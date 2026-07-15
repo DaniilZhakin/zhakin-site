@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         navigation.classList.remove('active');
+        menuButton.classList.remove('active');
       }
     });
   });
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuButton) {
     menuButton.addEventListener('click', () => {
       navigation.classList.toggle('active');
+      menuButton.classList.toggle('active');
     });
   }
 });
