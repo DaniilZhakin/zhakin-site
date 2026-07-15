@@ -34,6 +34,10 @@ p { font-size:18px; }
 .site-header { padding:14px 18px; }
 .menu-toggle { display:block; }
 .main-navigation { display:none; position:absolute; top:76px; left:18px; right:18px; flex-direction:column; align-items:flex-start; background:#102820; padding:24px; border:1px solid rgba(212,175,55,.3); border-radius:14px; box-shadow:0 20px 40px rgba(0,0,0,.35); }
+.main-navigation.active { display:flex; }
+.menu-toggle.active span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity:0; }
+.menu-toggle.active span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
 .brand-title { font-size:25px; }
 h1 { font-size:36px; }
 .hero { min-height:520px; flex-direction:column; gap:35px; align-items:flex-start; }
