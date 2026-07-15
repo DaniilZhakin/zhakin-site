@@ -2,24 +2,30 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #0b1f1a;
+  font-family: "Arial", "Helvetica", sans-serif;
+  background: #071a16;
   color: #f4f1e8;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 header {
   position: sticky;
   top: 0;
-  background: rgba(11,31,26,0.95);
-  border-bottom: 1px solid #b89b5e;
-  padding: 20px;
+  z-index: 10;
+  background: rgba(7, 26, 22, 0.96);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.55);
+  padding: 18px 20px;
+  backdrop-filter: blur(8px);
 }
 
 nav {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
   display: flex;
   gap: 24px;
@@ -28,8 +34,9 @@ nav {
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 2px;
   color: #d4af37;
   margin-right: auto;
 }
@@ -37,36 +44,45 @@ nav {
 nav a {
   color: #f4f1e8;
   text-decoration: none;
+  transition: opacity .2s ease;
+}
+
+nav a:hover {
+  opacity: .75;
 }
 
 main {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
-  padding: 40px 20px;
+  padding: 50px 20px;
 }
 
 section {
-  background: #152d25;
-  border: 1px solid rgba(212,175,55,0.35);
-  border-radius: 14px;
-  padding: 36px;
-  margin-bottom: 24px;
+  background: #102820;
+  border: 1px solid rgba(212,175,55,0.28);
+  border-radius: 18px;
+  padding: 40px;
+  margin-bottom: 28px;
 }
 
 .hero {
-  min-height: 360px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: linear-gradient(145deg, #102820, #071a16);
 }
 
 h1 {
-  font-size: 48px;
-  margin-bottom: 10px;
+  font-size: 52px;
+  margin: 0 0 14px;
+  letter-spacing: 1px;
 }
 
 h2 {
   color: #d4af37;
+  font-size: 30px;
+  margin-top: 0;
 }
 
 p {
@@ -74,11 +90,23 @@ p {
 }
 
 @media (max-width: 700px) {
+  header {
+    padding: 14px;
+  }
+
+  nav {
+    gap: 14px;
+  }
+
   h1 {
-    font-size: 34px;
+    font-size: 36px;
   }
 
   section {
     padding: 24px;
+  }
+
+  p {
+    font-size: 16px;
   }
 }
