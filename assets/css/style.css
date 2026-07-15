@@ -1,82 +1,40 @@
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  background: #071a16;
-  color: #f4f1e8;
-  line-height: 1.7;
-}
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: rgba(7, 26, 22, .92);
-  border-bottom: 1px solid rgba(212,175,55,.55);
-  padding: 18px 32px;
-  backdrop-filter: blur(12px);
-}
-
-.header-container {
-  max-width: 1200px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-}
-
+body { margin:0; font-family:"Inter","Segoe UI",Arial,sans-serif; background:#071a16; color:#f4f1e8; line-height:1.7; }
+.site-header { position:sticky; top:0; z-index:20; background:rgba(7,26,22,.92); border-bottom:1px solid rgba(212,175,55,.55); padding:18px 32px; backdrop-filter:blur(12px); }
+.header-container { max-width:1200px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:32px; }
 .brand { display:flex; flex-direction:column; text-decoration:none; color:#f4f1e8; }
 .brand-title { font-size:30px; font-weight:800; letter-spacing:5px; color:#d4af37; }
 .brand-subtitle { font-size:12px; letter-spacing:1.5px; text-transform:uppercase; opacity:.85; }
-
 .main-navigation { display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
 .main-navigation a { color:#f4f1e8; text-decoration:none; font-size:15px; transition:.25s; }
 .main-navigation a:hover { color:#d4af37; }
-
 .menu-toggle { display:none; background:none; border:0; cursor:pointer; }
 .menu-toggle span { display:block; width:28px; height:2px; background:#d4af37; margin:6px; }
-
 main { max-width:1200px; margin:auto; padding:50px 20px; }
-
-section {
- background:#102820;
- border:1px solid rgba(212,175,55,.28);
- border-radius:18px;
- padding:40px;
- margin-bottom:28px;
-}
-
-.hero {
- min-height:520px;
- display:flex;
- align-items:center;
- background:linear-gradient(145deg,#102820,#071a16);
- position:relative;
- overflow:hidden;
-}
-
+section { background:#102820; border:1px solid rgba(212,175,55,.28); border-radius:18px; padding:40px; margin-bottom:28px; }
+.hero { min-height:520px; display:flex; align-items:center; background:linear-gradient(145deg,#102820,#071a16); position:relative; overflow:hidden; }
 .hero-content { max-width:760px; }
 .hero-label { color:#d4af37; letter-spacing:4px; font-size:13px; }
 h1 { font-size:56px; line-height:1.1; margin:15px 0; letter-spacing:1px; }
 .hero-title { font-size:22px; }
 .hero-button { display:inline-block; margin-top:20px; padding:12px 26px; border:1px solid #d4af37; border-radius:30px; color:#d4af37; text-decoration:none; }
-
+.project-list { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:28px; }
+.project-list article { background:#071a16; border:1px solid rgba(212,175,55,.25); border-radius:16px; padding:26px; transition:transform .25s ease,border-color .25s ease; }
+.project-list article:hover { transform:translateY(-5px); border-color:#d4af37; }
+.project-list h3 { color:#d4af37; margin-top:0; font-size:20px; }
 h2 { color:#d4af37; font-size:30px; margin-top:0; }
 p { font-size:18px; }
-
 @media(max-width:700px){
- .site-header { padding:14px 18px; }
- .header-container { flex-direction:row; }
- .menu-toggle { display:block; }
- .main-navigation { display:none; position:absolute; top:75px; left:18px; right:18px; flex-direction:column; align-items:flex-start; background:#102820; padding:20px; border:1px solid rgba(212,175,55,.3); border-radius:14px; }
- .main-navigation.active { display:flex; }
- .brand-title { font-size:25px; }
- h1 { font-size:36px; }
- .hero { min-height:460px; }
- section { padding:24px; }
- p { font-size:16px; }
+.site-header { padding:14px 18px; }
+.header-container { flex-direction:row; }
+.menu-toggle { display:block; }
+.main-navigation { display:none; position:absolute; top:75px; left:18px; right:18px; flex-direction:column; align-items:flex-start; background:#102820; padding:20px; border:1px solid rgba(212,175,55,.3); border-radius:14px; }
+.main-navigation.active { display:flex; }
+.brand-title { font-size:25px; }
+h1 { font-size:36px; }
+.hero { min-height:460px; }
+.project-list { grid-template-columns:1fr; }
+section { padding:24px; }
+p { font-size:16px; }
 }
