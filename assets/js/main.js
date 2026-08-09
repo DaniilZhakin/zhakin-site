@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const links = document.querySelectorAll('.main-navigation a[href^="#"]');
+  const links = document.querySelectorAll('.main-navigation a[href*="#"]');
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-navigation');
 
@@ -21,9 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   links.forEach(link => {
     link.addEventListener('click', event => {
-      const target = document.querySelector(link.getAttribute('href'));
+      const url = new URL(link.href, window.location.href);
+      const isSamePage = url.pathname === window.location.pathname;
+      const target = document.querySelector(url.hash);
 
-      if (target) {
+      if (isSamePage && target) {
         event.preventDefault();
         target.scrollIntoView({
           behavior: 'smooth',
