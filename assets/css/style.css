@@ -11,6 +11,7 @@ body { margin:0; font-family:"Inter","Segoe UI",Arial,sans-serif; background:#07
 .main-navigation a:after { content:""; position:absolute; left:0; bottom:-8px; width:0; height:1px; background:#d4af37; transition:.25s; }
 .main-navigation a:hover { color:#d4af37; }
 .main-navigation a:hover:after { width:100%; }
+.main-navigation a:focus-visible, .brand:focus-visible, .menu-toggle:focus-visible, .hero-button:focus-visible, .hero-link:focus-visible { outline:2px solid #d4af37; outline-offset:4px; border-radius:4px; }
 .menu-toggle { display:none; background:none; border:0; cursor:pointer; padding:8px; }
 .menu-toggle span { display:block; width:30px; height:2px; background:#d4af37; margin:6px; transition:.25s; }
 main { max-width:1200px; margin:auto; padding:50px 20px; }
