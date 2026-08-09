@@ -3,10 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-navigation');
 
+  const setMenuState = (isOpen) => {
+    if (!navigation || !menuButton) return;
+
+    navigation.classList.toggle('active', isOpen);
+    menuButton.classList.toggle('active', isOpen);
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+    menuButton.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'Открыть меню');
+  };
+
   if (menuButton && navigation) {
     menuButton.addEventListener('click', () => {
-      navigation.classList.toggle('active');
-      menuButton.classList.toggle('active');
+      const isOpen = navigation.classList.contains('active');
+      setMenuState(!isOpen);
     });
   }
 
@@ -21,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
           block: 'start'
         });
 
-        if (navigation) navigation.classList.remove('active');
-        if (menuButton) menuButton.classList.remove('active');
+        setMenuState(false);
       }
     });
   });
@@ -34,8 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickedButton = menuButton.contains(event.target);
 
     if (!clickedInsideMenu && !clickedButton) {
-      navigation.classList.remove('active');
-      menuButton.classList.remove('active');
+      setMenuState(false);
     }
   });
 });
