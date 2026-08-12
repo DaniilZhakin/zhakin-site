@@ -18,12 +18,34 @@
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"Person",
-    "@id":"https://xn--80alhhq.xn--p1ai/about.html#person",
-    "name":"Даниил Жакин",
-    "url":"https://xn--80alhhq.xn--p1ai/about.html",
-    "description":"Эксперт в международном сотрудничестве, экономическом развитии, стратегических проектах и общественных инициативах.",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://xn--80alhhq.xn--p1ai/about.html"}
+    "@graph":[
+      {
+        "@type":"Person",
+        "@id":"https://xn--80alhhq.xn--p1ai/about.html#person",
+        "name":"Даниил Жакин",
+        "url":"https://xn--80alhhq.xn--p1ai/about.html",
+        "description":"Эксперт в международном сотрудничестве, экономическом развитии, стратегических проектах и общественных инициативах.",
+        "mainEntityOfPage":{"@type":"WebPage","@id":"https://xn--80alhhq.xn--p1ai/about.html"}
+      },
+      {
+        "@type":"Organization",
+        "@id":"https://xn--80alhhq.xn--p1ai/about.html#userdie",
+        "name":"Благотворительный фонд «УСЕРДИЕ»",
+        "description":"Самостоятельное социальное и гуманитарное направление."
+      },
+      {
+        "@type":"Brand",
+        "@id":"https://xn--80alhhq.xn--p1ai/about.html#zhakin-team",
+        "name":"ZHAKIN TEAM",
+        "description":"Отдельное аналитическое и экспертное направление."
+      },
+      {
+        "@type":"Organization",
+        "@id":"https://xn--80alhhq.xn--p1ai/about.html#pobeda",
+        "name":"ООО «ПОБЕДА»",
+        "description":"Отдельное направление международной экономической и внешнеэкономической деятельности."
+      }
+    ]
   }
   </script>
   <link rel="stylesheet" href="assets/css/style.css">
@@ -56,9 +78,19 @@
     </section>
     <section aria-labelledby="organizations-title">
       <h2 id="organizations-title">Организации и проекты</h2>
-      <p><strong>ООО «ПОБЕДА»</strong> — отдельное направление международной экономической и внешнеэкономической деятельности.</p>
-      <p><strong>Благотворительный фонд «УСЕРДИЕ»</strong> — самостоятельное социальное и гуманитарное направление.</p>
-      <p>Указанные организации и проекты сохраняют самостоятельность и не являются тождественными личному профилю Даниила Жакина.</p>
+      <article id="pobeda" aria-labelledby="pobeda-title">
+        <h3 id="pobeda-title">ООО «ПОБЕДА»</h3>
+        <p>Отдельное направление международной экономической и внешнеэкономической деятельности.</p>
+      </article>
+      <article id="userdie" aria-labelledby="userdie-title">
+        <h3 id="userdie-title">Благотворительный фонд «УСЕРДИЕ»</h3>
+        <p>Самостоятельное социальное и гуманитарное направление.</p>
+      </article>
+      <article id="zhakin-team" aria-labelledby="zhakin-team-title">
+        <h3 id="zhakin-team-title">ZHAKIN TEAM</h3>
+        <p>Отдельное аналитическое и экспертное направление, связанное с публикациями, аналитикой и профессиональным взаимодействием.</p>
+      </article>
+      <p>Указанные организации и направления сохраняют самостоятельность и не являются тождественными личному профилю Даниила Жакина.</p>
     </section>
     <section aria-labelledby="navigation-title">
       <h2 id="navigation-title">Навигация</h2>
