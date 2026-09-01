@@ -55,6 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
         label: link.textContent.trim().slice(0, 120)
       });
 
+      if (url.hash === '#contacts') {
+        recordAudienceEvent('contact_interest', {
+          source: 'navigation'
+        });
+      }
+
       if (isSamePage && target) {
         event.preventDefault();
         target.scrollIntoView({
@@ -71,13 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navigation || !menuButton) return;
 
     const clickedLink = event.target.closest('a[href]');
-    if (clickedLink && !clickedLink.classList.contains('main-navigation')) {
+    if (clickedLink) {
       const url = new URL(clickedLink.href, window.location.href);
       const isExternal = url.origin !== window.location.origin;
+
       if (isExternal) {
         recordAudienceEvent('outbound_click', {
           host: url.host,
           path: url.pathname
+        });
+      }
+
+      if (clickedLink.closest('#contacts')) {
+        recordAudienceEvent('contact_action', {
+          channel: url.protocol === 'mailto:' ? 'email' : url.host || url.protocol.replace(':', '')
         });
       }
     }
