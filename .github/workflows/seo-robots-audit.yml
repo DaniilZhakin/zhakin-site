@@ -1,0 +1,96 @@
+name: SEO Robots Audit
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seo-robots-audit:
+    name: Crawl & SEO integrity guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate robots.txt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f robots.txt
+          grep -Fx 'User-agent: *' robots.txt
+          grep -Fx 'Allow: /' robots.txt
+          grep -Fx 'Sitemap: https://xn--80alhhq.xn--p1ai/sitemap.xml' robots.txt
+
+      - name: Validate sitemap coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f sitemap.xml
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
+          urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
+          if len(urls) != 14:
+              raise SystemExit(f'Expected 14 sitemap URLs, found {len(urls)}')
+          if len(urls) != len(set(urls)):
+              raise SystemExit('Duplicate sitemap URLs detected')
+          for url in urls:
+              if not url.startswith('https://xn--80alhhq.xn--p1ai/'):
+                  raise SystemExit(f'Non-production URL in sitemap: {url}')
+
+          required = [
+              'https://xn--80alhhq.xn--p1ai/',
+              'https://xn--80alhhq.xn--p1ai/about.html',
+              'https://xn--80alhhq.xn--p1ai/projects.html',
+              'https://xn--80alhhq.xn--p1ai/publications.html',
+          ]
+          required += [
+              f'https://xn--80alhhq.xn--p1ai/publications/{slug}.html'
+              for slug in [
+                  'digital-ruble', 'ai-financial-system', 'ai-infrastructure',
+                  'legal-architecture', 'intellectual-economy',
+                  'economic-transition-1990s', 'future-without-money',
+                  'food-infrastructure', 'capital-requires-proof', 'price-discovery'
+              ]
+          ]
+          missing = [url for url in required if url not in urls]
+          if missing:
+              raise SystemExit('Missing required sitemap URLs: ' + ', '.join(missing))
+          print(f'Sitemap OK: {len(urls)} unique production URLs')
+          PY
+
+      - name: Validate canonical and indexability signals
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(index.html about.html projects.html publications.html publications/*.html)
+          for file in "${files[@]}"; do
+            test -f "$file"
+            grep -q 'rel="canonical"' "$file" || { echo "Missing canonical: $file"; exit 1; }
+            if grep -qiE 'noindex|X-Robots-Tag' "$file"; then
+              echo "Unexpected noindex/X-Robots-Tag signal: $file"
+              exit 1
+            fi
+          done
+          echo 'Canonical/indexability signals OK'
+
+      - name: Validate authority graph anchors
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in index.html about.html projects.html publications.html publications/*.html; do
+            grep -q '#person' "$file" || { echo "Missing #person authority anchor: $file"; exit 1; }
+            grep -q '#website' "$file" || { echo "Missing #website authority anchor: $file"; exit 1; }
+          done
+          echo 'Authority graph anchors OK'
+
+      - name: Summary
+        run: echo 'SEO Robots Audit PASSED — crawlability, sitemap, canonical, indexability and authority graph checks are green.'
