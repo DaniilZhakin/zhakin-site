@@ -46,7 +46,7 @@ function json(data, status = 200, extraHeaders = {}) {
   });
 }
 
-function validateEvent(event) {
+export function validateEvent(event) {
   if (!event || typeof event !== 'object' || Array.isArray(event)) {
     return 'event must be an object';
   }
