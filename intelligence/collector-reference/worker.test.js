@@ -61,7 +61,7 @@ assert.equal(tooManyEvents.status, 400, 'rejects more than 10 events');
 const oversized = await request('/v1/events', {
   method: 'POST',
   headers: { 'content-type': 'application/json' },
-  body: JSON.stringify({ ...valid, content_id: 'x'.repeat(128) }) + 'xxxxxxxx',
+  body: JSON.stringify({ ...valid, content_id: 'x'.repeat(128) }) + 'x'.repeat(8000),
 });
 assert.equal(oversized.status, 413, 'rejects oversized payload');
 
