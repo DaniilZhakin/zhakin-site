@@ -36,6 +36,7 @@ const MAX_BODY_BYTES = 8192;
 const MAX_EVENTS_PER_REQUEST = 10;
 const RATE_LIMIT_MAX_REQUESTS = 30;
 const RATE_LIMIT_WINDOW_MS = 60_000;
+const DEFAULT_RETENTION_DAYS = 90;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -116,6 +117,17 @@ function dayFromReceipt(receivedAt) {
   return receivedAt.slice(0, 10);
 }
 
+export function getRetentionDays(env) {
+  const configured = Number.parseInt(env.RETENTION_DAYS, 10);
+  return Number.isInteger(configured) && configured > 0 ? configured : DEFAULT_RETENTION_DAYS;
+}
+
+export function getRetentionCutoff(now = new Date(), retentionDays = DEFAULT_RETENTION_DAYS) {
+  const cutoff = new Date(now.getTime());
+  cutoff.setUTCDate(cutoff.getUTCDate() - retentionDays);
+  return cutoff.toISOString().slice(0, 10);
+}
+
 async function consumeRateLimit(env) {
   const id = env.RATE_LIMITER.idFromName('global');
   const limiter = env.RATE_LIMITER.get(id);
@@ -164,6 +176,18 @@ async function aggregateEvents(env, events, receivedAt) {
   });
 
   await env.DB.batch(statements);
+}
+
+export async function purgeExpiredAggregates(env, now = new Date()) {
+  if (!env.DB) throw new Error('DB binding is not configured');
+
+  const retentionDays = getRetentionDays(env);
+  const cutoff = getRetentionCutoff(now, retentionDays);
+  const result = await env.DB.prepare(
+    'DELETE FROM engagement_daily WHERE event_day < ?'
+  ).bind(cutoff).run();
+
+  return { cutoff, retentionDays, result };
 }
 
 export default {
@@ -235,5 +259,12 @@ export default {
     // Only aggregate anonymous counters are persisted. No IP, fingerprint,
     // raw form content, email, phone, ad IDs or cross-site identifiers.
     return json({ accepted: events.length, received_at: receivedAt }, 202, cors);
+  },
+
+  async scheduled(controller, env) {
+    // Retention cleanup is scheduled infrastructure, not an HTTP endpoint.
+    // The cron is configured in wrangler.jsonc and only becomes active after
+    // an explicitly approved production deployment.
+    await purgeExpiredAggregates(env, new Date(controller.scheduledTime));
   },
 };
