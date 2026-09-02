@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node worker.test.js && node schema-contract.test.js",
+    "test": "node worker.test.js && node schema-contract.test.js && node privacy-contract.test.js",
     "dev": "wrangler dev",
     "deploy": "npm run production:guard && wrangler deploy",
     "production:guard": "node production-config-guard.mjs",
