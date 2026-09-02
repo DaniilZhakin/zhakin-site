@@ -44,6 +44,7 @@ function json(data, status = 200, extraHeaders = {}) {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
       ...extraHeaders,
     },
   });
@@ -109,6 +110,11 @@ function corsHeaders(request, env) {
 function isAllowedOrigin(request, env) {
   const origin = request.headers.get('Origin');
   return !origin || origin === getAllowedOrigin(env);
+}
+
+function isJsonContentType(request) {
+  const contentType = request.headers.get('content-type') || '';
+  return /^application\/json(?:\s*;|\s*$)/i.test(contentType);
 }
 
 function validateRequestSize(request, raw) {
@@ -227,6 +233,10 @@ export default {
         ...cors,
         'retry-after': String(rate.retry_after),
       });
+    }
+
+    if (!isJsonContentType(request)) {
+      return json({ error: 'unsupported_media_type' }, 415, cors);
     }
 
     const raw = await request.text();
