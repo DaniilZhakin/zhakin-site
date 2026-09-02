@@ -19,48 +19,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate critical recovery artifacts
-        shell: bash
-        run: |
-          set -euo pipefail
-          required=(
-            index.html
-            about.html
-            projects.html
-            publications.html
-            reception.html
-            assets
-            robots.txt
-            sitemap.xml
-            CNAME
-            DISASTER_RECOVERY.md
-            docs/INDEPENDENT-INFRASTRUCTURE-PLAN.md
-            docs/INDEPENDENT-INFRASTRUCTURE-MANIFEST.json
-            docs/security-operations-checklist.md
-            docs/security-operations-tests.md
-            docs/intelligence-3.0-collector-contract.schema.json
-            intelligence/collector-cloudflare
-            intelligence/collector-reference
-          )
-          for path in "${required[@]}"; do
-            test -e "$path" || { echo "Missing recovery artifact: $path"; exit 1; }
-          done
-
-      - name: Verify manifest is valid JSON
-        run: python -m json.tool docs/INDEPENDENT-INFRASTRUCTURE-MANIFEST.json >/dev/null
-
-      - name: Block accidental production secrets and browser collector transport
-        shell: bash
-        run: |
-          set -euo pipefail
-          if grep -RInE --exclude-dir=.git --exclude='recovery-bundle.yml' '(CF_API_TOKEN|CLOUDFLARE_API_TOKEN|api[_-]?key|secret[_-]?key|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY)' .; then
-            echo "Potential credential material detected in tracked files."
-            exit 1
-          fi
-          if grep -RInE --exclude-dir=.git 'https://[^[:space:]"'"']+/v1/events' assets intelligence; then
-            echo "Production collector endpoint detected in browser/runtime source; transport must remain blocked until approval."
-            exit 1
-          fi
+      - name: Verify recovery integrity
+        run: node scripts/verify-recovery-integrity.mjs
 
       - name: Create recovery bundle
         shell: bash
