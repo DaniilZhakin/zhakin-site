@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "zhakin-intelligence-collector",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-02",
+
+  // Production deployment is intentionally gated.
+  // Add the real D1 database_id only after the Cloudflare account/runtime,
+  // ownership, retention and access controls are approved.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "zhakin-intelligence",
+      "database_id": "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RATE_LIMITER",
+        "class_name": "RateLimiter"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["RateLimiter"]
+    }
+  ],
+
+  "vars": {
+    "ALLOWED_ORIGIN": "https://xn--80alhhq.xn--p1ai"
+  }
+}
