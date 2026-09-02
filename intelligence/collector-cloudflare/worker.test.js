@@ -25,21 +25,27 @@ class MemoryStorage {
 
 const storage = new MemoryStorage();
 const limiter = new RateLimiter({ storage });
-
+const originalNow = Date.now;
 let now = 1_000_000;
-for (let i = 0; i < 30; i += 1) {
-  const response = await limiter.fetch(new Request('https://rate-limit/consume'));
-  const body = await response.json();
-  assert.equal(body.allowed, true);
+Date.now = () => now;
+
+try {
+  for (let i = 0; i < 30; i += 1) {
+    const response = await limiter.fetch(new Request('https://rate-limit/consume'));
+    const body = await response.json();
+    assert.equal(body.allowed, true);
+  }
+
+  const blocked = await limiter.fetch(new Request('https://rate-limit/consume'));
+  const blockedBody = await blocked.json();
+  assert.equal(blockedBody.allowed, false);
+  assert.equal(blocked.status, 200);
+
+  now += 60_001;
+  const reset = await limiter.fetch(new Request('https://rate-limit/consume'));
+  assert.equal((await reset.json()).allowed, true);
+} finally {
+  Date.now = originalNow;
 }
-
-const blocked = await limiter.fetch(new Request('https://rate-limit/consume'));
-const blockedBody = await blocked.json();
-assert.equal(blockedBody.allowed, false);
-assert.equal(blocked.status, 200);
-
-now += 60_001;
-const reset = await limiter.fetch(new Request('https://rate-limit/consume'));
-assert.equal((await reset.json()).allowed, true);
 
 console.log('PASS: Cloudflare collector validator + rate-limit boundary tests');
