@@ -1,0 +1,43 @@
+name: Intelligence Collector Contract Tests
+
+on:
+  push:
+    paths:
+      - 'intelligence/collector-reference/**'
+      - 'docs/intelligence-3.0-collector-contract.schema.json'
+      - '.github/workflows/intelligence-collector-tests.yml'
+  pull_request:
+    paths:
+      - 'intelligence/collector-reference/**'
+      - 'docs/intelligence-3.0-collector-contract.schema.json'
+      - '.github/workflows/intelligence-collector-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract-tests:
+    name: Collector contract tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: intelligence/collector-reference/package.json
+
+      - name: Run reference collector tests
+        working-directory: intelligence/collector-reference
+        run: npm test
+
+      - name: Production deployment gate
+        run: |
+          echo "Reference-only contract gate passed."
+          echo "No collector deployment and no browser transport are enabled by this workflow."
+          echo "Production provider, endpoint, storage, retention, CORS and abuse controls remain explicitly gated."
