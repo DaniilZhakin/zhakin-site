@@ -15,13 +15,15 @@
 - SEO: `robots.txt`, `sitemap.xml`, metadata и schema входят в исходный проект.
 - Intelligence 3.0: отдельный необязательный контур; отказ collector не должен останавливать статический сайт.
 
+Подробная последовательность построения независимого контура, DNS cutover и rollback описана в [`docs/INDEPENDENT-INFRASTRUCTURE-PLAN.md`](docs/INDEPENDENT-INFRASTRUCTURE-PLAN.md).
+
 ## 3. Восстановление при отказе хостинга
 
 1. Получить последнюю рабочую копию репозитория.
 2. Развернуть статический сайт на новом hosting.
 3. Проверить главную, `about.html`, `projects.html`, `publications.html` и assets.
 4. Проверить HTTPS.
-5. Обновить DNS-записи домена на новый production.
+5. Обновить DNS-записи домена на новый production только после прохождения независимой проверки.
 6. Проверить `robots.txt`, `sitemap.xml`, canonical и основные HTTP-ответы.
 7. После подтверждения доступности проверить индексацию в поисковых системах.
 
@@ -47,7 +49,8 @@
 - SEO metadata и Schema.org;
 - deployment-конфигурацию;
 - Intelligence 3.0 collector, schema и migrations;
-- этот документ.
+- этот документ;
+- `docs/INDEPENDENT-INFRASTRUCTURE-PLAN.md`.
 
 ## 6. Intelligence 3.0 — аварийное восстановление
 
