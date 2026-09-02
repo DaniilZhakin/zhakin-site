@@ -38,8 +38,8 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
-          if len(urls) != 14:
-              raise SystemExit(f'Expected 14 sitemap URLs, found {len(urls)}')
+          if len(urls) != 15:
+              raise SystemExit(f'Expected 15 sitemap URLs, found {len(urls)}')
           if len(urls) != len(set(urls)):
               raise SystemExit('Duplicate sitemap URLs detected')
           for url in urls:
@@ -56,7 +56,7 @@ jobs:
               f'https://xn--80alhhq.xn--p1ai/publications/{slug}.html'
               for slug in [
                   'digital-ruble', 'ai-financial-system', 'ai-infrastructure',
-                  'legal-architecture', 'intellectual-economy',
+                  'understanding-state-and-law', 'legal-architecture', 'intellectual-economy',
                   'economic-transition-1990s', 'future-without-money',
                   'food-infrastructure', 'capital-requires-proof', 'price-discovery'
               ]
