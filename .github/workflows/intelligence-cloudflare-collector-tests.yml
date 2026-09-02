@@ -1,0 +1,46 @@
+name: Intelligence Cloudflare Collector Validation
+
+on:
+  push:
+    paths:
+      - 'intelligence/collector-cloudflare/**'
+      - '.github/workflows/intelligence-cloudflare-collector-tests.yml'
+  pull_request:
+    paths:
+      - 'intelligence/collector-cloudflare/**'
+      - '.github/workflows/intelligence-cloudflare-collector-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: intelligence/collector-cloudflare
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: intelligence/collector-cloudflare/package.json
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Syntax check
+        run: node --check worker.js
+
+      - name: Wrangler dry-run validation
+        run: npx wrangler deploy --dry-run
+
+      - name: Production deployment gate reminder
+        run: |
+          echo "Validation only: no production deployment, no browser transport, and no credentials are used."
+          echo "Production requires account/runtime, D1, Durable Object, retention, access, abuse and independent verification gates."
