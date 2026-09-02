@@ -34,10 +34,11 @@ jobs:
           required = [
               '/', '/about.html', '/projects.html', '/publications.html',
               '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
-              '/publications/ai-infrastructure.html', '/publications/legal-architecture.html',
-              '/publications/intellectual-economy.html', '/publications/economic-transition-1990s.html',
-              '/publications/future-without-money.html', '/publications/food-infrastructure.html',
-              '/publications/capital-requires-proof.html', '/publications/price-discovery.html',
+              '/publications/ai-infrastructure.html', '/publications/understanding-state-and-law.html',
+              '/publications/legal-architecture.html', '/publications/intellectual-economy.html',
+              '/publications/economic-transition-1990s.html', '/publications/future-without-money.html',
+              '/publications/food-infrastructure.html', '/publications/capital-requires-proof.html',
+              '/publications/price-discovery.html',
           ]
 
           def fetch(url):
