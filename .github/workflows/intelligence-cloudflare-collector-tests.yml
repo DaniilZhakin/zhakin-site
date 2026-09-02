@@ -37,16 +37,47 @@ jobs:
         run: npm install --ignore-scripts
 
       - name: Collector HTTP contract tests
-        run: node worker.test.js
+        run: npm test
 
-      - name: Schema drift contract gate
-        run: node schema-contract.test.js
+      - name: Migration validation (local D1)
+        run: npm run d1:migrations:apply:local
+
+      - name: Production configuration guard
+        run: |
+          if npm run production:guard; then
+            echo "Unexpected: production guard passed with repository placeholder configuration."
+            exit 1
+          else
+            echo "Expected: production deployment remains blocked until a real external D1 database ID is configured outside Git."
+          fi
 
       - name: Syntax check
         run: node --check worker.js
 
       - name: Wrangler dry-run validation
         run: npx wrangler deploy --dry-run
+
+      - name: Validation artifact
+        run: |
+          mkdir -p ../../monitoring-report/intelligence-3.0
+          {
+            echo "Intelligence 3.0 Collector Validation"
+            echo "Commit: $GITHUB_SHA"
+            echo "UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "HTTP contract: PASS"
+            echo "Schema contract: PASS"
+            echo "Local D1 migration: PASS"
+            echo "Production guard: BLOCKED as expected"
+            echo "Syntax: PASS"
+            echo "Wrangler dry-run: PASS"
+          } > ../../monitoring-report/intelligence-3.0/validation.txt
+
+      - name: Upload validation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-3-0-collector-validation
+          path: monitoring-report/intelligence-3.0/validation.txt
+          if-no-files-found: error
 
       - name: Production deployment gate reminder
         run: |
