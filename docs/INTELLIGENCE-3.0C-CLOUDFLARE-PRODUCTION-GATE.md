@@ -27,13 +27,20 @@ The Durable Object rate limiter is used for request-window coordination. The pub
 - [ ] Durable Object rate limiting is provider-backed and atomic for the production topology.
 - [ ] D1 stores aggregate counters only; raw event payloads are not retained.
 - [ ] No IP address, fingerprint, raw form data, email, phone, advertising ID, cross-site identifier, credential, or API key is persisted by the collector.
-- [ ] Retention period for aggregate data is explicitly approved and documented.
+- [ ] 90-day aggregate retention is explicitly approved, or a different approved period is configured before activation.
+- [ ] Scheduled retention cleanup is enabled only after the approved retention policy is active.
 - [ ] Access to D1 and operational logs is restricted to authorized administrators.
-- [ ] Backup/export and recovery procedure is documented and tested.
+- [ ] Backup/export and recovery procedure is documented and tested according to `docs/INTELLIGENCE-3.0C-RETENTION-BACKUP-RECOVERY.md`.
 - [ ] Storage failure returns a controlled `503 storage_unavailable` response.
-- [ ] Rate-limit, CORS, payload, schema, invalid JSON, invalid route/method, and storage-failure boundaries are tested.
+- [ ] Rate-limit, CORS, payload, schema, invalid JSON, invalid route/method, storage-failure, and retention boundaries are tested.
 - [ ] Production endpoint is independently verified from outside the deployment environment.
 - [ ] Only after all gates above pass: browser transport may be enabled in the public site.
+
+## Retention baseline
+
+The implementation currently uses a **90-day engineering baseline** through `RETENTION_DAYS=90`. This is a configuration baseline, not authorization to collect production data. Production activation remains blocked until the site owner explicitly approves the retention period.
+
+The Worker has no public cleanup endpoint. Retention is performed by a scheduled Worker invocation that deletes aggregate rows older than the UTC cutoff. Raw browser events are never stored.
 
 ## Non-negotiable safety rules
 
@@ -42,9 +49,10 @@ The Durable Object rate limiter is used for request-window coordination. The pub
 3. The site must not fail closed because analytics is unavailable.
 4. The reference collector remains provider-neutral and non-production.
 5. Deployment is not considered complete until the real account configuration and endpoint have been independently verified.
+6. Retention cleanup must never be used as a substitute for a tested export/backup procedure.
 
 ## Current implementation state
 
-The repository contains a Cloudflare Worker reference implementation, D1 migration, Durable Object rate limiter, package configuration, and CI validation. These files are preparation artifacts only. They do not constitute a production deployment.
+The repository contains a Cloudflare Worker implementation, D1 migration, Durable Object rate limiter, scheduled aggregate-retention cleanup, package configuration, and CI validation. These files are preparation artifacts only. They do not constitute a production deployment.
 
-The schema contract remains the source of truth at `docs/intelligence-3.0-collector-contract.schema.json`.
+The canonical schema remains at `docs/intelligence-3.0-collector-contract.schema.json`.
