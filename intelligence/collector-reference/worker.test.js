@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { validateEvent } from './worker.js';
+import { validateEvent, default as worker } from './worker.js';
 
 const valid = {
   event_type: 'page_view',
@@ -30,4 +30,53 @@ for (const [name, event, expected] of cases) {
 assert.equal(validateEvent([{ ...valid }]), 'event must be an object', 'rejects array as event');
 assert.equal(validateEvent(null), 'event must be an object', 'rejects null');
 
-console.log(`PASS: ${cases.length + 2} collector contract tests`);
+async function request(path, options = {}) {
+  return worker.fetch(
+    new Request(`https://collector.example${path}`, options),
+    { ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai' },
+  );
+}
+
+const invalidJson = await request('/v1/events', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: '{invalid',
+});
+assert.equal(invalidJson.status, 400, 'rejects invalid JSON');
+
+const wrongMethod = await request('/v1/events', { method: 'GET' });
+assert.equal(wrongMethod.status, 404, 'rejects wrong method');
+
+const wrongPath = await request('/v1/not-events', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(valid),
+});
+assert.equal(wrongPath.status, 404, 'rejects wrong path');
+
+const tooManyEvents = await request('/v1/events', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(Array.from({ length: 11 }, () => valid)),
+});
+assert.equal(tooManyEvents.status, 400, 'rejects more than 10 events');
+
+const oversized = await request('/v1/events', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ ...valid, content_id: 'x'.repeat(128) }) + 'xxxxxxxx',
+});
+assert.equal(oversized.status, 413, 'rejects oversized payload');
+
+const accepted = await request('/v1/events', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    origin: 'https://xn--80alhhq.xn--p1ai',
+  },
+  body: JSON.stringify(valid),
+});
+assert.equal(accepted.status, 202, 'accepts valid HTTP request');
+assert.equal(accepted.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured origin');
+
+console.log(`PASS: ${cases.length + 2} validator tests + 6 HTTP contract tests`);
