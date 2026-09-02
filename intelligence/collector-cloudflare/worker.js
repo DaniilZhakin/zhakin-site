@@ -146,8 +146,9 @@ export class RateLimiter {
 
     const now = Date.now();
     const state = (await this.ctx.storage.get('window')) || { start: now, count: 0 };
-    const windowStart = now - state.start >= RATE_LIMIT_WINDOW_MS ? now : state.start;
-    const count = windowStart === now ? 0 : state.count;
+    const windowExpired = now - state.start >= RATE_LIMIT_WINDOW_MS;
+    const windowStart = windowExpired ? now : state.start;
+    const count = windowExpired ? 0 : state.count;
 
     if (count >= RATE_LIMIT_MAX_REQUESTS) {
       const retryAfter = Math.max(1, Math.ceil((windowStart + RATE_LIMIT_WINDOW_MS - now) / 1000));
