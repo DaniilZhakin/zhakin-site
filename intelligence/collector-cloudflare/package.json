@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node worker.test.js && node schema-contract.test.js",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "d1:migrations:list": "wrangler d1 migrations list DB",
