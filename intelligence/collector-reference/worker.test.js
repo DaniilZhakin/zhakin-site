@@ -65,6 +65,26 @@ const oversized = await request('/v1/events', {
 });
 assert.equal(oversized.status, 413, 'rejects oversized payload');
 
+const foreignOrigin = await request('/v1/events', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    origin: 'https://evil.example',
+  },
+  body: JSON.stringify(valid),
+});
+assert.equal(foreignOrigin.status, 403, 'rejects foreign POST origin');
+assert.equal(foreignOrigin.headers.get('access-control-allow-origin'), null, 'does not grant foreign origin access');
+
+const foreignPreflight = await request('/v1/events', {
+  method: 'OPTIONS',
+  headers: {
+    origin: 'https://evil.example',
+    'access-control-request-method': 'POST',
+  },
+});
+assert.equal(foreignPreflight.status, 403, 'rejects foreign preflight origin');
+
 const accepted = await request('/v1/events', {
   method: 'POST',
   headers: {
@@ -75,6 +95,16 @@ const accepted = await request('/v1/events', {
 });
 assert.equal(accepted.status, 202, 'accepts valid HTTP request');
 assert.equal(accepted.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured origin');
+
+const preflight = await request('/v1/events', {
+  method: 'OPTIONS',
+  headers: {
+    origin: 'https://xn--80alhhq.xn--p1ai',
+    'access-control-request-method': 'POST',
+  },
+});
+assert.equal(preflight.status, 204, 'accepts configured preflight');
+assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured preflight origin');
 
 const limiterStore = new Map();
 const limiter = {
@@ -91,4 +121,4 @@ assert.equal(rate.retryAfter, 60, 'returns retry-after for exhausted window');
 rate = await checkRateLimit(limiter, 'test', t0 + 60_000);
 assert.equal(rate.allowed, true, 'resets limiter after window');
 
-console.log(`PASS: ${cases.length + 2} validator tests + 6 HTTP contract tests + 4 rate-limit tests`);
+console.log(`PASS: ${cases.length + 2} validator tests + 8 HTTP contract tests + 4 rate-limit tests`);
