@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { validateEvent, default as worker } from './worker.js';
+import { validateEvent, checkRateLimit, default as worker } from './worker.js';
 
 const valid = {
   event_type: 'page_view',
@@ -30,11 +30,8 @@ for (const [name, event, expected] of cases) {
 assert.equal(validateEvent([{ ...valid }]), 'event must be an object', 'rejects array as event');
 assert.equal(validateEvent(null), 'event must be an object', 'rejects null');
 
-async function request(path, options = {}) {
-  return worker.fetch(
-    new Request(`https://collector.example${path}`, options),
-    { ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai' },
-  );
+async function request(path, options = {}, env = { ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai' }) {
+  return worker.fetch(new Request(`https://collector.example${path}`, options), env);
 }
 
 const invalidJson = await request('/v1/events', {
@@ -79,4 +76,19 @@ const accepted = await request('/v1/events', {
 assert.equal(accepted.status, 202, 'accepts valid HTTP request');
 assert.equal(accepted.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured origin');
 
-console.log(`PASS: ${cases.length + 2} validator tests + 6 HTTP contract tests`);
+const limiterStore = new Map();
+const limiter = {
+  async get(key) { return limiterStore.get(key) || null; },
+  async put(key, value) { limiterStore.set(key, JSON.parse(value)); },
+};
+const t0 = 1_000_000;
+let rate;
+for (let i = 0; i < 30; i += 1) rate = await checkRateLimit(limiter, 'test', t0);
+assert.equal(rate.allowed, true, 'allows first 30 requests in window');
+rate = await checkRateLimit(limiter, 'test', t0);
+assert.equal(rate.allowed, false, 'blocks request 31 in window');
+assert.equal(rate.retryAfter, 60, 'returns retry-after for exhausted window');
+rate = await checkRateLimit(limiter, 'test', t0 + 60_000);
+assert.equal(rate.allowed, true, 'resets limiter after window');
+
+console.log(`PASS: ${cases.length + 2} validator tests + 6 HTTP contract tests + 4 rate-limit tests`);
