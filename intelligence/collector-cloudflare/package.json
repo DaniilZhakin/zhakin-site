@@ -1,0 +1,14 @@
+{
+  "name": "zhakin-intelligence-collector-cloudflare",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "d1:migrations:list": "wrangler d1 migrations list DB",
+    "d1:migrations:apply:local": "wrangler d1 migrations apply DB --local"
+  },
+  "devDependencies": {
+    "wrangler": "^4.35.0"
+  }
+}
