@@ -17,19 +17,20 @@ assert.equal(validateEvent({ ...validEvent, referrer_class: 'ip' }), 'invalid re
 assert.equal(validateEvent({ ...validEvent, content_id: 'bad/id' }), 'invalid content_id');
 assert.equal(validateEvent({ ...validEvent, timestamp: 'not-a-date' }), 'invalid timestamp');
 
+const originalNow = Date.now;
+let now = 1_000_000;
+Date.now = () => now;
+
 class MemoryStorage {
   constructor() { this.values = new Map(); }
   async get(key) { return this.values.get(key); }
   async put(key, value) { this.values.set(key, value); }
 }
 
-const storage = new MemoryStorage();
-const limiter = new RateLimiter({ storage });
-const originalNow = Date.now;
-let now = 1_000_000;
-Date.now = () => now;
-
 try {
+  const storage = new MemoryStorage();
+  const limiter = new RateLimiter({ storage });
+
   for (let i = 0; i < 30; i += 1) {
     const response = await limiter.fetch(new Request('https://rate-limit/consume'));
     const body = await response.json();
