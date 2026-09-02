@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
-import worker, { RateLimiter, validateEvent } from './worker.js';
+import worker, {
+  RateLimiter,
+  getRetentionCutoff,
+  getRetentionDays,
+  purgeExpiredAggregates,
+  validateEvent,
+} from './worker.js';
 
 const validEvent = {
   event_type: 'page_view',
@@ -16,6 +22,11 @@ assert.equal(validateEvent({ ...validEvent, path: '/a?b=c' }), 'invalid path');
 assert.equal(validateEvent({ ...validEvent, referrer_class: 'ip' }), 'invalid referrer_class');
 assert.equal(validateEvent({ ...validEvent, content_id: 'bad/id' }), 'invalid content_id');
 assert.equal(validateEvent({ ...validEvent, timestamp: 'not-a-date' }), 'invalid timestamp');
+
+assert.equal(getRetentionDays({ RETENTION_DAYS: '90' }), 90);
+assert.equal(getRetentionDays({ RETENTION_DAYS: '0' }), 90);
+assert.equal(getRetentionDays({ RETENTION_DAYS: 'invalid' }), 90);
+assert.equal(getRetentionCutoff(new Date('2026-09-02T00:00:00.000Z'), 90), '2026-06-04');
 
 const originalNow = Date.now;
 let now = 1_000_000;
@@ -52,12 +63,13 @@ try {
 function createRateLimiterEnv(response = { allowed: true, remaining: 29 }) {
   return {
     ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai',
+    RETENTION_DAYS: '90',
     RATE_LIMITER: {
       idFromName: () => 'global',
       get: () => ({ fetch: async () => Response.json(response) }),
     },
     DB: {
-      prepare: () => ({ bind: () => ({}) }),
+      prepare: () => ({ bind: () => ({ run: async () => ({ success: true }) }) }),
       batch: async () => undefined,
     },
   };
@@ -183,4 +195,27 @@ const allowedHeaders = {
   assert.equal((await response.json()).error, 'storage_unavailable');
 }
 
-console.log('PASS: Cloudflare collector validator + rate-limit + HTTP contract tests');
+{
+  const calls = [];
+  const env = {
+    RETENTION_DAYS: '90',
+    DB: {
+      prepare: (sql) => ({
+        bind: (cutoff) => ({
+          run: async () => {
+            calls.push({ sql, cutoff });
+            return { success: true, meta: { changes: 3 } };
+          },
+        }),
+      }),
+    },
+  };
+  const result = await purgeExpiredAggregates(env, new Date('2026-09-02T00:00:00.000Z'));
+  assert.equal(result.cutoff, '2026-06-04');
+  assert.equal(result.retentionDays, 90);
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].sql, /DELETE FROM engagement_daily WHERE event_day < \?/);
+  assert.equal(calls[0].cutoff, '2026-06-04');
+}
+
+console.log('PASS: Cloudflare collector validator + rate-limit + HTTP + retention tests');
