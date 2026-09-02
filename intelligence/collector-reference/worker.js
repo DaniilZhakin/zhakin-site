@@ -36,6 +36,7 @@ const MAX_BODY_BYTES = 8192;
 const MAX_EVENTS_PER_REQUEST = 10;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 30;
+const RFC3339_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -43,6 +44,7 @@ function json(data, status = 200, extraHeaders = {}) {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
       ...extraHeaders,
     },
   });
@@ -68,7 +70,10 @@ export function validateEvent(event) {
   }
 
   if (event.timestamp !== undefined) {
-    if (typeof event.timestamp !== 'string' || event.timestamp.length > 64 || Number.isNaN(Date.parse(event.timestamp))) {
+    if (typeof event.timestamp !== 'string' ||
+        event.timestamp.length > 64 ||
+        !RFC3339_TIMESTAMP.test(event.timestamp) ||
+        Number.isNaN(Date.parse(event.timestamp))) {
       return 'invalid timestamp';
     }
   }
@@ -149,6 +154,7 @@ export default {
           'access-control-allow-methods': 'POST, OPTIONS',
           'access-control-allow-headers': 'content-type',
           'access-control-max-age': '600',
+          'x-content-type-options': 'nosniff',
         },
       });
     }
