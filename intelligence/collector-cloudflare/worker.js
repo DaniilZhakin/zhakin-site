@@ -214,6 +214,7 @@ export default {
         status: 204,
         headers: {
           ...cors,
+          'x-content-type-options': 'nosniff',
           'access-control-allow-methods': 'POST, OPTIONS',
           'access-control-allow-headers': 'content-type',
           'access-control-max-age': '600',
@@ -278,8 +279,6 @@ export default {
 
   async scheduled(controller, env) {
     // Retention cleanup is scheduled infrastructure, not an HTTP endpoint.
-    // The cron is configured in wrangler.jsonc and only becomes active after
-    // an explicitly approved production deployment.
     await purgeExpiredAggregates(env, new Date(controller.scheduledTime));
   },
 };
