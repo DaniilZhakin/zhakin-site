@@ -22,6 +22,9 @@ assert.equal(validateEvent({ ...validEvent, path: '/a?b=c' }), 'invalid path');
 assert.equal(validateEvent({ ...validEvent, referrer_class: 'ip' }), 'invalid referrer_class');
 assert.equal(validateEvent({ ...validEvent, content_id: 'bad/id' }), 'invalid content_id');
 assert.equal(validateEvent({ ...validEvent, timestamp: 'not-a-date' }), 'invalid timestamp');
+assert.equal(validateEvent({ ...validEvent, timestamp: '2026-09-02' }), 'invalid timestamp');
+assert.equal(validateEvent({ ...validEvent, timestamp: '2026-09-02T12:34:56Z' }), null);
+assert.equal(validateEvent({ ...validEvent, timestamp: '2026-09-02T12:34:56+03:00' }), null);
 
 assert.equal(getRetentionDays({ RETENTION_DAYS: '90' }), 90);
 assert.equal(getRetentionDays({ RETENTION_DAYS: '0' }), 90);
