@@ -66,9 +66,13 @@ export function validateEvent(event) {
     return 'invalid path';
   }
 
+  // Keep runtime validation aligned with the JSON Schema date-time contract.
+  // Date.parse alone is intentionally not used because it accepts date-only
+  // strings such as 2026-09-02, which are not RFC 3339 date-time values.
   if (event.timestamp !== undefined &&
       (typeof event.timestamp !== 'string' ||
        event.timestamp.length > 64 ||
+       !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(event.timestamp) ||
        Number.isNaN(Date.parse(event.timestamp)))) {
     return 'invalid timestamp';
   }
