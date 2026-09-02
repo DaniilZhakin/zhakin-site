@@ -90,12 +90,21 @@ export function validateEvent(event) {
   return null;
 }
 
+function getAllowedOrigin(env) {
+  return env.ALLOWED_ORIGIN || 'https://xn--80alhhq.xn--p1ai';
+}
+
 function corsHeaders(request, env) {
   const origin = request.headers.get('Origin');
-  const allowedOrigin = env.ALLOWED_ORIGIN || 'https://xn--80alhhq.xn--p1ai';
+  const allowedOrigin = getAllowedOrigin(env);
   const headers = { 'vary': 'Origin' };
   if (origin === allowedOrigin) headers['access-control-allow-origin'] = origin;
   return headers;
+}
+
+function isAllowedOrigin(request, env) {
+  const origin = request.headers.get('Origin');
+  return !origin || origin === getAllowedOrigin(env);
 }
 
 // Reference-only rate-limit abstraction. Production must use an atomic,
@@ -127,6 +136,10 @@ export async function checkRateLimit(limiter, key, now = Date.now()) {
 export default {
   async fetch(request, env) {
     const cors = corsHeaders(request, env);
+
+    if (!isAllowedOrigin(request, env)) {
+      return json({ error: 'cors_forbidden' }, 403, cors);
+    }
 
     if (request.method === 'OPTIONS') {
       return new Response(null, {
