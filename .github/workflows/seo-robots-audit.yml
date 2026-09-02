@@ -38,8 +38,8 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
-          if len(urls) != 15:
-              raise SystemExit(f'Expected 15 sitemap URLs, found {len(urls)}')
+          if len(urls) != 16:
+              raise SystemExit(f'Expected 16 sitemap URLs, found {len(urls)}')
           if len(urls) != len(set(urls)):
               raise SystemExit('Duplicate sitemap URLs detected')
           for url in urls:
@@ -51,6 +51,7 @@ jobs:
               'https://xn--80alhhq.xn--p1ai/about.html',
               'https://xn--80alhhq.xn--p1ai/projects.html',
               'https://xn--80alhhq.xn--p1ai/publications.html',
+              'https://xn--80alhhq.xn--p1ai/reception.html',
           ]
           required += [
               f'https://xn--80alhhq.xn--p1ai/publications/{slug}.html'
@@ -71,7 +72,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          files=(index.html about.html projects.html publications.html publications/*.html)
+          files=(index.html about.html projects.html publications.html reception.html publications/*.html)
           for file in "${files[@]}"; do
             test -f "$file"
             grep -q 'rel="canonical"' "$file" || { echo "Missing canonical: $file"; exit 1; }
@@ -86,7 +87,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html about.html projects.html publications.html publications/*.html; do
+          for file in index.html about.html projects.html publications.html reception.html publications/*.html; do
             grep -q '#person' "$file" || { echo "Missing #person authority anchor: $file"; exit 1; }
             grep -q '#website' "$file" || { echo "Missing #website authority anchor: $file"; exit 1; }
           done
