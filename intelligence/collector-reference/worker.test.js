@@ -33,7 +33,7 @@ for (const [name, event, expected] of cases) {
 assert.equal(validateEvent([{ ...valid }]), 'event must be an object', 'rejects array as event');
 assert.equal(validateEvent(null), 'event must be an object', 'rejects null');
 
-async function request(path, options = {}, env = { ALLOWED_ORIGIN: 'https://xn--alhhq.xn--p1ai' }) {
+async function request(path, options = {}, env = { ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai' }) {
   return worker.fetch(new Request(`https://collector.example${path}`, options), env);
 }
 
