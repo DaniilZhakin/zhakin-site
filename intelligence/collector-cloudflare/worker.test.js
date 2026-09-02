@@ -131,6 +131,20 @@ const allowedHeaders = {
 }
 
 {
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), {
+    Origin: 'https://xn--80alhhq.xn--p1ai',
+    'Content-Type': 'text/plain',
+  });
+  assert.equal(response.status, 415);
+  assert.equal((await response.json()).error, 'unsupported_media_type');
+}
+
+{
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), allowedHeaders);
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+}
+
+{
   const response = await request('POST', '/v1/events', '{invalid', allowedHeaders);
   assert.equal(response.status, 400);
   assert.equal((await response.json()).error, 'invalid_json');
