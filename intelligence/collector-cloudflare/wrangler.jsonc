@@ -32,7 +32,14 @@
     }
   ],
 
+  // Retention cleanup is defined now but cannot run in production until the
+  // real Cloudflare account, D1 binding and production deployment are approved.
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
+
   "vars": {
-    "ALLOWED_ORIGIN": "https://xn--80alhhq.xn--p1ai"
+    "ALLOWED_ORIGIN": "https://xn--80alhhq.xn--p1ai",
+    "RETENTION_DAYS": "90"
   }
 }
