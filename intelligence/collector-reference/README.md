@@ -8,6 +8,7 @@ This directory contains a provider-neutral reference implementation for the cent
 
 - `POST /v1/events`
 - `OPTIONS /v1/events` for CORS preflight
+- `Content-Type: application/json` is required for event submission
 - JSON object or batch array
 - maximum 10 events per request
 - maximum request body: 8 KiB
