@@ -36,8 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm install --ignore-scripts
 
-      - name: Collector contract tests
+      - name: Collector HTTP contract tests
         run: node worker.test.js
+
+      - name: Schema drift contract gate
+        run: node schema-contract.test.js
 
       - name: Syntax check
         run: node --check worker.js
