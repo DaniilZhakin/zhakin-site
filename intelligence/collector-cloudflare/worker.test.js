@@ -116,6 +116,7 @@ const allowedHeaders = {
   assert.equal(response.status, 204);
   assert.equal(response.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai');
   assert.equal(response.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
 }
 
 {
@@ -200,6 +201,21 @@ const allowedHeaders = {
     prepare: () => ({ bind: () => ({}) }),
     batch: async () => { throw new Error('D1 unavailable'); },
   };
+  const response = await worker.fetch(
+    new Request('https://collector.example/v1/events', {
+      method: 'POST',
+      body: JSON.stringify(validEvent),
+      headers: allowedHeaders,
+    }),
+    env,
+  );
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error, 'storage_unavailable');
+}
+
+{
+  const env = createRateLimiterEnv();
+  delete env.DB;
   const response = await worker.fetch(
     new Request('https://collector.example/v1/events', {
       method: 'POST',
