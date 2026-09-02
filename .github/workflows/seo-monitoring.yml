@@ -25,115 +25,47 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p monitoring-report
-
           python - <<'PY'
-          import json
-          import re
-          import subprocess
-          import time
+          import json, re, subprocess, time
           from pathlib import Path
           from urllib.parse import urljoin
-
           site = 'https://xn--80alhhq.xn--p1ai'
-          report = {
-              'site': site,
-              'checks': [],
-              'summary': {'ok': 0, 'warning': 0, 'failed': 0},
-          }
-
+          report = {'site': site, 'checks': [], 'summary': {'ok': 0, 'warning': 0, 'failed': 0}}
           def fetch(url):
               started = time.monotonic()
-              p = subprocess.run(
-                  ['curl', '-L', '--fail-with-body', '--silent', '--show-error',
-                   '--max-time', '20', '-D', '-', url],
-                  text=True, capture_output=True
-              )
-              elapsed_ms = round((time.monotonic() - started) * 1000)
-              if p.returncode != 0:
-                  return None, '', elapsed_ms, p.stderr.strip()
-              raw = p.stdout
-              parts = re.split(r'\r?\n\r?\n', raw, maxsplit=1)
-              headers = parts[0] if parts else ''
-              body = parts[1] if len(parts) > 1 else ''
-              return headers, body, elapsed_ms, ''
-
-          def add(name, status, detail, url=None, elapsed_ms=None):
-              report['checks'].append({
-                  'name': name, 'status': status, 'detail': detail,
-                  **({'url': url} if url else {}),
-                  **({'response_time_ms': elapsed_ms} if elapsed_ms is not None else {}),
-              })
-              report['summary'][status] += 1
-
-          robots_url = site + '/robots.txt'
-          headers, body, elapsed, err = fetch(robots_url)
-          if body and 'User-agent: *' in body and 'Allow: /' in body and 'Sitemap: ' + site + '/sitemap.xml' in body:
-              add('robots.txt', 'ok', 'Production robots policy and sitemap reference are present.', robots_url, elapsed)
-          else:
-              add('robots.txt', 'failed', err or 'robots.txt policy mismatch.', robots_url, elapsed)
-
-          sitemap_url = site + '/sitemap.xml'
-          headers, sitemap, elapsed, err = fetch(sitemap_url)
-          urls = re.findall(r'<loc>(.*?)</loc>', sitemap or '')
-          if urls and len(urls) == len(set(urls)) and all(u.startswith(site + '/') or u == site + '/' for u in urls):
-              add('sitemap.xml', 'ok', f'{len(urls)} unique production URLs detected.', sitemap_url, elapsed)
-          else:
-              add('sitemap.xml', 'failed', err or f'Sitemap integrity problem: {len(urls)} URLs, duplicates or foreign hosts detected.', sitemap_url, elapsed)
-
-          required = [
-              '/', '/about.html', '/projects.html', '/publications.html',
-              '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
-              '/publications/ai-infrastructure.html', '/publications/understanding-state-and-law.html',
-              '/publications/legal-architecture.html', '/publications/intellectual-economy.html',
-              '/publications/economic-transition-1990s.html', '/publications/future-without-money.html',
-              '/publications/food-infrastructure.html', '/publications/capital-requires-proof.html',
-              '/publications/price-discovery.html',
-          ]
-          sitemap_missing = [urljoin(site, path) for path in required if urljoin(site, path) not in urls]
-          if not sitemap_missing:
-              add('sitemap coverage', 'ok', 'All required authority and publication URLs are covered.')
-          else:
-              add('sitemap coverage', 'failed', 'Missing: ' + ', '.join(sitemap_missing))
-
-          pages = [urljoin(site, path) for path in required]
-          for url in pages:
-              headers, html, elapsed, err = fetch(url)
-              if not html:
-                  add('page availability', 'failed', err or 'Empty response.', url, elapsed)
-                  continue
-              canonical = re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', html, flags=re.I)
-              canonical_ok = canonical and canonical[0].rstrip('/') == url.rstrip('/')
-              noindex = bool(re.search(r'noindex|X-Robots-Tag', html, flags=re.I))
-              schema_ok = bool(re.search(r'application/ld\+json', html, flags=re.I))
-              if canonical_ok and not noindex and schema_ok:
-                  add('page SEO signals', 'ok', 'Canonical, indexability and JSON-LD signals are present.', url, elapsed)
+              p = subprocess.run(['curl','-L','--fail-with-body','--silent','--show-error','--max-time','20','-D','-',url], text=True, capture_output=True)
+              elapsed = round((time.monotonic()-started)*1000)
+              if p.returncode != 0: return None, '', elapsed, p.stderr.strip()
+              parts = re.split(r'\r?\n\r?\n', p.stdout, maxsplit=1)
+              return parts[0] if parts else '', parts[1] if len(parts)>1 else '', elapsed, ''
+          def add(name,status,detail,url=None,elapsed_ms=None):
+              report['checks'].append({'name':name,'status':status,'detail':detail,**({'url':url} if url else {}),**({'response_time_ms':elapsed_ms} if elapsed_ms is not None else {})})
+              report['summary'][status]+=1
+          robots_url=site+'/robots.txt'; headers,body,elapsed,err=fetch(robots_url)
+          add('robots.txt','ok','Production robots policy and sitemap reference are present.',robots_url,elapsed) if body and 'User-agent: *' in body and 'Allow: /' in body and 'Sitemap: '+site+'/sitemap.xml' in body else add('robots.txt','failed',err or 'robots.txt policy mismatch.',robots_url,elapsed)
+          sitemap_url=site+'/sitemap.xml'; headers,sitemap,elapsed,err=fetch(sitemap_url); urls=re.findall(r'<loc>(.*?)</loc>',sitemap or '')
+          add('sitemap.xml','ok',f'{len(urls)} unique production URLs detected.',sitemap_url,elapsed) if urls and len(urls)==len(set(urls)) and all(u.startswith(site+'/') or u==site+'/' for u in urls) else add('sitemap.xml','failed',err or f'Sitemap integrity problem: {len(urls)} URLs, duplicates or foreign hosts detected.',sitemap_url,elapsed)
+          required=['/','/about.html','/projects.html','/publications.html','/reception.html','/publications/digital-ruble.html','/publications/ai-financial-system.html','/publications/ai-infrastructure.html','/publications/understanding-state-and-law.html','/publications/legal-architecture.html','/publications/intellectual-economy.html','/publications/economic-transition-1990s.html','/publications/future-without-money.html','/publications/food-infrastructure.html','/publications/capital-requires-proof.html','/publications/price-discovery.html']
+          sitemap_missing=[urljoin(site,p) for p in required if urljoin(site,p) not in urls]
+          add('sitemap coverage','ok','All required authority, reception and publication URLs are covered.') if not sitemap_missing else add('sitemap coverage','failed','Missing: '+', '.join(sitemap_missing))
+          for path in required:
+              url=urljoin(site,path); headers,html,elapsed,err=fetch(url)
+              if not html: add('page availability','failed',err or 'Empty response.',url,elapsed); continue
+              canonical=re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)',html,flags=re.I); canonical_ok=canonical and canonical[0].rstrip('/')==url.rstrip('/'); noindex=bool(re.search(r'noindex|X-Robots-Tag',html,flags=re.I)); schema_ok=bool(re.search(r'application/ld\+json',html,flags=re.I))
+              if canonical_ok and not noindex and schema_ok: add('page SEO signals','ok','Canonical, indexability and JSON-LD signals are present.',url,elapsed)
               else:
-                  issues = []
+                  issues=[]
                   if not canonical_ok: issues.append('canonical mismatch/missing')
                   if noindex: issues.append('noindex signal')
                   if not schema_ok: issues.append('JSON-LD missing')
-                  add('page SEO signals', 'failed', '; '.join(issues), url, elapsed)
-
-          Path('monitoring-report/seo-monitoring.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
-          lines = [
-              '# SEO Monitoring & Intelligence',
-              '',
-              f"Site: {site}",
-              '',
-              f"Summary: OK={report['summary']['ok']} WARNING={report['summary']['warning']} FAILED={report['summary']['failed']}",
-              '',
-              '| Check | Status | Detail |',
-              '|---|---|---|',
-          ]
-          for item in report['checks']:
-              lines.append(f"| {item['name']} | {item['status'].upper()} | {item['detail']} |")
-          Path('monitoring-report/SEO-MONITORING.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
-
-          if report['summary']['failed']:
-              raise SystemExit(f"SEO monitoring failed: {report['summary']['failed']} check(s)")
+                  add('page SEO signals','failed','; '.join(issues),url,elapsed)
+          Path('monitoring-report/seo-monitoring.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          lines=['# SEO Monitoring & Intelligence','','Site: '+site,'',f"Summary: OK={report['summary']['ok']} WARNING={report['summary']['warning']} FAILED={report['summary']['failed']}",'','| Check | Status | Detail |','|---|---|---|']
+          for item in report['checks']: lines.append(f"| {item['name']} | {item['status'].upper()} | {item['detail']} |")
+          Path('monitoring-report/SEO-MONITORING.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          if report['summary']['failed']: raise SystemExit(f"SEO monitoring failed: {report['summary']['failed']} check(s)")
           print('SEO Monitoring & Intelligence PASSED')
           PY
-
       - name: Upload monitoring report
         if: always()
         uses: actions/upload-artifact@v4
