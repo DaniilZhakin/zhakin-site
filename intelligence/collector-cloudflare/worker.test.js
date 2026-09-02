@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { RateLimiter, validateEvent } from './worker.js';
+import worker, { RateLimiter, validateEvent } from './worker.js';
 
 const validEvent = {
   event_type: 'page_view',
@@ -49,4 +49,138 @@ try {
   Date.now = originalNow;
 }
 
-console.log('PASS: Cloudflare collector validator + rate-limit boundary tests');
+function createRateLimiterEnv(response = { allowed: true, remaining: 29 }) {
+  return {
+    ALLOWED_ORIGIN: 'https://xn--80alhhq.xn--p1ai',
+    RATE_LIMITER: {
+      idFromName: () => 'global',
+      get: () => ({ fetch: async () => Response.json(response) }),
+    },
+    DB: {
+      prepare: () => ({ bind: () => ({}) }),
+      batch: async () => undefined,
+    },
+  };
+}
+
+async function request(method, path, body, headers = {}) {
+  return worker.fetch(
+    new Request(`https://collector.example${path}`, {
+      method,
+      body,
+      headers,
+    }),
+    createRateLimiterEnv(),
+  );
+}
+
+const foreignHeaders = {
+  Origin: 'https://evil.example',
+  'Content-Type': 'application/json',
+};
+const allowedHeaders = {
+  Origin: 'https://xn--80alhhq.xn--p1ai',
+  'Content-Type': 'application/json',
+};
+
+{
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), foreignHeaders);
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error, 'cors_forbidden');
+  assert.equal(response.headers.get('access-control-allow-origin'), null);
+}
+
+{
+  const response = await request('OPTIONS', '/v1/events', null, foreignHeaders);
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error, 'cors_forbidden');
+}
+
+{
+  const response = await request('OPTIONS', '/v1/events', null, allowedHeaders);
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai');
+  assert.equal(response.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
+}
+
+{
+  const response = await request('POST', '/wrong', JSON.stringify(validEvent), allowedHeaders);
+  assert.equal(response.status, 404);
+  assert.equal((await response.json()).error, 'not_found');
+}
+
+{
+  const response = await request('GET', '/v1/events', null, allowedHeaders);
+  assert.equal(response.status, 404);
+  assert.equal((await response.json()).error, 'not_found');
+}
+
+{
+  const response = await request('POST', '/v1/events', '{invalid', allowedHeaders);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error, 'invalid_json');
+}
+
+{
+  const events = Array.from({ length: 11 }, () => validEvent);
+  const response = await request('POST', '/v1/events', JSON.stringify(events), allowedHeaders);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error, 'invalid_event_count');
+}
+
+{
+  const oversized = 'x'.repeat(8200);
+  const response = await request('POST', '/v1/events', oversized, allowedHeaders);
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).error, 'payload_too_large');
+}
+
+{
+  const invalid = { ...validEvent, event_type: 'invalid' };
+  const response = await request('POST', '/v1/events', JSON.stringify(invalid), allowedHeaders);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error, 'schema_validation_failed');
+}
+
+{
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), allowedHeaders);
+  assert.equal(response.status, 202);
+  const body = await response.json();
+  assert.equal(body.accepted, 1);
+  assert.equal(typeof body.received_at, 'string');
+}
+
+{
+  const env = createRateLimiterEnv({ allowed: false, retry_after: 17 });
+  const response = await worker.fetch(
+    new Request('https://collector.example/v1/events', {
+      method: 'POST',
+      body: JSON.stringify(validEvent),
+      headers: allowedHeaders,
+    }),
+    env,
+  );
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get('retry-after'), '17');
+  assert.equal((await response.json()).error, 'rate_limited');
+}
+
+{
+  const env = createRateLimiterEnv();
+  env.DB = {
+    prepare: () => ({ bind: () => ({}) }),
+    batch: async () => { throw new Error('D1 unavailable'); },
+  };
+  const response = await worker.fetch(
+    new Request('https://collector.example/v1/events', {
+      method: 'POST',
+      body: JSON.stringify(validEvent),
+      headers: allowedHeaders,
+    }),
+    env,
+  );
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error, 'storage_unavailable');
+}
+
+console.log('PASS: Cloudflare collector validator + rate-limit + HTTP contract tests');
