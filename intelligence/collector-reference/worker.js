@@ -34,6 +34,8 @@ const REFERRER_CLASSES = new Set([
 
 const MAX_BODY_BYTES = 8192;
 const MAX_EVENTS_PER_REQUEST = 10;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 30;
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -96,6 +98,32 @@ function corsHeaders(request, env) {
   return headers;
 }
 
+// Reference-only rate-limit abstraction. Production must use an atomic,
+// provider-backed limiter (for example KV/Durable Objects or an equivalent
+// server-side primitive), not process memory, because edge instances scale
+// horizontally and may be short-lived.
+export async function checkRateLimit(limiter, key, now = Date.now()) {
+  if (!limiter || typeof limiter.get !== 'function' || typeof limiter.put !== 'function') {
+    return { allowed: true, remaining: null, referenceOnly: true };
+  }
+
+  const current = await limiter.get(key, { type: 'json' });
+  const windowStart = current && Number.isFinite(current.window_start) ? current.window_start : now;
+  const count = current && Number.isFinite(current.count) && now - windowStart < RATE_LIMIT_WINDOW_MS
+    ? current.count
+    : 0;
+
+  if (count >= RATE_LIMIT_MAX_REQUESTS) {
+    return { allowed: false, remaining: 0, retryAfter: Math.max(1, Math.ceil((windowStart + RATE_LIMIT_WINDOW_MS - now) / 1000)) };
+  }
+
+  const next = count + 1;
+  await limiter.put(key, JSON.stringify({ window_start: count === 0 ? now : windowStart, count: next }), {
+    expirationTtl: 60,
+  });
+  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - next };
+}
+
 export default {
   async fetch(request, env) {
     const cors = corsHeaders(request, env);
@@ -115,6 +143,14 @@ export default {
     const url = new URL(request.url);
     if (url.pathname !== '/v1/events' || request.method !== 'POST') {
       return json({ error: 'not_found' }, 404, cors);
+    }
+
+    const rate = await checkRateLimit(env.RATE_LIMITER, 'global', Date.now());
+    if (!rate.allowed) {
+      return json({ error: 'rate_limited' }, 429, {
+        ...cors,
+        'retry-after': String(rate.retryAfter),
+      });
     }
 
     const contentLength = Number(request.headers.get('content-length') || 0);
