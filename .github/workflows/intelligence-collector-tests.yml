@@ -32,12 +32,12 @@ jobs:
           cache: npm
           cache-dependency-path: intelligence/collector-reference/package.json
 
-      - name: Run reference collector tests
+      - name: Run reference collector and schema-drift tests
         working-directory: intelligence/collector-reference
         run: npm test
 
       - name: Production deployment gate
         run: |
-          echo "Reference-only contract gate passed."
+          echo "Reference-only contract and schema-drift gate passed."
           echo "No collector deployment and no browser transport are enabled by this workflow."
           echo "Production provider, endpoint, storage, retention, CORS and abuse controls remain explicitly gated."
