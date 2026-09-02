@@ -58,6 +58,14 @@ if (!urls.every((url) => url.startsWith('https://xn--80alhhq.xn--p1ai/'))) {
   throw new Error('sitemap.xml contains a non-canonical host');
 }
 
+for (const url of urls) {
+  const pathname = new URL(url).pathname.replace(/^\//, '');
+  const localPath = path.join(root, pathname);
+  if (!fs.existsSync(localPath)) {
+    throw new Error(`Sitemap URL has no matching repository path: /${pathname}`);
+  }
+}
+
 const htmlFiles = ['index.html', 'about.html', 'projects.html', 'publications.html', 'reception.html'];
 for (const file of htmlFiles) {
   const html = fs.readFileSync(path.join(root, file), 'utf8');
