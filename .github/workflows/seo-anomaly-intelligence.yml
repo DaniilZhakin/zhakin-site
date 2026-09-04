@@ -1,0 +1,46 @@
+name: SEO Anomaly Intelligence
+
+on:
+  schedule:
+    - cron: '57 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  anomaly-intelligence:
+    name: Persistent SEO anomaly intelligence
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Analyze persistent anomalies
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p monitoring-history monitoring-report
+          python3 intelligence/seo-anomaly-intelligence.py
+
+      - name: Upload anomaly report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-anomaly-report
+          path: monitoring-report/
+          if-no-files-found: warn
+
+      - name: Commit anomaly history and report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoring-history/seo-anomalies.json monitoring-report/anomalies.json monitoring-report/SEO-ANOMALIES.md
+          if git diff --cached --quiet; then
+            echo 'No anomaly-history or report changes to commit.'
+          else
+            git commit -m 'chore: update persistent SEO anomaly report'
+            git push
+          fi
