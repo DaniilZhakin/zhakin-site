@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-03T10:06:28Z",
-  "history_points": 3,
+  "timestamp": "2026-09-04T09:58:20Z",
+  "history_points": 4,
   "current": {
     "robots_ok": true,
     "sitemap_urls": 15,
@@ -10,8 +10,8 @@
     "canonical_ok_pages": 15,
     "jsonld_pages": 15,
     "noindex_pages": 0,
-    "avg_response_time_ms": 202.8,
-    "max_response_time_ms": 331
+    "avg_response_time_ms": 354.3,
+    "max_response_time_ms": 1130
   },
   "warnings": [],
   "status": "ok"
