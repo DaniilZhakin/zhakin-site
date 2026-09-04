@@ -81,7 +81,8 @@ jobs:
               add('sitemap.xml', 'failed', err or f'Sitemap integrity problem: {len(urls)} URLs, duplicates or foreign hosts detected.', sitemap_url, elapsed)
 
           required = [
-              '/', '/about.html', '/projects.html', '/publications.html',
+              '/', '/about.html', '/projects.html', '/publications.html', '/reception.html',
+              '/publications/ai-parliament.html',
               '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
               '/publications/ai-infrastructure.html', '/publications/understanding-state-and-law.html',
               '/publications/legal-architecture.html', '/publications/intellectual-economy.html',
@@ -91,7 +92,7 @@ jobs:
           ]
           sitemap_missing = [urljoin(site, path) for path in required if urljoin(site, path) not in urls]
           if not sitemap_missing:
-              add('sitemap coverage', 'ok', 'All required authority and publication URLs are covered.')
+              add('sitemap coverage', 'ok', 'All required authority, reception and publication URLs are covered.')
           else:
               add('sitemap coverage', 'failed', 'Missing: ' + ', '.join(sitemap_missing))
 
