@@ -1,0 +1,46 @@
+name: SEO Incident Intelligence
+
+on:
+  schedule:
+    - cron: '7 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  incident-intelligence:
+    name: Correlated SEO incident intelligence
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Correlate and prioritize incidents
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p monitoring-history monitoring-report
+          python3 intelligence/seo-incident-intelligence.py
+
+      - name: Upload incident report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-incident-report
+          path: monitoring-report/
+          if-no-files-found: warn
+
+      - name: Commit incident history and report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoring-history/seo-incidents.json monitoring-report/incidents.json monitoring-report/SEO-INCIDENTS.md
+          if git diff --cached --quiet; then
+            echo 'No incident-history or report changes to commit.'
+          else
+            git commit -m 'chore: update correlated SEO incident report'
+            git push
+          fi
