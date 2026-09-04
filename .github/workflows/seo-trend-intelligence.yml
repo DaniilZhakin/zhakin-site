@@ -51,6 +51,21 @@ jobs:
               body = Path('/tmp/seo-body').read_text(encoding='utf-8', errors='replace')
               return raw_headers, body, elapsed, ''
 
+          def page_diff(previous_page, current_page):
+              changes = []
+              if previous_page is None:
+                  return ['new page in monitored baseline']
+              for key in ['available', 'canonical_ok', 'noindex', 'x_robots_tag', 'jsonld']:
+                  old = previous_page.get(key)
+                  new = current_page.get(key)
+                  if old != new:
+                      changes.append(f'{key}: {old} -> {new}')
+              old_ms = previous_page.get('response_time_ms')
+              new_ms = current_page.get('response_time_ms')
+              if old_ms is not None and new_ms is not None and new_ms >= max(1000, old_ms * 1.5) and new_ms - old_ms >= 250:
+                  changes.append(f'response_time_ms: {old_ms} -> {new_ms}')
+              return changes
+
           now = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
           snapshot = {'timestamp': now, 'site': site, 'pages': {}, 'signals': {}}
 
@@ -88,40 +103,72 @@ jobs:
 
           history_path = Path('monitoring-history/seo-history.json')
           history = json.loads(history_path.read_text(encoding='utf-8')) if history_path.exists() else []
+          previous_snapshot = history[-1] if history else None
           history.append(snapshot)
           history = history[-30:]
           history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-          previous = history[:-1]
           warnings = []
-          if previous:
-              prev = previous[-1]
+          page_changes = {}
+          critical_pages = []
+          warning_pages = []
+          if previous_snapshot:
+              prev_signals = previous_snapshot.get('signals', {})
               for key in ['robots_ok','sitemap_unique','sitemap_coverage']:
-                  if prev['signals'].get(key) and not snapshot['signals'].get(key):
+                  if prev_signals.get(key) and not snapshot['signals'].get(key):
                       warnings.append(f'{key} regressed')
-              if snapshot['signals']['available_pages'] < prev['signals']['available_pages']:
+              if snapshot['signals']['available_pages'] < prev_signals.get('available_pages', snapshot['signals']['available_pages']):
                   warnings.append('available page count decreased')
-              if snapshot['signals']['canonical_ok_pages'] < prev['signals']['canonical_ok_pages']:
+              if snapshot['signals']['canonical_ok_pages'] < prev_signals.get('canonical_ok_pages', snapshot['signals']['canonical_ok_pages']):
                   warnings.append('canonical coverage decreased')
-              if snapshot['signals']['jsonld_pages'] < prev['signals']['jsonld_pages']:
+              if snapshot['signals']['jsonld_pages'] < prev_signals.get('jsonld_pages', snapshot['signals']['jsonld_pages']):
                   warnings.append('JSON-LD coverage decreased')
-              if snapshot['signals']['noindex_pages'] > prev['signals']['noindex_pages']:
+              if snapshot['signals']['noindex_pages'] > prev_signals.get('noindex_pages', snapshot['signals']['noindex_pages']):
                   warnings.append('noindex count increased')
-              old_avg = prev['signals'].get('avg_response_time_ms')
+              old_avg = prev_signals.get('avg_response_time_ms')
               new_avg = snapshot['signals'].get('avg_response_time_ms')
               if old_avg and new_avg and new_avg > old_avg * 1.5 and new_avg - old_avg >= 250:
                   warnings.append(f'average response time increased from {old_avg}ms to {new_avg}ms')
 
+              for path, current_page in snapshot['pages'].items():
+                  changes = page_diff(previous_snapshot.get('pages', {}).get(path), current_page)
+                  if changes:
+                      page_changes[path] = changes
+                      if current_page.get('available') is False or current_page.get('canonical_ok') is False or current_page.get('noindex') is True:
+                          critical_pages.append(path)
+                      else:
+                          warning_pages.append(path)
+
+              for path in critical_pages:
+                  warnings.append(f'critical page regression: {path}')
+              for path in warning_pages:
+                  warnings.append(f'page-level change: {path}')
+
+          status = 'critical' if critical_pages or not snapshot['signals']['robots_ok'] or not snapshot['signals']['sitemap_coverage'] else ('warning' if warnings else 'ok')
           report = {
               'timestamp': now,
               'history_points': len(history),
               'current': snapshot['signals'],
               'warnings': warnings,
-              'status': 'warning' if warnings else 'ok',
+              'page_changes': page_changes,
+              'critical_pages': critical_pages,
+              'warning_pages': warning_pages,
+              'status': status,
           }
           Path('monitoring-report/seo-trend.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-          md = ['# SEO 2.6 — Trend Intelligence', '', f'Snapshot: `{now}`', f'History points: **{len(history)}**', '', '## Current signals', '']
-          for k, v in snapshot['signals'].items(): md.append(f'- `{k}`: **{v}**')
+          Path('monitoring-report/latest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          md = ['# SEO 2.6 — Trend Intelligence', '', f'Snapshot: `{now}`', f'History points: **{len(history)}**', f'Status: **{status.upper()}**', '', '## Current signals', '']
+          for k, v in snapshot['signals'].items():
+              md.append(f'- `{k}`: **{v}**')
+          md += ['', '## Page-level intelligence', '']
+          if not page_changes:
+              md.append('No page-level change detected.')
+          else:
+              for path, changes in page_changes.items():
+                  md.append(f'### `{path}`')
+                  for change in changes:
+                      md.append(f'- {change}')
           md += ['', '## Anomaly detection', '']
           md.append('No regression detected.' if not warnings else '\n'.join('- ' + w for w in warnings))
           Path('monitoring-report/SEO-TREND.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
@@ -142,7 +189,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add monitoring-history/seo-history.json monitoring-report/seo-trend.json monitoring-report/SEO-TREND.md
+          git add monitoring-history/seo-history.json monitoring-report/seo-trend.json monitoring-report/latest.json monitoring-report/SEO-TREND.md
           if git diff --cached --quiet; then
             echo 'No trend-history or report changes to commit.'
           else
