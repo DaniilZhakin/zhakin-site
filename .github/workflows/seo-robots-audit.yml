@@ -90,7 +90,10 @@ jobs:
           set -euo pipefail
           for file in index.html about.html projects.html publications/*.html; do
             grep -q '#person' "$file" || { echo "Missing #person authority anchor: $file"; exit 1; }
-            grep -q '#website' "$file" || { echo "Missing #website authority anchor: $file"; exit 1; }
+            if ! grep -qE '#website|#webpage' "$file"; then
+              echo "Missing #website/#webpage authority anchor: $file"
+              exit 1
+            fi
           done
           echo 'Authority graph anchors OK'
 
