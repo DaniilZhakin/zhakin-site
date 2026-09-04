@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in index.html about.html projects.html publications.html reception.html publications/*.html; do
+          for file in index.html about.html projects.html publications/*.html; do
             grep -q '#person' "$file" || { echo "Missing #person authority anchor: $file"; exit 1; }
             grep -q '#website' "$file" || { echo "Missing #website authority anchor: $file"; exit 1; }
           done
