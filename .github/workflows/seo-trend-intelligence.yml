@@ -32,13 +32,13 @@ jobs:
 
           site = 'https://xn--80alhhq.xn--p1ai'
           required = [
-              '/', '/about.html', '/projects.html', '/publications.html',
+              '/', '/about.html', '/projects.html', '/publications.html', '/reception.html',
               '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
-              '/publications/ai-infrastructure.html', '/publications/understanding-state-and-law.html',
-              '/publications/legal-architecture.html', '/publications/intellectual-economy.html',
-              '/publications/economic-transition-1990s.html', '/publications/future-without-money.html',
-              '/publications/food-infrastructure.html', '/publications/capital-requires-proof.html',
-              '/publications/price-discovery.html',
+              '/publications/ai-infrastructure.html', '/publications/ai-parliament.html',
+              '/publications/understanding-state-and-law.html', '/publications/legal-architecture.html',
+              '/publications/intellectual-economy.html', '/publications/economic-transition-1990s.html',
+              '/publications/future-without-money.html', '/publications/food-infrastructure.html',
+              '/publications/capital-requires-proof.html', '/publications/price-discovery.html',
           ]
 
           def fetch(url):
@@ -77,6 +77,7 @@ jobs:
                   'jsonld': bool(re.search(r'application/ld\+json', html, flags=re.I)),
               }
 
+          snapshot['signals']['required_pages'] = len(required)
           snapshot['signals']['available_pages'] = sum(p['available'] for p in snapshot['pages'].values())
           snapshot['signals']['canonical_ok_pages'] = sum(p['canonical_ok'] for p in snapshot['pages'].values())
           snapshot['signals']['jsonld_pages'] = sum(p['jsonld'] for p in snapshot['pages'].values())
