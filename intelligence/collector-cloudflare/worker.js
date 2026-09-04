@@ -44,6 +44,7 @@ function json(data, status = 200, extraHeaders = {}) {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
       ...extraHeaders,
     },
   });
@@ -66,9 +67,13 @@ export function validateEvent(event) {
     return 'invalid path';
   }
 
+  // Keep runtime validation aligned with the JSON Schema date-time contract.
+  // Date.parse alone is intentionally not used because it accepts date-only
+  // strings such as 2026-09-02, which are not RFC 3339 date-time values.
   if (event.timestamp !== undefined &&
       (typeof event.timestamp !== 'string' ||
        event.timestamp.length > 64 ||
+       !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(event.timestamp) ||
        Number.isNaN(Date.parse(event.timestamp)))) {
     return 'invalid timestamp';
   }
@@ -105,6 +110,11 @@ function corsHeaders(request, env) {
 function isAllowedOrigin(request, env) {
   const origin = request.headers.get('Origin');
   return !origin || origin === getAllowedOrigin(env);
+}
+
+function isJsonContentType(request) {
+  const contentType = request.headers.get('content-type') || '';
+  return /^application\/json(?:\s*;|\s*$)/i.test(contentType);
 }
 
 function validateRequestSize(request, raw) {
@@ -204,6 +214,7 @@ export default {
         status: 204,
         headers: {
           ...cors,
+          'x-content-type-options': 'nosniff',
           'access-control-allow-methods': 'POST, OPTIONS',
           'access-control-allow-headers': 'content-type',
           'access-control-max-age': '600',
@@ -223,6 +234,10 @@ export default {
         ...cors,
         'retry-after': String(rate.retry_after),
       });
+    }
+
+    if (!isJsonContentType(request)) {
+      return json({ error: 'unsupported_media_type' }, 415, cors);
     }
 
     const raw = await request.text();
@@ -264,8 +279,6 @@ export default {
 
   async scheduled(controller, env) {
     // Retention cleanup is scheduled infrastructure, not an HTTP endpoint.
-    // The cron is configured in wrangler.jsonc and only becomes active after
-    // an explicitly approved production deployment.
     await purgeExpiredAggregates(env, new Date(controller.scheduledTime));
   },
 };

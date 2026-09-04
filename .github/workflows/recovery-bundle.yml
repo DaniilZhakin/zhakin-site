@@ -1,0 +1,40 @@
+name: Recovery Bundle
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - intelligence-3.0-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify recovery integrity
+        run: node scripts/verify-recovery-integrity.mjs
+
+      - name: Create recovery bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovery-bundle
+          git archive --format=tar.gz --output=recovery-bundle/zhakin-site-${GITHUB_SHA}.tar.gz HEAD
+          git rev-parse HEAD > recovery-bundle/known-good-commit.txt
+          git status --short > recovery-bundle/worktree-status.txt
+          printf '%s\n' "This is an interim GitHub Actions recovery snapshot. It is not a substitute for an independent secondary repository or recovery origin." > recovery-bundle/README.txt
+
+      - name: Upload recovery bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-site-recovery-${{ github.sha }}
+          path: recovery-bundle/
+          retention-days: 30

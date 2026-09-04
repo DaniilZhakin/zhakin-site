@@ -1,0 +1,39 @@
+{
+  "project": "Official website of Daniil Zhakin",
+  "domain": {
+    "unicode": "жакин.рф",
+    "punycode": "xn--80alhhq.xn--p1ai"
+  },
+  "source_repository": "DaniilZhakin/zhakin-site",
+  "current_public_delivery": "github-pages",
+  "dns_control": "UNVERIFIED",
+  "primary_independent_origin": "UNPROVISIONED",
+  "recovery_origin": "UNPROVISIONED",
+  "secondary_repository": "UNPROVISIONED",
+  "assets_backup": "UNPROVISIONED",
+  "cloudflare_zone": "UNPROVISIONED",
+  "intelligence_production": "BLOCKED",
+  "browser_transport": "BLOCKED",
+  "dns_cutover": "BLOCKED",
+  "rto": "UNDEFINED_UNTIL_OPERATIONAL_APPROVAL",
+  "rpo": "UNDEFINED_UNTIL_OPERATIONAL_APPROVAL",
+  "critical_files": [
+    "index.html",
+    "about.html",
+    "projects.html",
+    "publications.html",
+    "reception.html",
+    "assets/",
+    "robots.txt",
+    "sitemap.xml",
+    "CNAME",
+    "DISASTER_RECOVERY.md",
+    "docs/INDEPENDENT-INFRASTRUCTURE-PLAN.md",
+    "docs/security-operations-checklist.md",
+    "docs/security-operations-tests.md",
+    "docs/intelligence-3.0-collector-contract.schema.json",
+    "intelligence/collector-cloudflare/",
+    "intelligence/collector-reference/"
+  ],
+  "policy": "This manifest records infrastructure state without inventing providers, credentials, DNS records, or production identifiers. DNS cutover and production Intelligence 3.0 activation remain explicitly blocked until independently verified gates are satisfied."
+}

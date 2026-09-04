@@ -15,7 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Analyze production trends
         shell: bash
         env:
@@ -23,110 +22,36 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p monitoring-history monitoring-report
-
           python - <<'PY'
-          import json, re, subprocess, time
+          import json,re,subprocess,time
           from pathlib import Path
           from statistics import mean
           from urllib.parse import urljoin
-
-          site = 'https://xn--80alhhq.xn--p1ai'
-          required = [
-              '/', '/about.html', '/projects.html', '/publications.html',
-              '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
-              '/publications/ai-infrastructure.html', '/publications/understanding-state-and-law.html',
-              '/publications/legal-architecture.html', '/publications/intellectual-economy.html',
-              '/publications/economic-transition-1990s.html', '/publications/future-without-money.html',
-              '/publications/food-infrastructure.html', '/publications/capital-requires-proof.html',
-              '/publications/price-discovery.html',
-          ]
-
+          site='https://xn--80alhhq.xn--p1ai'
+          required=['/','/about.html','/projects.html','/publications.html','/reception.html','/publications/digital-ruble.html','/publications/ai-financial-system.html','/publications/ai-infrastructure.html','/publications/understanding-state-and-law.html','/publications/legal-architecture.html','/publications/intellectual-economy.html','/publications/economic-transition-1990s.html','/publications/future-without-money.html','/publications/food-infrastructure.html','/publications/capital-requires-proof.html','/publications/price-discovery.html']
           def fetch(url):
-              started = time.monotonic()
-              p = subprocess.run(['curl','-L','--fail-with-body','--silent','--show-error','--max-time','20','-D','-','-o','/tmp/seo-body',url], text=True, capture_output=True)
-              elapsed = round((time.monotonic()-started)*1000)
-              if p.returncode != 0:
-                  return '', '', elapsed, p.stderr.strip()
-              raw_headers = p.stdout
-              body = Path('/tmp/seo-body').read_text(encoding='utf-8', errors='replace')
-              return raw_headers, body, elapsed, ''
-
-          now = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-          snapshot = {'timestamp': now, 'site': site, 'pages': {}, 'signals': {}}
-
-          rh, robots, ms, err = fetch(site + '/robots.txt')
-          snapshot['signals']['robots_ok'] = bool(robots and 'User-agent: *' in robots and 'Allow: /' in robots and 'Sitemap: ' + site + '/sitemap.xml' in robots)
-          rh, sitemap, ms, err = fetch(site + '/sitemap.xml')
-          urls = re.findall(r'<loc>(.*?)</loc>', sitemap or '')
-          snapshot['signals']['sitemap_urls'] = len(urls)
-          snapshot['signals']['sitemap_unique'] = len(urls) == len(set(urls))
-          snapshot['signals']['sitemap_coverage'] = all(urljoin(site, p) in urls for p in required)
-
+              started=time.monotonic(); p=subprocess.run(['curl','-L','--fail-with-body','--silent','--show-error','--max-time','20','-D','-','-o','/tmp/seo-body',url],text=True,capture_output=True); elapsed=round((time.monotonic()-started)*1000)
+              if p.returncode!=0:return '','',elapsed,p.stderr.strip()
+              return p.stdout,Path('/tmp/seo-body').read_text(encoding='utf-8',errors='replace'),elapsed,''
+          now=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()); snapshot={'timestamp':now,'site':site,'pages':{},'signals':{}}
+          rh,robots,ms,err=fetch(site+'/robots.txt'); snapshot['signals']['robots_ok']=bool(robots and 'User-agent: *' in robots and 'Allow: /' in robots and 'Sitemap: '+site+'/sitemap.xml' in robots)
+          rh,sitemap,ms,err=fetch(site+'/sitemap.xml'); urls=re.findall(r'<loc>(.*?)</loc>',sitemap or ''); snapshot['signals']['sitemap_urls']=len(urls); snapshot['signals']['sitemap_unique']=len(urls)==len(set(urls)); snapshot['signals']['sitemap_coverage']=all(urljoin(site,p) in urls for p in required)
           for path in required:
-              url = urljoin(site, path)
-              headers, html, elapsed, err = fetch(url)
-              canonical = re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', html, flags=re.I)
-              header_noindex = bool(re.search(r'^X-Robots-Tag:\s*.*noindex', headers, flags=re.I|re.M))
-              html_noindex = bool(re.search(r'<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex', html, flags=re.I))
-              snapshot['pages'][path] = {
-                  'available': bool(html),
-                  'response_time_ms': elapsed,
-                  'canonical_ok': bool(canonical and canonical[0].rstrip('/') == url.rstrip('/')),
-                  'noindex': header_noindex or html_noindex,
-                  'x_robots_tag': header_noindex,
-                  'jsonld': bool(re.search(r'application/ld\+json', html, flags=re.I)),
-              }
-
-          snapshot['signals']['available_pages'] = sum(p['available'] for p in snapshot['pages'].values())
-          snapshot['signals']['canonical_ok_pages'] = sum(p['canonical_ok'] for p in snapshot['pages'].values())
-          snapshot['signals']['jsonld_pages'] = sum(p['jsonld'] for p in snapshot['pages'].values())
-          snapshot['signals']['noindex_pages'] = sum(p['noindex'] for p in snapshot['pages'].values())
-          times = [p['response_time_ms'] for p in snapshot['pages'].values() if p['available']]
-          snapshot['signals']['avg_response_time_ms'] = round(mean(times), 1) if times else None
-          snapshot['signals']['max_response_time_ms'] = max(times) if times else None
-
-          history_path = Path('monitoring-history/seo-history.json')
-          history = json.loads(history_path.read_text(encoding='utf-8')) if history_path.exists() else []
-          history.append(snapshot)
-          history = history[-30:]
-          history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-
-          previous = history[:-1]
-          warnings = []
+              url=urljoin(site,path); headers,html,elapsed,err=fetch(url); canonical=re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)',html,flags=re.I); header_noindex=bool(re.search(r'^X-Robots-Tag:\s*.*noindex',headers,flags=re.I|re.M)); html_noindex=bool(re.search(r'<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex',html,flags=re.I)); snapshot['pages'][path]={'available':bool(html),'response_time_ms':elapsed,'canonical_ok':bool(canonical and canonical[0].rstrip('/')==url.rstrip('/')),'noindex':header_noindex or html_noindex,'x_robots_tag':header_noindex,'jsonld':bool(re.search(r'application/ld\+json',html,flags=re.I))}
+          snapshot['signals']['available_pages']=sum(p['available'] for p in snapshot['pages'].values()); snapshot['signals']['canonical_ok_pages']=sum(p['canonical_ok'] for p in snapshot['pages'].values()); snapshot['signals']['jsonld_pages']=sum(p['jsonld'] for p in snapshot['pages'].values()); snapshot['signals']['noindex_pages']=sum(p['noindex'] for p in snapshot['pages'].values()); times=[p['response_time_ms'] for p in snapshot['pages'].values() if p['available']]; snapshot['signals']['avg_response_time_ms']=round(mean(times),1) if times else None; snapshot['signals']['max_response_time_ms']=max(times) if times else None
+          history_path=Path('monitoring-history/seo-history.json'); history=json.loads(history_path.read_text(encoding='utf-8')) if history_path.exists() else []; history.append(snapshot); history=history[-30:]; history_path.write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'); previous=history[:-1]; warnings=[]
           if previous:
-              prev = previous[-1]
+              prev=previous[-1]
               for key in ['robots_ok','sitemap_unique','sitemap_coverage']:
-                  if prev['signals'].get(key) and not snapshot['signals'].get(key):
-                      warnings.append(f'{key} regressed')
-              if snapshot['signals']['available_pages'] < prev['signals']['available_pages']:
-                  warnings.append('available page count decreased')
-              if snapshot['signals']['canonical_ok_pages'] < prev['signals']['canonical_ok_pages']:
-                  warnings.append('canonical coverage decreased')
-              if snapshot['signals']['jsonld_pages'] < prev['signals']['jsonld_pages']:
-                  warnings.append('JSON-LD coverage decreased')
-              if snapshot['signals']['noindex_pages'] > prev['signals']['noindex_pages']:
-                  warnings.append('noindex count increased')
-              old_avg = prev['signals'].get('avg_response_time_ms')
-              new_avg = snapshot['signals'].get('avg_response_time_ms')
-              if old_avg and new_avg and new_avg > old_avg * 1.5 and new_avg - old_avg >= 250:
-                  warnings.append(f'average response time increased from {old_avg}ms to {new_avg}ms')
-
-          report = {
-              'timestamp': now,
-              'history_points': len(history),
-              'current': snapshot['signals'],
-              'warnings': warnings,
-              'status': 'warning' if warnings else 'ok',
-          }
-          Path('monitoring-report/seo-trend.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-          md = ['# SEO 2.6 — Trend Intelligence', '', f'Snapshot: `{now}`', f'History points: **{len(history)}**', '', '## Current signals', '']
-          for k, v in snapshot['signals'].items(): md.append(f'- `{k}`: **{v}**')
-          md += ['', '## Anomaly detection', '']
-          md.append('No regression detected.' if not warnings else '\n'.join('- ' + w for w in warnings))
-          Path('monitoring-report/SEO-TREND.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
-          print(json.dumps(report, ensure_ascii=False))
+                  if prev['signals'].get(key) and not snapshot['signals'].get(key): warnings.append(f'{key} regressed')
+              if snapshot['signals']['available_pages']<prev['signals']['available_pages']: warnings.append('available page count decreased')
+              if snapshot['signals']['canonical_ok_pages']<prev['signals']['canonical_ok_pages']: warnings.append('canonical coverage decreased')
+              if snapshot['signals']['jsonld_pages']<prev['signals']['jsonld_pages']: warnings.append('JSON-LD coverage decreased')
+              if snapshot['signals']['noindex_pages']>prev['signals']['noindex_pages']: warnings.append('noindex count increased')
+              old_avg=prev['signals'].get('avg_response_time_ms'); new_avg=snapshot['signals'].get('avg_response_time_ms')
+              if old_avg and new_avg and new_avg>old_avg*1.5 and new_avg-old_avg>=250: warnings.append(f'average response time increased from {old_avg}ms to {new_avg}ms')
+          report={'timestamp':now,'history_points':len(history),'current':snapshot['signals'],'warnings':warnings,'status':'warning' if warnings else 'ok'}; Path('monitoring-report/seo-trend.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8'); md=['# SEO Trend Intelligence','','Snapshot: `'+now+'`','History points: **'+str(len(history))+'**','','## Current signals','']; md += [f'- `{k}`: **{v}**' for k,v in snapshot['signals'].items()]; md += ['','## Anomaly detection','']; md.append('No regression detected.' if not warnings else '\n'.join('- '+w for w in warnings)); Path('monitoring-report/SEO-TREND.md').write_text('\n'.join(md)+'\n',encoding='utf-8'); print(json.dumps(report,ensure_ascii=False))
           PY
-
       - name: Upload trend report
         if: always()
         uses: actions/upload-artifact@v4
@@ -134,7 +59,6 @@ jobs:
           name: seo-trend-report
           path: monitoring-report/
           if-no-files-found: warn
-
       - name: Commit trend history and report
         shell: bash
         run: |
@@ -142,9 +66,4 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add monitoring-history/seo-history.json monitoring-report/seo-trend.json monitoring-report/SEO-TREND.md
-          if git diff --cached --quiet; then
-            echo 'No trend-history or report changes to commit.'
-          else
-            git commit -m 'chore: update SEO trend history and report'
-            git push
-          fi
+          if git diff --cached --quiet; then echo 'No trend-history or report changes to commit.'; else git commit -m 'chore: update SEO trend history and report'; git push; fi

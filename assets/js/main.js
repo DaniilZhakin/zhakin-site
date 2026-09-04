@@ -1,7 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const links = document.querySelectorAll('.main-navigation a[href*="#"]');
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-navigation');
+
+  // Long-term site architecture: keep the Reception section in the primary navigation.
+  // The public intake endpoint remains intentionally disconnected until Security & Operations is approved.
+  if (navigation && !navigation.querySelector('a[href="/reception.html"]')) {
+    const receptionLink = document.createElement('a');
+    receptionLink.href = '/reception.html';
+    receptionLink.textContent = 'Приёмная';
+    receptionLink.setAttribute('aria-label', 'Приёмная');
+    const contactsLink = navigation.querySelector('a[href="#contacts"]');
+    navigation.insertBefore(receptionLink, contactsLink || null);
+  }
+
+  const links = document.querySelectorAll('.main-navigation a[href*="#"]');
 
   const AUDIENCE_KEY = 'zhakin_audience_events_v1';
   const MAX_EVENTS = 50;

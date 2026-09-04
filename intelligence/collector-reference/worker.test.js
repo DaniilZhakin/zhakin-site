@@ -15,6 +15,9 @@ const cases = [
   ['rejects query string in path', { ...valid, path: '/?q=test' }, 'invalid path'],
   ['rejects invalid referrer class', { ...valid, referrer_class: 'utm_campaign' }, 'invalid referrer_class'],
   ['rejects invalid content id', { ...valid, content_id: 'article/1' }, 'invalid content_id'],
+  ['rejects date-only timestamp', { ...valid, timestamp: '2026-09-02' }, 'invalid timestamp'],
+  ['accepts RFC3339 UTC timestamp', { ...valid, timestamp: '2026-09-02T12:34:56Z' }, null],
+  ['accepts RFC3339 offset timestamp', { ...valid, timestamp: '2026-09-02T12:34:56+03:00' }, null],
   ['accepts optional fields', {
     ...valid,
     timestamp: '2026-09-02T08:25:20Z',
@@ -61,7 +64,7 @@ assert.equal(tooManyEvents.status, 400, 'rejects more than 10 events');
 const oversized = await request('/v1/events', {
   method: 'POST',
   headers: { 'content-type': 'application/json' },
-  body: JSON.stringify({ ...valid, content_id: 'x'.repeat(128) }) + 'xxxxxxxx',
+  body: JSON.stringify({ ...valid, content_id: 'x'.repeat(128) }) + 'x'.repeat(8000),
 });
 assert.equal(oversized.status, 413, 'rejects oversized payload');
 
@@ -95,6 +98,7 @@ const accepted = await request('/v1/events', {
 });
 assert.equal(accepted.status, 202, 'accepts valid HTTP request');
 assert.equal(accepted.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured origin');
+assert.equal(accepted.headers.get('x-content-type-options'), 'nosniff', 'sets nosniff on JSON response');
 
 const preflight = await request('/v1/events', {
   method: 'OPTIONS',
@@ -105,6 +109,7 @@ const preflight = await request('/v1/events', {
 });
 assert.equal(preflight.status, 204, 'accepts configured preflight');
 assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai', 'allows configured preflight origin');
+assert.equal(preflight.headers.get('x-content-type-options'), 'nosniff', 'sets nosniff on preflight');
 
 const limiterStore = new Map();
 const limiter = {
