@@ -66,6 +66,40 @@ jobs:
                   changes.append(f'response_time_ms: {old_ms} -> {new_ms}')
               return changes
 
+          def calculate_health(signals, critical_count=0, warning_count=0):
+              required_pages = max(1, signals.get('required_pages', 0))
+              availability = signals.get('available_pages', 0) / required_pages
+              canonical = signals.get('canonical_ok_pages', 0) / required_pages
+              jsonld = signals.get('jsonld_pages', 0) / required_pages
+              noindex = signals.get('noindex_pages', 0)
+              avg_ms = signals.get('avg_response_time_ms')
+
+              score = 0.0
+              score += 20.0 * (1.0 if signals.get('robots_ok') else 0.0)
+              score += 15.0 * (1.0 if signals.get('sitemap_coverage') else 0.0)
+              score += 20.0 * availability
+              score += 15.0 * canonical
+              score += 10.0 * jsonld
+              score += 10.0 * max(0.0, 1.0 - min(1.0, noindex / required_pages))
+
+              if avg_ms is None:
+                  speed_score = 0.0
+              elif avg_ms <= 500:
+                  speed_score = 10.0
+              elif avg_ms <= 800:
+                  speed_score = 7.0
+              elif avg_ms <= 1200:
+                  speed_score = 4.0
+              else:
+                  speed_score = 0.0
+              score += speed_score
+
+              score -= min(10.0, critical_count * 5.0)
+              score -= min(5.0, warning_count * 1.0)
+              score = max(0.0, min(100.0, round(score, 1)))
+              grade = 'healthy' if score >= 90 else ('warning' if score >= 75 else 'critical')
+              return score, grade
+
           now = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
           snapshot = {'timestamp': now, 'site': site, 'pages': {}, 'signals': {}}
 
@@ -144,11 +178,32 @@ jobs:
               for path in warning_pages:
                   warnings.append(f'page-level change: {path}')
 
+          health_score, health_grade = calculate_health(snapshot['signals'], len(critical_pages), len(warning_pages))
+          snapshot['signals']['health_score'] = health_score
+          snapshot['signals']['health_grade'] = health_grade
+
+          previous_score = None
+          if previous_snapshot:
+              previous_score = previous_snapshot.get('signals', {}).get('health_score')
+              if previous_score is None:
+                  previous_score, _ = calculate_health(previous_snapshot.get('signals', {}))
+          if previous_score is None:
+              trend_direction = 'baseline'
+              trend_delta = None
+          else:
+              trend_delta = round(health_score - previous_score, 1)
+              trend_direction = 'improving' if trend_delta > 1 else ('declining' if trend_delta < -1 else 'stable')
+
           status = 'critical' if critical_pages or not snapshot['signals']['robots_ok'] or not snapshot['signals']['sitemap_coverage'] else ('warning' if warnings else 'ok')
           report = {
               'timestamp': now,
               'history_points': len(history),
               'current': snapshot['signals'],
+              'health_score': health_score,
+              'health_grade': health_grade,
+              'trend_direction': trend_direction,
+              'trend_delta': trend_delta,
+              'baseline_timestamp': previous_snapshot.get('timestamp') if previous_snapshot else now,
               'warnings': warnings,
               'page_changes': page_changes,
               'critical_pages': critical_pages,
@@ -157,8 +212,18 @@ jobs:
           }
           Path('monitoring-report/seo-trend.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
           Path('monitoring-report/latest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          Path('monitoring-report/health.json').write_text(json.dumps({
+              'timestamp': now,
+              'site': site,
+              'health_score': health_score,
+              'health_grade': health_grade,
+              'trend_direction': trend_direction,
+              'trend_delta': trend_delta,
+              'baseline_timestamp': previous_snapshot.get('timestamp') if previous_snapshot else now,
+              'status': status,
+          }, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-          md = ['# SEO 2.6 — Trend Intelligence', '', f'Snapshot: `{now}`', f'History points: **{len(history)}**', f'Status: **{status.upper()}**', '', '## Current signals', '']
+          md = ['# SEO 3.1 — Health & Trend Intelligence', '', f'Snapshot: `{now}`', f'History points: **{len(history)}**', f'Status: **{status.upper()}**', f'Health score: **{health_score}/100 ({health_grade.upper()})**', f'Trend: **{trend_direction.upper()}**' + (f' ({trend_delta:+.1f})' if trend_delta is not None else ''), '', '## Current signals', '']
           for k, v in snapshot['signals'].items():
               md.append(f'- `{k}`: **{v}**')
           md += ['', '## Page-level intelligence', '']
@@ -189,10 +254,10 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add monitoring-history/seo-history.json monitoring-report/seo-trend.json monitoring-report/latest.json monitoring-report/SEO-TREND.md
+          git add monitoring-history/seo-history.json monitoring-report/seo-trend.json monitoring-report/latest.json monitoring-report/health.json monitoring-report/SEO-TREND.md
           if git diff --cached --quiet; then
             echo 'No trend-history or report changes to commit.'
           else
-            git commit -m 'chore: update SEO trend history and report'
+            git commit -m 'chore: update SEO health score and trend report'
             git push
           fi
