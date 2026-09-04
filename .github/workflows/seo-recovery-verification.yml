@@ -1,0 +1,53 @@
+name: SEO Recovery Verification
+
+on:
+  schedule:
+    - cron: '47 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recovery-verification:
+    name: Automated production recovery verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build recovery context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p monitoring-report
+          if [ ! -f monitoring-report/recovery.json ]; then
+            printf '%s\n' '{"state":"stable"}' > monitoring-report/recovery.json
+          fi
+
+      - name: Verify production recovery
+        shell: bash
+        run: python3 intelligence/seo-recovery-verification.py
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-recovery-verification
+          path: monitoring-report/
+          if-no-files-found: warn
+
+      - name: Commit verification report
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoring-report/recovery-verification.json monitoring-report/SEO-RECOVERY-VERIFICATION.md
+          if git diff --cached --quiet; then
+            echo 'No verification report changes to commit.'
+          else
+            git commit -m 'chore: update SEO recovery verification'
+            git push
+          fi
