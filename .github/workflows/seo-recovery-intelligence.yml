@@ -1,0 +1,46 @@
+name: SEO Recovery Intelligence
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recovery-intelligence:
+    name: Recovery intelligence and verification plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build recovery intelligence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p monitoring-history monitoring-report
+          python3 intelligence/seo-recovery-intelligence.py
+
+      - name: Upload recovery report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-recovery-report
+          path: monitoring-report/
+          if-no-files-found: warn
+
+      - name: Commit recovery history and report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoring-history/seo-recovery.json monitoring-report/recovery.json monitoring-report/SEO-RECOVERY.md
+          if git diff --cached --quiet; then
+            echo 'No recovery-history or report changes to commit.'
+          else
+            git commit -m 'chore: update SEO recovery intelligence'
+            git push
+          fi
