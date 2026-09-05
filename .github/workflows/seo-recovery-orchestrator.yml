@@ -1,0 +1,89 @@
+name: SEO Recovery Orchestrator
+
+on:
+  workflow_run:
+    workflows:
+      - SEO Recovery Verification
+      - SEO Recovery Intelligence
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: seo-recovery-orchestrator
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    name: Self-healing recovery orchestration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Run orchestrator
+        id: orchestrator
+        shell: bash
+        run: |
+          set +e
+          python3 intelligence/seo-recovery-orchestrator.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Create corrective issue on escalation
+        if: steps.orchestrator.outputs.exit_code == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          fingerprint=$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('monitoring-report/recovery-orchestrator.json').read_text(encoding='utf-8'))
+          print(data['fingerprint'])
+          PY
+          )
+          title="SEO Recovery Escalation ${fingerprint}"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "${title} in:title" --json number --jq 'length')
+          if [ "$existing" = "0" ]; then
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$title" \
+              --body-file monitoring-report/SEO-RECOVERY-ORCHESTRATOR.md
+          else
+            echo "Escalation issue already exists for fingerprint ${fingerprint}."
+          fi
+
+      - name: Upload orchestrator report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-recovery-orchestrator
+          path: monitoring-report/recovery-orchestrator.json
+          if-no-files-found: warn
+
+      - name: Commit orchestrator report
+        if: steps.orchestrator.outputs.exit_code != '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoring-report/recovery-orchestrator.json monitoring-report/SEO-RECOVERY-ORCHESTRATOR.md
+          if git diff --cached --quiet; then
+            echo 'No orchestrator report changes to commit.'
+          else
+            git commit -m 'chore: update SEO recovery orchestrator'
+            git push origin main
+          fi
