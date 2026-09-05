@@ -1,0 +1,19 @@
+[
+  {
+    "timestamp": "2026-09-05T09:26:33Z",
+    "history_points": 5,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
+  },
+  {
+    "timestamp": "2026-09-05T09:26:33Z",
+    "source_history_points": 1,
+    "incident_count": 0,
+    "new_incident_count": 0,
+    "resolved_incident_count": 0,
+    "incidents": [],
+    "resolved_dedupe_keys": []
+  }
+]
