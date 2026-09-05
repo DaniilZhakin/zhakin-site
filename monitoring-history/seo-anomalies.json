@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2026-09-05T09:26:33Z",
+    "history_points": 5,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
+  }
+]
