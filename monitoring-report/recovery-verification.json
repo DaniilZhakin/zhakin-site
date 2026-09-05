@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-09-05T10:55:35Z",
+  "site": "https://xn--80alhhq.xn--p1ai",
+  "recovery_state": "stable",
+  "verification_state": "stable",
+  "verdict": "Stable: production SEO surface is healthy.",
+  "checks": [
+    {
+      "name": "robots.txt",
+      "ok": true,
+      "response_time_ms": 245,
+      "error": ""
+    },
+    {
+      "name": "sitemap.xml",
+      "ok": true,
+      "response_time_ms": 353,
+      "url_count": 17,
+      "error": ""
+    },
+    {
+      "name": "sitemap coverage",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "page SEO signals",
+      "ok": true,
+      "failed_pages": []
+    }
+  ],
+  "failed_check_count": 0
+}
