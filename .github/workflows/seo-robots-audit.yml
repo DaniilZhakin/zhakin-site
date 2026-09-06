@@ -38,8 +38,8 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
-          if len(urls) != 17:
-              raise SystemExit(f'Expected 17 sitemap URLs, found {len(urls)}')
+          if len(urls) != 18:
+              raise SystemExit(f'Expected 18 sitemap URLs, found {len(urls)}')
           if len(urls) != len(set(urls)):
               raise SystemExit('Duplicate sitemap URLs detected')
           for url in urls:
@@ -53,6 +53,7 @@ jobs:
               'https://xn--80alhhq.xn--p1ai/publications.html',
               'https://xn--80alhhq.xn--p1ai/reception.html',
               'https://xn--80alhhq.xn--p1ai/publications/ai-parliament.html',
+              'https://xn--80alhhq.xn--p1ai/publications/money-financial-system.html',
           ]
           required += [
               f'https://xn--80alhhq.xn--p1ai/publications/{slug}.html'
