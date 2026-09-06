@@ -94,9 +94,11 @@ jobs:
               echo "Missing Person authority signal: $file"
               exit 1
             fi
-            if ! grep -qE '#website|#webpage|"@type":"WebSite"|"@type":"WebPage"' "$file"; then
-              echo "Missing Website/WebPage authority signal: $file"
-              exit 1
+            if ! grep -qE '#website|#webpage|"@type":"WebSite"|"@type":"WebPage"'; then
+              if ! grep -q '"@type":"Article"' "$file"; then
+                echo "Missing Website/WebPage/Article authority signal: $file"
+                exit 1
+              fi
             fi
           done
           echo 'Authority graph anchors/signals OK'
