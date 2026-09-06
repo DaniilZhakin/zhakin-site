@@ -1,13 +1,20 @@
 {
-  "timestamp": "2026-09-06T21:19:04Z",
-  "orchestrator": "SEO Intelligence 3.6",
+  "timestamp": "2026-09-06T22:00:10Z",
+  "orchestrator": "SEO Intelligence 3.6.1",
   "state": "RECOVERED",
   "action": "NONE",
   "reason": "No active correlated incidents and production verification is healthy.",
   "incident_snapshot": "2026-09-06T09:41:06Z",
-  "verification_timestamp": "2026-09-06T11:21:23Z",
+  "verification_timestamp": "2026-09-06T21:59:57Z",
   "verification_state": "stable",
   "fingerprint": "f8587a3407760f17",
+  "dry_run": false,
+  "state_machine_guard": "ENABLED",
+  "recovery_loop_protection": {
+    "enabled": true,
+    "history_file": "monitoring-history/seo-recovery-history.json",
+    "previous_terminal_state": null
+  },
   "safe_repair_policy": {
     "allowed": [
       "regenerate deterministic monitoring/recovery reports",

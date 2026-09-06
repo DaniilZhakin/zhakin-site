@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2026-09-06T22:00:10Z",
+    "fingerprint": "f8587a3407760f17",
+    "state": "RECOVERED",
+    "action": "NONE",
+    "escalation_required": false,
+    "dry_run": false
+  }
+]
