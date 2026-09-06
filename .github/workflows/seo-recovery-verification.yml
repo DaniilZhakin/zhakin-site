@@ -1,6 +1,11 @@
 name: SEO Recovery Verification
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'monitoring-report/**'
+      - 'monitoring-history/**'
   schedule:
     - cron: '47 6 * * *'
   workflow_dispatch:
