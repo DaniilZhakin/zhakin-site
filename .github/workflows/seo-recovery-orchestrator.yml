@@ -8,6 +8,12 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Evaluate recovery path without executing repair scripts'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '17 * * * *'
 
@@ -18,6 +24,9 @@ permissions:
 concurrency:
   group: seo-recovery-orchestrator
   cancel-in-progress: false
+
+env:
+  DRY_RUN: ${{ inputs.dry_run || 'false' }}
 
 jobs:
   orchestrate:
@@ -74,13 +83,13 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit orchestrator report
-        if: steps.orchestrator.outputs.exit_code != '1'
+        if: steps.orchestrator.outputs.exit_code != '1' && env.DRY_RUN != 'true'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add monitoring-report/recovery-orchestrator.json monitoring-report/SEO-RECOVERY-ORCHESTRATOR.md
+          git add monitoring-report/recovery-orchestrator.json monitoring-report/SEO-RECOVERY-ORCHESTRATOR.md monitoring-history/seo-recovery-history.json
           if git diff --cached --quiet; then
             echo 'No orchestrator report changes to commit.'
           else
