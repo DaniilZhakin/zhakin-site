@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-06T22:00:10Z",
+  "timestamp": "2026-09-06T23:51:10Z",
   "orchestrator": "SEO Intelligence 3.6.1",
   "state": "RECOVERED",
   "action": "NONE",
@@ -13,7 +13,7 @@
   "recovery_loop_protection": {
     "enabled": true,
     "history_file": "monitoring-history/seo-recovery-history.json",
-    "previous_terminal_state": null
+    "previous_terminal_state": "RECOVERED"
   },
   "safe_repair_policy": {
     "allowed": [
