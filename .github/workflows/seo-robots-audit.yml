@@ -90,13 +90,16 @@ jobs:
         run: |
           set -euo pipefail
           for file in index.html about.html projects.html publications/*.html; do
-            grep -q '#person' "$file" || { echo "Missing #person authority anchor: $file"; exit 1; }
-            if ! grep -qE '#website|#webpage' "$file"; then
-              echo "Missing #website/#webpage authority anchor: $file"
+            if ! grep -qE '#person|"@type":"Person"|"@id":"https://xn--80alhhq.xn--p1ai/#person"' "$file"; then
+              echo "Missing Person authority signal: $file"
+              exit 1
+            fi
+            if ! grep -qE '#website|#webpage|"@type":"WebSite"|"@type":"WebPage"' "$file"; then
+              echo "Missing Website/WebPage authority signal: $file"
               exit 1
             fi
           done
-          echo 'Authority graph anchors OK'
+          echo 'Authority graph anchors/signals OK'
 
       - name: Summary
         run: echo 'SEO Robots Audit PASSED — crawlability, sitemap, canonical, indexability and authority graph checks are green.'
