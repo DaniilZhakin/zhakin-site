@@ -62,5 +62,13 @@
     "action": "NONE",
     "escalation_required": false,
     "dry_run": false
+  },
+  {
+    "timestamp": "2026-09-07T22:48:49Z",
+    "fingerprint": "f8587a3407760f17",
+    "state": "RECOVERED",
+    "action": "NONE",
+    "escalation_required": false,
+    "dry_run": false
   }
 ]
