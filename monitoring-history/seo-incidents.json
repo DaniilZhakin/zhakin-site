@@ -16,8 +16,16 @@
     "transient_signals": []
   },
   {
-    "timestamp": "2026-09-06T09:41:06Z",
-    "source_history_points": 2,
+    "timestamp": "2026-09-07T10:44:59Z",
+    "history_points": 7,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
+  },
+  {
+    "timestamp": "2026-09-07T10:44:59Z",
+    "source_history_points": 3,
     "incident_count": 0,
     "new_incident_count": 0,
     "resolved_incident_count": 0,
