@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-08T15:06:14Z`
-History points: **23**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Snapshot: `2026-09-08T18:37:38Z`
+History points: **24**
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **STABLE** (-1.0)
 
 ## Current signals
 
@@ -17,15 +17,16 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **17**
 - `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **197.5**
-- `max_response_time_ms`: **345**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **308.1**
+- `max_response_time_ms`: **1229**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/publications/future-without-money.html`
+- response_time_ms: 41 -> 1229
 
 ## Anomaly detection
 
-No regression detected.
+- page-level change: /publications/future-without-money.html
