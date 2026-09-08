@@ -8,7 +8,7 @@
   "properties": {
     "event_type": {
       "type": "string",
-      "enum": ["page_view", "navigation_click", "menu_toggle", "outbound_click", "contact_interest", "contact_action"]
+      "enum": ["page_view", "navigation", "menu_interaction", "outbound_click", "contact_interest", "contact_action"]
     },
     "path": {
       "type": "string",
