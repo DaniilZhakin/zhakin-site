@@ -1,7 +1,7 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-08T10:11:50Z`
-History points: **15**
+Snapshot: `2026-09-08T10:12:25Z`
+History points: **16**
 Status: **WARNING**
 Health score: **99.0/100 (HEALTHY)**
 Trend: **STABLE** (-1.0)
@@ -17,16 +17,16 @@ Trend: **STABLE** (-1.0)
 - `canonical_ok_pages`: **17**
 - `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **375.4**
-- `max_response_time_ms`: **2731**
+- `avg_response_time_ms`: **249.8**
+- `max_response_time_ms`: **1967**
 - `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/digital-ruble.html`
-- response_time_ms: 135 -> 2731
+### `/publications/ai-financial-system.html`
+- response_time_ms: 464 -> 1967
 
 ## Anomaly detection
 
-- page-level change: /publications/digital-ruble.html
+- page-level change: /publications/ai-financial-system.html
