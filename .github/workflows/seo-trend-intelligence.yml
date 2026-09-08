@@ -3,6 +3,11 @@ name: SEO Trend Intelligence
 on:
   schedule:
     - cron: '47 5 * * *'
+  workflow_run:
+    workflows:
+      - SEO Recovery Orchestrator
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
