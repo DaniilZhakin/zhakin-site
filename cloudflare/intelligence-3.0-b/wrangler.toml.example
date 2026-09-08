@@ -1,0 +1,15 @@
+# Example configuration for Intelligence 3.0-B.
+# This file is a template only. Do not place account IDs, tokens, or secrets here.
+
+name = "zhakin-intelligence-3-0-b"
+main = "src/worker.js"
+compatibility_date = "2026-09-08"
+
+[vars]
+# Production configuration must define the public origins through deployment settings.
+# No credentials or secrets belong in this repository.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhakin-intelligence"
+database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
