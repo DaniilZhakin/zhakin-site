@@ -1,6 +1,10 @@
 name: SEO Trend Intelligence
 
 on:
+  push:
+    paths-ignore:
+      - 'monitoring-history/**'
+      - 'monitoring-report/**'
   schedule:
     - cron: '47 5 * * *'
   workflow_run:
