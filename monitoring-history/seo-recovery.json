@@ -25,5 +25,14 @@
     "recovery_plan_count": 0,
     "resolved_incident_count": 0,
     "plans": []
+  },
+  {
+    "timestamp": "2026-09-08T10:06:06Z",
+    "source_incident_snapshot": "2026-09-08T10:06:06Z",
+    "state": "stable",
+    "active_incident_count": 0,
+    "recovery_plan_count": 0,
+    "resolved_incident_count": 0,
+    "plans": []
   }
 ]
