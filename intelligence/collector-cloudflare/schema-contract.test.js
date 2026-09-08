@@ -11,8 +11,8 @@ assert.deepEqual(schema.required, ['event_type', 'path', 'schema_version']);
 assert.equal(schema.properties.schema_version.const, '3.0');
 assert.deepEqual(schema.properties.event_type.enum, [
   'page_view',
-  'navigation_click',
-  'menu_toggle',
+  'navigation',
+  'menu_interaction',
   'outbound_click',
   'contact_interest',
   'contact_action',
