@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T11:23:49Z",
+  "timestamp": "2026-09-09T11:53:36Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,43 +11,19 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 500.7,
-    "max_response_time_ms": 1140,
-    "health_score": 93.0,
+    "avg_response_time_ms": 448.8,
+    "max_response_time_ms": 808,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 93.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
-  "trend_direction": "declining",
-  "trend_delta": -7.0,
-  "baseline_timestamp": "2026-09-09T11:13:37Z",
-  "warnings": [
-    "average response time increased from 233.1ms to 500.7ms",
-    "page-level change: /publications.html",
-    "page-level change: /publications/digital-ruble.html",
-    "page-level change: /publications/ai-infrastructure.html",
-    "page-level change: /publications/capital-requires-proof.html"
-  ],
-  "page_changes": {
-    "/publications.html": [
-      "response_time_ms: 585 -> 1105"
-    ],
-    "/publications/digital-ruble.html": [
-      "response_time_ms: 34 -> 1093"
-    ],
-    "/publications/ai-infrastructure.html": [
-      "response_time_ms: 107 -> 1140"
-    ],
-    "/publications/capital-requires-proof.html": [
-      "response_time_ms: 413 -> 1086"
-    ]
-  },
+  "trend_direction": "improving",
+  "trend_delta": 3.0,
+  "baseline_timestamp": "2026-09-09T11:23:49Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications.html",
-    "/publications/digital-ruble.html",
-    "/publications/ai-infrastructure.html",
-    "/publications/capital-requires-proof.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
