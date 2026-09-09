@@ -18,10 +18,13 @@ main { max-width:1200px; margin:auto; padding:50px 20px; }
 section { background:#102820; border:1px solid rgba(212,175,55,.28); border-radius:18px; padding:40px; margin-bottom:28px; }
 section:not(.hero) { content-visibility:auto; contain-intrinsic-size:400px; }
 .hero { min-height:600px; display:flex; align-items:center; justify-content:space-between; gap:60px; background:linear-gradient(145deg,#102820,#071a16); position:relative; overflow:hidden; }
-.hero-content { max-width:620px; }
+.hero:after { content:""; position:absolute; width:520px; height:520px; right:-220px; top:-180px; border-radius:50%; border:1px solid rgba(212,175,55,.12); box-shadow:0 0 0 70px rgba(212,175,55,.025),0 0 0 140px rgba(212,175,55,.018); pointer-events:none; }
+.hero-content { max-width:720px; position:relative; z-index:1; }
 .hero-label { color:#d4af37; letter-spacing:3px; font-size:12px; margin-bottom:22px; display:block; }
 h1 { font-size:56px; line-height:1.05; margin:12px 0 18px; }
-.hero-content p { max-width:520px; font-size:18px; }
+.hero-content h2 { font-size:24px; line-height:1.4; margin:0 0 22px; }
+.hero-content p { max-width:620px; font-size:18px; }
+.hero-content p:last-child { margin-top:24px; padding-left:18px; border-left:2px solid rgba(212,175,55,.65); }
 .hero-card { padding:38px; border:1px solid rgba(212,175,55,.4); border-radius:22px; background:rgba(7,26,22,.45); display:flex; flex-direction:column; gap:14px; text-align:center; }
 .hero-card strong { color:#d4af37; font-size:28px; letter-spacing:3px; }
 .project-list { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:28px; }
@@ -38,6 +41,10 @@ p { font-size:18px; }
 .brand-title { font-size:25px; }
 h1 { font-size:36px; }
 .hero { min-height:520px; flex-direction:column; gap:35px; align-items:flex-start; }
+.hero-label { letter-spacing:1.8px; font-size:10px; line-height:1.5; }
+.hero-content h2 { font-size:20px; }
+.hero-content p { font-size:16px; }
+.hero-content p:last-child { padding-left:14px; }
 .project-list { grid-template-columns:1fr; }
 section { padding:24px; }
 p { font-size:16px; }
