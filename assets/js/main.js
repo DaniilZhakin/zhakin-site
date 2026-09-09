@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="eyebrow">GLOBAL BUSINESS NETWORK</span>
           <h2 id="geography-title">География международного взаимодействия</h2>
           <p>Карта-схема публично показывает ключевые международные направления, страны СНГ и рынки БРИКС. Персональные данные и закрытые контакты не публикуются.</p>
+          <p><a href="/international-geography.html">Открыть структурированный обзор международной географии →</a></p>
         </div>
         <div class="geo-map" role="img" aria-label="Схематическая карта международных деловых направлений, стран СНГ и рынков БРИКС">
           <div class="geo-grid" aria-hidden="true"></div>
