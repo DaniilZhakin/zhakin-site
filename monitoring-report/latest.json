@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T10:05:57Z",
+  "timestamp": "2026-09-09T10:06:17Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 146.7,
-    "max_response_time_ms": 496,
-    "health_score": 100.0,
+    "avg_response_time_ms": 279.9,
+    "max_response_time_ms": 2639,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-09T09:58:05Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-09-09T10:05:57Z",
+  "warnings": [
+    "page-level change: /"
+  ],
+  "page_changes": {
+    "/": [
+      "response_time_ms: 34 -> 2639"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/"
+  ],
+  "status": "warning"
 }
