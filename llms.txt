@@ -1,0 +1,34 @@
+# Даниил Жакин — официальный сайт
+
+> Официальная информационно-аналитическая платформа Даниила Юрьевича Жакина.
+
+## Основные разделы
+- [Главная](https://xn--80alhhq.xn--p1ai/): профессиональный профиль, международная деятельность, стратегические проекты и ZHAKIN TEAM.
+- [Обо мне](https://xn--80alhhq.xn--p1ai/about.html): профессиональный профиль и направления деятельности.
+- [Профессиональный путь](https://xn--80alhhq.xn--p1ai/professional-history.html): профессиональная и общественная история.
+- [Проекты](https://xn--80alhhq.xn--p1ai/projects.html): стратегические проекты и направления.
+- [Публикации](https://xn--80alhhq.xn--p1ai/publications.html): авторская аналитика.
+- [Международная география](https://xn--80alhhq.xn--p1ai/international-geography.html): география международного взаимодействия.
+- [Приёмная](https://xn--80alhhq.xn--p1ai/reception.html): официальный канал обращения.
+
+## Тематические публикации
+- [Финансовая система и деньги](https://xn--80alhhq.xn--p1ai/publications/money-financial-system.html)
+- [AI Parliament](https://xn--80alhhq.xn--p1ai/publications/ai-parliament.html)
+- [Цифровой рубль](https://xn--80alhhq.xn--p1ai/publications/digital-ruble.html)
+- [AI и финансовая система](https://xn--80alhhq.xn--p1ai/publications/ai-financial-system.html)
+- [AI-инфраструктура](https://xn--80alhhq.xn--p1ai/publications/ai-infrastructure.html)
+- [Государство и право](https://xn--80alhhq.xn--p1ai/publications/understanding-state-and-law.html)
+- [Правовая архитектура](https://xn--80alhhq.xn--p1ai/publications/legal-architecture.html)
+- [Интеллектуальная экономика](https://xn--80alhhq.xn--p1ai/publications/intellectual-economy.html)
+- [Экономический переход 1990-х](https://xn--80alhhq.xn--p1ai/publications/economic-transition-1990s.html)
+- [Будущее без денег](https://xn--80alhhq.xn--p1ai/publications/future-without-money.html)
+- [Продовольственная инфраструктура](https://xn--80alhhq.xn--p1ai/publications/food-infrastructure.html)
+- [Капитал требует доказательств](https://xn--80alhhq.xn--p1ai/publications/capital-requires-proof.html)
+- [Price Discovery](https://xn--80alhhq.xn--p1ai/publications/price-discovery.html)
+
+## Технический источник
+- [XML Sitemap](https://xn--80alhhq.xn--p1ai/sitemap.xml)
+- [Robots](https://xn--80alhhq.xn--p1ai/robots.txt)
+
+## Контекст
+Сайт предназначен для представления проверяемой информации о профессиональной деятельности, международном сотрудничестве, экономической аналитике, стратегических проектах и связанных с ними общественных инициативах. Для актуальной структуры страниц используйте XML Sitemap.
