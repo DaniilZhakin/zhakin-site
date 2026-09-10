@@ -38,8 +38,8 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
-          if len(urls) != 18:
-              raise SystemExit(f'Expected 18 sitemap URLs, found {len(urls)}')
+          if len(urls) != 20:
+              raise SystemExit(f'Expected 20 sitemap URLs, found {len(urls)}')
           if len(urls) != len(set(urls)):
               raise SystemExit('Duplicate sitemap URLs detected')
           for url in urls:
@@ -103,5 +103,36 @@ jobs:
           done
           echo 'Authority graph anchors/signals OK'
 
+      - name: Validate publication catalog integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          catalog = Path('publications.html').read_text(encoding='utf-8')
+          publication_files = sorted(Path('publications').glob('*.html'))
+          if len(publication_files) != 13:
+              raise SystemExit(f'Expected 13 publication pages, found {len(publication_files)}')
+
+          links = set(re.findall(r'href=["\'](/publications/[^"\']+\.html)["\']', catalog))
+          expected = {f'/publications/{p.name}' for p in publication_files}
+          missing = sorted(expected - links)
+          if missing:
+              raise SystemExit('Publication catalog missing links: ' + ', '.join(missing))
+
+          for page in publication_files:
+              html = page.read_text(encoding='utf-8')
+              if 'rel="canonical"' not in html:
+                  raise SystemExit(f'Missing canonical: {page}')
+              if '"@type":"Article"' not in html:
+                  raise SystemExit(f'Missing Article JSON-LD: {page}')
+              if 'og:image' not in html:
+                  raise SystemExit(f'Missing OG image: {page}')
+
+          print(f'Publication catalog OK: {len(publication_files)} pages, all linked and structurally valid')
+          PY
+
       - name: Summary
-        run: echo 'SEO Robots Audit PASSED — crawlability, sitemap, canonical, indexability and authority graph checks are green.'
+        run: echo 'SEO Robots Audit PASSED — crawlability, sitemap, canonical, indexability, authority graph and publication catalog checks are green.'
