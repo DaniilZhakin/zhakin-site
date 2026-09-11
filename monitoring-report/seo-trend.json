@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-10T21:36:32Z",
+  "timestamp": "2026-09-11T00:08:33Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,27 +11,19 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 415.2,
-    "max_response_time_ms": 1258,
-    "health_score": 99.0,
+    "avg_response_time_ms": 203.1,
+    "max_response_time_ms": 330,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 99.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": -1.0,
-  "baseline_timestamp": "2026-09-10T18:25:12Z",
-  "warnings": [
-    "page-level change: /projects.html"
-  ],
-  "page_changes": {
-    "/projects.html": [
-      "response_time_ms: 318 -> 1258"
-    ]
-  },
+  "trend_delta": 0.0,
+  "baseline_timestamp": "2026-09-10T21:36:32Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/projects.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
