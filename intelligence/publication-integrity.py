@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the publication graph, analytical directions, sitemap and SEO metadata."""
+"""Validate the publication graph, analytical directions, filtered navigation, sitemap and SEO metadata."""
 from pathlib import Path
 import re
 import sys
@@ -116,6 +116,19 @@ if set(direction_links) != expected_direction_paths:
     if extra_links:
         errors.append("directions.html extra links: " + ", ".join(extra_links))
 
+# Validate one filtered publication-index entry point per analytical direction.
+for group_id in direction_groups:
+    expected_href = f'/publications.html?direction={group_id}'
+    if expected_href not in directions_text:
+        errors.append(f"directions.html: missing filtered entry point: {expected_href}")
+
+if 'URLSearchParams(window.location.search)' not in js_text:
+    errors.append("publications.js: filtered direction query handling missing")
+for group_id in direction_groups:
+    if f'group.id === requestedDirection' not in js_text:
+        errors.append("publications.js: direction filter guard missing")
+        break
+
 if '<link rel="canonical"' not in directions_text:
     errors.append("directions.html: missing canonical")
 if '"@type":"CollectionPage"' not in directions_text and '"@type": "CollectionPage"' not in directions_text:
@@ -148,5 +161,7 @@ print(f"- classified publications: {len(classified)}")
 print(f"- analytical groups: {', '.join(sorted(allowed_groups))}")
 print("- directions map: verified")
 print("- direction links: verified")
+print("- filtered entry points: verified")
+print("- filtered query handling: verified")
 print("- sitemap directions URL: verified")
 print("- canonical + Article JSON-LD: verified")
