@@ -133,4 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!button) return;
     applyFilter(button.dataset.publicationFilter);
   });
+
+  const requestedDirection = new URLSearchParams(window.location.search).get('direction');
+  if (requestedDirection && groups.some(group => group.id === requestedDirection)) {
+    applyFilter(requestedDirection);
+  }
 });
