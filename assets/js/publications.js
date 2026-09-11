@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/capital-requires-proof.html': 'strategy'
   };
 
+  const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
+
   const getGroupId = item => {
     const link = item.querySelector('a[href]');
     if (link) {
@@ -48,6 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
       : itemGroups.filter(id => id === group.id).length;
     return acc;
   }, {});
+
+  const publicationData = items.map((item, index) => {
+    const link = item.querySelector('a[href]');
+    const title = item.querySelector('h2')?.textContent?.trim() || 'Материал';
+    let path = '#';
+    if (link) {
+      try { path = new URL(link.href, window.location.origin).pathname; } catch (_) { path = link.getAttribute('href') || '#'; }
+    }
+    return { index, path, title, group: itemGroups[index] };
+  });
 
   const controls = document.createElement('div');
   controls.className = 'publication-filters';
@@ -70,9 +82,37 @@ document.addEventListener('DOMContentLoaded', () => {
     .publication-filter-count{min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:999px;font-size:11px;line-height:1}
     .item.is-filtered-out{display:none}
     .publication-filter:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-    @media(max-width:720px){.publication-filters{gap:8px;margin-top:24px}.publication-filter{font-size:12px;padding:9px 12px}}
+    .related-materials{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+    .related-materials-label{margin:0 0 9px;color:var(--gold-soft);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    .related-materials-direction{margin:0 0 10px;color:var(--muted);font-size:12px}
+    .related-materials-list{display:flex;flex-wrap:wrap;gap:7px}
+    .related-material{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--text);font-size:12px;background:rgba(8,17,15,.42);transition:.2s ease}
+    .related-material:hover{border-color:var(--accent);color:var(--gold-soft)}
+    @media(max-width:720px){.publication-filters{gap:8px;margin-top:24px}.publication-filter{font-size:12px;padding:9px 12px}.related-materials{margin-top:18px}.related-material{font-size:11px}}
   `;
   document.head.appendChild(style);
+
+  items.forEach((item, index) => {
+    const data = publicationData[index];
+    const related = publicationData
+      .filter(candidate => candidate.group === data.group && candidate.path !== data.path)
+      .slice(0, 3);
+    if (!related.length) return;
+
+    const body = item.querySelector('.body');
+    if (!body) return;
+
+    const section = document.createElement('div');
+    section.className = 'related-materials';
+    section.innerHTML = `
+      <p class="related-materials-label">Связанные материалы</p>
+      <p class="related-materials-direction">Аналитическое направление: ${groupLabels[data.group]}</p>
+      <div class="related-materials-list">
+        ${related.map(material => `<a class="related-material" href="${material.path}">${material.title}</a>`).join('')}
+      </div>
+    `;
+    body.appendChild(section);
+  });
 
   const applyFilter = groupId => {
     const group = groups.find(item => item.id === groupId) || groups[0];
