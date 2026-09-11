@@ -1,0 +1,30 @@
+name: Publication Graph Integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'publications.html'
+      - 'publications/**'
+      - 'assets/js/publications.js'
+      - 'intelligence/publication-integrity.py'
+      - '.github/workflows/publication-integrity.yml'
+  pull_request:
+    paths:
+      - 'publications.html'
+      - 'publications/**'
+      - 'assets/js/publications.js'
+      - 'intelligence/publication-integrity.py'
+      - '.github/workflows/publication-integrity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate publication graph
+        run: python3 intelligence/publication-integrity.py
