@@ -45,9 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const itemGroups = items.map(getGroupId);
   const counts = groups.reduce((acc, group) => {
-    acc[group.id] = group.id === 'all'
-      ? items.length
-      : itemGroups.filter(id => id === group.id).length;
+    acc[group.id] = group.id === 'all' ? items.length : itemGroups.filter(id => id === group.id).length;
     return acc;
   }, {});
 
@@ -74,14 +72,22 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!intro) return;
   intro.insertAdjacentElement('afterend', controls);
 
+  const directionLink = document.createElement('a');
+  directionLink.className = 'publication-directions-link';
+  directionLink.href = '/publications/directions.html';
+  directionLink.textContent = 'Открыть карту аналитических направлений →';
+  controls.insertAdjacentElement('afterend', directionLink);
+
   const style = document.createElement('style');
   style.textContent = `
     .publication-filters{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px;padding:14px 0 2px}
     .publication-filter{appearance:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(13,30,26,.72);color:var(--muted);padding:10px 14px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer;transition:.2s ease}
     .publication-filter:hover,.publication-filter.is-active{color:var(--text);border-color:var(--accent);background:rgba(199,164,90,.08)}
     .publication-filter-count{min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:999px;font-size:11px;line-height:1}
-    .item.is-filtered-out{display:none}
     .publication-filter:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .publication-directions-link{display:inline-flex;margin-top:12px;color:var(--accent);font-size:13px;font-weight:700}
+    .publication-directions-link:hover{color:var(--gold-soft)}
+    .item.is-filtered-out{display:none}
     .related-materials{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
     .related-materials-label{margin:0 0 9px;color:var(--gold-soft);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
     .related-materials-direction{margin:0 0 10px;color:var(--muted);font-size:12px}
@@ -94,9 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   items.forEach((item, index) => {
     const data = publicationData[index];
-    const related = publicationData
-      .filter(candidate => candidate.group === data.group && candidate.path !== data.path)
-      .slice(0, 3);
+    const related = publicationData.filter(candidate => candidate.group === data.group && candidate.path !== data.path).slice(0, 3);
     if (!related.length) return;
 
     const body = item.querySelector('.body');
@@ -116,11 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const applyFilter = groupId => {
     const group = groups.find(item => item.id === groupId) || groups[0];
-    items.forEach((item, index) => {
-      const visible = group.id === 'all' || itemGroups[index] === group.id;
-      item.classList.toggle('is-filtered-out', !visible);
-    });
-
+    items.forEach((item, index) => item.classList.toggle('is-filtered-out', !(group.id === 'all' || itemGroups[index] === group.id)));
     controls.querySelectorAll('.publication-filter').forEach(button => {
       const active = button.dataset.publicationFilter === group.id;
       button.classList.toggle('is-active', active);
