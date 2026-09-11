@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-11T11:49:43Z",
+  "timestamp": "2026-09-11T14:24:26Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,8 +11,8 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 192.1,
-    "max_response_time_ms": 424,
+    "avg_response_time_ms": 327.4,
+    "max_response_time_ms": 613,
     "health_score": 100.0,
     "health_grade": "healthy"
   },
@@ -20,7 +20,7 @@
   "health_grade": "healthy",
   "trend_direction": "stable",
   "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-11T11:21:21Z",
+  "baseline_timestamp": "2026-09-11T11:49:43Z",
   "warnings": [],
   "page_changes": {},
   "critical_pages": [],
