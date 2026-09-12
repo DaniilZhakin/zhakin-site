@@ -33,7 +33,7 @@ assert.deepEqual(Object.keys(schema.properties).sort(), [
   'timestamp',
 ]);
 assert.equal(schema.properties.path.maxLength, 512);
-assert.equal(schema.properties.path.pattern, '^\\/[^?#]*$');
+assert.equal(schema.properties.path.pattern, '^/[^?#]*$');
 assert.equal(schema.properties.timestamp.format, 'date-time');
 assert.equal(schema.properties.timestamp.maxLength, 64);
 assert.equal(schema.properties.referrer_class.maxLength, 32);
