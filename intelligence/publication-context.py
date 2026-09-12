@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 
+# Publication context trigger: keep the generator active on every publication graph change.
 ROOT = Path(__file__).resolve().parents[1]
 PUBLICATIONS = ROOT / "publications"
 
