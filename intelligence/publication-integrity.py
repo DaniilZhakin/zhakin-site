@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the publication graph, analytical directions, filtered navigation, sitemap and SEO metadata."""
+"""Validate the publication graph, analytical directions, filtered navigation, context links, sitemap and SEO metadata."""
 from pathlib import Path
 import re
 import sys
@@ -124,10 +124,10 @@ for group_id in direction_groups:
 
 if 'URLSearchParams(window.location.search)' not in js_text:
     errors.append("publications.js: filtered direction query handling missing")
-for group_id in direction_groups:
-    if f'group.id === requestedDirection' not in js_text:
-        errors.append("publications.js: direction filter guard missing")
-        break
+if 'applyFilter(requestedDirection)' not in js_text:
+    errors.append("publications.js: requested direction is not applied")
+if 'button.setAttribute(\'aria-pressed\'' not in js_text:
+    errors.append("publications.js: filter accessibility state handling missing")
 
 if '<link rel="canonical"' not in directions_text:
     errors.append("directions.html: missing canonical")
@@ -144,6 +144,49 @@ for path in index_paths:
         errors.append(f"missing canonical: {path}")
     if '"@type":"Article"' not in text and '"@type": "Article"' not in text:
         errors.append(f"missing Article JSON-LD: {path}")
+
+    group_id = classified.get(path)
+    if not group_id or group_id not in direction_groups:
+        continue
+    group = direction_groups[group_id]
+    context_match = re.search(
+        r'<div class="publication-context" data-publication-context="v1">.*?'
+        r'<div class="publication-context-label">Аналитическое направление</div>\s*'
+        r'<div class="publication-context-direction">([^<]+)</div>\s*'
+        r'<div class="publication-context-links">(.*?)</div>\s*'
+        r'<a class="publication-context-map" href="([^"]+)">.*?</a>\s*'
+        r'<a class="publication-context-index" href="([^"]+)">.*?</a>\s*'
+        r'</div>',
+        text,
+        re.S,
+    )
+    if not context_match:
+        errors.append(f"publication context missing or malformed: {path}")
+        continue
+
+    context_label, links_html, map_href, index_href = context_match.groups()
+    if context_label != group["label"]:
+        errors.append(f"publication context direction mismatch: {path}")
+
+    related_links = set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', links_html))
+    expected_related = expected_paths.intersection(group["paths"]) - {path}
+    if related_links != expected_related:
+        missing_related = sorted(expected_related - related_links)
+        extra_related = sorted(related_links - expected_related)
+        if missing_related:
+            errors.append(f"publication context missing related links [{path}]: " + ", ".join(missing_related))
+        if extra_related:
+            errors.append(f"publication context extra related links [{path}]: " + ", ".join(extra_related))
+    for related in related_links:
+        if not (ROOT / related.lstrip("/")).is_file():
+            errors.append(f"publication context link target missing: {path} -> {related}")
+
+    expected_map = "/publications/directions.html"
+    expected_index = f"/publications.html?direction={group_id}"
+    if map_href != expected_map:
+        errors.append(f"publication context map mismatch: {path}")
+    if index_href != expected_index:
+        errors.append(f"publication context filtered entry mismatch: {path}")
 
 sitemap_url = "https://xn--80alhhq.xn--p1ai/publications/directions.html"
 if sitemap_url not in sitemap_text:
@@ -163,5 +206,7 @@ print("- directions map: verified")
 print("- direction links: verified")
 print("- filtered entry points: verified")
 print("- filtered query handling: verified")
+print("- publication context blocks: verified")
+print("- related-material links: verified")
 print("- sitemap directions URL: verified")
 print("- canonical + Article JSON-LD: verified")
