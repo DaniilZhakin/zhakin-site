@@ -36,3 +36,5 @@ jobs:
           ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
       - name: Validate publication graph
         run: python3 intelligence/publication-integrity.py
+      - name: Record validation checkpoint
+        run: echo "Publication integrity validation executed on $GITHUB_SHA"
