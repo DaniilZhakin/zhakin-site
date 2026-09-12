@@ -2,6 +2,7 @@ from pathlib import Path
 import re
 
 # Publication context trigger: keep the generator active on every publication graph change.
+# Runtime re-trigger: downstream integrity validation is attached to Publication Context completion.
 ROOT = Path(__file__).resolve().parents[1]
 PUBLICATIONS = ROOT / "publications"
 
