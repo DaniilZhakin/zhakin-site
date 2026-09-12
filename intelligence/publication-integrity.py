@@ -103,7 +103,8 @@ for group_id, group in direction_groups.items():
         errors.append(f"directions.html: missing direction label: {group['label']}")
 
 # Validate that every direction-page publication link resolves to a real publication file.
-direction_links = sorted(set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', directions_text)))
+# Exclude the directions page's own self-link from the publication graph.
+direction_links = sorted(set(re.findall(r'href=["\'](/publications/(?!directions\.html(?:["\'#?]|$))[^"\'#?]+\.html)', directions_text)))
 for path in direction_links:
     if not (ROOT / path.lstrip("/")).is_file():
         errors.append(f"directions.html: missing publication file: {path}")
