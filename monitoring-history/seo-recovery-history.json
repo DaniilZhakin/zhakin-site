@@ -1,13 +1,5 @@
 [
   {
-    "timestamp": "2026-09-10T00:12:42Z",
-    "fingerprint": "f8587a3407760f17",
-    "state": "RECOVERED",
-    "action": "NONE",
-    "escalation_required": false,
-    "dry_run": false
-  },
-  {
     "timestamp": "2026-09-10T04:39:32Z",
     "fingerprint": "f8587a3407760f17",
     "state": "RECOVERED",
@@ -393,6 +385,14 @@
   },
   {
     "timestamp": "2026-09-12T19:21:39Z",
+    "fingerprint": "f8587a3407760f17",
+    "state": "RECOVERED",
+    "action": "NONE",
+    "escalation_required": false,
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-09-12T19:44:16Z",
     "fingerprint": "f8587a3407760f17",
     "state": "RECOVERED",
     "action": "NONE",
