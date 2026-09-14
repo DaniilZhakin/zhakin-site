@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-09-14",
+  "source": "official website project registry",
+  "projects": [
+    {
+      "id": "economic-development",
+      "name": "Экономические проекты",
+      "category": "economy",
+      "status": "active-direction",
+      "description": "Развитие внешнеэкономических связей и международного делового сотрудничества; направление включает деятельность ООО «ПОБЕДА» и проекты устойчивого партнёрства.",
+      "page": "/projects.html",
+      "links": [
+        "/index.html#international",
+        "/publications.html",
+        "/publications/money-financial-system.html",
+        "/publications/digital-ruble.html",
+        "/publications/ai-financial-system.html"
+      ]
+    },
+    {
+      "id": "international-cooperation",
+      "name": "Международные проекты",
+      "category": "international",
+      "status": "active-direction",
+      "description": "Формирование международных контактов, стратегических партнёрств и механизмов взаимодействия с зарубежными участниками экономических и гуманитарных процессов.",
+      "page": "/projects.html",
+      "links": [
+        "/index.html#international",
+        "/international-geography.html",
+        "/publications.html"
+      ]
+    },
+    {
+      "id": "investment-directions",
+      "name": "Инвестиционные направления",
+      "category": "investment",
+      "status": "active-direction",
+      "description": "Подготовка инициатив в сфере инвестиций, агропромышленного комплекса, инфраструктурного развития и долгосрочных экономических проектов.",
+      "page": "/projects.html",
+      "links": [
+        "/publications.html",
+        "/publications/money-financial-system.html"
+      ]
+    },
+    {
+      "id": "social-initiatives",
+      "name": "Социальные инициативы",
+      "category": "social",
+      "status": "active-direction",
+      "description": "Развитие общественных и гуманитарных программ через Благотворительный фонд «УСЕРДИЕ», направленных на поддержку людей и укрепление социальных связей.",
+      "page": "/projects.html",
+      "links": [
+        "/index.html#userdie"
+      ]
+    },
+    {
+      "id": "zhakin-team",
+      "name": "ZHAKIN TEAM",
+      "category": "expert-platform",
+      "status": "active-platform",
+      "description": "Профессиональная экосистема и брендовая платформа, объединяющая направления деятельности, экспертизу и стратегические инициативы Даниила Жакина.",
+      "page": "/projects.html",
+      "links": [
+        "/index.html#media",
+        "/publications.html"
+      ]
+    },
+    {
+      "id": "future-initiatives",
+      "name": "Будущие инициативы",
+      "category": "development",
+      "status": "planned",
+      "description": "Разработка новых проектов на пересечении экономики, международного сотрудничества, технологий управления и общественного развития.",
+      "page": "/projects.html",
+      "links": []
+    }
+  ]
+}
