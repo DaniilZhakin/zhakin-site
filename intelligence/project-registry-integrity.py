@@ -109,6 +109,34 @@ for pid in ids:
     if pid not in page_ids:
         errors.append(f"projects.html: missing project anchor id: {pid}")
 
+# Verify that every registry-declared operational route is visibly exposed
+# inside the matching public project card. This keeps the data registry and
+# user-facing navigation from silently drifting apart.
+for project in projects:
+    if not isinstance(project, dict):
+        continue
+    pid = project.get("id")
+    if not isinstance(pid, str):
+        continue
+    card_match = re.search(
+        r'<article[^>]+\bid=["\']' + re.escape(pid) + r'["\'][^>]*>.*?</article>',
+        page_text,
+        re.DOTALL,
+    )
+    if not card_match:
+        errors.append(f"projects.html: missing public card for project: {pid}")
+        continue
+    card = card_match.group(0)
+    for route_name, route in routes.items():
+        if not isinstance(route, str):
+            continue
+        if route in project.get("links", []):
+            public_path = route.lstrip("/")
+            if not re.search(r'href=["\'][^"\']*' + re.escape(public_path) + r'(?:["\'#?])', card):
+                errors.append(
+                    f"projects.html: project [{pid}] missing visible operational route binding: {route_name}={route}"
+                )
+
 if errors:
     print("PROJECT REGISTRY: FAIL")
     for error in errors:
@@ -124,3 +152,4 @@ print("- internal registry links: verified")
 print("- fragment anchors: verified")
 print("- projects.html ItemList binding: verified")
 print("- public project anchors: verified")
+print("- operational route bindings: verified")
