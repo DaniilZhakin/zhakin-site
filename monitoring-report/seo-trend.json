@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T06:15:10Z",
+  "timestamp": "2026-09-14T09:45:33Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,38 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 316.2,
-    "max_response_time_ms": 677,
-    "health_score": 100.0,
+    "avg_response_time_ms": 780.7,
+    "max_response_time_ms": 3682,
+    "health_score": 94.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 94.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-14T01:01:50Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -6.0,
+  "baseline_timestamp": "2026-09-14T06:15:10Z",
+  "warnings": [
+    "average response time increased from 316.2ms to 780.7ms",
+    "page-level change: /projects.html",
+    "page-level change: /publications/ai-parliament.html",
+    "page-level change: /publications/intellectual-economy.html"
+  ],
+  "page_changes": {
+    "/projects.html": [
+      "response_time_ms: 306 -> 3682"
+    ],
+    "/publications/ai-parliament.html": [
+      "response_time_ms: 128 -> 2472"
+    ],
+    "/publications/intellectual-economy.html": [
+      "response_time_ms: 490 -> 2842"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/projects.html",
+    "/publications/ai-parliament.html",
+    "/publications/intellectual-economy.html"
+  ],
+  "status": "warning"
 }

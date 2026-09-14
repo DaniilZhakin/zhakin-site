@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-14T06:15:10Z`
+Snapshot: `2026-09-14T09:45:33Z`
 History points: **30**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Status: **WARNING**
+Health score: **94.0/100 (HEALTHY)**
+Trend: **DECLINING** (-6.0)
 
 ## Current signals
 
@@ -17,15 +17,23 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **17**
 - `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **316.2**
-- `max_response_time_ms`: **677**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **780.7**
+- `max_response_time_ms`: **3682**
+- `health_score`: **94.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/projects.html`
+- response_time_ms: 306 -> 3682
+### `/publications/ai-parliament.html`
+- response_time_ms: 128 -> 2472
+### `/publications/intellectual-economy.html`
+- response_time_ms: 490 -> 2842
 
 ## Anomaly detection
 
-No regression detected.
+- average response time increased from 316.2ms to 780.7ms
+- page-level change: /projects.html
+- page-level change: /publications/ai-parliament.html
+- page-level change: /publications/intellectual-economy.html
