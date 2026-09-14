@@ -52,13 +52,14 @@ for project in projects:
         continue
 
     pid = project.get("id", "<missing>")
-    required = ("id", "name", "category", "status", "description", "page", "links")
+    required = ("id", "name", "category", "status", "description", "page", "links", "analytical_links")
     for field in required:
         if field not in project:
             errors.append(f"project [{pid}]: missing field: {field}")
 
     page = project.get("page")
     links = project.get("links")
+    analytical_links = project.get("analytical_links")
     if isinstance(page, str):
         target = ROOT / page.lstrip("/")
         if not target.is_file():
@@ -69,6 +70,9 @@ for project in projects:
     if not isinstance(links, list):
         errors.append(f"project [{pid}]: links must be an array")
         continue
+    if not isinstance(analytical_links, list):
+        errors.append(f"project [{pid}]: analytical_links must be an array")
+        analytical_links = []
 
     for link in links:
         if not isinstance(link, str) or not link.startswith("/"):
@@ -86,6 +90,16 @@ for project in projects:
             target_text = target.read_text(encoding="utf-8")
             if not re.search(r'\bid=["\']' + re.escape(parsed.fragment) + r'["\']', target_text):
                 errors.append(f"project [{pid}]: missing anchor target: {link}")
+
+    for link in analytical_links:
+        if not isinstance(link, str) or not link.startswith("/"):
+            errors.append(f"project [{pid}]: invalid analytical link: {link!r}")
+            continue
+        if link not in links:
+            errors.append(f"project [{pid}]: analytical link is absent from links: {link}")
+        target = ROOT / urlsplit(link).path.lstrip("/")
+        if not target.is_file():
+            errors.append(f"project [{pid}]: missing analytical link target: {link}")
 
 # The public project page must expose the same registry IDs in its ItemList.
 itemlist_match = re.search(r'"@type":"ItemList".*?"itemListElement":\[(.*?)\]\}', page_text)
@@ -109,9 +123,8 @@ for pid in ids:
     if pid not in page_ids:
         errors.append(f"projects.html: missing project anchor id: {pid}")
 
-# Verify that every registry-declared operational route is visibly exposed
-# inside the matching public project card. This keeps the data registry and
-# user-facing navigation from silently drifting apart.
+# Verify registry-declared operational and analytical routes are visibly exposed
+# inside the matching public project card.
 for project in projects:
     if not isinstance(project, dict):
         continue
@@ -136,6 +149,12 @@ for project in projects:
                 errors.append(
                     f"projects.html: project [{pid}] missing visible operational route binding: {route_name}={route}"
                 )
+    for link in project.get("analytical_links", []):
+        public_path = urlsplit(link).path.lstrip("/")
+        if not re.search(r'href=["\'][^"\']*' + re.escape(public_path) + r'(?:["\'#?])', card):
+            errors.append(
+                f"projects.html: project [{pid}] missing visible analytical publication binding: {link}"
+            )
 
 if errors:
     print("PROJECT REGISTRY: FAIL")
@@ -149,7 +168,9 @@ print("- unique project IDs: verified")
 print("- operational routes: verified")
 print("- project page targets: verified")
 print("- internal registry links: verified")
+print("- analytical publication links: verified")
 print("- fragment anchors: verified")
 print("- projects.html ItemList binding: verified")
 print("- public project anchors: verified")
 print("- operational route bindings: verified")
+print("- analytical publication bindings: verified")
