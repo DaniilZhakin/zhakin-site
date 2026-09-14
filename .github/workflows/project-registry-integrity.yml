@@ -1,0 +1,31 @@
+name: Project Registry Integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/projects.json'
+      - 'projects.html'
+      - 'intelligence/project-registry-integrity.py'
+      - '.github/workflows/project-registry-integrity.yml'
+  pull_request:
+    paths:
+      - 'data/projects.json'
+      - 'projects.html'
+      - 'intelligence/project-registry-integrity.py'
+      - '.github/workflows/project-registry-integrity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    name: Validate project registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate project registry
+        run: python3 intelligence/project-registry-integrity.py
+      - name: Record validation checkpoint
+        run: echo "Project registry integrity validation executed on $GITHUB_SHA"
