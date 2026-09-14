@@ -23,6 +23,19 @@ if not isinstance(projects, list) or not projects:
     errors.append("projects.json: projects must be a non-empty array")
     projects = []
 
+routes = data.get("operational_routes")
+if not isinstance(routes, dict):
+    errors.append("projects.json: operational_routes must be an object")
+    routes = {}
+for route_name in ("reception", "publications", "international_geography"):
+    route = routes.get(route_name)
+    if not isinstance(route, str) or not route.startswith("/"):
+        errors.append(f"projects.json: missing or invalid operational route: {route_name}")
+    else:
+        route_target = ROOT / route.lstrip("/")
+        if not route_target.is_file():
+            errors.append(f"projects.json: missing operational route target: {route}")
+
 ids = [p.get("id") for p in projects if isinstance(p, dict)]
 if any(not isinstance(pid, str) or not pid for pid in ids):
     errors.append("projects.json: every project must have a non-empty string id")
@@ -74,7 +87,7 @@ for project in projects:
             if not re.search(r'\bid=["\']' + re.escape(parsed.fragment) + r'["\']', target_text):
                 errors.append(f"project [{pid}]: missing anchor target: {link}")
 
-# The public project page must expose the same six registry IDs in its ItemList.
+# The public project page must expose the same registry IDs in its ItemList.
 itemlist_match = re.search(r'"@type":"ItemList".*?"itemListElement":\[(.*?)\]\}', page_text)
 if not itemlist_match:
     itemlist_match = re.search(r'"@type":\s*"ItemList".*?"itemListElement":\[(.*?)\]\}', page_text)
@@ -105,6 +118,7 @@ if errors:
 print("PROJECT REGISTRY: PASS")
 print(f"- registry entries: {len(projects)}")
 print("- unique project IDs: verified")
+print("- operational routes: verified")
 print("- project page targets: verified")
 print("- internal registry links: verified")
 print("- fragment anchors: verified")
