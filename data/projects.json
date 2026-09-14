@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "updated_at": "2026-09-14",
   "source": "official website project registry",
   "operational_routes": {
@@ -28,7 +28,9 @@
         "/publications/money-financial-system.html",
         "/publications/digital-ruble.html",
         "/publications/ai-financial-system.html"
-      ]
+      ],
+      "international_link": "/international-geography.html",
+      "reception_link": "/reception.html"
     },
     {
       "id": "international-cooperation",
@@ -43,7 +45,9 @@
         "/publications.html",
         "/reception.html"
       ],
-      "analytical_links": []
+      "analytical_links": [],
+      "international_link": "/international-geography.html",
+      "reception_link": "/reception.html"
     },
     {
       "id": "investment-directions",
@@ -61,7 +65,9 @@
       "analytical_links": [
         "/publications/money-financial-system.html",
         "/publications/capital-requires-proof.html"
-      ]
+      ],
+      "international_link": null,
+      "reception_link": "/reception.html"
     },
     {
       "id": "social-initiatives",
@@ -74,7 +80,9 @@
         "/index.html#userdie",
         "/reception.html"
       ],
-      "analytical_links": []
+      "analytical_links": [],
+      "international_link": null,
+      "reception_link": "/reception.html"
     },
     {
       "id": "zhakin-team",
@@ -88,7 +96,9 @@
         "/publications.html",
         "/reception.html"
       ],
-      "analytical_links": []
+      "analytical_links": [],
+      "international_link": null,
+      "reception_link": "/reception.html"
     },
     {
       "id": "future-initiatives",
@@ -100,7 +110,9 @@
       "links": [
         "/reception.html"
       ],
-      "analytical_links": []
+      "analytical_links": [],
+      "international_link": null,
+      "reception_link": "/reception.html"
     }
   ]
 }
