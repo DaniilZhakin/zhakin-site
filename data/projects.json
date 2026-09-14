@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "updated_at": "2026-09-14",
   "source": "official website project registry",
   "operational_routes": {
@@ -23,6 +23,11 @@
         "/publications/ai-financial-system.html",
         "/international-geography.html",
         "/reception.html"
+      ],
+      "analytical_links": [
+        "/publications/money-financial-system.html",
+        "/publications/digital-ruble.html",
+        "/publications/ai-financial-system.html"
       ]
     },
     {
@@ -37,7 +42,8 @@
         "/international-geography.html",
         "/publications.html",
         "/reception.html"
-      ]
+      ],
+      "analytical_links": []
     },
     {
       "id": "investment-directions",
@@ -51,6 +57,10 @@
         "/publications/money-financial-system.html",
         "/publications/capital-requires-proof.html",
         "/reception.html"
+      ],
+      "analytical_links": [
+        "/publications/money-financial-system.html",
+        "/publications/capital-requires-proof.html"
       ]
     },
     {
@@ -63,7 +73,8 @@
       "links": [
         "/index.html#userdie",
         "/reception.html"
-      ]
+      ],
+      "analytical_links": []
     },
     {
       "id": "zhakin-team",
@@ -76,7 +87,8 @@
         "/index.html#media",
         "/publications.html",
         "/reception.html"
-      ]
+      ],
+      "analytical_links": []
     },
     {
       "id": "future-initiatives",
@@ -87,7 +99,8 @@
       "page": "/projects.html",
       "links": [
         "/reception.html"
-      ]
+      ],
+      "analytical_links": []
     }
   ]
 }
