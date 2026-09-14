@@ -1,7 +1,12 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "updated_at": "2026-09-14",
   "source": "official website project registry",
+  "operational_routes": {
+    "reception": "/reception.html",
+    "publications": "/publications.html",
+    "international_geography": "/international-geography.html"
+  },
   "projects": [
     {
       "id": "economic-development",
@@ -15,7 +20,9 @@
         "/publications.html",
         "/publications/money-financial-system.html",
         "/publications/digital-ruble.html",
-        "/publications/ai-financial-system.html"
+        "/publications/ai-financial-system.html",
+        "/international-geography.html",
+        "/reception.html"
       ]
     },
     {
@@ -28,7 +35,8 @@
       "links": [
         "/index.html#international",
         "/international-geography.html",
-        "/publications.html"
+        "/publications.html",
+        "/reception.html"
       ]
     },
     {
@@ -40,7 +48,9 @@
       "page": "/projects.html",
       "links": [
         "/publications.html",
-        "/publications/money-financial-system.html"
+        "/publications/money-financial-system.html",
+        "/publications/capital-requires-proof.html",
+        "/reception.html"
       ]
     },
     {
@@ -51,7 +61,8 @@
       "description": "Развитие общественных и гуманитарных программ через Благотворительный фонд «УСЕРДИЕ», направленных на поддержку людей и укрепление социальных связей.",
       "page": "/projects.html",
       "links": [
-        "/index.html#userdie"
+        "/index.html#userdie",
+        "/reception.html"
       ]
     },
     {
@@ -63,7 +74,8 @@
       "page": "/projects.html",
       "links": [
         "/index.html#media",
-        "/publications.html"
+        "/publications.html",
+        "/reception.html"
       ]
     },
     {
@@ -73,7 +85,9 @@
       "status": "planned",
       "description": "Разработка новых проектов на пересечении экономики, международного сотрудничества, технологий управления и общественного развития.",
       "page": "/projects.html",
-      "links": []
+      "links": [
+        "/reception.html"
+      ]
     }
   ]
 }
