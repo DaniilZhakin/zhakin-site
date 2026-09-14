@@ -45,14 +45,13 @@ if len(ids) != len(set(ids)):
 page_text = PROJECTS_PAGE.read_text(encoding="utf-8")
 page_ids = set(re.findall(r'<(?:article|section|div)[^>]+\bid=["\']([^"\']+)["\']', page_text))
 
-# Validate each registry entry and every internal target.
 for project in projects:
     if not isinstance(project, dict):
         errors.append("projects.json: project entry is not an object")
         continue
 
     pid = project.get("id", "<missing>")
-    required = ("id", "name", "category", "status", "description", "page", "links", "analytical_links")
+    required = ("id", "name", "category", "status", "description", "page", "links", "analytical_links", "international_link", "reception_link")
     for field in required:
         if field not in project:
             errors.append(f"project [{pid}]: missing field: {field}")
@@ -60,6 +59,9 @@ for project in projects:
     page = project.get("page")
     links = project.get("links")
     analytical_links = project.get("analytical_links")
+    international_link = project.get("international_link")
+    reception_link = project.get("reception_link")
+
     if isinstance(page, str):
         target = ROOT / page.lstrip("/")
         if not target.is_file():
@@ -101,7 +103,29 @@ for project in projects:
         if not target.is_file():
             errors.append(f"project [{pid}]: missing analytical link target: {link}")
 
-# The public project page must expose the same registry IDs in its ItemList.
+    if international_link is not None:
+        if not isinstance(international_link, str) or not international_link.startswith("/"):
+            errors.append(f"project [{pid}]: invalid international_link: {international_link!r}")
+        else:
+            if international_link not in links:
+                errors.append(f"project [{pid}]: international_link is absent from links: {international_link}")
+            target = ROOT / international_link.lstrip("/")
+            if not target.is_file():
+                errors.append(f"project [{pid}]: missing international_link target: {international_link}")
+            if international_link != routes.get("international_geography"):
+                errors.append(f"project [{pid}]: international_link must use operational international_geography route")
+
+    if not isinstance(reception_link, str) or not reception_link.startswith("/"):
+        errors.append(f"project [{pid}]: invalid reception_link: {reception_link!r}")
+    else:
+        if reception_link not in links:
+            errors.append(f"project [{pid}]: reception_link is absent from links: {reception_link}")
+        target = ROOT / reception_link.lstrip("/")
+        if not target.is_file():
+            errors.append(f"project [{pid}]: missing reception_link target: {reception_link}")
+        if reception_link != routes.get("reception"):
+            errors.append(f"project [{pid}]: reception_link must use operational reception route")
+
 itemlist_match = re.search(r'"@type":"ItemList".*?"itemListElement":\[(.*?)\]\}', page_text)
 if not itemlist_match:
     itemlist_match = re.search(r'"@type":\s*"ItemList".*?"itemListElement":\[(.*?)\]\}', page_text)
@@ -123,8 +147,6 @@ for pid in ids:
     if pid not in page_ids:
         errors.append(f"projects.html: missing project anchor id: {pid}")
 
-# Verify registry-declared operational and analytical routes are visibly exposed
-# inside the matching public project card.
 for project in projects:
     if not isinstance(project, dict):
         continue
@@ -169,6 +191,8 @@ print("- operational routes: verified")
 print("- project page targets: verified")
 print("- internal registry links: verified")
 print("- analytical publication links: verified")
+print("- international project routes: verified")
+print("- reception routes: verified")
 print("- fragment anchors: verified")
 print("- projects.html ItemList binding: verified")
 print("- public project anchors: verified")
