@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-17T00:28:54Z`
+Snapshot: `2026-09-17T06:08:01Z`
 History points: **30**
-Status: **WARNING**
-Health score: **98.0/100 (HEALTHY)**
-Trend: **DECLINING** (-2.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,19 +17,15 @@ Trend: **DECLINING** (-2.0)
 - `canonical_ok_pages`: **17**
 - `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **432.4**
-- `max_response_time_ms`: **1028**
-- `health_score`: **98.0**
+- `avg_response_time_ms`: **236.2**
+- `max_response_time_ms`: **320**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/digital-ruble.html`
-- response_time_ms: 79 -> 1014
-### `/publications/understanding-state-and-law.html`
-- response_time_ms: 225 -> 1028
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/digital-ruble.html
-- page-level change: /publications/understanding-state-and-law.html
+No regression detected.
