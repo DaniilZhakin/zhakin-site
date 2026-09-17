@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-16T22:08:44Z",
+  "timestamp": "2026-09-17T00:28:54Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,32 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 228.7,
-    "max_response_time_ms": 451,
-    "health_score": 100.0,
+    "avg_response_time_ms": 432.4,
+    "max_response_time_ms": 1028,
+    "health_score": 98.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 98.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-16T18:53:13Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -2.0,
+  "baseline_timestamp": "2026-09-16T22:08:44Z",
+  "warnings": [
+    "page-level change: /publications/digital-ruble.html",
+    "page-level change: /publications/understanding-state-and-law.html"
+  ],
+  "page_changes": {
+    "/publications/digital-ruble.html": [
+      "response_time_ms: 79 -> 1014"
+    ],
+    "/publications/understanding-state-and-law.html": [
+      "response_time_ms: 225 -> 1028"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/digital-ruble.html",
+    "/publications/understanding-state-and-law.html"
+  ],
+  "status": "warning"
 }
