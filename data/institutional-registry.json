@@ -90,32 +90,38 @@
       {
         "id": "economic-development",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "Экономические проекты"
       },
       {
         "id": "international-cooperation",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "Международные проекты"
       },
       {
         "id": "investment-directions",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "Инвестиционные направления"
       },
       {
         "id": "social-initiatives",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "Социальные инициативы"
       },
       {
         "id": "zhakin-team",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "ZHAKIN TEAM"
       },
       {
         "id": "future-initiatives",
         "type": "project",
-        "source": "/data/projects.json"
+        "source": "/data/projects.json",
+        "name": "Будущие инициативы"
       }
     ],
     "documents": []
