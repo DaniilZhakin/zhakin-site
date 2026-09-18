@@ -54,6 +54,13 @@ if project_ids != registry_project_ids:
         f"projects.json={sorted(project_ids)} institutional={sorted(registry_project_ids)}"
     )
 
+relation_pairs = {
+    "member-of": {"person": {"organization"}},
+    "implemented-by": {"project": {"organization"}},
+    "supports-direction": {"project": {"direction"}},
+    "documented-by": {"project": {"document"}},
+}
+
 for relation in registry.get("relations", []):
     for field in ("from", "type", "to", "source"):
         if not relation.get(field):
@@ -62,8 +69,18 @@ for relation in registry.get("relations", []):
         errors.append(f"relation from unknown entity: {relation.get('from')}")
     if relation.get("to") not in ids:
         errors.append(f"relation to unknown entity: {relation.get('to')}")
-    if relation.get("type") not in relation_types:
-        errors.append(f"unknown relation type: {relation.get('type')}")
+    relation_type = relation.get("type")
+    if relation_type not in relation_types:
+        errors.append(f"unknown relation type: {relation_type}")
+    else:
+        from_type = ids.get(relation.get("from"), {}).get("type")
+        to_type = ids.get(relation.get("to"), {}).get("type")
+        allowed_targets = relation_pairs.get(relation_type, {}).get(from_type, set())
+        if to_type not in allowed_targets:
+            errors.append(
+                f"invalid relation semantics: {relation_type} "
+                f"{from_type}->{to_type}"
+            )
 
 if errors:
     print("INSTITUTIONAL REGISTRY: FAIL")
