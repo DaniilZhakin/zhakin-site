@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-09-18",
+  "source": "official website institutional registry",
+  "entity_types": [
+    "person",
+    "organization",
+    "direction",
+    "project",
+    "document"
+  ],
+  "relation_types": [
+    "member-of",
+    "contains-project",
+    "supports-direction",
+    "documented-by"
+  ],
+  "entities": {
+    "persons": [
+      {
+        "id": "daniil-zhakin",
+        "type": "person",
+        "name": "Даниил Юрьевич Жакин",
+        "page": "/index.html",
+        "source": "/projects.html"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "zhakin-team",
+        "type": "organization",
+        "name": "ZHAKIN TEAM",
+        "page": "/index.html#media",
+        "source": "/projects.html"
+      },
+      {
+        "id": "pobeda",
+        "type": "organization",
+        "name": "ООО «ПОБЕДА»",
+        "page": "/index.html#international",
+        "source": "/projects.html"
+      },
+      {
+        "id": "userdie",
+        "type": "organization",
+        "name": "Благотворительный фонд «УСЕРДИЕ»",
+        "page": "/index.html#userdie",
+        "source": "/projects.html"
+      }
+    ],
+    "directions": [
+      {
+        "id": "economy",
+        "type": "direction",
+        "name": "Экономическое развитие",
+        "page": "/projects.html",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "international",
+        "type": "direction",
+        "name": "Международное сотрудничество",
+        "page": "/international-geography.html",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "investment",
+        "type": "direction",
+        "name": "Инвестиционные направления",
+        "page": "/projects.html",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "social",
+        "type": "direction",
+        "name": "Социальные инициативы",
+        "page": "/index.html#userdie",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "expert-platform",
+        "type": "direction",
+        "name": "Экспертная платформа",
+        "page": "/index.html#media",
+        "source": "/data/projects.json"
+      }
+    ],
+    "projects": [
+      {
+        "id": "economic-development",
+        "type": "project",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "international-cooperation",
+        "type": "project",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "investment-directions",
+        "type": "project",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "social-initiatives",
+        "type": "project",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "zhakin-team",
+        "type": "project",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "future-initiatives",
+        "type": "project",
+        "source": "/data/projects.json"
+      }
+    ],
+    "documents": []
+  },
+  "relations": [
+    {
+      "from": "daniil-zhakin",
+      "type": "member-of",
+      "to": "zhakin-team",
+      "source": "/projects.html"
+    },
+    {
+      "from": "daniil-zhakin",
+      "type": "member-of",
+      "to": "pobeda",
+      "source": "/projects.html"
+    },
+    {
+      "from": "economic-development",
+      "type": "supports-direction",
+      "to": "economy",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "international-cooperation",
+      "type": "supports-direction",
+      "to": "international",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "investment-directions",
+      "type": "supports-direction",
+      "to": "investment",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "social-initiatives",
+      "type": "supports-direction",
+      "to": "social",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "zhakin-team",
+      "type": "supports-direction",
+      "to": "expert-platform",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "economic-development",
+      "type": "contains-project",
+      "to": "pobeda",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "social-initiatives",
+      "type": "contains-project",
+      "to": "userdie",
+      "source": "/data/projects.json"
+    }
+  ]
+}
