@@ -12,7 +12,7 @@
   ],
   "relation_types": [
     "member-of",
-    "contains-project",
+    "implemented-by",
     "supports-direction",
     "documented-by"
   ],
@@ -28,7 +28,7 @@
     ],
     "organizations": [
       {
-        "id": "zhakin-team",
+        "id": "zhakin-team-org",
         "type": "organization",
         "name": "ZHAKIN TEAM",
         "page": "/index.html#media",
@@ -124,7 +124,7 @@
     {
       "from": "daniil-zhakin",
       "type": "member-of",
-      "to": "zhakin-team",
+      "to": "zhakin-team-org",
       "source": "/projects.html"
     },
     {
@@ -165,13 +165,13 @@
     },
     {
       "from": "economic-development",
-      "type": "contains-project",
+      "type": "implemented-by",
       "to": "pobeda",
       "source": "/data/projects.json"
     },
     {
       "from": "social-initiatives",
-      "type": "contains-project",
+      "type": "implemented-by",
       "to": "userdie",
       "source": "/data/projects.json"
     }
