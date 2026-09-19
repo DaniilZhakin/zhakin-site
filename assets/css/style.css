@@ -1,5 +1,8 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+a { color:#ead9aa; text-decoration:underline; text-decoration-color:rgba(234,217,170,.45); text-underline-offset:3px; transition:color .2s ease, text-decoration-color .2s ease; }
+a:hover { color:#d4af37; text-decoration-color:#d4af37; }
+a:focus-visible { outline:2px solid #d4af37; outline-offset:4px; border-radius:3px; }
 body { margin:0; font-family:"Inter","Segoe UI",Arial,sans-serif; background:#071a16; color:#f4f1e8; line-height:1.7; }
 .site-header { position:sticky; top:0; z-index:20; background:rgba(7,26,22,.94); border-bottom:1px solid rgba(212,175,55,.55); padding:18px 32px; backdrop-filter:blur(14px); }
 .header-container { max-width:1200px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:32px; }
