@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-09-19T14:23:18Z",
+  "timestamp": "2026-09-19T17:59:26Z",
   "site": "https://xn--80alhhq.xn--p1ai",
   "health_score": 100.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
   "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-19T13:27:21Z",
+  "baseline_timestamp": "2026-09-19T14:23:18Z",
   "status": "ok"
 }
