@@ -27,7 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/economic-transition-1990s.html': 'strategy',
     '/publications/future-without-money.html': 'strategy',
     '/publications/intellectual-economy.html': 'strategy',
-    '/publications/capital-requires-proof.html': 'strategy'
+    '/publications/capital-requires-proof.html': 'strategy',
+    '/publications/naruto-hidden-meanings.html': 'strategy',
+    '/publications/ai-decision-responsibility.html': 'ai',
+    '/publications/personal-growth-hidden-meanings.html': 'strategy'
   };
 
   const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
