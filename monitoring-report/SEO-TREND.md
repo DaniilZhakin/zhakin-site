@@ -1,6 +1,6 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-20T16:02:45Z`
+Snapshot: `2026-09-20T18:45:19Z`
 History points: **30**
 Status: **OK**
 Health score: **100.0/100 (HEALTHY)**
@@ -17,8 +17,8 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **17**
 - `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **233.8**
-- `max_response_time_ms`: **477**
+- `avg_response_time_ms`: **289.2**
+- `max_response_time_ms`: **588**
 - `health_score`: **100.0**
 - `health_grade`: **healthy**
 
