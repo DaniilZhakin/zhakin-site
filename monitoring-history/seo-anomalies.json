@@ -126,5 +126,13 @@
     "transient_signal_count": 0,
     "anomalies": [],
     "transient_signals": []
+  },
+  {
+    "timestamp": "2026-09-22T10:21:52Z",
+    "history_points": 30,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
   }
 ]
