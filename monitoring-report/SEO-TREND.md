@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-22T18:52:08Z`
+Snapshot: `2026-09-22T22:06:08Z`
 History points: **30**
-Status: **CRITICAL**
-Health score: **92.4/100 (HEALTHY)**
-Trend: **DECLINING** (-7.6)
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **IMPROVING** (+1.6)
 
 ## Current signals
 
@@ -13,25 +13,22 @@ Trend: **DECLINING** (-7.6)
 - `sitemap_unique`: **True**
 - `sitemap_coverage`: **True**
 - `required_pages`: **17**
-- `available_pages`: **16**
-- `canonical_ok_pages`: **16**
-- `jsonld_pages`: **16**
+- `available_pages`: **17**
+- `canonical_ok_pages`: **17**
+- `jsonld_pages`: **17**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **196.9**
-- `max_response_time_ms`: **509**
-- `health_score`: **92.4**
+- `avg_response_time_ms`: **311.8**
+- `max_response_time_ms`: **681**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
 ### `/publications.html`
-- available: True -> False
-- canonical_ok: True -> False
-- jsonld: True -> False
+- available: False -> True
+- canonical_ok: False -> True
+- jsonld: False -> True
 
 ## Anomaly detection
 
-- available page count decreased
-- canonical coverage decreased
-- JSON-LD coverage decreased
-- critical page regression: /publications.html
+- page-level change: /publications.html
