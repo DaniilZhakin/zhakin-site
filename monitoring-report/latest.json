@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T14:50:53Z",
+  "timestamp": "2026-09-22T18:52:08Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -7,23 +7,36 @@
     "sitemap_unique": true,
     "sitemap_coverage": true,
     "required_pages": 17,
-    "available_pages": 17,
-    "canonical_ok_pages": 17,
-    "jsonld_pages": 17,
+    "available_pages": 16,
+    "canonical_ok_pages": 16,
+    "jsonld_pages": 16,
     "noindex_pages": 0,
-    "avg_response_time_ms": 209.2,
-    "max_response_time_ms": 476,
-    "health_score": 100.0,
+    "avg_response_time_ms": 196.9,
+    "max_response_time_ms": 509,
+    "health_score": 92.4,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 92.4,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-22T12:03:40Z",
-  "warnings": [],
-  "page_changes": {},
-  "critical_pages": [],
+  "trend_direction": "declining",
+  "trend_delta": -7.6,
+  "baseline_timestamp": "2026-09-22T14:50:53Z",
+  "warnings": [
+    "available page count decreased",
+    "canonical coverage decreased",
+    "JSON-LD coverage decreased",
+    "critical page regression: /publications.html"
+  ],
+  "page_changes": {
+    "/publications.html": [
+      "available: True -> False",
+      "canonical_ok: True -> False",
+      "jsonld: True -> False"
+    ]
+  },
+  "critical_pages": [
+    "/publications.html"
+  ],
   "warning_pages": [],
-  "status": "ok"
+  "status": "critical"
 }
