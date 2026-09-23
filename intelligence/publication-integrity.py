@@ -63,6 +63,13 @@ direction_groups = {
             "/publications/personal-growth-hidden-meanings.html",
         },
     },
+    "geoeconomics": {
+        "label": "Геоэкономика и международные процессы",
+        "paths": {
+            "/publications/sanctions-new-generation.html",
+            "/publications/global-economy-after-sanctions.html",
+        },
+    },
 }
 
 expected_paths = set(index_paths)
@@ -71,8 +78,8 @@ expected_direction_paths = set().union(*(group["paths"] for group in direction_g
 if not index_paths:
     errors.append("publications.html: no publication links found")
 
-if len(index_paths) != 16:
-    errors.append(f"publication count: expected 13, found {len(index_paths)}")
+if len(index_paths) != 18:
+    errors.append(f"publication count: expected 18, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
 extra_classification = [path for path in classified if path not in index_paths]
@@ -173,7 +180,8 @@ for path in index_paths:
         errors.append(f"publication context direction mismatch: {path}")
 
     related_links = set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', links_html))
-    expected_related = expected_paths.intersection(group["paths"]) - {path}
+    group_index_paths = [candidate for candidate in index_paths if classified.get(candidate) == group_id]
+    expected_related = set(group_index_paths[:4]) - {path}
     if related_links != expected_related:
         missing_related = sorted(expected_related - related_links)
         extra_related = sorted(related_links - expected_related)
