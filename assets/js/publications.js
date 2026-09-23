@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'ai', label: 'AI и государство' },
     { id: 'law', label: 'Право и институты' },
     { id: 'infra', label: 'Инфраструктура и экономика' },
-    { id: 'strategy', label: 'Стратегическое развитие' }
+    { id: 'strategy', label: 'Стратегическое развитие' },
+    { id: 'geoeconomics', label: 'Геоэкономика и международные процессы' }
   ];
 
   const classification = {
@@ -30,7 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/capital-requires-proof.html': 'strategy',
     '/publications/naruto-hidden-meanings.html': 'strategy',
     '/publications/ai-decision-responsibility.html': 'ai',
-    '/publications/personal-growth-hidden-meanings.html': 'strategy'
+    '/publications/personal-growth-hidden-meanings.html': 'strategy',
+    '/publications/sanctions-new-generation.html': 'geoeconomics',
+    '/publications/global-economy-after-sanctions.html': 'geoeconomics'
   };
 
   const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
