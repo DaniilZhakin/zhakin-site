@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "updated_at": "2026-09-23",
+  "updated_at": "2026-09-24",
   "source": "official website institutional registry",
   "ui_route": "/institutional.html",
   "entity_types": [
@@ -89,6 +89,13 @@
         "type": "direction",
         "name": "Экспертная платформа",
         "page": "/index.html#media",
+        "source": "/data/projects.json"
+      },
+      {
+        "id": "development",
+        "type": "direction",
+        "name": "Развитие и новые инициативы",
+        "page": "/projects.html",
         "source": "/data/projects.json"
       }
     ],
@@ -188,6 +195,12 @@
       "from": "social-initiatives",
       "type": "implemented-by",
       "to": "userdie",
+      "source": "/data/projects.json"
+    },
+    {
+      "from": "future-initiatives",
+      "type": "supports-direction",
+      "to": "development",
       "source": "/data/projects.json"
     }
   ]
