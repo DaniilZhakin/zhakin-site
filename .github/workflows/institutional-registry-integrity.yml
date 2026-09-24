@@ -6,12 +6,14 @@ on:
     paths:
       - 'data/institutional-registry.json'
       - 'data/projects.json'
+      - 'institutional.html'
       - 'intelligence/institutional-registry-integrity.py'
       - '.github/workflows/institutional-registry-integrity.yml'
   pull_request:
     paths:
       - 'data/institutional-registry.json'
       - 'data/projects.json'
+      - 'institutional.html'
       - 'intelligence/institutional-registry-integrity.py'
       - '.github/workflows/institutional-registry-integrity.yml'
 
