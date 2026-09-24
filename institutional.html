@@ -21,6 +21,12 @@
 </header>
 <main>
 <section class="hero"><div class="hero-content"><span class="hero-label">ИНСТИТУЦИОНАЛЬНЫЙ КОНТУР</span><h1>Организации, направления, проекты и связи</h1><p>Единая структурная карта сайта. Реестр связывает уже опубликованные сущности без создания неподтверждённых сведений.</p></div></section>
+<section aria-labelledby="registry-control-title">
+<h2 id="registry-control-title">Контрольный срез реестра</h2>
+<div id="registry-control" class="project-list" aria-live="polite">
+<article class="hero-card"><h3>Проверка</h3><p>Загрузка структурированного реестра…</p></article>
+</div>
+</section>
 <section>
 <h2>Структура</h2>
 <div class="project-list">
@@ -37,5 +43,29 @@
 </main>
 <footer><p>© Жакин Даниил Юрьевич · <a href="projects.html">Проекты</a> · <a href="publications.html">Публикации</a> · <a href="index.html#contacts">Контакты</a></p></footer>
 <script src="assets/js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const target = document.getElementById('registry-control');
+  if (!target) return;
+  try {
+    const response = await fetch('/data/institutional-registry.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('registry request failed');
+    const registry = await response.json();
+    const entities = registry.entities || {};
+    const count = key => Array.isArray(entities[key]) ? entities[key].length : 0;
+    const total = Object.values(entities).reduce((sum, items) => sum + (Array.isArray(items) ? items.length : 0), 0);
+    const relations = Array.isArray(registry.relations) ? registry.relations.length : 0;
+    target.innerHTML = [
+      ['Сущности', total, 'структурированных записей'],
+      ['Организации', count('organizations'), 'организационных сущностей'],
+      ['Направления', count('directions'), 'связанных направлений'],
+      ['Проекты', count('projects'), 'канонических проектов'],
+      ['Связи', relations, 'зафиксированных отношений']
+    ].map(([label, value, note]) => '<article class="hero-card"><h3>'+label+'</h3><p style="font-size:2rem;font-weight:700;margin:.25rem 0;">'+value+'</p><p>'+note+'</p></article>').join('');
+  } catch (error) {
+    target.innerHTML = '<article class="hero-card"><h3>Проверка</h3><p>Реестр временно недоступен. Страница продолжает работать без зависимости от загрузки данных.</p></article>';
+  }
+});
+</script>
 </body>
 </html>
