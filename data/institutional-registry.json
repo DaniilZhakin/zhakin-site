@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "updated_at": "2026-09-24",
+  "updated_at": "2026-09-26",
   "source": "official website institutional registry",
   "ui_route": "/institutional.html",
   "entity_types": [
@@ -140,7 +140,50 @@
     "documents": [],
     "partners": [],
     "awards": [],
-    "links": []
+    "links": [
+      {
+        "id": "official-site",
+        "type": "link",
+        "name": "Официальный сайт Жакин.рф",
+        "url": "/",
+        "source": "official website"
+      },
+      {
+        "id": "projects",
+        "type": "link",
+        "name": "Раздел «Проекты»",
+        "url": "/projects.html",
+        "source": "official website"
+      },
+      {
+        "id": "publications",
+        "type": "link",
+        "name": "Раздел «Публикации»",
+        "url": "/publications.html",
+        "source": "official website"
+      },
+      {
+        "id": "reception",
+        "type": "link",
+        "name": "Официальная приёмная",
+        "url": "/reception.html",
+        "source": "official website"
+      },
+      {
+        "id": "international-geography",
+        "type": "link",
+        "name": "Международная география",
+        "url": "/international-geography.html",
+        "source": "official website"
+      },
+      {
+        "id": "institutional",
+        "type": "link",
+        "name": "Институциональный контур",
+        "url": "/institutional.html",
+        "source": "official website"
+      }
+    ]
   },
   "relations": [
     {
@@ -202,6 +245,42 @@
       "type": "supports-direction",
       "to": "development",
       "source": "/data/projects.json"
+    },
+    {
+      "from": "official-site",
+      "type": "references",
+      "to": "daniil-zhakin",
+      "source": "official website"
+    },
+    {
+      "from": "projects",
+      "type": "references",
+      "to": "economic-development",
+      "source": "official website"
+    },
+    {
+      "from": "publications",
+      "type": "references",
+      "to": "zhakin-team",
+      "source": "official website"
+    },
+    {
+      "from": "reception",
+      "type": "references",
+      "to": "daniil-zhakin",
+      "source": "official website"
+    },
+    {
+      "from": "international-geography",
+      "type": "references",
+      "to": "international-cooperation",
+      "source": "official website"
+    },
+    {
+      "from": "institutional",
+      "type": "references",
+      "to": "zhakin-team",
+      "source": "official website"
     }
   ]
 }
