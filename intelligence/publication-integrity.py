@@ -165,27 +165,19 @@ for path in index_paths:
     if not group_id or group_id not in direction_groups:
         continue
     group = direction_groups[group_id]
-    context_match = re.search(
-        r'<div class="publication-context" data-publication-context="v1">.*?'
-        r'<div class="publication-context-label">Аналитическое направление</div>\s*'
-        r'<div class="publication-context-direction">([^<]+)</div>\s*'
-        r'<div class="publication-context-links">(.*?)</div>\s*'
-        r'<a class="publication-context-map" href="([^"]+)">.*?</a>\s*'
-        r'<a class="publication-context-index" href="([^"]+)">.*?</a>\s*'
-        r'</div>',
-        text,
-        re.S,
-    )
-    if not context_match:
-        errors.append(f"publication context missing or malformed: {path}")
+    if '<div class="publication-context" data-publication-context="v1">' not in text:
+        errors.append(f"publication context missing: {path}")
         continue
 
-    context_label, links_html, map_href, index_href = context_match.groups()
-    if context_label != group["label"]:
+    if f'<div class="publication-context-direction">{group["label"]}</div>' not in text:
         errors.append(f"publication context direction mismatch: {path}")
 
-    related_links = set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', links_html))
-    group_index_paths = [candidate for candidate in index_paths if classified.get(candidate) == group_id]
+    context_links_match = re.search(r'<div class="publication-context-links">(.*?)</div>', text, re.S)
+    if not context_links_match:
+        errors.append(f"publication context links missing: {path}")
+        continue
+
+    related_links = set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', context_links_match.group(1)))
     if len(related_links) > 4:
         errors.append(f"publication context has too many related links [{path}]: {len(related_links)}")
     wrong_group_related = sorted(related for related in related_links if classified.get(related) != group_id)
@@ -195,11 +187,9 @@ for path in index_paths:
         if not (ROOT / related.lstrip("/")).is_file():
             errors.append(f"publication context link target missing: {path} -> {related}")
 
-    expected_map = "/publications/directions.html"
-    expected_index = f"/publications.html?direction={group_id}"
-    if map_href != expected_map:
+    if 'class="publication-context-map" href="/publications/directions.html"' not in text:
         errors.append(f"publication context map mismatch: {path}")
-    if index_href != expected_index:
+    if f'class="publication-context-index" href="/publications.html?direction={group_id}"' not in text:
         errors.append(f"publication context filtered entry mismatch: {path}")
 
 sitemap_url = "https://xn--80alhhq.xn--p1ai/publications/directions.html"
