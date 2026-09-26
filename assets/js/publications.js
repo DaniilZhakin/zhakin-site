@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/digital-ruble.html': 'finance',
     '/publications/ai-financial-system.html': 'finance',
     '/publications/price-discovery.html': 'finance',
+    '/publications/money-capital-friction.html': 'finance',
     '/publications/ai-parliament.html': 'ai',
     '/publications/ai-infrastructure.html': 'ai',
     '/publications/understanding-state-and-law.html': 'law',
@@ -31,9 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/capital-requires-proof.html': 'strategy',
     '/publications/naruto-hidden-meanings.html': 'strategy',
     '/publications/ai-decision-responsibility.html': 'ai',
+    '/publications/ai-cost-economics.html': 'ai',
+    '/publications/ai-infrastructure-economy.html': 'ai',
     '/publications/personal-growth-hidden-meanings.html': 'strategy',
     '/publications/sanctions-new-generation.html': 'geoeconomics',
-    '/publications/global-economy-after-sanctions.html': 'geoeconomics'
+    '/publications/global-economy-after-sanctions.html': 'geoeconomics',
+    '/publications/global-economy-new-assets.html': 'geoeconomics',
+    '/publications/global-dependence-map.html': 'geoeconomics'
   };
 
   const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
