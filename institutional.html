@@ -61,6 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       ['Организации', count('organizations'), 'организационных сущностей'],
       ['Направления', count('directions'), 'связанных направлений'],
       ['Проекты', count('projects'), 'канонических проектов'],
+      ['Партнёры', count('partners'), 'подтверждённых записей'],
+      ['Награды', count('awards'), 'подтверждённых записей'],
+      ['Документы', count('documents'), 'подтверждённых документов'],
+      ['Источники', count('links'), 'структурированных ссылок'],
       ['Связи', relations, 'зафиксированных отношений']
     ].map(([label, value, note]) => '<article class="hero-card"><h3>'+label+'</h3><p style="font-size:2rem;font-weight:700;margin:.25rem 0;">'+value+'</p><p>'+note+'</p></article>').join('');
   } catch (error) {
