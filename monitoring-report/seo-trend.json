@@ -1,29 +1,42 @@
 {
-  "timestamp": "2026-09-26T13:39:32Z",
+  "timestamp": "2026-09-26T13:42:16Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
     "sitemap_urls": 32,
     "sitemap_unique": true,
     "sitemap_coverage": true,
-    "required_pages": 17,
-    "available_pages": 17,
-    "canonical_ok_pages": 17,
+    "required_pages": 18,
+    "available_pages": 18,
+    "canonical_ok_pages": 18,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 303.4,
-    "max_response_time_ms": 699,
-    "health_score": 100.0,
+    "avg_response_time_ms": 276.7,
+    "max_response_time_ms": 2198,
+    "health_score": 97.4,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 97.4,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-26T13:39:10Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -2.6,
+  "baseline_timestamp": "2026-09-26T13:39:32Z",
+  "warnings": [
+    "page-level change: /",
+    "page-level change: /institutional.html"
+  ],
+  "page_changes": {
+    "/": [
+      "response_time_ms: 495 -> 2198"
+    ],
+    "/institutional.html": [
+      "new page in monitored baseline"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/",
+    "/institutional.html"
+  ],
+  "status": "warning"
 }
