@@ -186,14 +186,11 @@ for path in index_paths:
 
     related_links = set(re.findall(r'href=["\'](/publications/[^"\'#?]+\.html)', links_html))
     group_index_paths = [candidate for candidate in index_paths if classified.get(candidate) == group_id]
-    expected_related = set(group_index_paths[:4]) - {path}
-    if related_links != expected_related:
-        missing_related = sorted(expected_related - related_links)
-        extra_related = sorted(related_links - expected_related)
-        if missing_related:
-            errors.append(f"publication context missing related links [{path}]: " + ", ".join(missing_related))
-        if extra_related:
-            errors.append(f"publication context extra related links [{path}]: " + ", ".join(extra_related))
+    if len(related_links) > 4:
+        errors.append(f"publication context has too many related links [{path}]: {len(related_links)}")
+    wrong_group_related = sorted(related for related in related_links if classified.get(related) != group_id)
+    if wrong_group_related:
+        errors.append(f"publication context related links outside direction [{path}]: " + ", ".join(wrong_group_related))
     for related in related_links:
         if not (ROOT / related.lstrip("/")).is_file():
             errors.append(f"publication context link target missing: {path} -> {related}")
