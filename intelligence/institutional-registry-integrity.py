@@ -59,6 +59,9 @@ relation_pairs = {
     "implemented-by": {"project": {"organization"}},
     "supports-direction": {"project": {"direction"}},
     "documented-by": {"project": {"document"}},
+    "references": {
+        "link": {"person", "project"}
+    },
 }
 
 for relation in registry.get("relations", []):
