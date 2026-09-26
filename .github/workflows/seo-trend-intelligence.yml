@@ -42,7 +42,7 @@ jobs:
 
           site = 'https://xn--80alhhq.xn--p1ai'
           required = [
-              '/', '/about.html', '/projects.html', '/publications.html', '/reception.html',
+              '/', '/about.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html',
               '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
               '/publications/ai-infrastructure.html', '/publications/ai-parliament.html',
               '/publications/understanding-state-and-law.html', '/publications/legal-architecture.html',
