@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-26T11:06:09Z",
+  "timestamp": "2026-09-26T11:07:49Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
-    "sitemap_urls": 26,
+    "sitemap_urls": 31,
     "sitemap_unique": true,
     "sitemap_coverage": true,
     "required_pages": 17,
@@ -11,8 +11,8 @@
     "canonical_ok_pages": 17,
     "jsonld_pages": 17,
     "noindex_pages": 0,
-    "avg_response_time_ms": 242.3,
-    "max_response_time_ms": 923,
+    "avg_response_time_ms": 133.5,
+    "max_response_time_ms": 374,
     "health_score": 100.0,
     "health_grade": "healthy"
   },
@@ -20,7 +20,7 @@
   "health_grade": "healthy",
   "trend_direction": "stable",
   "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-26T11:05:11Z",
+  "baseline_timestamp": "2026-09-26T11:06:09Z",
   "warnings": [],
   "page_changes": {},
   "critical_pages": [],
