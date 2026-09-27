@@ -129,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('zhakin-ai-widget')) {
     const style = document.createElement('style');
     style.textContent = `
-      #zhakin-ai-widget{position:fixed;right:18px;bottom:18px;z-index:9999;font-family:inherit;display:flex;flex-direction:column;align-items:flex-end}
-      #zhakin-ai-launcher{position:relative;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+      #zhakin-ai-widget{position:fixed;inset:0;z-index:9999;pointer-events:none;font-family:inherit}
+      #zhakin-ai-launcher{position:fixed;right:18px;bottom:18px;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
       #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px);box-shadow:0 15px 38px rgba(0,0,0,.38)}
       .zhakin-ai-robot{position:relative;width:31px;height:31px;flex:0 0 31px;border-radius:9px 7px 10px 10px;background:linear-gradient(135deg,#1b302b 0%,#0a1814 68%);border:1px solid rgba(212,175,55,.7);box-shadow:inset -5px 0 0 rgba(0,0,0,.13),inset 0 -5px 0 rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.28);overflow:visible}
       .zhakin-ai-robot:before{content:"";position:absolute;left:5px;top:7px;width:16px;height:11px;border:1px solid rgba(212,175,55,.78);border-radius:5px 3px 3px 5px;background:#050e0b;box-shadow:inset 0 0 8px rgba(31,199,143,.09)}
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .zhakin-ai-antenna:after{content:"";position:absolute;width:5px;height:5px;left:-2px;top:-4px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px rgba(212,175,55,.55)}
       .zhakin-ai-robot .zhakin-ai-antenna:before{content:"";position:absolute;width:3px;height:13px;right:-7px;bottom:-1px;border-radius:3px;background:rgba(212,175,55,.42);box-shadow:0 2px 0 rgba(212,175,55,.35)}
       .zhakin-ai-panel{display:none}
-      #zhakin-ai-panel{width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
+      #zhakin-ai-panel{position:fixed;right:18px;bottom:76px;width:min(360px,calc(100vw - 28px));margin:0;pointer-events:auto;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
       #zhakin-ai-panel.is-open{display:block}
       .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
       .zhakin-ai-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       #zhakin-ai-submit{border:1px solid #d4af37;border-radius:11px;background:#d4af37;color:#071a16;padding:0 12px;font-weight:800;cursor:pointer}
       #zhakin-ai-submit:disabled{opacity:.42;cursor:not-allowed}
       .zhakin-ai-links{padding:0 13px 12px;font-size:11px}.zhakin-ai-links a{color:#d4af37;text-decoration:none}
-      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:5px 9px 5px 5px}.zhakin-ai-robot{width:28px;height:28px;flex-basis:28px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
+      @media(max-width:520px){#zhakin-ai-launcher{right:10px;bottom:max(10px,env(safe-area-inset-bottom));padding:5px 9px 5px 5px}.zhakin-ai-robot{width:28px;height:28px;flex-basis:28px}#zhakin-ai-panel{right:10px;bottom:64px;width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
     `;
     document.head.appendChild(style);
 
@@ -205,11 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeAi = () => {
       panel.classList.remove('is-open');
+      panel.hidden = true;
       launcher.setAttribute('aria-expanded', 'false');
       launcher.setAttribute('aria-label', 'Открыть ЖАК');
     };
 
     const openAi = () => {
+      panel.hidden = false;
       panel.classList.add('is-open');
       launcher.setAttribute('aria-expanded', 'true');
       launcher.setAttribute('aria-label', 'Закрыть ЖАК');
@@ -220,7 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ЖАК всегда стартует закрытым и остаётся в нижнем правом углу.
     closeAi();
 
-    launcher.addEventListener('click', () => {
+    launcher.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (panel.classList.contains('is-open')) {
         closeAi();
       } else {
@@ -236,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', event => {
-      if (!panel.classList.contains('is-open')) return;
+      if (panel.hidden || !panel.classList.contains('is-open')) return;
       if (!widget.contains(event.target)) closeAi();
     });
 
