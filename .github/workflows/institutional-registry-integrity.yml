@@ -9,6 +9,8 @@ on:
       - 'institutional.html'
       - 'intelligence/institutional-registry-integrity.py'
       - '.github/workflows/institutional-registry-integrity.yml'
+  workflow_dispatch:
+
   pull_request:
     paths:
       - 'data/institutional-registry.json'
