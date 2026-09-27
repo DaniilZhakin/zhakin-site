@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "service": "zhakin-ai",
-  "status": "frontend-ready-backend-pending",
-  "endpoint": "",
+  "status": "knowledge-ready-backend-pending",
+  "endpoint": "",\n  "knowledge_core": "/data/zhak-knowledge.json",
   "public_context": {
     "institutional_registry": "/data/institutional-registry.json",
     "institutional_page": "/institutional.html",
