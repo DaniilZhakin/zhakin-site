@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Жакин AI | Цифровой интеллект</title>
+<meta name="description" content="Цифровой интеллект Жакин.рф: ответы по материалам сайта, институциональному контуру и опубликованным проектам с указанием источников.">
+<link rel="canonical" href="https://xn--80alhhq.xn--p1ai/intelligence.html">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.ai-shell{max-width:920px;margin:0 auto}
+.ai-hero{margin-bottom:28px}
+.ai-badge{display:inline-flex;padding:7px 12px;border:1px solid rgba(212,175,55,.35);border-radius:999px;color:#d4af37;font-size:11px;letter-spacing:1.6px;text-transform:uppercase}
+.ai-status{margin-top:18px;padding:14px 16px;border:1px solid rgba(212,175,55,.22);border-radius:12px;background:rgba(7,26,22,.5);color:rgba(244,241,232,.72);font-size:14px}
+.ai-chat{display:flex;flex-direction:column;gap:16px}
+.ai-messages{min-height:280px;max-height:52vh;overflow:auto;padding:20px;border:1px solid rgba(212,175,55,.25);border-radius:18px;background:#091f1a}
+.ai-message{max-width:82%;padding:15px 17px;border-radius:16px;line-height:1.6;white-space:pre-wrap}
+.ai-message.system{align-self:flex-start;border:1px solid rgba(212,175,55,.2);background:rgba(244,241,232,.035);color:rgba(244,241,232,.82)}
+.ai-message.user{align-self:flex-end;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.28)}
+.ai-form{display:flex;gap:12px}
+.ai-input{flex:1;min-height:54px;resize:vertical;padding:14px 16px;border-radius:14px;border:1px solid rgba(212,175,55,.3);background:#071a16;color:#f4f1e8;font:inherit}
+.ai-input:focus{outline:2px solid rgba(212,175,55,.55);outline-offset:2px}
+.ai-submit{border:1px solid #d4af37;border-radius:14px;background:#d4af37;color:#071a16;font-weight:800;padding:0 22px;cursor:pointer}
+.ai-submit:disabled{opacity:.45;cursor:not-allowed}
+.ai-sources{margin-top:10px;font-size:13px;color:rgba(244,241,232,.65)}
+.ai-sources a{margin-right:14px}
+.ai-topics{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.ai-topic{border:1px solid rgba(212,175,55,.25);border-radius:999px;padding:8px 12px;background:transparent;color:#f4f1e8;cursor:pointer}
+@media(max-width:700px){.ai-form{flex-direction:column}.ai-submit{min-height:50px}.ai-message{max-width:94%}}
+</style>
+</head>
+<body>
+<header class="site-header">
+<div class="header-container">
+<a class="brand" href="index.html"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">Цифровой интеллект</span></a>
+<button class="menu-toggle" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
+<nav class="main-navigation" aria-label="Основная навигация">
+<a href="index.html">Главная</a><a href="projects.html">Проекты</a><a href="publications.html">Публикации</a><a href="institutional.html">Институциональный контур</a><a href="intelligence.html" aria-current="page">Жакин AI</a><a href="reception.html">Приёмная</a>
+</nav>
+</div>
+</header>
+<main>
+<section class="ai-hero">
+<div class="ai-shell">
+<span class="hero-label">ZHAKIN.RF • INTELLIGENCE LAYER</span>
+<h1>Жакин AI</h1>
+<p>Цифровой помощник, который должен отвечать не «из воздуха», а опираться на структурированные материалы Жакин.рф, публикации и институциональный реестр.</p>
+<div class="ai-status" id="ai-status" role="status">Проверка контура подключения…</div>
+</div>
+</section>
+<section>
+<div class="ai-shell ai-chat">
+<h2>Задать вопрос</h2>
+<div class="ai-messages" id="ai-messages" aria-live="polite">
+<div class="ai-message system">Здравствуйте. Я Жакин AI. На следующем этапе я буду отвечать по материалам сайта и показывать источники, на которых основан ответ.</div>
+</div>
+<div class="ai-topics" aria-label="Примеры вопросов">
+<button class="ai-topic" type="button">Что такое ZHAKIN TEAM?</button>
+<button class="ai-topic" type="button">Какие проекты представлены на сайте?</button>
+<button class="ai-topic" type="button">Что входит в институциональный контур?</button>
+</div>
+<form class="ai-form" id="ai-form">
+<textarea class="ai-input" id="ai-input" rows="2" placeholder="Напишите вопрос…" aria-label="Вопрос"></textarea>
+<button class="ai-submit" id="ai-submit" type="submit" disabled>Спросить</button>
+</form>
+<div class="ai-sources" id="ai-sources"></div>
+</div>
+</section>
+<section>
+<div class="ai-shell">
+<h2>Как устроен контур</h2>
+<div class="project-list">
+<article class="hero-card"><h3>01 · Источники</h3><p>Публичные страницы, публикации и структурированный институциональный реестр.</p></article>
+<article class="hero-card"><h3>02 · Ответ</h3><p>Модель формирует ответ на основании переданного контекста, а не получает ключ доступа из браузера.</p></article>
+<article class="hero-card"><h3>03 · Проверка</h3><p>Ответ должен сопровождаться ссылками на первичные страницы сайта, когда источник доступен.</p></article>
+</div>
+</div>
+</section>
+</main>
+<footer><p>© Жакин Даниил Юрьевич · <a href="institutional.html">Институциональный контур</a> · <a href="reception.html">Приёмная</a></p></footer>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/intelligence.js"></script>
+</body>
+</html>
