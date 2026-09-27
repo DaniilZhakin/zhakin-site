@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const style = document.createElement('style');
     style.textContent = `
       #zhakin-ai-widget{position:fixed;inset:0;z-index:9999;pointer-events:none;font-family:inherit}
-      #zhakin-ai-launcher{position:fixed;right:18px;bottom:18px;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+      #zhakin-ai-launcher{pointer-events:auto;position:fixed;right:18px;bottom:18px;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
       #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px);box-shadow:0 15px 38px rgba(0,0,0,.38)}
       .zhakin-ai-robot{position:relative;width:31px;height:31px;flex:0 0 31px;border-radius:9px 7px 10px 10px;background:linear-gradient(135deg,#1b302b 0%,#0a1814 68%);border:1px solid rgba(212,175,55,.7);box-shadow:inset -5px 0 0 rgba(0,0,0,.13),inset 0 -5px 0 rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.28);overflow:visible}
       .zhakin-ai-robot:before{content:"";position:absolute;left:5px;top:7px;width:16px;height:11px;border:1px solid rgba(212,175,55,.78);border-radius:5px 3px 3px 5px;background:#050e0b;box-shadow:inset 0 0 8px rgba(31,199,143,.09)}
