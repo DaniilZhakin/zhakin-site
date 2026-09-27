@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="geo-legend"><span><i></i> международные деловые направления</span><span><i></i> СНГ · торговля и сотрудничество</span><span><i></i> БРИКС · торгово-экономические связи</span></div>
       </div>`;
-
     hero.insertAdjacentElement('afterend', section);
     section.querySelectorAll('.geo-marker').forEach(marker => {
       marker.addEventListener('click', () => {
@@ -127,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Site-wide AI assistant: compact robot persona "ЖАК".
   if (!document.getElementById('zhakin-ai-widget')) {
     const style = document.createElement('style');
     style.textContent = `
@@ -205,16 +203,34 @@ document.addEventListener('DOMContentLoaded', () => {
       messages.scrollTop = messages.scrollHeight;
     };
 
+    const closeAi = () => {
+      panel.classList.remove('is-open');
+      launcher.setAttribute('aria-expanded', 'false');
+    };
+
     launcher.addEventListener('click', () => {
       const open = panel.classList.toggle('is-open');
       launcher.setAttribute('aria-expanded', String(open));
       if (open) { loadAiConfig(); setTimeout(() => input.focus(), 50); }
     });
 
-    close.addEventListener('click', () => {
-      panel.classList.remove('is-open');
-      launcher.setAttribute('aria-expanded', 'false');
+    close.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeAi();
       launcher.focus();
+    });
+
+    document.addEventListener('click', event => {
+      if (!panel.classList.contains('is-open')) return;
+      if (!widget.contains(event.target)) closeAi();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && panel.classList.contains('is-open')) {
+        closeAi();
+        launcher.focus();
+      }
     });
 
     const loadAiConfig = async () => {
@@ -271,6 +287,5 @@ document.addEventListener('DOMContentLoaded', () => {
         input.focus();
       }
     });
-
   }
 });
