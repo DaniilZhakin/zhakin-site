@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-27T01:24:51Z",
+  "timestamp": "2026-09-27T08:05:47Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 18,
     "jsonld_pages": 18,
     "noindex_pages": 0,
-    "avg_response_time_ms": 197.6,
-    "max_response_time_ms": 350,
-    "health_score": 100.0,
+    "avg_response_time_ms": 343.2,
+    "max_response_time_ms": 1211,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-09-26T22:47:03Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-09-27T01:24:51Z",
+  "warnings": [
+    "page-level change: /publications/digital-ruble.html"
+  ],
+  "page_changes": {
+    "/publications/digital-ruble.html": [
+      "response_time_ms: 225 -> 1211"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/digital-ruble.html"
+  ],
+  "status": "warning"
 }
