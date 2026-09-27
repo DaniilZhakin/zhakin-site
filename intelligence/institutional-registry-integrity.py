@@ -28,6 +28,10 @@ if missing:
 entity_types = set(registry.get("entity_types", []))
 relation_types = set(registry.get("relation_types", []))
 entities = registry.get("entities", {})
+expected_buckets = {f"{entity_type}s" for entity_type in entity_types}
+unknown_buckets = set(entities) - expected_buckets
+if unknown_buckets:
+    errors.append(f"unknown entity buckets: {sorted(unknown_buckets)}")
 
 ids = {}
 for bucket, items in entities.items():
