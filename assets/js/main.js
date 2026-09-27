@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="zhakin-ai-title"><span class="zhakin-ai-head-robot" aria-hidden="true"></span><span>ЖАК<small>Жакин AI · цифровой помощник</small></span></div>
           <button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button>
         </div>
-        <div class="zhakin-ai-status" id="zhakin-ai-status">Проверяю контур подключения…</div>
+        <div class="zhakin-ai-status" id="zhakin-ai-status">Готов к диалогу. Нажмите на ЖАК, чтобы открыть помощника.</div>
         <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я ЖАК — цифровой помощник Жакин.рф. Помогу найти информацию на сайте и покажу источники.</div></div>
         <form class="zhakin-ai-form" id="zhakin-ai-form">
           <textarea id="zhakin-ai-input" rows="1" placeholder="Задайте вопрос…" aria-label="Вопрос для ЖАК"></textarea>
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     launcher.addEventListener('click', () => {
       const open = panel.classList.toggle('is-open');
       launcher.setAttribute('aria-expanded', String(open));
-      if (open) setTimeout(() => input.focus(), 50);
+      if (open) { loadAiConfig(); setTimeout(() => input.focus(), 50); }
     });
 
     close.addEventListener('click', () => {
@@ -272,6 +272,5 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    loadAiConfig();
   }
 });
