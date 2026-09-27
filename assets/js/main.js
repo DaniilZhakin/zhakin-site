@@ -134,20 +134,21 @@ document.addEventListener('DOMContentLoaded', () => {
       #zhakin-ai-widget{position:fixed;right:18px;bottom:18px;z-index:9999;font-family:inherit}
       #zhakin-ai-launcher{position:relative;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
       #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px);box-shadow:0 15px 38px rgba(0,0,0,.38)}
-      .zhakin-ai-robot{position:relative;width:31px;height:31px;flex:0 0 31px;border-radius:8px 8px 10px 10px;background:linear-gradient(160deg,#172d28 0%,#081713 72%);border:1px solid rgba(212,175,55,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 -5px 0 rgba(0,0,0,.15),0 4px 12px rgba(0,0,0,.28)}
-      .zhakin-ai-robot:before{content:"";position:absolute;left:5px;right:5px;top:7px;height:12px;border:1px solid rgba(212,175,55,.78);border-radius:4px;background:#050e0b;box-shadow:inset 0 0 8px rgba(31,199,143,.09)}
-      .zhakin-ai-robot:after{content:"••";position:absolute;left:9px;top:6px;color:#d4af37;font-size:12px;letter-spacing:4px;line-height:10px;text-shadow:0 0 7px rgba(212,175,55,.55)}
-      .zhakin-ai-antenna{position:absolute;width:3px;height:5px;left:13px;top:-6px;border-radius:3px;background:#d4af37;box-shadow:0 -3px 0 0 #d4af37}
-      .zhakin-ai-antenna:after{content:"";position:absolute;width:5px;height:5px;left:-1px;top:-4px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px rgba(212,175,55,.55)}
+      .zhakin-ai-robot{position:relative;width:31px;height:31px;flex:0 0 31px;border-radius:9px 7px 10px 10px;background:linear-gradient(135deg,#1b302b 0%,#0a1814 68%);border:1px solid rgba(212,175,55,.7);box-shadow:inset -5px 0 0 rgba(0,0,0,.13),inset 0 -5px 0 rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.28);overflow:visible}
+      .zhakin-ai-robot:before{content:"";position:absolute;left:5px;top:7px;width:16px;height:11px;border:1px solid rgba(212,175,55,.78);border-radius:5px 3px 3px 5px;background:#050e0b;box-shadow:inset 0 0 8px rgba(31,199,143,.09)}
+      .zhakin-ai-robot:after{content:"•";position:absolute;left:11px;top:6px;color:#d4af37;font-size:12px;line-height:10px;text-shadow:0 0 7px rgba(212,175,55,.55)}
+      .zhakin-ai-antenna{position:absolute;width:2px;height:7px;left:18px;top:-6px;border-radius:3px;background:#d4af37;transform:rotate(22deg);transform-origin:bottom}
+      .zhakin-ai-antenna:after{content:"";position:absolute;width:5px;height:5px;left:-2px;top:-4px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px rgba(212,175,55,.55)}
+      .zhakin-ai-robot .zhakin-ai-antenna:before{content:"";position:absolute;width:3px;height:13px;right:-7px;bottom:-1px;border-radius:3px;background:rgba(212,175,55,.42);box-shadow:0 2px 0 rgba(212,175,55,.35)}
       .zhakin-ai-panel{display:none}
       #zhakin-ai-panel{width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
       #zhakin-ai-panel.is-open{display:block}
       .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
       .zhakin-ai-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
       .zhakin-ai-title small{display:block;margin-top:2px;color:rgba(244,241,232,.55);font-size:11px;font-weight:400}
-      .zhakin-ai-head-robot{width:25px;height:25px;border-radius:6px 6px 8px 8px;background:#102a22;border:1px solid rgba(212,175,55,.55);position:relative}
-      .zhakin-ai-head-robot:before{content:"";position:absolute;left:5px;right:5px;top:6px;height:9px;border:1px solid #d4af37;border-radius:3px}
-      .zhakin-ai-head-robot:after{content:"••";position:absolute;left:7px;top:2px;color:#d4af37;font-size:9px;letter-spacing:3px}
+      .zhakin-ai-head-robot{width:25px;height:25px;border-radius:7px 5px 8px 8px;background:linear-gradient(135deg,#173027,#0a1814);border:1px solid rgba(212,175,55,.55);position:relative;overflow:visible}
+      .zhakin-ai-head-robot:before{content:"";position:absolute;left:5px;top:6px;width:13px;height:8px;border:1px solid #d4af37;border-radius:4px 2px 2px 4px}
+      .zhakin-ai-head-robot:after{content:"•";position:absolute;left:10px;top:2px;color:#d4af37;font-size:9px;line-height:9px}
       #zhakin-ai-close{border:0;background:transparent;color:rgba(244,241,232,.7);font-size:20px;cursor:pointer}
       .zhakin-ai-status{padding:10px 15px;color:rgba(244,241,232,.62);font-size:11px;line-height:1.45;border-bottom:1px solid rgba(212,175,55,.12)}
       #zhakin-ai-messages{max-height:250px;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
