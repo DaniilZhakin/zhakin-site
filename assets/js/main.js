@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я ЖАК — цифровой помощник Жакин.рф. Помогу найти информацию на сайте и покажу источники.</div></div>
         <form class="zhakin-ai-form" id="zhakin-ai-form">
           <textarea id="zhakin-ai-input" rows="1" placeholder="Задайте вопрос…" aria-label="Вопрос для ЖАК"></textarea>
-          <button id="zhakin-ai-submit" type="submit" disabled>→</button>
+          <button id="zhakin-ai-submit" type="submit">→</button>
         </form>
         <div class="zhakin-ai-links"><a href="/intelligence.html">Открыть полный режим →</a></div>
       </div>
@@ -206,12 +206,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeAi = () => {
       panel.classList.remove('is-open');
       launcher.setAttribute('aria-expanded', 'false');
+      launcher.setAttribute('aria-label', 'Открыть ЖАК');
     };
 
+    const openAi = () => {
+      panel.classList.add('is-open');
+      launcher.setAttribute('aria-expanded', 'true');
+      launcher.setAttribute('aria-label', 'Закрыть ЖАК');
+      loadAiConfig();
+      setTimeout(() => input.focus(), 50);
+    };
+
+    // ЖАК всегда стартует закрытым и остаётся в нижнем правом углу.
+    closeAi();
+
     launcher.addEventListener('click', () => {
-      const open = panel.classList.toggle('is-open');
-      launcher.setAttribute('aria-expanded', String(open));
-      if (open) { loadAiConfig(); setTimeout(() => input.focus(), 50); }
+      if (panel.classList.contains('is-open')) {
+        closeAi();
+      } else {
+        openAi();
+      }
     });
 
     close.addEventListener('click', (event) => {
