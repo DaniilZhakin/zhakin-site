@@ -62,6 +62,9 @@ jobs:
           if (config.security?.backend_required !== true) {
             throw new Error('Backend requirement must remain enabled');
           }
+          if (!Array.isArray(knowledge.knowledge_sources) || knowledge.knowledge_sources.length < 1) {
+            throw new Error('Knowledge source registry is empty');
+          }
           if (!Array.isArray(registry.entities?.projects) || registry.entities.projects.length === 0) {
             throw new Error('Institutional project registry is empty');
           }
