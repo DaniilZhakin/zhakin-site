@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "zhakin-ai-backend",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-25",
+  "vars": {
+    "ALLOWED_ORIGIN": "https://xn--80alhhq.xn--p1ai",
+    "KNOWLEDGE_URL": "https://xn--80alhhq.xn--p1ai/data/zhak-knowledge.json",
+    "OPENAI_MODEL": "SET_IN_CLOUDFLARE_RUNTIME"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RATE_LIMITER",
+        "class_name": "RateLimiter"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["RateLimiter"]
+    }
+  ],
+  "secrets": {
+    "required": ["OPENAI_API_KEY"]
+  }
+}
