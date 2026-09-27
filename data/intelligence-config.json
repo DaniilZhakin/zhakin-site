@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "service": "zhakin-ai",
+  "status": "frontend-ready-backend-pending",
+  "endpoint": "",
+  "public_context": {
+    "institutional_registry": "/data/institutional-registry.json",
+    "institutional_page": "/institutional.html",
+    "projects_page": "/projects.html",
+    "publications_page": "/publications.html"
+  },
+  "security": {
+    "api_key_client_side": false,
+    "backend_required": true,
+    "note": "The model API key must remain server-side. The browser may call only the public backend endpoint."
+  }
+}
