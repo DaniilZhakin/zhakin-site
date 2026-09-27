@@ -1,0 +1,100 @@
+name: ЖАК Knowledge Integrity
+
+on:
+  push:
+    paths:
+      - 'data/zhak-knowledge.json'
+      - 'data/intelligence-config.json'
+      - 'data/institutional-registry.json'
+      - 'data/projects.json'
+      - '.github/workflows/zhak-knowledge-integrity.yml'
+  pull_request:
+    paths:
+      - 'data/zhak-knowledge.json'
+      - 'data/intelligence-config.json'
+      - 'data/institutional-registry.json'
+      - 'data/projects.json'
+      - '.github/workflows/zhak-knowledge-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate ЖАК knowledge contract
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const readJson = (file) => {
+            const raw = fs.readFileSync(file, 'utf8');
+            try { return JSON.parse(raw); }
+            catch (e) { throw new Error(file + ': invalid JSON: ' + e.message); }
+          };
+
+          const knowledge = readJson('data/zhak-knowledge.json');
+          const config = readJson('data/intelligence-config.json');
+          const registry = readJson('data/institutional-registry.json');
+          const projects = readJson('data/projects.json');
+
+          if (knowledge.service !== 'zhakin-ai') throw new Error('Knowledge service mismatch');
+          if (!knowledge.response_contract?.answer || !Array.isArray(knowledge.response_contract?.sources)) {
+            throw new Error('Knowledge response contract is incomplete');
+          }
+          if (config.knowledge_core !== '/data/zhak-knowledge.json') {
+            throw new Error('intelligence-config knowledge_core mismatch');
+          }
+          if (config.security?.api_key_client_side !== false) {
+            throw new Error('API key client-side exposure must remain disabled');
+          }
+          if (config.security?.backend_required !== true) {
+            throw new Error('Backend requirement must remain enabled');
+          }
+          if (!Array.isArray(registry.entities?.projects) || registry.entities.projects.length === 0) {
+            throw new Error('Institutional project registry is empty');
+          }
+          if (!Array.isArray(projects.projects) || projects.projects.length === 0) {
+            throw new Error('Public project registry is empty');
+          }
+
+          for (const source of knowledge.knowledge_sources) {
+            const file = '.' + source.path;
+            if (!fs.existsSync(file)) throw new Error('Knowledge source missing: ' + source.path);
+          }
+
+          const publicPaths = [
+            '/institutional.html',
+            '/projects.html',
+            '/publications.html',
+            '/reception.html',
+            '/international-geography.html'
+          ];
+          for (const publicPath of publicPaths) {
+            if (!fs.existsSync('.' + publicPath)) {
+              throw new Error('Public knowledge route missing: ' + publicPath);
+            }
+          }
+
+          console.log('ЖАК knowledge integrity: PASS');
+          console.log('Knowledge core, config, registries and public source routes are consistent.');
+          NODE
+
+      - name: Security contract check
+        run: |
+          if grep -RniE 'sk-[A-Za-z0-9_-]{20,}|OPENAI_API_KEY[[:space:]]*=' data intelligence .github 2>/dev/null; then
+            echo "Potential API credential material detected in tracked configuration."
+            exit 1
+          fi
+          echo "Security contract: PASS"
