@@ -184,4 +184,135 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+  // Site-wide AI assistant: compact, unobtrusive and mobile-first.
+  if (!document.getElementById('zhakin-ai-widget')) {
+    const style = document.createElement('style');
+    style.textContent = `
+      #zhakin-ai-widget{position:fixed;right:18px;bottom:18px;z-index:9999;font-family:inherit}
+      #zhakin-ai-launcher{display:flex;align-items:center;gap:9px;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:11px 15px;background:#0a211b;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.28);cursor:pointer;font:600 13px/1 inherit}
+      #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-1px)}
+      .zhakin-ai-orb{width:9px;height:9px;border-radius:50%;background:#d4af37;box-shadow:0 0 0 4px rgba(212,175,55,.12)}
+      #zhakin-ai-panel{display:none;width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
+      #zhakin-ai-panel.is-open{display:block}
+      .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
+      .zhakin-ai-title{font-weight:800;font-size:14px}.zhakin-ai-sub{display:block;margin-top:2px;color:rgba(244,241,232,.55);font-size:11px;font-weight:400}
+      #zhakin-ai-close{border:0;background:transparent;color:rgba(244,241,232,.7);font-size:20px;cursor:pointer}
+      .zhakin-ai-status{padding:10px 15px;color:rgba(244,241,232,.62);font-size:11px;line-height:1.45;border-bottom:1px solid rgba(212,175,55,.12)}
+      #zhakin-ai-messages{max-height:250px;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+      .zhakin-ai-msg{max-width:88%;padding:10px 12px;border-radius:13px;font-size:13px;line-height:1.45;white-space:pre-wrap}
+      .zhakin-ai-msg.system{align-self:flex-start;background:rgba(244,241,232,.045);border:1px solid rgba(212,175,55,.14)}
+      .zhakin-ai-msg.user{align-self:flex-end;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.24)}
+      .zhakin-ai-form{display:flex;gap:8px;padding:11px;border-top:1px solid rgba(212,175,55,.14)}
+      #zhakin-ai-input{min-width:0;flex:1;min-height:42px;max-height:100px;resize:vertical;border-radius:11px;border:1px solid rgba(212,175,55,.25);background:#06130f;color:#f4f1e8;padding:10px;font:inherit;font-size:13px}
+      #zhakin-ai-input:focus{outline:2px solid rgba(212,175,55,.4);outline-offset:1px}
+      #zhakin-ai-submit{border:1px solid #d4af37;border-radius:11px;background:#d4af37;color:#071a16;padding:0 12px;font-weight:800;cursor:pointer}
+      #zhakin-ai-submit:disabled{opacity:.42;cursor:not-allowed}
+      .zhakin-ai-links{padding:0 13px 12px;font-size:11px}.zhakin-ai-links a{color:#d4af37;text-decoration:none}
+      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:10px 13px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
+    `;
+    document.head.appendChild(style);
+
+    const widget = document.createElement('div');
+    widget.id = 'zhakin-ai-widget';
+    widget.innerHTML = `
+      <div id="zhakin-ai-panel" role="dialog" aria-label="Жакин AI">
+        <div class="zhakin-ai-head"><div class="zhakin-ai-title">Жакин AI<span class="zhakin-ai-sub">цифровой помощник сайта</span></div><button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button></div>
+        <div class="zhakin-ai-status" id="zhakin-ai-status">Проверяю контур подключения…</div>
+        <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я помогу найти информацию на Жакин.рф. Ответы должны опираться на материалы сайта и показывать источники.</div></div>
+        <form class="zhakin-ai-form" id="zhakin-ai-form">
+          <textarea id="zhakin-ai-input" rows="1" placeholder="Задайте вопрос…" aria-label="Вопрос для Жакин AI"></textarea>
+          <button id="zhakin-ai-submit" type="submit" disabled>→</button>
+        </form>
+        <div class="zhakin-ai-links"><a href="/intelligence.html">Открыть полный режим →</a></div>
+      </div>
+      <button id="zhakin-ai-launcher" type="button" aria-expanded="false" aria-controls="zhakin-ai-panel"><span class="zhakin-ai-orb" aria-hidden="true"></span>Жакин AI</button>
+    `;
+    document.body.appendChild(widget);
+
+    const panel = document.getElementById('zhakin-ai-panel');
+    const launcher = document.getElementById('zhakin-ai-launcher');
+    const close = document.getElementById('zhakin-ai-close');
+    const form = document.getElementById('zhakin-ai-form');
+    const input = document.getElementById('zhakin-ai-input');
+    const submit = document.getElementById('zhakin-ai-submit');
+    const status = document.getElementById('zhakin-ai-status');
+    const messages = document.getElementById('zhakin-ai-messages');
+    let endpoint = null;
+
+    const addAiMessage = (text, role='system') => {
+      const el = document.createElement('div');
+      el.className = 'zhakin-ai-msg ' + role;
+      el.textContent = text;
+      messages.appendChild(el);
+      messages.scrollTop = messages.scrollHeight;
+    };
+
+    launcher.addEventListener('click', () => {
+      const open = panel.classList.toggle('is-open');
+      launcher.setAttribute('aria-expanded', String(open));
+      if (open) setTimeout(() => input.focus(), 50);
+    });
+    close.addEventListener('click', () => {
+      panel.classList.remove('is-open');
+      launcher.setAttribute('aria-expanded', 'false');
+      launcher.focus();
+    });
+
+    const loadAiConfig = async () => {
+      try {
+        const response = await fetch('/data/intelligence-config.json', {cache:'no-store'});
+        if (!response.ok) throw new Error('config');
+        const config = await response.json();
+        endpoint = typeof config.endpoint === 'string' && config.endpoint.trim() ? config.endpoint.trim() : null;
+        status.textContent = endpoint
+          ? 'Контур подключён. Можно задавать вопросы.'
+          : 'Интерфейс готов. Серверный AI пока не подключён; API-ключ не хранится в браузере.';
+        submit.disabled = !endpoint;
+      } catch (_) {
+        status.textContent = 'Конфигурация помощника временно недоступна.';
+      }
+    };
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+      if (!endpoint) {
+        addAiMessage('Сейчас доступен интерфейс помощника, но серверный AI-контур ещё не подключён. Как только безопасный backend будет активирован, здесь можно будет получать ответы с источниками.', 'system');
+        return;
+      }
+      addAiMessage(question, 'user');
+      input.value = '';
+      input.disabled = true;
+      submit.disabled = true;
+      try {
+        const response = await fetch(endpoint, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question})});
+        if (!response.ok) throw new Error('request');
+        const data = await response.json();
+        addAiMessage(typeof data.answer === 'string' ? data.answer : 'Сервис вернул неподдерживаемый формат ответа.');
+        if (Array.isArray(data.sources) && data.sources.length) {
+          data.sources.forEach(source => {
+            if (!source || !source.url) return;
+            const link = document.createElement('a');
+            link.href = source.url;
+            link.textContent = source.title || source.url;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            const wrap = document.createElement('div');
+            wrap.className = 'zhakin-ai-links';
+            wrap.appendChild(link);
+            messages.appendChild(wrap);
+          });
+        }
+      } catch (_) {
+        addAiMessage('Не удалось получить ответ от AI-сервера. Попробуйте ещё раз позже.');
+      } finally {
+        input.disabled = false;
+        submit.disabled = !endpoint;
+        input.focus();
+      }
+    });
+
+    loadAiConfig();
+  }
 });
