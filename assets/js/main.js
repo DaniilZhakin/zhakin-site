@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         status.textContent = endpoint
           ? 'Контур подключён. Можно задавать вопросы.'
           : 'Интерфейс готов. Серверный AI пока не подключён; API-ключ не хранится в браузере.';
-        submit.disabled = !endpoint;
+        submit.disabled = false;
       } catch (_) {
         status.textContent = 'Конфигурация помощника временно недоступна.';
       }
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addAiMessage('Не удалось получить ответ от AI-сервера. Попробуйте ещё раз позже.');
       } finally {
         input.disabled = false;
-        submit.disabled = !endpoint;
+        submit.disabled = false;
         input.focus();
       }
     });
