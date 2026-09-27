@@ -11,25 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const recordAudienceEvent = (type, data = {}) => {
     try {
       const events = JSON.parse(sessionStorage.getItem(AUDIENCE_KEY) || '[]');
-      events.push({
-        type,
-        path: window.location.pathname,
-        timestamp: new Date().toISOString(),
-        ...data
-      });
+      events.push({ type, path: window.location.pathname, timestamp: new Date().toISOString(), ...data });
       sessionStorage.setItem(AUDIENCE_KEY, JSON.stringify(events.slice(-MAX_EVENTS)));
-    } catch (_) {
-      // Storage may be unavailable; site functionality must never depend on analytics.
-    }
+    } catch (_) {}
   };
 
-  recordAudienceEvent('page_view', {
-    title: document.title
-  });
+  recordAudienceEvent('page_view', { title: document.title });
 
   const setMenuState = (isOpen) => {
     if (!navigation || !menuButton) return;
-
     navigation.classList.toggle('active', isOpen);
     menuButton.classList.toggle('active', isOpen);
     menuButton.setAttribute('aria-expanded', String(isOpen));
@@ -50,24 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const isSamePage = url.pathname === window.location.pathname;
       const target = document.querySelector(url.hash);
 
-      recordAudienceEvent('navigation_click', {
-        target: url.pathname + url.hash,
-        label: link.textContent.trim().slice(0, 120)
-      });
+      recordAudienceEvent('navigation_click', { target: url.pathname + url.hash, label: link.textContent.trim().slice(0, 120) });
 
-      if (url.hash === '#contacts') {
-        recordAudienceEvent('contact_interest', {
-          source: 'navigation'
-        });
-      }
+      if (url.hash === '#contacts') recordAudienceEvent('contact_interest', { source: 'navigation' });
 
       if (isSamePage && target) {
         event.preventDefault();
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setMenuState(false);
       }
     });
@@ -75,19 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', event => {
     if (!navigation || !menuButton) return;
-
     const clickedLink = event.target.closest('a[href]');
+
     if (clickedLink) {
       const url = new URL(clickedLink.href, window.location.href);
-      const isExternal = url.origin !== window.location.origin;
-
-      if (isExternal) {
-        recordAudienceEvent('outbound_click', {
-          host: url.host,
-          path: url.pathname
-        });
+      if (url.origin !== window.location.origin) {
+        recordAudienceEvent('outbound_click', { host: url.host, path: url.pathname });
       }
-
       if (clickedLink.closest('#contacts')) {
         recordAudienceEvent('contact_action', {
           channel: url.protocol === 'mailto:' ? 'email' : url.host || url.protocol.replace(':', '')
@@ -97,15 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const clickedInsideMenu = navigation.contains(event.target);
     const clickedButton = menuButton.contains(event.target);
-
-    if (!clickedInsideMenu && !clickedButton) {
-      setMenuState(false);
-    }
+    if (!clickedInsideMenu && !clickedButton) setMenuState(false);
   });
 
-  // Public, privacy-safe geography layer: countries/markets only, no private contact data.
   const geography = [
-    // Existing international directions
     { name: 'Канада', x: 18, y: 31, note: 'международные деловые направления' },
     { name: 'Турция', x: 49, y: 43, note: 'торговое взаимодействие' },
     { name: 'Египет', x: 53, y: 55, note: 'экспортное направление · БРИКС' },
@@ -114,8 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Эфиопия', x: 61, y: 70, note: 'международное сотрудничество · БРИКС' },
     { name: 'Индия', x: 69, y: 57, note: 'экспортное направление · БРИКС' },
     { name: 'Бангладеш', x: 73, y: 55, note: 'торговое взаимодействие' },
-
-    // CIS
     { name: 'Беларусь', x: 48, y: 32, note: 'СНГ · международное взаимодействие' },
     { name: 'Казахстан', x: 58, y: 34, note: 'СНГ · торгово-экономическое взаимодействие' },
     { name: 'Кыргызстан', x: 63, y: 40, note: 'СНГ · международное сотрудничество' },
@@ -125,8 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Азербайджан', x: 54, y: 38, note: 'СНГ · торгово-экономическое взаимодействие' },
     { name: 'Молдова', x: 47, y: 38, note: 'СНГ · международное взаимодействие' },
     { name: 'Туркменистан', x: 58, y: 47, note: 'СНГ · международное взаимодействие' },
-
-    // BRICS core and expanded markets
     { name: 'Китай', x: 78, y: 39, note: 'БРИКС · стратегическое торговое направление' },
     { name: 'Бразилия', x: 32, y: 68, note: 'БРИКС · международное сотрудничество' },
     { name: 'ЮАР', x: 51, y: 79, note: 'БРИКС · международное сотрудничество' },
@@ -144,10 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const markers = geography.map((place, index) => `
       <button class="geo-marker" type="button" style="--x:${place.x}%;--y:${place.y}%" aria-label="${place.name}: ${place.note}" data-geo-index="${index}">
-        <span class="geo-dot" aria-hidden="true"></span>
-        <span class="geo-label">${place.name}</span>
-      </button>
-    `).join('');
+        <span class="geo-dot" aria-hidden="true"></span><span class="geo-label">${place.name}</span>
+      </button>`).join('');
 
     section.innerHTML = `
       <div class="geography-inner">
@@ -158,20 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <p><a href="/international-geography.html">Открыть структурированный обзор международной географии →</a></p>
         </div>
         <div class="geo-map" role="img" aria-label="Схематическая карта международных деловых направлений, стран СНГ и рынков БРИКС">
-          <div class="geo-grid" aria-hidden="true"></div>
-          <div class="geo-orbit geo-orbit-a" aria-hidden="true"></div>
-          <div class="geo-orbit geo-orbit-b" aria-hidden="true"></div>
-          <div class="geo-route geo-route-a" aria-hidden="true"></div>
-          <div class="geo-route geo-route-b" aria-hidden="true"></div>
-          ${markers}
+          <div class="geo-grid" aria-hidden="true"></div><div class="geo-orbit geo-orbit-a" aria-hidden="true"></div>
+          <div class="geo-orbit geo-orbit-b" aria-hidden="true"></div><div class="geo-route geo-route-a" aria-hidden="true"></div>
+          <div class="geo-route geo-route-b" aria-hidden="true"></div>${markers}
         </div>
-        <div class="geo-legend">
-          <span><i></i> международные деловые направления</span>
-          <span><i></i> СНГ · торговля и сотрудничество</span>
-          <span><i></i> БРИКС · торгово-экономические связи</span>
-        </div>
-      </div>
-    `;
+        <div class="geo-legend"><span><i></i> международные деловые направления</span><span><i></i> СНГ · торговля и сотрудничество</span><span><i></i> БРИКС · торгово-экономические связи</span></div>
+      </div>`;
 
     hero.insertAdjacentElement('afterend', section);
 
@@ -184,18 +138,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-  // Site-wide AI assistant: compact, unobtrusive and mobile-first.
+
+  // Site-wide AI assistant: a small friendly robot, compact and mobile-first.
   if (!document.getElementById('zhakin-ai-widget')) {
     const style = document.createElement('style');
     style.textContent = `
       #zhakin-ai-widget{position:fixed;right:18px;bottom:18px;z-index:9999;font-family:inherit}
-      #zhakin-ai-launcher{display:flex;align-items:center;gap:9px;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:11px 15px;background:#0a211b;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.28);cursor:pointer;font:600 13px/1 inherit}
-      #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-1px)}
-      .zhakin-ai-orb{width:9px;height:9px;border-radius:50%;background:#d4af37;box-shadow:0 0 0 4px rgba(212,175,55,.12)}
-      #zhakin-ai-panel{display:none;width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
+      #zhakin-ai-launcher{position:relative;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.5);border-radius:16px;padding:7px 11px 7px 7px;background:#0a211b;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.3);cursor:pointer;font:700 12px/1 inherit;transition:transform .18s ease,border-color .18s ease}
+      #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px)}
+      .zhakin-ai-robot{position:relative;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:linear-gradient(145deg,#163c31,#071711);border:1px solid rgba(212,175,55,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.25)}
+      .zhakin-ai-robot:before{content:"";position:absolute;left:7px;right:7px;top:8px;height:11px;border:1px solid rgba(212,175,55,.7);border-radius:5px;background:#0a1713}
+      .zhakin-ai-robot:after{content:"••";position:absolute;left:10px;top:4px;color:#d4af37;font-size:13px;letter-spacing:4px;line-height:12px}
+      .zhakin-ai-antenna{position:absolute;width:4px;height:5px;left:13px;top:-6px;border-radius:3px;background:#d4af37;box-shadow:0 -4px 0 -1px #d4af37}
+      .zhakin-ai-panel{display:none}
+      #zhakin-ai-panel{width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
       #zhakin-ai-panel.is-open{display:block}
       .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
-      .zhakin-ai-title{font-weight:800;font-size:14px}.zhakin-ai-sub{display:block;margin-top:2px;color:rgba(244,241,232,.55);font-size:11px;font-weight:400}
+      .zhakin-ai-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
+      .zhakin-ai-title small{display:block;margin-top:2px;color:rgba(244,241,232,.55);font-size:11px;font-weight:400}
+      .zhakin-ai-head-robot{width:24px;height:24px;border-radius:7px;background:#0d2b22;border:1px solid rgba(212,175,55,.5);position:relative}
+      .zhakin-ai-head-robot:before{content:"";position:absolute;left:5px;right:5px;top:7px;height:8px;border:1px solid #d4af37;border-radius:3px}
+      .zhakin-ai-head-robot:after{content:"••";position:absolute;left:7px;top:2px;color:#d4af37;font-size:9px;letter-spacing:3px}
       #zhakin-ai-close{border:0;background:transparent;color:rgba(244,241,232,.7);font-size:20px;cursor:pointer}
       .zhakin-ai-status{padding:10px 15px;color:rgba(244,241,232,.62);font-size:11px;line-height:1.45;border-bottom:1px solid rgba(212,175,55,.12)}
       #zhakin-ai-messages{max-height:250px;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
@@ -208,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       #zhakin-ai-submit{border:1px solid #d4af37;border-radius:11px;background:#d4af37;color:#071a16;padding:0 12px;font-weight:800;cursor:pointer}
       #zhakin-ai-submit:disabled{opacity:.42;cursor:not-allowed}
       .zhakin-ai-links{padding:0 13px 12px;font-size:11px}.zhakin-ai-links a{color:#d4af37;text-decoration:none}
-      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:10px 13px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
+      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:6px 9px 6px 6px}.zhakin-ai-robot{width:28px;height:28px;flex-basis:28px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
     `;
     document.head.appendChild(style);
 
@@ -216,7 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
     widget.id = 'zhakin-ai-widget';
     widget.innerHTML = `
       <div id="zhakin-ai-panel" role="dialog" aria-label="Жакин AI">
-        <div class="zhakin-ai-head"><div class="zhakin-ai-title">Жакин AI<span class="zhakin-ai-sub">цифровой помощник сайта</span></div><button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button></div>
+        <div class="zhakin-ai-head">
+          <div class="zhakin-ai-title"><span class="zhakin-ai-head-robot" aria-hidden="true"></span><span>Жакин AI<small>цифровой помощник сайта</small></span></div>
+          <button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button>
+        </div>
         <div class="zhakin-ai-status" id="zhakin-ai-status">Проверяю контур подключения…</div>
         <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я помогу найти информацию на Жакин.рф. Ответы должны опираться на материалы сайта и показывать источники.</div></div>
         <form class="zhakin-ai-form" id="zhakin-ai-form">
@@ -225,7 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </form>
         <div class="zhakin-ai-links"><a href="/intelligence.html">Открыть полный режим →</a></div>
       </div>
-      <button id="zhakin-ai-launcher" type="button" aria-expanded="false" aria-controls="zhakin-ai-panel"><span class="zhakin-ai-orb" aria-hidden="true"></span>Жакин AI</button>
+      <button id="zhakin-ai-launcher" type="button" aria-expanded="false" aria-controls="zhakin-ai-panel" aria-label="Открыть Жакин AI">
+        <span class="zhakin-ai-robot" aria-hidden="true"><span class="zhakin-ai-antenna"></span></span><span>Жакин AI</span>
+      </button>
     `;
     document.body.appendChild(widget);
 
@@ -252,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
       launcher.setAttribute('aria-expanded', String(open));
       if (open) setTimeout(() => input.focus(), 50);
     });
+
     close.addEventListener('click', () => {
       panel.classList.remove('is-open');
       launcher.setAttribute('aria-expanded', 'false');
