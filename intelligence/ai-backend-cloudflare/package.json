@@ -1,0 +1,11 @@
+{
+  "name": "zhakin-ai-backend-cloudflare",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check worker.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.35.0"
+  }
+}
