@@ -65,7 +65,7 @@
     } catch (error) {
       addMessage('Не удалось получить ответ от AI-сервера. Попробуйте ещё раз позже.', 'system');
     } finally {
-      submit.disabled = !endpoint;
+      submit.disabled = false;
       input.disabled = false;
       input.focus();
     }
