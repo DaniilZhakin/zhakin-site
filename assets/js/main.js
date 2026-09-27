@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .zhakin-ai-antenna:after{content:"";position:absolute;width:5px;height:5px;left:-2px;top:-4px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px rgba(212,175,55,.55)}
       .zhakin-ai-robot .zhakin-ai-antenna:before{content:"";position:absolute;width:3px;height:13px;right:-7px;bottom:-1px;border-radius:3px;background:rgba(212,175,55,.42);box-shadow:0 2px 0 rgba(212,175,55,.35)}
       .zhakin-ai-panel{display:none}
-      #zhakin-ai-panel{position:fixed;right:18px;bottom:76px;width:min(360px,calc(100vw - 28px));margin:0;pointer-events:auto;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
+      #zhakin-ai-panel[hidden]{display:none!important}#zhakin-ai-panel{position:fixed;right:18px;bottom:76px;width:min(360px,calc(100vw - 28px));margin:0;pointer-events:auto;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
       #zhakin-ai-panel.is-open{display:block}
       .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
       .zhakin-ai-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const widget = document.createElement('div');
     widget.id = 'zhakin-ai-widget';
     widget.innerHTML = `
-      <div id="zhakin-ai-panel" role="dialog" aria-label="ЖАК">
+      <div id="zhakin-ai-panel" hidden role="dialog" aria-label="ЖАК">
         <div class="zhakin-ai-head">
           <div class="zhakin-ai-title"><span class="zhakin-ai-head-robot" aria-hidden="true"></span><span>ЖАК<small>Жакин AI · цифровой помощник</small></span></div>
           <button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button>
