@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const AUDIENCE_KEY = 'zhakin_audience_events_v1';
   const MAX_EVENTS = 50;
 
-  // Privacy-first instrumentation: events stay in the visitor's browser.
-  // No IP address, fingerprint, form content, or personally identifiable data is collected.
   const recordAudienceEvent = (type, data = {}) => {
     try {
       const events = JSON.parse(sessionStorage.getItem(AUDIENCE_KEY) || '[]');
@@ -39,11 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = new URL(link.href, window.location.href);
       const isSamePage = url.pathname === window.location.pathname;
       const target = document.querySelector(url.hash);
-
       recordAudienceEvent('navigation_click', { target: url.pathname + url.hash, label: link.textContent.trim().slice(0, 120) });
-
       if (url.hash === '#contacts') recordAudienceEvent('contact_interest', { source: 'navigation' });
-
       if (isSamePage && target) {
         event.preventDefault();
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -55,19 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', event => {
     if (!navigation || !menuButton) return;
     const clickedLink = event.target.closest('a[href]');
-
     if (clickedLink) {
       const url = new URL(clickedLink.href, window.location.href);
-      if (url.origin !== window.location.origin) {
-        recordAudienceEvent('outbound_click', { host: url.host, path: url.pathname });
-      }
+      if (url.origin !== window.location.origin) recordAudienceEvent('outbound_click', { host: url.host, path: url.pathname });
       if (clickedLink.closest('#contacts')) {
         recordAudienceEvent('contact_action', {
           channel: url.protocol === 'mailto:' ? 'email' : url.host || url.protocol.replace(':', '')
         });
       }
     }
-
     const clickedInsideMenu = navigation.contains(event.target);
     const clickedButton = menuButton.contains(event.target);
     if (!clickedInsideMenu && !clickedButton) setMenuState(false);
@@ -105,12 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
     section.id = 'geography';
     section.className = 'geography-section';
     section.setAttribute('aria-labelledby', 'geography-title');
-
     const markers = geography.map((place, index) => `
       <button class="geo-marker" type="button" style="--x:${place.x}%;--y:${place.y}%" aria-label="${place.name}: ${place.note}" data-geo-index="${index}">
         <span class="geo-dot" aria-hidden="true"></span><span class="geo-label">${place.name}</span>
       </button>`).join('');
-
     section.innerHTML = `
       <div class="geography-inner">
         <div class="geography-heading">
@@ -128,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>`;
 
     hero.insertAdjacentElement('afterend', section);
-
     section.querySelectorAll('.geo-marker').forEach(marker => {
       marker.addEventListener('click', () => {
         const place = geography[Number(marker.dataset.geoIndex)];
@@ -139,25 +127,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Site-wide AI assistant: a small friendly robot, compact and mobile-first.
+  // Site-wide AI assistant: compact robot persona "ЖАК".
   if (!document.getElementById('zhakin-ai-widget')) {
     const style = document.createElement('style');
     style.textContent = `
       #zhakin-ai-widget{position:fixed;right:18px;bottom:18px;z-index:9999;font-family:inherit}
-      #zhakin-ai-launcher{position:relative;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.5);border-radius:16px;padding:7px 11px 7px 7px;background:#0a211b;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.3);cursor:pointer;font:700 12px/1 inherit;transition:transform .18s ease,border-color .18s ease}
-      #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px)}
-      .zhakin-ai-robot{position:relative;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:linear-gradient(145deg,#163c31,#071711);border:1px solid rgba(212,175,55,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.25)}
-      .zhakin-ai-robot:before{content:"";position:absolute;left:7px;right:7px;top:8px;height:11px;border:1px solid rgba(212,175,55,.7);border-radius:5px;background:#0a1713}
-      .zhakin-ai-robot:after{content:"••";position:absolute;left:10px;top:4px;color:#d4af37;font-size:13px;letter-spacing:4px;line-height:12px}
-      .zhakin-ai-antenna{position:absolute;width:4px;height:5px;left:13px;top:-6px;border-radius:3px;background:#d4af37;box-shadow:0 -4px 0 -1px #d4af37}
+      #zhakin-ai-launcher{position:relative;display:flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.55);border-radius:14px;padding:6px 11px 6px 6px;background:#071a15;color:#f4f1e8;box-shadow:0 12px 34px rgba(0,0,0,.32);cursor:pointer;font:800 12px/1 inherit;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+      #zhakin-ai-launcher:hover{border-color:#d4af37;transform:translateY(-2px);box-shadow:0 15px 38px rgba(0,0,0,.38)}
+      .zhakin-ai-robot{position:relative;width:31px;height:31px;flex:0 0 31px;border-radius:8px 8px 10px 10px;background:linear-gradient(160deg,#172d28 0%,#081713 72%);border:1px solid rgba(212,175,55,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 -5px 0 rgba(0,0,0,.15),0 4px 12px rgba(0,0,0,.28)}
+      .zhakin-ai-robot:before{content:"";position:absolute;left:5px;right:5px;top:7px;height:12px;border:1px solid rgba(212,175,55,.78);border-radius:4px;background:#050e0b;box-shadow:inset 0 0 8px rgba(31,199,143,.09)}
+      .zhakin-ai-robot:after{content:"••";position:absolute;left:9px;top:6px;color:#d4af37;font-size:12px;letter-spacing:4px;line-height:10px;text-shadow:0 0 7px rgba(212,175,55,.55)}
+      .zhakin-ai-antenna{position:absolute;width:3px;height:5px;left:13px;top:-6px;border-radius:3px;background:#d4af37;box-shadow:0 -3px 0 0 #d4af37}
+      .zhakin-ai-antenna:after{content:"";position:absolute;width:5px;height:5px;left:-1px;top:-4px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px rgba(212,175,55,.55)}
       .zhakin-ai-panel{display:none}
       #zhakin-ai-panel{width:min(360px,calc(100vw - 28px));margin-bottom:10px;border:1px solid rgba(212,175,55,.3);border-radius:18px;background:#081a16;color:#f4f1e8;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden}
       #zhakin-ai-panel.is-open{display:block}
       .zhakin-ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid rgba(212,175,55,.18)}
       .zhakin-ai-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
       .zhakin-ai-title small{display:block;margin-top:2px;color:rgba(244,241,232,.55);font-size:11px;font-weight:400}
-      .zhakin-ai-head-robot{width:24px;height:24px;border-radius:7px;background:#0d2b22;border:1px solid rgba(212,175,55,.5);position:relative}
-      .zhakin-ai-head-robot:before{content:"";position:absolute;left:5px;right:5px;top:7px;height:8px;border:1px solid #d4af37;border-radius:3px}
+      .zhakin-ai-head-robot{width:25px;height:25px;border-radius:6px 6px 8px 8px;background:#102a22;border:1px solid rgba(212,175,55,.55);position:relative}
+      .zhakin-ai-head-robot:before{content:"";position:absolute;left:5px;right:5px;top:6px;height:9px;border:1px solid #d4af37;border-radius:3px}
       .zhakin-ai-head-robot:after{content:"••";position:absolute;left:7px;top:2px;color:#d4af37;font-size:9px;letter-spacing:3px}
       #zhakin-ai-close{border:0;background:transparent;color:rgba(244,241,232,.7);font-size:20px;cursor:pointer}
       .zhakin-ai-status{padding:10px 15px;color:rgba(244,241,232,.62);font-size:11px;line-height:1.45;border-bottom:1px solid rgba(212,175,55,.12)}
@@ -171,28 +160,28 @@ document.addEventListener('DOMContentLoaded', () => {
       #zhakin-ai-submit{border:1px solid #d4af37;border-radius:11px;background:#d4af37;color:#071a16;padding:0 12px;font-weight:800;cursor:pointer}
       #zhakin-ai-submit:disabled{opacity:.42;cursor:not-allowed}
       .zhakin-ai-links{padding:0 13px 12px;font-size:11px}.zhakin-ai-links a{color:#d4af37;text-decoration:none}
-      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:6px 9px 6px 6px}.zhakin-ai-robot{width:28px;height:28px;flex-basis:28px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
+      @media(max-width:520px){#zhakin-ai-widget{right:10px;bottom:max(10px,env(safe-area-inset-bottom))}#zhakin-ai-launcher{padding:5px 9px 5px 5px}.zhakin-ai-robot{width:28px;height:28px;flex-basis:28px}#zhakin-ai-panel{width:calc(100vw - 20px)}#zhakin-ai-messages{max-height:32vh}}
     `;
     document.head.appendChild(style);
 
     const widget = document.createElement('div');
     widget.id = 'zhakin-ai-widget';
     widget.innerHTML = `
-      <div id="zhakin-ai-panel" role="dialog" aria-label="Жакин AI">
+      <div id="zhakin-ai-panel" role="dialog" aria-label="ЖАК">
         <div class="zhakin-ai-head">
-          <div class="zhakin-ai-title"><span class="zhakin-ai-head-robot" aria-hidden="true"></span><span>Жакин AI<small>цифровой помощник сайта</small></span></div>
+          <div class="zhakin-ai-title"><span class="zhakin-ai-head-robot" aria-hidden="true"></span><span>ЖАК<small>Жакин AI · цифровой помощник</small></span></div>
           <button id="zhakin-ai-close" type="button" aria-label="Закрыть">×</button>
         </div>
         <div class="zhakin-ai-status" id="zhakin-ai-status">Проверяю контур подключения…</div>
-        <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я помогу найти информацию на Жакин.рф. Ответы должны опираться на материалы сайта и показывать источники.</div></div>
+        <div id="zhakin-ai-messages" aria-live="polite"><div class="zhakin-ai-msg system">Здравствуйте. Я ЖАК — цифровой помощник Жакин.рф. Помогу найти информацию на сайте и покажу источники.</div></div>
         <form class="zhakin-ai-form" id="zhakin-ai-form">
-          <textarea id="zhakin-ai-input" rows="1" placeholder="Задайте вопрос…" aria-label="Вопрос для Жакин AI"></textarea>
+          <textarea id="zhakin-ai-input" rows="1" placeholder="Задайте вопрос…" aria-label="Вопрос для ЖАК"></textarea>
           <button id="zhakin-ai-submit" type="submit" disabled>→</button>
         </form>
         <div class="zhakin-ai-links"><a href="/intelligence.html">Открыть полный режим →</a></div>
       </div>
-      <button id="zhakin-ai-launcher" type="button" aria-expanded="false" aria-controls="zhakin-ai-panel" aria-label="Открыть Жакин AI">
-        <span class="zhakin-ai-robot" aria-hidden="true"><span class="zhakin-ai-antenna"></span></span><span>Жакин AI</span>
+      <button id="zhakin-ai-launcher" type="button" aria-expanded="false" aria-controls="zhakin-ai-panel" aria-label="Открыть ЖАК">
+        <span class="zhakin-ai-robot" aria-hidden="true"><span class="zhakin-ai-antenna"></span></span><span>ЖАК</span>
       </button>
     `;
     document.body.appendChild(widget);
