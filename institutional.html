@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const relations = Array.isArray(registry.relations) ? registry.relations.length : 0;
     const relationsTarget = document.getElementById('relations-list');
     const allEntities = Object.values(entities).flat().reduce((map, entity) => { map[entity.id] = entity.name || entity.id; return map; }, {});
+    const allEntityUrls = Object.values(entities).flat().reduce((map, entity) => { if (entity.url || entity.page) map[entity.id] = entity.url || entity.page; return map; }, {});
     const relationLabels = {'member-of':'участие / принадлежность','implemented-by':'реализуется через','supports-direction':'поддерживает направление','documented-by':'подтверждается документом','partner-of':'партнёрская связь','recognized-by':'признание','references':'ссылается на'};
     const searchInput = document.getElementById('relation-search');
     const typeSelect = document.getElementById('relation-type');
