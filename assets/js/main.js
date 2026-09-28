@@ -126,6 +126,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Премиальный блок глобальных котировок: интерактивная карта/список мировых рынков.
+  if (!document.getElementById('zhakin-global-markets')) {
+    const markets = document.createElement('section');
+    markets.id = 'zhakin-global-markets';
+    markets.className = 'markets-section';
+    markets.setAttribute('aria-labelledby', 'markets-title');
+    markets.innerHTML = `
+      <div class="markets-inner">
+        <div class="markets-heading">
+          <span class="eyebrow">GLOBAL MARKETS • LIVE QUOTES</span>
+          <h2 id="markets-title">Мировые рынки</h2>
+          <p>Автоматически обновляемая визуальная панель с текущей рыночной динамикой. Можно переключаться между картой и ранжированным списком мировых индексов.</p>
+        </div>
+        <div class="markets-panel">
+          <div class="markets-widget" id="zhakin-markets-widget"></div>
+        </div>
+        <div class="markets-note">
+          <span>Данные и котировки предоставляются внешним поставщиком рыночных данных.</span>
+          <span><a href="https://www.tradingview.com/" target="_blank" rel="noopener nofollow">Источник данных: TradingView</a></span>
+        </div>
+      </div>`;
+    const geographySection = document.getElementById('geography');
+    if (geographySection) geographySection.insertAdjacentElement('afterend', markets);
+    else if (hero) hero.insertAdjacentElement('afterend', markets);
+
+    const mountMarketsWidget = () => {
+      const host = document.getElementById('zhakin-markets-widget');
+      if (!host || customElements.get('tv-world-market-summary')) return;
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://widgets.tradingview-widget.com/w/en/tv-world-market-summary.js';
+      script.async = true;
+      document.head.appendChild(script);
+      const widget = document.createElement('tv-world-market-summary');
+      host.appendChild(widget);
+    };
+    mountMarketsWidget();
+  }
+
   if (!document.getElementById('zhakin-ai-widget')) {
     const style = document.createElement('style');
     style.textContent = `
