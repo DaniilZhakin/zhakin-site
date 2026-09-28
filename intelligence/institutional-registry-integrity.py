@@ -62,9 +62,23 @@ relation_pairs = {
     "member-of": {"person": {"organization"}},
     "implemented-by": {"project": {"organization"}},
     "supports-direction": {"project": {"direction"}},
-    "documented-by": {"project": {"document"}},
+    "documented-by": {
+        "person": {"document"},
+        "organization": {"document"},
+        "project": {"document"},
+        "award": {"document"},
+    },
+    "partner-of": {
+        "organization": {"organization", "partner"},
+        "project": {"partner"},
+        "partner": {"organization", "project", "partner"},
+    },
+    "recognized-by": {
+        "person": {"award"},
+        "organization": {"award"},
+    },
     "references": {
-        "link": {"person", "project"}
+        "link": {"person", "organization", "direction", "project", "partner", "award", "document", "link"}
     },
 }
 
