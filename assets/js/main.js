@@ -137,10 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="markets-heading">
           <span class="eyebrow">GLOBAL MARKETS • LIVE QUOTES</span>
           <h2 id="markets-title">Мировые рынки</h2>
-          <p>Автоматически обновляемая визуальная панель с текущей рыночной динамикой. Можно переключаться между картой и ранжированным списком мировых индексов.</p>
+          <p>Глобальный рыночный контур платформы: мировые индексы, криптовалюты, золото, нефть, газ, валюты и другие ключевые финансовые инструменты. Можно переключаться между картой и подробным списком.</p>
         </div>
         <div class="markets-panel">
           <div class="markets-widget" id="zhakin-markets-widget"></div>
+          <div class="markets-data">
+            <div class="markets-data-label">Индексы · Крипто · Сырьё · Валюты · Облигации</div>
+            <div class="markets-data-widget" id="zhakin-markets-data"></div>
+          </div>
         </div>
         <div class="markets-note">
           <span>Данные и котировки предоставляются внешним поставщиком рыночных данных.</span>
@@ -163,6 +167,28 @@ document.addEventListener('DOMContentLoaded', () => {
       host.appendChild(widget);
     };
     mountMarketsWidget();
+
+    const mountMarketData = () => {
+      const host = document.getElementById('zhakin-markets-data');
+      if (!host || customElements.get('tv-market-data')) return;
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://widgets.tradingview-widget.com/w/en/tv-market-data.js';
+      script.async = true;
+      document.head.appendChild(script);
+      const widget = document.createElement('tv-market-data');
+      widget.setAttribute('theme', 'dark');
+      widget.setAttribute('transparent-background', '');
+      widget.setAttribute('symbol-sectors', JSON.stringify([
+        { sectionName: 'Индексы', symbols: ['FOREXCOM:SPXUSD','FOREXCOM:NSXUSD','FOREXCOM:DJI','INDEX:NKY','INDEX:DEU40','FOREXCOM:UKXGBP'] },
+        { sectionName: 'Криптовалюты', symbols: ['BINANCE:BTCUSDT','BINANCE:ETHUSDT','COINBASE:SOLUSD','BINANCE:BNBUSDT','BINANCE:XRPUSDT'] },
+        { sectionName: 'Сырьё', symbols: ['TVC:GOLD','TVC:SILVER','TVC:USOIL','TVC:UKOIL','NYMEX:NG1!'] },
+        { sectionName: 'Валюты', symbols: ['FX:EURUSD','FX:GBPUSD','FX:USDJPY','FX:USDCHF','FX:USDCNY','FX:USDTRY'] },
+        { sectionName: 'Облигации', symbols: ['TVC:US10Y','TVC:DE10Y','TVC:JP10Y'] }
+      ]));
+      host.appendChild(widget);
+    };
+    mountMarketData();
   }
 
   if (!document.getElementById('zhakin-ai-widget')) {
