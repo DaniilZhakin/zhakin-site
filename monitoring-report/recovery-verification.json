@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T10:29:19Z",
+  "timestamp": "2026-09-28T12:19:00Z",
   "site": "https://xn--80alhhq.xn--p1ai",
   "recovery_state": "stable",
   "verification_state": "stable",
@@ -8,13 +8,13 @@
     {
       "name": "robots.txt",
       "ok": true,
-      "response_time_ms": 454,
+      "response_time_ms": 568,
       "error": ""
     },
     {
       "name": "sitemap.xml",
       "ok": true,
-      "response_time_ms": 182,
+      "response_time_ms": 473,
       "url_count": 33,
       "error": ""
     },
