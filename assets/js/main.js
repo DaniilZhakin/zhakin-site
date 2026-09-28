@@ -316,7 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
       <button type="button" data-a11y="reset" aria-label="Сбросить размер текста" title="Сбросить размер текста">A</button>
       <button type="button" data-a11y="increase" aria-label="Увеличить размер текста" title="Увеличить текст">A+</button>
     `;
-    document.body.appendChild(accessibility);
+    if (menuButton && menuButton.parentElement) {
+      menuButton.parentElement.insertBefore(accessibility, menuButton);
+    } else {
+      document.body.appendChild(accessibility);
+    }
 
     const A11Y_KEY = 'zhakin_text_scale_v1';
     const clampScale = value => Math.min(1.18, Math.max(0.92, Number(value) || 1));
