@@ -164,6 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
       script.async = true;
       document.head.appendChild(script);
       const widget = document.createElement('tv-world-market-summary');
+      widget.setAttribute('theme', 'dark');
+      widget.setAttribute('transparent-background', '');
       host.appendChild(widget);
     };
     mountMarketsWidget();
@@ -184,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { sectionName: 'Криптовалюты', symbols: ['BINANCE:BTCUSDT','BINANCE:ETHUSDT','COINBASE:SOLUSD','BINANCE:BNBUSDT','BINANCE:XRPUSDT'] },
         { sectionName: 'Сырьё', symbols: ['TVC:GOLD','TVC:SILVER','TVC:USOIL','TVC:UKOIL','NYMEX:NG1!'] },
         { sectionName: 'Валюты', symbols: ['FX:EURUSD','FX:GBPUSD','FX:USDJPY','FX:USDCHF','FX:USDCNY','FX:USDTRY'] },
-        { sectionName: 'Облигации', symbols: ['TVC:US10Y','TVC:DE10Y','TVC:JP10Y'] }
+        { sectionName: 'Облигации', symbols: ['TVC:US10Y','TVC:DE10Y','TVC:JP10Y'] },
+        { sectionName: 'Облигации РФ', symbols: ['RUS:RGBI','RUS:RGBITR','RUS:RUGBITR10Y'] }
       ]));
       host.appendChild(widget);
     };
