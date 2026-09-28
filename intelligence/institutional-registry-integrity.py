@@ -48,6 +48,10 @@ for bucket, items in entities.items():
             errors.append(f"{entity_id}: unknown entity type {entity.get('type')}")
         if entity.get("page") and not entity["page"].startswith("/"):
             errors.append(f"{entity_id}: page must be an internal route")
+        if entity.get("url"):
+            url = entity["url"]
+            if not (url.startswith("https://") or url.startswith("http://") or url.startswith("/")):
+                errors.append(f"{entity_id}: url must be absolute http(s) or an internal route")
 
 project_ids = {p["id"] for p in projects.get("projects", [])}
 registry_project_ids = {e["id"] for e in entities.get("projects", [])}
@@ -57,6 +61,8 @@ if project_ids != registry_project_ids:
         "project registry mismatch: "
         f"projects.json={sorted(project_ids)} institutional={sorted(registry_project_ids)}"
     )
+
+relation_keys = set()
 
 relation_pairs = {
     "member-of": {"person": {"organization"}},
@@ -90,6 +96,12 @@ for relation in registry.get("relations", []):
         errors.append(f"relation from unknown entity: {relation.get('from')}")
     if relation.get("to") not in ids:
         errors.append(f"relation to unknown entity: {relation.get('to')}")
+    relation_key = (relation.get("from"), relation.get("type"), relation.get("to"))
+    if all(relation_key):
+        if relation_key in relation_keys:
+            errors.append(f"duplicate relation: {relation_key[0]} {relation_key[1]} {relation_key[2]}")
+        relation_keys.add(relation_key)
+
     relation_type = relation.get("type")
     if relation_type not in relation_types:
         errors.append(f"unknown relation type: {relation_type}")
