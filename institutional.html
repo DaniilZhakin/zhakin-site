@@ -60,6 +60,7 @@
 <article class="award-card award-closed"><div class="award-mark" aria-hidden="true">🔒</div><span class="award-category">Ведомственное признание · закрытый контур</span><h3>Благодарность Центра специального назначения ФСБ России</h3><p>Ведомственная благодарность, указанная в закрытом формате. Подробности, реквизиты и материалы документа не размещаются в открытом доступе.</p><span class="award-status">🔒 Закрытые сведения</span></article>
 </div></article>
 <article class="hero-card" id="institutional-nodes"><h3>Ключевые узлы контура</h3><p>Навигационный слой строится непосредственно из институционального реестра: организации, направления и проекты показываются как связанные точки входа.</p><div id="institutional-nodes-list" class="institutional-nodes-list" aria-live="polite"><p>Загрузка узлов…</p></div></article>
+<article class="hero-card" id="content-contour"><h3>Контентный контур</h3><p>Публикации теперь учитываются непосредственно в институциональном реестре как отдельные проверяемые сущности с внутренними страницами.</p><p><a href="publications.html">Открыть контур публикаций →</a></p></article>
 <article class="hero-card"><h3>Документы</h3><p>Раздел зарезервирован под документы с подтверждаемым происхождением, датой, статусом и связью с конкретными сущностями.</p><p><a href="reception.html">Официальная приёмная →</a></p></article>
 <article class="hero-card"><h3>Ссылки и источники</h3><p>Структурированный слой официальных и первичных источников для проверки сущностей и связей.</p></article>
 <article class="hero-card" id="relations"><h3>Связи</h3><p>Реестр фиксирует тип связи, исходную и целевую сущность и источник. Ниже показывается текущий машинно-читаемый срез без добавления неподтверждённых данных.</p><div class="relation-controls" aria-label="Фильтр связей"><label>Поиск <input id="relation-search" type="search" placeholder="Найти сущность"></label><label>Тип <select id="relation-type"><option value="">Все связи</option></select></label></div><div id="relations-list" class="relations-list" aria-live="polite"><p>Загрузка связей…</p></div></article>
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ['Организации', count('organizations'), 'организационных сущностей'],
       ['Направления', count('directions'), 'связанных направлений'],
       ['Проекты', count('projects'), 'канонических проектов'],
+      ['Публикации', count('publications'), 'материалов в контентном контуре'],
       ['Партнёры', count('partners'), 'подтверждённых записей'],
       ['Награды', count('awards'), 'подтверждённых записей'],
       ['Документы', count('documents'), 'подтверждённых документов'],
