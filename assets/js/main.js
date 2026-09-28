@@ -306,4 +306,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  if (!document.getElementById('zhakin-accessibility')) {
+    const accessibility = document.createElement('div');
+    accessibility.id = 'zhakin-accessibility';
+    accessibility.setAttribute('aria-label', 'Настройки отображения');
+    accessibility.innerHTML = `
+      <button type="button" data-a11y="decrease" aria-label="Уменьшить размер текста" title="Уменьшить текст">A−</button>
+      <button type="button" data-a11y="reset" aria-label="Сбросить размер текста" title="Сбросить размер текста">A</button>
+      <button type="button" data-a11y="increase" aria-label="Увеличить размер текста" title="Увеличить текст">A+</button>
+    `;
+    document.body.appendChild(accessibility);
+
+    const A11Y_KEY = 'zhakin_text_scale_v1';
+    const clampScale = value => Math.min(1.18, Math.max(0.92, Number(value) || 1));
+    const applyScale = value => {
+      const scale = clampScale(value);
+      document.documentElement.style.setProperty('--zhakin-text-scale', String(scale));
+      try { localStorage.setItem(A11Y_KEY, String(scale)); } catch (_) {}
+    };
+
+    let initialScale = 1;
+    try { initialScale = clampScale(localStorage.getItem(A11Y_KEY)); } catch (_) {}
+    applyScale(initialScale);
+
+    accessibility.addEventListener('click', event => {
+      const button = event.target.closest('button[data-a11y]');
+      if (!button) return;
+      const current = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--zhakin-text-scale')) || 1;
+      const action = button.dataset.a11y;
+      applyScale(action === 'increase' ? current + 0.06 : action === 'decrease' ? current - 0.06 : 1);
+      recordAudienceEvent('accessibility_text_scale', { scale: getComputedStyle(document.documentElement).getPropertyValue('--zhakin-text-scale') });
+    });
+  }
+
 });
