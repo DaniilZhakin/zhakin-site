@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-09-30T19:13:06Z`
+Snapshot: `2026-09-30T19:16:35Z`
 History points: **30**
-Status: **WARNING**
-Health score: **96.0/100 (HEALTHY)**
-Trend: **DECLINING** (-4.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **IMPROVING** (+3.0)
 
 ## Current signals
 
@@ -17,17 +17,15 @@ Trend: **DECLINING** (-4.0)
 - `canonical_ok_pages`: **18**
 - `jsonld_pages`: **18**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **568**
-- `max_response_time_ms`: **6556**
-- `health_score`: **96.0**
+- `avg_response_time_ms`: **297.8**
+- `max_response_time_ms`: **570**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/legal-architecture.html`
-- response_time_ms: 77 -> 6556
+No page-level change detected.
 
 ## Anomaly detection
 
-- average response time increased from 247.7ms to 568ms
-- page-level change: /publications/legal-architecture.html
+No regression detected.

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-30T19:13:06Z",
+  "timestamp": "2026-09-30T19:16:35Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,28 +11,19 @@
     "canonical_ok_pages": 18,
     "jsonld_pages": 18,
     "noindex_pages": 0,
-    "avg_response_time_ms": 568,
-    "max_response_time_ms": 6556,
-    "health_score": 96.0,
+    "avg_response_time_ms": 297.8,
+    "max_response_time_ms": 570,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 96.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
-  "trend_direction": "declining",
-  "trend_delta": -4.0,
-  "baseline_timestamp": "2026-09-30T19:10:23Z",
-  "warnings": [
-    "average response time increased from 247.7ms to 568ms",
-    "page-level change: /publications/legal-architecture.html"
-  ],
-  "page_changes": {
-    "/publications/legal-architecture.html": [
-      "response_time_ms: 77 -> 6556"
-    ]
-  },
+  "trend_direction": "improving",
+  "trend_delta": 3.0,
+  "baseline_timestamp": "2026-09-30T19:13:06Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications/legal-architecture.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
