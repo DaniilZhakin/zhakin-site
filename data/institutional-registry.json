@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "updated_at": "2026-09-28",
+  "updated_at": "2026-09-30",
   "source": "official website institutional registry",
   "ui_route": "/institutional.html",
   "entity_types": [
@@ -564,6 +564,254 @@
       "type": "recognized-by",
       "to": "fsb-special-purpose-centre-gratitude",
       "source": "предоставлено владельцем; подтверждающие материалы не публикуются"
+    },
+    {
+      "from": "legal-information",
+      "type": "references",
+      "to": "daniil-zhakin",
+      "source": "official website"
+    },
+    {
+      "from": "privacy-policy",
+      "type": "references",
+      "to": "daniil-zhakin",
+      "source": "official website"
+    },
+    {
+      "from": "investment-disclaimer",
+      "type": "references",
+      "to": "daniil-zhakin",
+      "source": "official website"
+    },
+    {
+      "from": "legal-information-document",
+      "type": "documented-by",
+      "to": "legal-information",
+      "source": "official website"
+    },
+    {
+      "from": "privacy-policy-document",
+      "type": "documented-by",
+      "to": "privacy-policy",
+      "source": "official website"
+    },
+    {
+      "from": "investment-disclaimer-document",
+      "type": "documented-by",
+      "to": "investment-disclaimer",
+      "source": "official website"
+    }
+  ],
+  "publications": [
+    {
+      "id": "money-financial-system",
+      "type": "publication",
+      "name": "Откуда берутся деньги: почему современная валюта — это больше, чем бумага",
+      "page": "/publications/money-financial-system.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-parliament",
+      "type": "publication",
+      "name": "ИИ-парламент: каким может стать государство в эпоху искусственного интеллекта",
+      "page": "/publications/ai-parliament.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "digital-ruble",
+      "type": "publication",
+      "name": "Деньги становятся цифровыми. Кто заплатит за переход к новой финансовой системе?",
+      "page": "/publications/digital-ruble.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-financial-system",
+      "type": "publication",
+      "name": "ИИ-бум уже стал финансовой системой. Кто заплатит за триллионы вложений?",
+      "page": "/publications/ai-financial-system.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-infrastructure",
+      "type": "publication",
+      "name": "Кому на самом деле принадлежит ИИ: модели видят все. Инфраструктуру — почти никто",
+      "page": "/publications/ai-infrastructure.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "understanding-state-and-law",
+      "type": "publication",
+      "name": "Почему человек должен понимать, как работает государство и право",
+      "page": "/publications/understanding-state-and-law.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "legal-architecture",
+      "type": "publication",
+      "name": "Пока все обсуждают гостей Москвы, главное происходит в праве",
+      "page": "/publications/legal-architecture.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "intellectual-economy",
+      "type": "publication",
+      "name": "Следующая экономическая революция будет не цифровой. Россия уже строит её правовую архитектуру",
+      "page": "/publications/intellectual-economy.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "economic-transition-1990s",
+      "type": "publication",
+      "name": "Что Россия потеряла в 1990-е — и почему мы до сих пор не посчитали цену перехода",
+      "page": "/publications/economic-transition-1990s.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "future-without-money",
+      "type": "publication",
+      "name": "2036 год: а что, если Маск действительно прав — и деньги перестанут быть главным ограничителем?",
+      "page": "/publications/future-without-money.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "food-infrastructure",
+      "type": "publication",
+      "name": "Продовольствие есть. Но хватит ли инфраструктуры, чтобы накормить страну?",
+      "page": "/publications/food-infrastructure.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "capital-requires-proof",
+      "type": "publication",
+      "name": "Эпоха денег за идею закончилась: капитал теперь требует доказательств",
+      "page": "/publications/capital-requires-proof.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "price-discovery",
+      "type": "publication",
+      "name": "Российский фондовый рынок: цена есть. А полноценного глобального price discovery больше нет?",
+      "page": "/publications/price-discovery.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "naruto-hidden-meanings",
+      "type": "publication",
+      "name": "Наруто: почему это история не о ниндзя, а о природе человека?",
+      "page": "/publications/naruto-hidden-meanings.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-decision-responsibility",
+      "type": "publication",
+      "name": "Когда алгоритм становится институтом: кто отвечает за решение, принятое ИИ?",
+      "page": "/publications/ai-decision-responsibility.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "personal-growth-hidden-meanings",
+      "type": "publication",
+      "name": "Скрытые смыслы №2. Почему человек останавливается именно тогда, когда начинает расти",
+      "page": "/publications/personal-growth-hidden-meanings.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "sanctions-new-generation",
+      "type": "publication",
+      "name": "Санкции нового поколения: как формируется новая архитектура глобальной экономики",
+      "page": "/publications/sanctions-new-generation.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "global-economy-after-sanctions",
+      "type": "publication",
+      "name": "Мир после санкций: новая архитектура мировой экономики",
+      "page": "/publications/global-economy-after-sanctions.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "global-economy-new-assets",
+      "type": "publication",
+      "name": "Новая карта мировой экономики: почему технологии, энергия и ресурсы становятся главным активом XXI века",
+      "page": "/publications/global-economy-new-assets.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "money-capital-friction",
+      "type": "publication",
+      "name": "Деньги есть, но они не работают: где проходит главный барьер для экономики",
+      "page": "/publications/money-capital-friction.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-infrastructure-economy",
+      "type": "publication",
+      "name": "ИИ выходит из экрана: кто будет контролировать новую инфраструктуру экономики",
+      "page": "/publications/ai-infrastructure-economy.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "global-dependence-map",
+      "type": "publication",
+      "name": "Экономика больше не глобальна: тарифы, нефть и ИИ создают новую карту зависимости",
+      "page": "/publications/global-dependence-map.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    },
+    {
+      "id": "ai-cost-economics",
+      "type": "publication",
+      "name": "ИИ уже экономит бизнесу деньги. Почему продукты от этого не становятся дешевле?",
+      "page": "/publications/ai-cost-economics.html",
+      "source": "официальный сайт Жакин.рф · раздел публикаций"
+    }
+  ],
+  "links": [
+    {
+      "id": "legal-information",
+      "type": "link",
+      "name": "Правовая информация",
+      "url": "/legal.html",
+      "source": "official website"
+    },
+    {
+      "id": "privacy-policy",
+      "type": "link",
+      "name": "Политика конфиденциальности",
+      "url": "/privacy.html",
+      "source": "official website"
+    },
+    {
+      "id": "investment-disclaimer",
+      "type": "link",
+      "name": "Инвестиционный дисклеймер",
+      "url": "/investment-disclaimer.html",
+      "source": "official website"
+    }
+  ],
+  "documents": [
+    {
+      "id": "legal-information-document",
+      "type": "document",
+      "name": "Правовая информация — Жакин.рф",
+      "page": "/legal.html",
+      "status": "published",
+      "source": "official website"
+    },
+    {
+      "id": "privacy-policy-document",
+      "type": "document",
+      "name": "Политика конфиденциальности — Жакин.рф",
+      "page": "/privacy.html",
+      "status": "published",
+      "source": "official website"
+    },
+    {
+      "id": "investment-disclaimer-document",
+      "type": "document",
+      "name": "Инвестиционный дисклеймер — Жакин.рф",
+      "page": "/investment-disclaimer.html",
+      "status": "published",
+      "source": "official website"
     }
   ]
 }
