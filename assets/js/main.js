@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.querySelectorAll('.main-navigation a[href*="#"]');
+  const navigationLinks = document.querySelectorAll('.main-navigation a[href]');
   const menuButton = document.querySelector('.menu-toggle');
   const navigation = document.querySelector('.main-navigation');
 
@@ -31,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
       recordAudienceEvent('menu_toggle', { state: !isOpen ? 'open' : 'close' });
     });
   }
+
+  navigationLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (navigation?.classList.contains('active')) setMenuState(false);
+    });
+  });
 
   links.forEach(link => {
     link.addEventListener('click', event => {
