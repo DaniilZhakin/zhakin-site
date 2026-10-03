@@ -55,6 +55,7 @@ jobs:
               url.replace(site, '', 1)
               for url in urls
               if url.startswith(site + '/publications/') and url.endswith('.html')
+              and not url.endswith('/publications/directions.html')
           })
           required = [site + path for path in core_paths] + [
               site + path for path in publication_paths
@@ -62,7 +63,7 @@ jobs:
           missing = [url for url in required if url not in urls]
           if missing:
               raise SystemExit('Missing required sitemap URLs: ' + ', '.join(missing))
-          print(f'Sitemap OK: {len(urls)} unique production URLs; {len(publication_paths)} publication URLs monitored')
+          print(f'Sitemap OK: {len(urls)} unique production URLs; {len(publication_paths)} publication URLs monitored; directions page handled separately')
           PY
 
       - name: Validate canonical and indexability signals
@@ -111,7 +112,12 @@ jobs:
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           sitemap_urls = set(re.findall(r'<loc>(.*?)</loc>', sitemap))
           site = 'https://xn--80alhhq.xn--p1ai'
-          sitemap_publications = {url.replace(site, '', 1) for url in sitemap_urls if url.startswith(site + '/publications/') and url.endswith('.html')}
+          sitemap_publications = {
+              url.replace(site, '', 1)
+              for url in sitemap_urls
+              if url.startswith(site + '/publications/') and url.endswith('.html')
+              and not url.endswith('/publications/directions.html')
+          }
           actual_publications = {f'/publications/{p.name}' for p in publication_files}
           if actual_publications != sitemap_publications:
               missing_from_sitemap = sorted(actual_publications - sitemap_publications)
@@ -133,7 +139,7 @@ jobs:
               if 'og:image' not in html:
                   raise SystemExit(f'Missing OG image: {page}')
 
-          print(f'Publication catalog OK: {len(publication_files)} pages, all linked and structurally valid')
+          print(f'Publication catalog OK: {len(publication_files)} pages, all linked and structurally valid; directions page excluded from article set')
           PY
 
       - name: Summary
