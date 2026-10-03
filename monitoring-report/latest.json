@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-03T22:33:50Z",
+  "timestamp": "2026-10-03T22:39:24Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 34,
     "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 188.0,
-    "max_response_time_ms": 456,
-    "health_score": 100.0,
+    "avg_response_time_ms": 247.1,
+    "max_response_time_ms": 1044,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-03T22:31:32Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-03T22:33:50Z",
+  "warnings": [
+    "page-level change: /"
+  ],
+  "page_changes": {
+    "/": [
+      "response_time_ms: 238 -> 1044"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/"
+  ],
+  "status": "warning"
 }
