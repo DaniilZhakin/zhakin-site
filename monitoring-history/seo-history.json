@@ -1,168 +1,5 @@
 [
   {
-    "timestamp": "2026-10-01T08:52:32Z",
-    "site": "https://xn--80alhhq.xn--p1ai",
-    "pages": {
-      "/": {
-        "available": true,
-        "response_time_ms": 319,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/about.html": {
-        "available": true,
-        "response_time_ms": 329,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/projects.html": {
-        "available": true,
-        "response_time_ms": 145,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications.html": {
-        "available": true,
-        "response_time_ms": 511,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/reception.html": {
-        "available": true,
-        "response_time_ms": 325,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/institutional.html": {
-        "available": true,
-        "response_time_ms": 327,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/digital-ruble.html": {
-        "available": true,
-        "response_time_ms": 133,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/ai-financial-system.html": {
-        "available": true,
-        "response_time_ms": 503,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/ai-infrastructure.html": {
-        "available": true,
-        "response_time_ms": 134,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/ai-parliament.html": {
-        "available": true,
-        "response_time_ms": 161,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/understanding-state-and-law.html": {
-        "available": true,
-        "response_time_ms": 333,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/legal-architecture.html": {
-        "available": true,
-        "response_time_ms": 110,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/intellectual-economy.html": {
-        "available": true,
-        "response_time_ms": 111,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/economic-transition-1990s.html": {
-        "available": true,
-        "response_time_ms": 316,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/future-without-money.html": {
-        "available": true,
-        "response_time_ms": 506,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/food-infrastructure.html": {
-        "available": true,
-        "response_time_ms": 321,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/capital-requires-proof.html": {
-        "available": true,
-        "response_time_ms": 132,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      },
-      "/publications/price-discovery.html": {
-        "available": true,
-        "response_time_ms": 110,
-        "canonical_ok": true,
-        "noindex": false,
-        "x_robots_tag": false,
-        "jsonld": true
-      }
-    },
-    "signals": {
-      "robots_ok": true,
-      "sitemap_urls": 36,
-      "sitemap_unique": true,
-      "sitemap_coverage": true,
-      "required_pages": 18,
-      "available_pages": 18,
-      "canonical_ok_pages": 18,
-      "jsonld_pages": 18,
-      "noindex_pages": 0,
-      "avg_response_time_ms": 268.1,
-      "max_response_time_ms": 511
-    }
-  },
-  {
     "timestamp": "2026-10-01T10:30:27Z",
     "site": "https://xn--80alhhq.xn--p1ai",
     "pages": {
@@ -4887,6 +4724,169 @@
       "noindex_pages": 0,
       "avg_response_time_ms": 241,
       "max_response_time_ms": 465
+    }
+  },
+  {
+    "timestamp": "2026-10-03T12:03:13Z",
+    "site": "https://xn--80alhhq.xn--p1ai",
+    "pages": {
+      "/": {
+        "available": true,
+        "response_time_ms": 341,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/about.html": {
+        "available": true,
+        "response_time_ms": 381,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/projects.html": {
+        "available": true,
+        "response_time_ms": 564,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications.html": {
+        "available": true,
+        "response_time_ms": 355,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/reception.html": {
+        "available": true,
+        "response_time_ms": 531,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/institutional.html": {
+        "available": true,
+        "response_time_ms": 321,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/digital-ruble.html": {
+        "available": true,
+        "response_time_ms": 358,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/ai-financial-system.html": {
+        "available": true,
+        "response_time_ms": 129,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/ai-infrastructure.html": {
+        "available": true,
+        "response_time_ms": 128,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/ai-parliament.html": {
+        "available": true,
+        "response_time_ms": 737,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/understanding-state-and-law.html": {
+        "available": true,
+        "response_time_ms": 520,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/legal-architecture.html": {
+        "available": true,
+        "response_time_ms": 125,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/intellectual-economy.html": {
+        "available": true,
+        "response_time_ms": 117,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/economic-transition-1990s.html": {
+        "available": true,
+        "response_time_ms": 711,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/future-without-money.html": {
+        "available": true,
+        "response_time_ms": 402,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/food-infrastructure.html": {
+        "available": true,
+        "response_time_ms": 677,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/capital-requires-proof.html": {
+        "available": true,
+        "response_time_ms": 655,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      },
+      "/publications/price-discovery.html": {
+        "available": true,
+        "response_time_ms": 108,
+        "canonical_ok": true,
+        "noindex": false,
+        "x_robots_tag": false,
+        "jsonld": true
+      }
+    },
+    "signals": {
+      "robots_ok": true,
+      "sitemap_urls": 40,
+      "sitemap_unique": true,
+      "sitemap_coverage": true,
+      "required_pages": 18,
+      "available_pages": 18,
+      "canonical_ok_pages": 18,
+      "jsonld_pages": 18,
+      "noindex_pages": 0,
+      "avg_response_time_ms": 397.8,
+      "max_response_time_ms": 737
     }
   }
 ]
