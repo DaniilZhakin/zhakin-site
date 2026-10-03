@@ -1,0 +1,23 @@
+name: Digital Profile Integrity
+
+on:
+  push:
+    paths:
+      - 'data/profiles.json'
+      - 'profiles.html'
+      - 'intelligence/profile-registry-integrity.py'
+      - '.github/workflows/digital-profile-integrity.yml'
+  pull_request:
+    paths:
+      - 'data/profiles.json'
+      - 'profiles.html'
+      - 'intelligence/profile-registry-integrity.py'
+      - '.github/workflows/digital-profile-integrity.yml'
+
+jobs:
+  profile-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate universal digital profile registry
+        run: python3 intelligence/profile-registry-integrity.py

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Цифровые профили — Жакин.рф</title>
+  <meta name="description" content="Структурированная модель цифровых профилей: человек, организации, проекты, связи и источники.">
+  <link rel="canonical" href="https://xn--80alhhq.xn--p1ai/profiles.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","@id":"https://xn--80alhhq.xn--p1ai/profiles.html#webpage","url":"https://xn--80alhhq.xn--p1ai/profiles.html","name":"Цифровые профили — Жакин.рф","description":"Структурированная модель цифровых профилей: человек, организации, проекты, связи и источники.","inLanguage":"ru","isPartOf":{"@id":"https://xn--80alhhq.xn--p1ai/#website"}}</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-container">
+    <a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ЦИФРОВЫЕ ПРОФИЛИ</span><span class="brand-platform">PERSON • ORGANIZATION • PROJECT • SOURCE</span></a>
+    <nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+      <a href="/">Главная</a><a href="/about.html">Обо мне</a><a href="/profiles.html" aria-current="page">Профили</a><a href="/institutional.html">Институциональный контур</a><a href="/projects.html">Проекты</a><a href="/publications.html">Публикации</a>
+    </nav>
+  </div></header>
+  <main>
+    <section class="hero hero-premium"><div class="hero-content"><h1>Цифровые профили</h1><h2>Человек • Организация • Проект • Источник</h2><p>Новый слой Жакин.рф: профиль рассматривается не как статичная страница, а как структурированная сущность с ролями, связями, направлениями и источниками.</p></div></section>
+    <section><h2>Модель</h2><p>Каждый профиль получает стабильный идентификатор, тип сущности, канонический адрес, описание, связи и предметные домены. Это позволяет соединять персональный, институциональный, деловой, общественный и аналитический контуры без дублирования данных.</p></section>
+    <section><h2>Публичные профили</h2><div id="profiles"><p>Загрузка реестра…</p></div></section>
+    <section><h2>Принцип доказуемости</h2><p>Профиль не должен превращаться в набор неподтверждённых утверждений. Каноническая страница, first-party профили и внутренние реестры выступают источниками происхождения данных. В дальнейшем к модели можно безопасно подключить документы, события, публикации и аналитические связи.</p></section>
+  </main>
+  <footer class="site-header"><div class="header-container"><span>Жакин.рф • цифровой профильный контур</span></div></footer>
+  <script>
+  (async()=>{const root=document.getElementById('profiles');try{const r=await fetch('/data/profiles.json',{cache:'no-store'});if(!r.ok)throw new Error('registry request failed');const d=await r.json();root.innerHTML=d.profiles.map(p=>'<article class="hero-card"><h3>'+p.name+'</h3><p><strong>Тип:</strong> '+p.type+'</p><p>'+p.role_summary+'</p><p><a href="'+p.canonical_url+'">Канонический источник →</a></p></article>').join('')}catch(e){root.innerHTML='<p>Реестр профилей временно недоступен.</p>'}})();
+  </script>
+</body>
+</html>

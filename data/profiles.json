@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "model": "universal-digital-profile",
+  "profiles": [
+    {
+      "id": "person-daniil-zhakin",
+      "type": "Person",
+      "canonical_url": "https://xn--80alhhq.xn--p1ai/about.html",
+      "name": "Даниил Юрьевич Жакин",
+      "role_summary": "Эксперт в международном сотрудничестве, внешнеэкономической деятельности, стратегическом развитии и экспортных проектах.",
+      "same_as": [
+        "https://vk.ru/d.zhakin",
+        "https://vc.ru/id1651220",
+        "https://www.instagram.com/daniil____1/"
+      ],
+      "affiliations": [
+        {"id":"org-zhakin-team","relation":"founder"},
+        {"id":"org-pobeda","relation":"international-director"},
+        {"id":"org-userdie","relation":"founder"}
+      ],
+      "domains": [
+        "international-cooperation",
+        "foreign-economic-activity",
+        "strategic-development",
+        "export-projects",
+        "humanitarian-initiatives"
+      ],
+      "source_policy": "Public profile facts must be traceable to canonical site pages or explicitly listed first-party profiles."
+    },
+    {
+      "id": "org-zhakin-team",
+      "type": "Organization",
+      "canonical_url": "https://xn--80alhhq.xn--p1ai/",
+      "name": "ZHAKIN TEAM",
+      "role_summary": "Экспертная платформа, объединяющая международное развитие, экономическую аналитику, инвестиционные инициативы, цифровые технологии и общественные проекты.",
+      "domains": ["analytics","international-development","economy","digital-transformation","public-projects"]
+    },
+    {
+      "id": "org-pobeda",
+      "type": "Organization",
+      "canonical_url": "https://xn--80alhhq.xn--p1ai/about.html#international",
+      "name": "ООО «ПОБЕДА»",
+      "role_summary": "Направление международной экономической и внешнеэкономической деятельности.",
+      "domains": ["foreign-economic-activity","export","international-partnerships"]
+    },
+    {
+      "id": "org-userdie",
+      "type": "Organization",
+      "canonical_url": "https://xn--80alhhq.xn--p1ai/about.html#userdie",
+      "name": "Благотворительный фонд «УСЕРДИЕ»",
+      "role_summary": "Социальное и гуманитарное направление, развивающее программы социальной и правовой помощи.",
+      "domains": ["social-support","humanitarian-programs","public-development"]
+    }
+  ]
+}
