@@ -91,7 +91,6 @@ jobs:
           })
           required = core_paths + publication_paths
           sitemap_missing = [urljoin(site, path) for path in required if urljoin(site, path) not in urls]
-          sitemap_missing = [urljoin(site, path) for path in required if urljoin(site, path) not in urls]
           if not sitemap_missing:
               add('sitemap coverage', 'ok', 'All required authority, reception and publication URLs are covered.')
           else:
