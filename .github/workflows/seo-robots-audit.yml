@@ -73,7 +73,7 @@ jobs:
           for file in "${files[@]}"; do
             test -f "$file"
             grep -q 'rel="canonical"' "$file" || { echo "Missing canonical: $file"; exit 1; }
-            if grep -qiE "<meta[^>]+name=[\"']robots[\"'][^>]+content=[\"'][^\"']*noindex|<meta[^>]+content=[\"'][^\"']*noindex[^\"']*[\"'][^>]+name=[\"']robots[\"']" "$file"; then
+            if grep -qi 'noindex' "$file"; then
               echo "Unexpected robots noindex signal: $file"
               exit 1
             fi
