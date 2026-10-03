@@ -1,29 +1,112 @@
 {
-  "timestamp": "2026-10-03T19:50:16Z",
+  "timestamp": "2026-10-03T22:07:45Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
     "sitemap_urls": 40,
     "sitemap_unique": true,
+    "required_pages": 34,
     "sitemap_coverage": true,
-    "required_pages": 18,
-    "available_pages": 18,
-    "canonical_ok_pages": 18,
-    "jsonld_pages": 18,
+    "available_pages": 34,
+    "canonical_ok_pages": 34,
+    "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 348.7,
-    "max_response_time_ms": 724,
-    "health_score": 100.0,
+    "avg_response_time_ms": 204.8,
+    "max_response_time_ms": 693,
+    "health_score": 95.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 95.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-03T17:14:26Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -5.0,
+  "baseline_timestamp": "2026-10-03T19:50:16Z",
+  "warnings": [
+    "page-level change: /publications/ai-cost-economics.html",
+    "page-level change: /publications/ai-decision-responsibility.html",
+    "page-level change: /publications/ai-infrastructure-economy.html",
+    "page-level change: /publications/directions.html",
+    "page-level change: /publications/expensive-money.html",
+    "page-level change: /publications/global-dependence-map.html",
+    "page-level change: /publications/global-economy-after-sanctions.html",
+    "page-level change: /publications/global-economy-new-assets.html",
+    "page-level change: /publications/hidden-matrix.html",
+    "page-level change: /publications/human-value-ai.html",
+    "page-level change: /publications/money-capital-friction.html",
+    "page-level change: /publications/money-financial-system.html",
+    "page-level change: /publications/naruto-hidden-meanings.html",
+    "page-level change: /publications/personal-growth-hidden-meanings.html",
+    "page-level change: /publications/sanctions-new-generation.html",
+    "page-level change: /publications/system-workability.html"
+  ],
+  "page_changes": {
+    "/publications/ai-cost-economics.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/ai-decision-responsibility.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/ai-infrastructure-economy.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/directions.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/expensive-money.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/global-dependence-map.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/global-economy-after-sanctions.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/global-economy-new-assets.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/hidden-matrix.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/human-value-ai.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/money-capital-friction.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/money-financial-system.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/naruto-hidden-meanings.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/personal-growth-hidden-meanings.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/sanctions-new-generation.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/system-workability.html": [
+      "new page in monitored baseline"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/ai-cost-economics.html",
+    "/publications/ai-decision-responsibility.html",
+    "/publications/ai-infrastructure-economy.html",
+    "/publications/directions.html",
+    "/publications/expensive-money.html",
+    "/publications/global-dependence-map.html",
+    "/publications/global-economy-after-sanctions.html",
+    "/publications/global-economy-new-assets.html",
+    "/publications/hidden-matrix.html",
+    "/publications/human-value-ai.html",
+    "/publications/money-capital-friction.html",
+    "/publications/money-financial-system.html",
+    "/publications/naruto-hidden-meanings.html",
+    "/publications/personal-growth-hidden-meanings.html",
+    "/publications/sanctions-new-generation.html",
+    "/publications/system-workability.html"
+  ],
+  "status": "warning"
 }
