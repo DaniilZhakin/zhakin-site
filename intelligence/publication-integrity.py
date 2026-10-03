@@ -88,7 +88,7 @@ if not index_paths:
     errors.append("publications.html: no publication links found")
 
 if len(index_paths) != 27:
-    errors.append(f"publication count: expected 23, found {len(index_paths)}")
+    errors.append(f"publication count: expected 27, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
 extra_classification = [path for path in classified if path not in index_paths]
