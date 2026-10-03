@@ -41,14 +41,8 @@ jobs:
           from urllib.parse import urljoin
 
           site = 'https://xn--80alhhq.xn--p1ai'
-          required = [
+          core_pages = [
               '/', '/about.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html',
-              '/publications/digital-ruble.html', '/publications/ai-financial-system.html',
-              '/publications/ai-infrastructure.html', '/publications/ai-parliament.html',
-              '/publications/understanding-state-and-law.html', '/publications/legal-architecture.html',
-              '/publications/intellectual-economy.html', '/publications/economic-transition-1990s.html',
-              '/publications/future-without-money.html', '/publications/food-infrastructure.html',
-              '/publications/capital-requires-proof.html', '/publications/price-discovery.html',
           ]
 
           def fetch(url):
@@ -119,12 +113,19 @@ jobs:
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap or '')
           snapshot['signals']['sitemap_urls'] = len(urls)
           snapshot['signals']['sitemap_unique'] = len(urls) == len(set(urls))
+          publication_paths = sorted({
+              url.replace(site, '', 1)
+              for url in urls
+              if url.startswith(site + '/publications/') and url.endswith('.html')
+          })
+          required = core_pages + [p for p in publication_paths if p not in core_pages]
+          snapshot['signals']['required_pages'] = len(required)
           snapshot['signals']['sitemap_coverage'] = all(urljoin(site, p) in urls for p in required)
 
           for path in required:
               url = urljoin(site, path)
               headers, html, elapsed, err = fetch(url)
-              canonical = re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', html, flags=re.I)
+              canonical = re.findall(r'<link\b(?=[^>]*\brel=["\']canonical["\'])(?=[^>]*\bhref=["\']([^"\']+))[^>]*>', html, flags=re.I)
               header_noindex = bool(re.search(r'^X-Robots-Tag:\s*.*noindex', headers, flags=re.I|re.M))
               html_noindex = bool(re.search(r'<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex', html, flags=re.I))
               snapshot['pages'][path] = {
@@ -136,7 +137,6 @@ jobs:
                   'jsonld': bool(re.search(r'application/ld\+json', html, flags=re.I)),
               }
 
-          snapshot['signals']['required_pages'] = len(required)
           snapshot['signals']['available_pages'] = sum(p['available'] for p in snapshot['pages'].values())
           snapshot['signals']['canonical_ok_pages'] = sum(p['canonical_ok'] for p in snapshot['pages'].values())
           snapshot['signals']['jsonld_pages'] = sum(p['jsonld'] for p in snapshot['pages'].values())
