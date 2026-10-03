@@ -43,15 +43,15 @@ def main():
     urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
     checks.append({'name': 'sitemap.xml', 'ok': bool(urls and len(urls) == len(set(urls)) and all(u.startswith(SITE + '/') or u == SITE + '/' for u in urls)), 'response_time_ms': elapsed, 'url_count': len(urls), 'error': err})
 
-    required = [
-        '/', '/about.html', '/projects.html', '/publications.html', '/reception.html',
-        '/publications/ai-parliament.html', '/publications/digital-ruble.html',
-        '/publications/ai-financial-system.html', '/publications/ai-infrastructure.html',
-        '/publications/understanding-state-and-law.html', '/publications/legal-architecture.html',
-        '/publications/intellectual-economy.html', '/publications/economic-transition-1990s.html',
-        '/publications/future-without-money.html', '/publications/food-infrastructure.html',
-        '/publications/capital-requires-proof.html', '/publications/price-discovery.html',
+    core_pages = [
+        '/', '/about.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html',
     ]
+    publication_paths = sorted({
+        url.replace(SITE, '', 1)
+        for url in urls
+        if url.startswith(SITE + '/publications/') and url.endswith('.html')
+    })
+    required = core_pages + [path for path in publication_paths if path not in core_pages]
     missing = [SITE + path for path in required if SITE + path not in urls]
     checks.append({'name': 'sitemap coverage', 'ok': not missing, 'missing': missing})
 
@@ -59,9 +59,9 @@ def main():
     for path in required:
         url = SITE + path
         headers, html, elapsed, err = fetch(url)
-        canonical = re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', html, flags=re.I)
+        canonical = re.findall(r'<link\b(?=[^>]*\brel=["\']canonical["\'])(?=[^>]*\bhref=["\']([^"\']+))[^>]*>', html, flags=re.I)
         canonical_ok = bool(canonical and canonical[0].rstrip('/') == url.rstrip('/'))
-        noindex = bool(re.search(r'noindex|X-Robots-Tag', html, flags=re.I))
+        noindex = bool(re.search(r'<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex', html, flags=re.I)) or bool(re.search(r'X-Robots-Tag:\s*[^\r\n]*noindex', headers, flags=re.I))
         schema_ok = bool(re.search(r'application/ld\+json', html, flags=re.I))
         ok = bool(html and canonical_ok and not noindex and schema_ok)
         if not ok:
