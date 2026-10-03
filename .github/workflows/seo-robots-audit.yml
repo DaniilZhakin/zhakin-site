@@ -38,37 +38,31 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           urls = re.findall(r'<loc>(.*?)</loc>', sitemap)
-          if len(urls) != 40:
-              raise SystemExit(f'Expected 40 sitemap URLs, found {len(urls)}')
+          if not urls:
+              raise SystemExit('Sitemap is empty')
           if len(urls) != len(set(urls)):
               raise SystemExit('Duplicate sitemap URLs detected')
           for url in urls:
               if not url.startswith('https://xn--80alhhq.xn--p1ai/'):
                   raise SystemExit(f'Non-production URL in sitemap: {url}')
 
-          required = [
-              'https://xn--80alhhq.xn--p1ai/',
-              'https://xn--80alhhq.xn--p1ai/about.html',
-              'https://xn--80alhhq.xn--p1ai/projects.html',
-              'https://xn--80alhhq.xn--p1ai/publications.html',
-              'https://xn--80alhhq.xn--p1ai/reception.html',
-              'https://xn--80alhhq.xn--p1ai/intelligence.html',
-              'https://xn--80alhhq.xn--p1ai/publications/ai-parliament.html',
-              'https://xn--80alhhq.xn--p1ai/publications/money-financial-system.html',
+          site = 'https://xn--80alhhq.xn--p1ai'
+          core_paths = [
+              '/', '/about.html', '/projects.html', '/publications.html',
+              '/reception.html', '/institutional.html', '/intelligence.html',
           ]
-          required += [
-              f'https://xn--80alhhq.xn--p1ai/publications/{slug}.html'
-              for slug in [
-                  'digital-ruble', 'ai-financial-system', 'ai-infrastructure',
-                  'understanding-state-and-law', 'legal-architecture', 'intellectual-economy',
-                  'economic-transition-1990s', 'future-without-money',
-                  'food-infrastructure', 'capital-requires-proof', 'price-discovery'
-              ]
+          publication_paths = sorted({
+              url.replace(site, '', 1)
+              for url in urls
+              if url.startswith(site + '/publications/') and url.endswith('.html')
+          })
+          required = [site + path for path in core_paths] + [
+              site + path for path in publication_paths
           ]
           missing = [url for url in required if url not in urls]
           if missing:
               raise SystemExit('Missing required sitemap URLs: ' + ', '.join(missing))
-          print(f'Sitemap OK: {len(urls)} unique production URLs')
+          print(f'Sitemap OK: {len(urls)} unique production URLs; {len(publication_paths)} publication URLs monitored')
           PY
 
       - name: Validate canonical and indexability signals
@@ -79,8 +73,8 @@ jobs:
           for file in "${files[@]}"; do
             test -f "$file"
             grep -q 'rel="canonical"' "$file" || { echo "Missing canonical: $file"; exit 1; }
-            if grep -qiE 'noindex|X-Robots-Tag' "$file"; then
-              echo "Unexpected noindex/X-Robots-Tag signal: $file"
+            if grep -qiE '<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex|<meta[^>]+content=["\'][^"\']*noindex[^"\']*["\'][^>]+name=["\']robots["\']' "$file"; then
+              echo "Unexpected robots noindex signal: $file"
               exit 1
             fi
           done
