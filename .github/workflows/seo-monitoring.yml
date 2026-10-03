@@ -35,11 +35,7 @@ jobs:
           from urllib.parse import urljoin
 
           site = 'https://xn--80alhhq.xn--p1ai'
-          report = {
-              'site': site,
-              'checks': [],
-              'summary': {'ok': 0, 'warning': 0, 'failed': 0},
-          }
+          report = {'site': site, 'checks': [], 'summary': {'ok': 0, 'warning': 0, 'failed': 0}}
 
           def fetch(url):
               started = time.monotonic()
@@ -88,11 +84,13 @@ jobs:
               u.replace(site, '', 1)
               for u in urls
               if u.startswith(site + '/publications/') and u.endswith('.html')
+              and not u.endswith('/publications/directions.html')
           })
-          required = core_paths + publication_paths
+          auxiliary_paths = ['/publications/directions.html']
+          required = core_paths + auxiliary_paths + publication_paths
           sitemap_missing = [urljoin(site, path) for path in required if urljoin(site, path) not in urls]
           if not sitemap_missing:
-              add('sitemap coverage', 'ok', 'All required authority, reception and publication URLs are covered.')
+              add('sitemap coverage', 'ok', 'All required authority, reception, directions and publication URLs are covered.')
           else:
               add('sitemap coverage', 'failed', 'Missing: ' + ', '.join(sitemap_missing))
 
@@ -102,9 +100,13 @@ jobs:
               if not html:
                   add('page availability', 'failed', err or 'Empty response.', url, elapsed)
                   continue
-              canonical = re.findall(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', html, flags=re.I)
-              canonical_ok = canonical and canonical[0].rstrip('/') == url.rstrip('/')
-              noindex = bool(re.search(r'noindex|X-Robots-Tag', html, flags=re.I))
+              canonical = re.findall(r'<link\b[^>]*\brel=["\']canonical["\'][^>]*\bhref=["\']([^"\']+)["\']', html, flags=re.I)
+              if not canonical:
+                  canonical = re.findall(r'<link\b[^>]*\bhref=["\']([^"\']+)["\'][^>]*\brel=["\']canonical["\']', html, flags=re.I)
+              canonical_ok = bool(canonical) and canonical[0].rstrip('/') == url.rstrip('/')
+              header_noindex = bool(re.search(r'(?im)^\s*x-robots-tag:.*\bnoindex\b', headers or ''))
+              html_noindex = bool(re.search(r'<meta\b[^>]*name=["\']robots["\'][^>]*content=["\'][^"\']*\bnoindex\b', html, flags=re.I))
+              noindex = header_noindex or html_noindex
               schema_ok = bool(re.search(r'application/ld\+json', html, flags=re.I))
               if canonical_ok and not noindex and schema_ok:
                   add('page SEO signals', 'ok', 'Canonical, indexability and JSON-LD signals are present.', url, elapsed)
@@ -117,14 +119,10 @@ jobs:
 
           Path('monitoring-report/seo-monitoring.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
           lines = [
-              '# SEO Monitoring & Intelligence',
-              '',
-              f"Site: {site}",
-              '',
-              f"Summary: OK={report['summary']['ok']} WARNING={report['summary']['warning']} FAILED={report['summary']['failed']}",
-              '',
-              '| Check | Status | Detail |',
-              '|---|---|---|',
+              '# SEO Monitoring & Intelligence', '',
+              f"Site: {site}", '',
+              f"Summary: OK={report['summary']['ok']} WARNING={report['summary']['warning']} FAILED={report['summary']['failed']}", '',
+              '| Check | Status | Detail |', '|---|---|---|',
           ]
           for item in report['checks']:
               lines.append(f"| {item['name']} | {item['status'].upper()} | {item['detail']} |")
