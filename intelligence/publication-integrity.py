@@ -30,6 +30,7 @@ direction_groups = {
             "/publications/ai-financial-system.html",
             "/publications/price-discovery.html",
             "/publications/money-capital-friction.html",
+            "/publications/expensive-money.html",
         },
     },
     "ai": {
@@ -40,6 +41,7 @@ direction_groups = {
             "/publications/ai-decision-responsibility.html",
             "/publications/ai-cost-economics.html",
             "/publications/ai-infrastructure-economy.html",
+            "/publications/human-value-ai.html",
         },
     },
     "law": {
@@ -64,6 +66,8 @@ direction_groups = {
             "/publications/capital-requires-proof.html",
             "/publications/naruto-hidden-meanings.html",
             "/publications/personal-growth-hidden-meanings.html",
+            "/publications/hidden-matrix.html",
+            "/publications/system-workability.html",
         },
     },
     "geoeconomics": {
@@ -83,7 +87,7 @@ expected_direction_paths = set().union(*(group["paths"] for group in direction_g
 if not index_paths:
     errors.append("publications.html: no publication links found")
 
-if len(index_paths) != 23:
+if len(index_paths) != 27:
     errors.append(f"publication count: expected 23, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
