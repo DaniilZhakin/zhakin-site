@@ -167,7 +167,8 @@ jobs:
             '/international-geography.html',
             '/political-analysis.html',
             '/political-objects.html',
-            '/political-object.html'
+            '/political-object.html',
+            '/political-methodology.html'
           ];
           for (const publicPath of publicPaths) {
             if (!fs.existsSync('.' + publicPath)) {
