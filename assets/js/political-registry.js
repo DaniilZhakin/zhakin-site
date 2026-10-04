@@ -11,7 +11,7 @@
   let records = [];
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  const optionize = (select, values) => values.sort().forEach(value => {
+  const reviewState = (date) => { if (!date) return ''; const due = new Date(date + 'T00:00:00'); const today = new Date(); today.setHours(0,0,0,0); const days = Math.ceil((due-today)/86400000); return days < 0 ? 'overdue' : (days <= 30 ? 'due-soon' : 'current'); };\n  const reviewLabel = state => ({current:'актуально', 'due-soon':'проверка скоро', overdue:'проверка просрочена'}[state] || '');\n  const optionize = (select, values) => values.sort().forEach(value => {
     const option = document.createElement('option');
     option.value = value;
     option.textContent = value;
@@ -35,14 +35,14 @@
       const evidenceCount = Array.isArray(record.evidence) ? record.evidence.length : 0;
       const historyCount = Array.isArray(record.change_history) ? record.change_history.length : 0;
       return '<article class="registry-card">' +
-        '<h3>' + esc(record.name) + '</h3>' +
+        '<h3><a href="/political-object.html?id=' + encodeURIComponent(record.id) + '">' + esc(record.name) + '</a></h3>' +
         '<div class="meta"><span class="tag">' + esc(record.object_type) + '</span><span class="tag">' + esc(record.status) + '</span>' +
-        (record.jurisdiction ? '<span class="tag">' + esc(record.jurisdiction) + '</span>' : '') + '</div>' +
+        (record.jurisdiction ? '<span class="tag">' + esc(record.jurisdiction) + '</span>' : '') + (record.review_due ? '<span class="tag">' + esc(reviewLabel(reviewState(record.review_due))) + '</span>' : '') + '</div>' +
         (record.description ? '<p>' + esc(record.description) + '</p>' : '') +
         '<p class="source"><strong>Источник:</strong> ' + esc(record.source) + '<br><strong>Источник от:</strong> ' + esc(record.source_date) +
         '<br><strong>Проверено:</strong> ' + esc(record.last_reviewed) +
         (record.review_due ? '<br><strong>Следующая проверка:</strong> ' + esc(record.review_due) : '') +
-        '<br><strong>Доказательств:</strong> ' + evidenceCount + ' · <strong>Изменений:</strong> ' + historyCount + '</p>' +
+        '<br><strong>Доказательств:</strong> ' + evidenceCount + ' · <strong>Изменений:</strong> ' + historyCount + '</p>' + '<p><a href="/political-object.html?id=' + encodeURIComponent(record.id) + '">Открыть аналитическую карточку →</a></p>' +
         '</article>';
     }).join('');
     empty.classList.toggle('hidden', records.length !== 0);
