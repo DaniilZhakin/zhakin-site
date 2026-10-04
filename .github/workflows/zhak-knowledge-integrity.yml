@@ -15,6 +15,7 @@ on:
       - 'data/intelligence-config.json'
       - 'data/institutional-registry.json'
       - 'data/projects.json'
+      - 'data/political-analysis.json'
       - '.github/workflows/zhak-knowledge-integrity.yml'
   workflow_dispatch:
 
@@ -81,6 +82,52 @@ jobs:
           }
           if (!Array.isArray(political.analytical_dimensions) || political.analytical_dimensions.length < 1) {
             throw new Error('Political analysis dimensions are empty');
+          }
+          if (!Array.isArray(political.records)) {
+            throw new Error('Political analysis records must be an array');
+          }
+
+          const allowedObjectTypes = new Set(political.object_types);
+          const requiredFields = political.record_contract?.required || [];
+          const allowedStatuses = new Set(['active', 'inactive', 'historical', 'under-review', 'draft']);
+          const recordIds = new Set();
+
+          for (const record of political.records) {
+            for (const field of requiredFields) {
+              if (record[field] === undefined || record[field] === null || record[field] === '') {
+                throw new Error('Political record ' + (record.id || '<unknown>') + ': missing required field ' + field);
+              }
+            }
+            if (!allowedObjectTypes.has(record.object_type)) {
+              throw new Error('Political record ' + record.id + ': unsupported object_type ' + record.object_type);
+            }
+            if (!allowedStatuses.has(record.status)) {
+              throw new Error('Political record ' + record.id + ': unsupported status ' + record.status);
+            }
+            if (recordIds.has(record.id)) {
+              throw new Error('Political record duplicate id: ' + record.id);
+            }
+            recordIds.add(record.id);
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(record.source_date)) {
+              throw new Error('Political record ' + record.id + ': source_date must be YYYY-MM-DD');
+            }
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(record.last_reviewed)) {
+              throw new Error('Political record ' + record.id + ': last_reviewed must be YYYY-MM-DD');
+            }
+            if (record.relations !== undefined && !Array.isArray(record.relations)) {
+              throw new Error('Political record ' + record.id + ': relations must be an array');
+            }
+            if (record.scenario_notes !== undefined && (typeof record.scenario_notes !== 'object' || Array.isArray(record.scenario_notes))) {
+              throw new Error('Political record ' + record.id + ': scenario_notes must be an object');
+            }
+          }
+
+          for (const record of political.records) {
+            for (const relation of record.relations || []) {
+              if (!relation.target_id || !recordIds.has(relation.target_id)) {
+                throw new Error('Political record ' + record.id + ': relation target not found: ' + (relation.target_id || '<empty>'));
+              }
+            }
           }
 
           for (const source of knowledge.knowledge_sources) {
