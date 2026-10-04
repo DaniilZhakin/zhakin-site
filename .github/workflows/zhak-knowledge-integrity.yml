@@ -165,7 +165,8 @@ jobs:
             '/publications.html',
             '/reception.html',
             '/international-geography.html',
-            '/political-analysis.html'
+            '/political-analysis.html',
+            '/political-objects.html'
           ];
           for (const publicPath of publicPaths) {
             if (!fs.existsSync('.' + publicPath)) {
