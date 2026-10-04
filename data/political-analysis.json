@@ -33,7 +33,10 @@
       "resources",
       "communications",
       "relations",
-      "scenario_notes"
+      "scenario_notes",
+      "review_due",
+      "evidence",
+      "change_history"
     ]
   },
   "analytical_dimensions": [
