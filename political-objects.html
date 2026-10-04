@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реестр политических объектов — Жакин.рф</title>
+<meta name="description" content="Структурированный публичный реестр политических объектов Жакин.рф: тип, статус, юрисдикция, источники и контроль актуальности.">
+<link rel="canonical" href="https://xn--80alhhq.xn--p1ai/political-objects.html">
+<meta property="og:title" content="Реестр политических объектов — Жакин.рф">
+<meta property="og:description" content="Публичный структурированный реестр объектов политической аналитики с контролем источников и актуальности.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xn--80alhhq.xn--p1ai/political-objects.html">
+<meta property="og:image" content="https://xn--80alhhq.xn--p1ai/assets/images/political-analysis.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.registry-hero{margin-bottom:34px}.eyebrow{color:#c7a45a;text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700}.lead{font-size:20px;color:#9fb2aa}.registry-toolbar{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:12px;margin:24px 0}.registry-toolbar label{display:flex;flex-direction:column;gap:7px;color:#9fb2aa;font-size:12px}.registry-toolbar input,.registry-toolbar select{font:inherit;color:#e9f0ed;background:#0d1e1a;border:1px solid #28453b;border-radius:10px;padding:12px}.registry-meta{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:18px 0;color:#9fb2aa;font-size:13px}.registry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.registry-card{padding:22px;border:1px solid #28453b;background:#0d1e1a;border-radius:14px}.registry-card h3{margin-top:0}.registry-card .meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.tag{border:1px solid #3b5b50;border-radius:999px;padding:5px 9px;font-size:11px;color:#c7a45a}.source{color:#9fb2aa;font-size:13px}.empty,.error{padding:24px;border-left:3px solid #c7a45a;background:#0c1a16;color:#cbd7d2}.hidden{display:none}@media(max-width:800px){.registry-toolbar,.registry-grid{grid-template-columns:1fr}.registry-meta{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-container">
+<a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ОФИЦИАЛЬНЫЙ ПРОФЕССИОНАЛЬНЫЙ<br>ПРОФИЛЬ</span><span class="brand-platform">ZHAKIN TEAM • INTERNATIONAL<br>DEVELOPMENT PLATFORM</span></a>
+<button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+<nav id="site-navigation" class="main-navigation" aria-label="Основная навигация"><a href="/">Главная</a><a href="/about.html">Обо мне</a><a href="/projects.html">Проекты</a><a href="/publications.html">Публикации</a><a href="/political-analysis.html">Политическая аналитика</a><a href="/institutional.html">Институциональный контур</a><a href="/reception.html">Приёмная</a></nav>
+</div></header>
+<main>
+<section class="registry-hero">
+<div class="eyebrow">ZHAKIN TEAM · POLITICAL ANALYSIS · PUBLIC REGISTRY</div>
+<h1>Реестр политических объектов</h1>
+<p class="lead">Публичный индекс структурированных аналитических объектов. Здесь фиксируются только данные, прошедшие установленный контракт источников и дат проверки.</p>
+<p><a href="/political-analysis.html">← Вернуться к политической аналитике</a></p>
+</section>
+<section>
+<h2>Поиск и фильтрация</h2>
+<div class="registry-toolbar">
+<label>Поиск<input id="registry-search" type="search" placeholder="Название или описание" autocomplete="off"></label>
+<label>Тип объекта<select id="registry-type"><option value="">Все типы</option></select></label>
+<label>Статус<select id="registry-status"><option value="">Все статусы</option></select></label>
+<label>Юрисдикция<input id="registry-jurisdiction" type="search" placeholder="Например: РФ" autocomplete="off"></label>
+</div>
+<div class="registry-meta"><span id="registry-count">Загрузка реестра…</span><span>Источник данных: <code>/data/political-analysis.json</code></span></div>
+<div id="registry-error" class="error hidden" role="alert"></div>
+<div id="registry-empty" class="empty hidden">В реестре пока нет опубликованных объектов. Это намеренное состояние: реальные политические сущности не добавляются без проверенного источника и даты.</div>
+<div id="registry-grid" class="registry-grid"></div>
+</section>
+<section>
+<h2>Правила публичного реестра</h2>
+<ul>
+<li>наличие объекта в реестре не означает поддержки, членства или политической аффилированности автора;</li>
+<li>каждый опубликованный объект должен иметь источник, дату источника и дату последней проверки;</li>
+<li>изменяющиеся сведения проходят повторную проверку по полю <code>review_due</code>;</li>
+<li>доказательства и история изменений хранятся структурированно и не подменяются свободной интерпретацией;</li>
+<li>факт, интерпретация и сценарная гипотеза рассматриваются раздельно.</li>
+</ul>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Юрьевич Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a> • <a href="/investment-disclaimer.html">Информация о рынках</a></p></div></footer>
+<script src="assets/js/main.js?v=20260927-9"></script>
+<script src="assets/js/political-registry.js?v=20261004-1"></script>
+</body>
+</html>
