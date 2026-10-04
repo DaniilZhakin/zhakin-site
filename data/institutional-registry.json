@@ -93,6 +93,13 @@
         "source": "/data/projects.json"
       },
       {
+        "id": "political-analysis",
+        "type": "direction",
+        "name": "Политическая аналитика",
+        "page": "/political-analysis.html",
+        "source": "/political-analysis.html"
+      },
+      {
         "id": "development",
         "type": "direction",
         "name": "Развитие и новые инициативы",
@@ -240,6 +247,13 @@
         "type": "link",
         "name": "Международная география",
         "url": "/international-geography.html",
+        "source": "official website"
+      },
+      {
+        "id": "political-analysis",
+        "type": "link",
+        "name": "Политическая аналитика",
+        "url": "/political-analysis.html",
         "source": "official website"
       },
       {
@@ -474,6 +488,12 @@
       "type": "supports-direction",
       "to": "development",
       "source": "/data/projects.json"
+    },
+    {
+      "from": "political-analysis",
+      "type": "references",
+      "to": "zhakin-team-org",
+      "source": "official website"
     },
     {
       "from": "official-site",
