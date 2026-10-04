@@ -7,6 +7,7 @@ on:
       - 'data/intelligence-config.json'
       - 'data/institutional-registry.json'
       - 'data/projects.json'
+      - 'data/political-analysis.json'
       - '.github/workflows/zhak-knowledge-integrity.yml'
   pull_request:
     paths:
@@ -48,6 +49,7 @@ jobs:
           const config = readJson('data/intelligence-config.json');
           const registry = readJson('data/institutional-registry.json');
           const projects = readJson('data/projects.json');
+          const political = readJson('data/political-analysis.json');
 
           if (knowledge.service !== 'zhakin-ai') throw new Error('Knowledge service mismatch');
           if (!knowledge.response_contract?.answer || !Array.isArray(knowledge.response_contract?.sources)) {
@@ -71,6 +73,15 @@ jobs:
           if (!Array.isArray(projects.projects) || projects.projects.length === 0) {
             throw new Error('Public project registry is empty');
           }
+          if (political.scope !== 'political-analysis' || political.public_route !== '/political-analysis.html') {
+            throw new Error('Political analysis registry scope/route mismatch');
+          }
+          if (!Array.isArray(political.object_types) || political.object_types.length < 1) {
+            throw new Error('Political analysis object registry is empty');
+          }
+          if (!Array.isArray(political.analytical_dimensions) || political.analytical_dimensions.length < 1) {
+            throw new Error('Political analysis dimensions are empty');
+          }
 
           for (const source of knowledge.knowledge_sources) {
             const file = '.' + source.path;
@@ -82,7 +93,8 @@ jobs:
             '/projects.html',
             '/publications.html',
             '/reception.html',
-            '/international-geography.html'
+            '/international-geography.html',
+            '/political-analysis.html'
           ];
           for (const publicPath of publicPaths) {
             if (!fs.existsSync('.' + publicPath)) {
