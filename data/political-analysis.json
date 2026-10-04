@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-10-04",
+  "scope": "political-analysis",
+  "public_route": "/political-analysis.html",
+  "purpose": "Structured analytical framework for studying political institutions, parties, movements, coalitions, electoral systems, political communication and strategic scenarios.",
+  "object_types": [
+    "party",
+    "movement",
+    "coalition",
+    "institution",
+    "electoral-system",
+    "political-technology",
+    "public-actor",
+    "communication-environment"
+  ],
+  "record_contract": {
+    "required": [
+      "id",
+      "name",
+      "object_type",
+      "status",
+      "source",
+      "source_date",
+      "last_reviewed"
+    ],
+    "optional": [
+      "jurisdiction",
+      "description",
+      "program_position",
+      "organizational_model",
+      "electoral_profile",
+      "resources",
+      "communications",
+      "relations",
+      "scenario_notes"
+    ]
+  },
+  "analytical_dimensions": [
+    "institutions",
+    "actors",
+    "rules",
+    "resources",
+    "agenda",
+    "communications",
+    "time-horizon"
+  ],
+  "scenario_framework": [
+    "base",
+    "alternative",
+    "stress",
+    "early-warning-indicators"
+  ],
+  "quality_controls": [
+    "fact",
+    "interpretation",
+    "scenario-hypothesis"
+  ],
+  "data_policy": {
+    "political_affiliation_claims": "prohibited_without_explicit_source",
+    "sensitive_current_data_requires_date": true,
+    "source_required_for_entity_records": true,
+    "review_before_publication": true,
+    "analytical_neutrality": true
+  },
+  "records": []
+}
