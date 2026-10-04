@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs><radialGradient id="bg" cx="50%" cy="35%" r="80%"><stop offset="0" stop-color="#17352c"/><stop offset="1" stop-color="#08110f"/></radialGradient><linearGradient id="gold" x1="0" x2="1"><stop stop-color="#c7a45a"/><stop offset="1" stop-color="#8e7440"/></linearGradient></defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<g fill="none" stroke="#31574a" stroke-width="3" opacity=".8">
+<path d="M170 670 L470 450 L790 610 L1110 350 L1430 560"/>
+<path d="M280 250 L470 450 L680 220 L790 610 L980 180 L1110 350 L1320 230 L1430 560"/>
+<circle cx="170" cy="670" r="24"/><circle cx="470" cy="450" r="32"/><circle cx="790" cy="610" r="28"/><circle cx="1110" cy="350" r="34"/><circle cx="1430" cy="560" r="26"/>
+<circle cx="280" cy="250" r="20"/><circle cx="680" cy="220" r="22"/><circle cx="980" cy="180" r="25"/><circle cx="1320" cy="230" r="22"/>
+</g>
+<g fill="none" stroke="url(#gold)" stroke-width="5" opacity=".9"><circle cx="790" cy="450" r="180"/><circle cx="790" cy="450" r="110"/><path d="M610 450h360M790 270v360"/></g>
+<g fill="#c7a45a"><circle cx="790" cy="450" r="9"/><circle cx="470" cy="450" r="7"/><circle cx="1110" cy="350" r="7"/></g>
+</svg>
