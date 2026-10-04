@@ -123,19 +123,19 @@ jobs:
             if (!/^\d{4}-\d{2}-\d{2}$/.test(record.last_reviewed)) {
               throw new Error('Political record ' + record.id + ': last_reviewed must be YYYY-MM-DD');
             }
-            if (record.review_due !== undefined && !/^\\d{4}-\\d{2}-\\d{2}$/.test(record.review_due)) {
+            if (record.review_due !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(record.review_due)) {
               throw new Error('Political record ' + record.id + ': review_due must be YYYY-MM-DD');
             }
             if (record.evidence !== undefined) {
               if (!Array.isArray(record.evidence)) throw new Error('Political record ' + record.id + ': evidence must be an array');
               for (const item of record.evidence) {
-                if (!item?.source || !/^\\d{4}-\\d{2}-\\d{2}$/.test(item.source_date)) throw new Error('Political record ' + record.id + ': evidence requires source and YYYY-MM-DD source_date');
+                if (!item?.source || !/^\d{4}-\d{2}-\d{2}$/.test(item.source_date)) throw new Error('Political record ' + record.id + ': evidence requires source and YYYY-MM-DD source_date');
               }
             }
             if (record.change_history !== undefined) {
               if (!Array.isArray(record.change_history)) throw new Error('Political record ' + record.id + ': change_history must be an array');
               for (const item of record.change_history) {
-                if (!item?.change || !/^\\d{4}-\\d{2}-\\d{2}$/.test(item.date)) throw new Error('Political record ' + record.id + ': change_history requires change and YYYY-MM-DD date');
+                if (!item?.change || !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) throw new Error('Political record ' + record.id + ': change_history requires change and YYYY-MM-DD date');
               }
             }
             if (record.relations !== undefined && !Array.isArray(record.relations)) {
