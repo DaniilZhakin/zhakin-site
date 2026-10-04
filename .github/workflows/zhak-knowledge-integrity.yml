@@ -17,6 +17,7 @@ on:
       - 'data/institutional-registry.json'
       - 'data/projects.json'
       - 'data/political-analysis.json'
+      - 'data/political-analysis.schema.json'
       - '.github/workflows/zhak-knowledge-integrity.yml'
   workflow_dispatch:
 
