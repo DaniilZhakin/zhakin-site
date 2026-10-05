@@ -163,6 +163,28 @@
       }
     },
     {
+      "id": "world-political-legitimacy",
+      "name": "Эволюция представлений о политической легитимности",
+      "object_type": "political-technology",
+      "status": "historical",
+      "jurisdiction": "Европа / международная политико-правовая традиция",
+      "description": "Историческое развитие представлений о законности и общественном признании политической власти, включая переход от династических оснований к конституционным и гражданским формам легитимации.",
+      "source": "Encyclopaedia Britannica — legitimacy / political legitimacy",
+      "source_date": "1789-01-01",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "develops_through",
+          "target": "world-french-revolution"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Легитимность опирается на признанные обществом правила и институты.",
+        "alternative": "Изменение источников легитимации через новые формы представительства.",
+        "stress": "Расхождение между формальной законностью и общественным признанием."
+      }
+    },
+    {
       "id": "world-separation-of-powers",
       "name": "Разделение властей",
       "object_type": "political-technology",
@@ -240,6 +262,28 @@
         "base": "Локальная институционализация представительства.",
         "alternative": "Расширение участия общества в управлении.",
         "stress": "Ограничение автономии местных институтов."
+      }
+    },
+    {
+      "id": "russia-monarchy",
+      "name": "Монархическая система Российской империи",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "description": "Монархическая институциональная система Российской империи до революционных изменений 1917 года.",
+      "source": "Encyclopaedia Britannica — Russian Empire / Russian Revolution",
+      "source_date": "1917-02-23",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "transformed_by",
+          "target": "russia-february-1917"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Централизованная монархическая форма верховной власти.",
+        "alternative": "Институциональная реформа без смены формы правления.",
+        "stress": "Потеря политической легитимности и системный кризис управления."
       }
     },
     {
