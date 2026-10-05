@@ -34,7 +34,7 @@
 <h2>Историческая последовательность</h2>
 <div id="timeline" class="timeline"><div class="empty">Загрузка реестра…</div></div>
 </section>
-<section><h2>Цепочка политического цикла</h2><p class="lead">Событие → институт → изменение правила → последствие → следующий цикл.</p><div id="chain"></div></section>
+<section id="cycle"><h2>Цепочка политического цикла</h2><p class="lead">Событие → институт → изменение правила → последствие → следующий цикл.</p><div id="chain"></div></section>
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script>
@@ -62,6 +62,7 @@
 <script src="assets/js/main.js?v=20260927-9"></script>
 
 <script>
-(async function(){const root=document.getElementById('chain');try{const r=await fetch('/data/political-timeline.json',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();root.innerHTML=d.records.map(x=>'<article class="item"><div class="date">'+escapeHtml(x.date)+'</div><h3>'+escapeHtml(x.event)+'</h3><div class="meta"><span class="tag">'+escapeHtml(x.institution)+'</span></div><p><strong>Изменение правила:</strong> '+escapeHtml(x.rule_change)+'</p><p><strong>Последствие:</strong> '+escapeHtml(x.consequence)+'</p><p><strong>Следующий цикл:</strong> '+escapeHtml(x.next_cycle)+'</p></article>').join('')}catch(e){root.innerHTML='<div class="empty">Цепочка пока недоступна. Данные не подменяются.</div>'}function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}})();
+(async function(){const root=document.getElementById('chain');try{const r=await fetch('/data/political-timeline.json',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();const focus=new URLSearchParams(location.search).get('object');
+ root.innerHTML=d.records.map(x=>'<article class="item" id="cycle-'+escapeHtml(x.object_id)+'">'+(focus===x.object_id?'<div class="tag">Выбранный цикл</div>':'')+'<div class="date">'+escapeHtml(x.date)+'</div><h3>'+escapeHtml(x.event)+'</h3><div class="meta"><span class="tag">'+escapeHtml(x.institution)+'</span></div><p><strong>Изменение правила:</strong> '+escapeHtml(x.rule_change)+'</p><p><strong>Последствие:</strong> '+escapeHtml(x.consequence)+'</p><p><strong>Следующий цикл:</strong> '+escapeHtml(x.next_cycle)+'</p></article>').join('')}catch(e){root.innerHTML='<div class="empty">Цепочка пока недоступна. Данные не подменяются.</div>'}function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}})();
 </script></body>
 </html>
