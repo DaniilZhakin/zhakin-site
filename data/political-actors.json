@@ -305,6 +305,67 @@
         "временной контекст"
       ],
       "relations": []
+    },
+    {
+      "id": "world-separation-of-powers",
+      "name": "Разделение властей",
+      "object_type": "political-technology",
+      "status": "historical",
+      "jurisdiction": "Международная политико-правовая традиция",
+      "source": "Encyclopaedia Britannica — separation of powers",
+      "source_date": "1748-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "world-political-legitimacy",
+      "name": "Эволюция представлений о политической легитимности",
+      "object_type": "political-technology",
+      "status": "historical",
+      "jurisdiction": "Европа / международная политико-правовая традиция",
+      "source": "Encyclopaedia Britannica — legitimacy / political legitimacy",
+      "source_date": "1789-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "develops_through",
+          "target": "world-french-revolution"
+        }
+      ]
+    },
+    {
+      "id": "russia-monarchy",
+      "name": "Монархическая система Российской империи",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "source": "Encyclopaedia Britannica — Russian Empire / Russian Revolution",
+      "source_date": "1917-02-23",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "transformed_by",
+          "target": "russia-february-1917"
+        }
+      ]
     }
   ]
 }
