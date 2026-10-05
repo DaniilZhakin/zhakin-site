@@ -53,7 +53,9 @@
 <section>
 <h2>Текущее состояние реестра</h2>
 <div id="registry-state" class="empty">Загрузка структурированного реестра…</div>
+<div id="actor-matrix" class="map-grid" style="margin-top:16px"><div class="empty">Загрузка матрицы акторов…</div></div>
 </section>
+<section><h2>Матрица акторов и центров влияния</h2><p class="lead">Историко-институциональный слой: роль, ресурсы, коммуникации, отношения и временной контекст.</p><div id="actor-matrix" class="map-grid"></div></section>
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Юрьевич Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a> • <a href="/investment-disclaimer.html">Информация о рынках</a></p></div></footer>
 <script>
@@ -63,5 +65,8 @@ document.getElementById('registry-state').innerHTML='<strong>Объектов в
 }).catch(()=>{document.getElementById('registry-state').textContent='Не удалось загрузить реестр. Данные не подменяются предположениями.'});
 </script>
 <script src="assets/js/main.js?v=20260927-9"></script>
-</body>
+
+<script>
+(async function(){const root=document.getElementById('actor-matrix');try{const r=await fetch('/data/political-actors.json',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();root.innerHTML=d.records.map(x=>'<article class="map-card"><h3>'+esc(x.name)+'</h3><p><strong>Тип:</strong> '+esc(x.object_type)+' · <strong>Статус:</strong> '+esc(x.status)+'</p><p><strong>Юрисдикция:</strong> '+esc(x.jurisdiction)+'</p><p><strong>Аналитические измерения:</strong> '+x.dimensions.map(esc).join(' · ')+'</p><p class="meta">Связей: '+x.relations.length+'</p></article>').join('')}catch(e){root.innerHTML='<div class="empty">Матрица недоступна. Данные не подменяются предположениями.</div>'}function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}})();
+</script></body>
 </html>
