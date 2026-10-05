@@ -63,6 +63,7 @@
 
 <script>
 (async function(){const root=document.getElementById('chain');try{const r=await fetch('/data/political-timeline.json',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();const focus=new URLSearchParams(location.search).get('object');
+ const byId=new Map(d.records.map(x=>[x.object_id,x]));
  const focused=d.records.find(x=>x.object_id===focus);
  const bar=focused?'<div class="focus-bar">Показан выбранный цикл: <strong>'+escapeHtml(focused.event)+'</strong> · <a href="/political-map.html">← назад к политической карте</a></div>':'';
  root.innerHTML=bar+d.records.map(x=>'<article class="item '+(focus===x.object_id?'cycle-focus':'')+'" id="cycle-'+escapeHtml(x.object_id)+'">'+(focus===x.object_id?'<div class="tag">Выбранный цикл</div>':'')+'<div class="date">'+escapeHtml(x.date)+'</div><h3>'+escapeHtml(x.event)+'</h3><div class="meta"><span class="tag">'+escapeHtml(x.institution)+'</span></div><p><strong>Изменение правила:</strong> '+escapeHtml(x.rule_change)+'</p><p><strong>Последствие:</strong> '+escapeHtml(x.consequence)+'</p><p><strong>Следующий цикл:</strong> '+escapeHtml(x.next_cycle)+'</p></article>').join('')}catch(e){root.innerHTML='<div class="empty">Цепочка пока недоступна. Данные не подменяются.</div>'}function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}})();
