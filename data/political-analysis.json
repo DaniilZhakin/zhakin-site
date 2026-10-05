@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-04",
+  "updated_at": "2026-10-05",
   "scope": "political-analysis",
   "public_route": "/political-analysis.html",
   "purpose": "Structured analytical framework for studying political institutions, parties, movements, coalitions, electoral systems, political communication and strategic scenarios.",
@@ -66,5 +66,337 @@
     "review_before_publication": true,
     "analytical_neutrality": true
   },
-  "records": []
+  "records": [
+    {
+      "id": "world-magna-carta",
+      "name": "Великая хартия вольностей",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Англия",
+      "description": "Исторический акт 1215 года, ограничивший часть королевской власти и ставший одним из важных этапов развития идеи правовых ограничений государственной власти.",
+      "source": "Encyclopaedia Britannica — Magna Carta",
+      "source_date": "1215-06-15",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "influences",
+          "target": "world-parliamentary-tradition"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Исторический прецедент правового ограничения власти.",
+        "alternative": "Развитие представительных механизмов через последующую институционализацию.",
+        "stress": "Конфликт между верховной властью и группами, требующими формальных гарантий."
+      },
+      "evidence": [
+        {
+          "source": "Encyclopaedia Britannica — Magna Carta",
+          "source_date": "1215-06-15",
+          "note": "Дата первоначального соглашения 1215 года."
+        }
+      ]
+    },
+    {
+      "id": "world-parliamentary-tradition",
+      "name": "Английская парламентская традиция",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Англия / Великобритания",
+      "description": "Долговременное развитие представительных институтов, парламентского контроля и конституционных практик.",
+      "source": "UK Parliament — History of Parliament",
+      "source_date": "1295-01-01",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "develops_from",
+          "target": "world-magna-carta"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Постепенная институционализация представительства.",
+        "alternative": "Усиление исполнительной власти при сохранении формальных представительных институтов.",
+        "stress": "Конституционный конфликт вокруг распределения полномочий."
+      }
+    },
+    {
+      "id": "world-us-constitution",
+      "name": "Конституционная модель США",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "США",
+      "description": "Конституционная система, основанная на разделении властей, федерализме и системе сдержек и противовесов.",
+      "source": "U.S. National Archives — Constitution of the United States",
+      "source_date": "1787-09-17",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "contains",
+          "target": "world-separation-of-powers"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Баланс ветвей власти через институциональные ограничения.",
+        "alternative": "Изменение баланса полномочий через политические и судебные механизмы.",
+        "stress": "Системный конфликт между ветвями или уровнями власти."
+      }
+    },
+    {
+      "id": "world-french-revolution",
+      "name": "Французская революция",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Франция",
+      "description": "Переломный политический процесс 1789–1799 годов, изменивший представления о суверенитете, гражданстве и легитимности власти.",
+      "source": "Encyclopaedia Britannica — French Revolution",
+      "source_date": "1789-05-05",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "transforms",
+          "target": "world-political-legitimacy"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Мобилизация общества вокруг изменения политического порядка.",
+        "alternative": "Институционализация революционных требований.",
+        "stress": "Радикализация и распад прежних механизмов управления."
+      }
+    },
+    {
+      "id": "world-separation-of-powers",
+      "name": "Разделение властей",
+      "object_type": "political-technology",
+      "status": "historical",
+      "jurisdiction": "Международная политико-правовая традиция",
+      "description": "Институциональный принцип распределения законодательных, исполнительных и судебных функций между различными органами.",
+      "source": "Encyclopaedia Britannica — separation of powers",
+      "source_date": "1748-01-01",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Сдерживание концентрации власти.",
+        "alternative": "Адаптация баланса полномочий к новой политической среде.",
+        "stress": "Концентрация полномочий и ослабление взаимного контроля."
+      }
+    },
+    {
+      "id": "world-industrial-party-politics",
+      "name": "Массовая партийная политика индустриальной эпохи",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "Европа и Северная Америка",
+      "description": "Переход от элитарных политических клубов к массовым партиям, членству, партийной прессе и организованной электоральной мобилизации XIX–XX веков.",
+      "source": "Encyclopaedia Britannica — political party",
+      "source_date": "1900-01-01",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Организация массового электората вокруг устойчивых партийных структур.",
+        "alternative": "Сдвиг от партийного членства к персонализированной политической коммуникации.",
+        "stress": "Фрагментация партийных систем и снижение доверия к посредническим институтам."
+      }
+    },
+    {
+      "id": "world-propaganda-mass-media",
+      "name": "Массовая политическая коммуникация XX века",
+      "object_type": "communication-environment",
+      "status": "historical",
+      "jurisdiction": "Международная",
+      "description": "Использование прессы, радио, кино и телевидения для формирования массовой политической повестки и мобилизации.",
+      "source": "Encyclopaedia Britannica — propaganda",
+      "source_date": "1914-07-28",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Централизованное распространение политических сообщений.",
+        "alternative": "Рост конкурирующих каналов информации.",
+        "stress": "Информационная поляризация и массовая манипуляция."
+      }
+    },
+    {
+      "id": "world-postwar-un-system",
+      "name": "Послевоенная институциональная система ООН",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Международная",
+      "description": "Создание Организации Объединённых Наций как универсального институционального механизма международного взаимодействия после Второй мировой войны.",
+      "source": "United Nations — History of the United Nations",
+      "source_date": "1945-10-24",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Многосторонняя институциональная координация.",
+        "alternative": "Регионализация и усиление параллельных форматов.",
+        "stress": "Снижение способности институтов обеспечивать коллективные решения."
+      }
+    },
+    {
+      "id": "russia-zemstvo",
+      "name": "Земское самоуправление",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "description": "Институт местного самоуправления, созданный реформой 1864 года и связанный с развитием представительных практик на местном уровне.",
+      "source": "Большая российская энциклопедия — Земства",
+      "source_date": "1864-01-01",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Локальная институционализация представительства.",
+        "alternative": "Расширение участия общества в управлении.",
+        "stress": "Ограничение автономии местных институтов."
+      }
+    },
+    {
+      "id": "russia-1905-duma",
+      "name": "Государственная дума Российской империи",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "description": "Представительный законодательный институт, возникший в результате политических реформ 1905–1906 годов.",
+      "source": "Государственная Дума Российской Федерации — история парламентаризма",
+      "source_date": "1906-04-27",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Ограниченное представительство при сохраняющейся сильной монархической власти.",
+        "alternative": "Расширение парламентских полномочий.",
+        "stress": "Конфликт представительного института с исполнительной и монархической властью."
+      }
+    },
+    {
+      "id": "russia-february-1917",
+      "name": "Февральская революция 1917 года",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Россия",
+      "description": "Революционный политический процесс, завершившийся падением монархии и формированием Временного правительства.",
+      "source": "Encyclopaedia Britannica — Russian Revolution",
+      "source_date": "1917-02-23",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "transforms",
+          "target": "russia-monarchy"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Смена формы верховной власти.",
+        "alternative": "Переход к устойчивой парламентской модели.",
+        "stress": "Конкуренция нескольких центров легитимности."
+      }
+    },
+    {
+      "id": "russia-october-1917",
+      "name": "Октябрьская революция 1917 года",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Россия",
+      "description": "Приход большевиков к власти в результате вооружённого восстания и последующего формирования советской системы.",
+      "source": "Encyclopaedia Britannica — October Revolution",
+      "source_date": "1917-11-07",
+      "last_reviewed": "2026-10-05",
+      "relations": [
+        {
+          "type": "follows",
+          "target": "russia-february-1917"
+        }
+      ],
+      "scenario_notes": {
+        "base": "Концентрация политической власти вокруг новой революционной системы.",
+        "alternative": "Конкуренция советских и парламентских механизмов.",
+        "stress": "Гражданская война и распад прежней государственной структуры."
+      }
+    },
+    {
+      "id": "russia-soviet-party-system",
+      "name": "Советская партийно-государственная система",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "СССР",
+      "description": "Модель, в которой Коммунистическая партия занимала центральное положение в политической системе СССР.",
+      "source": "Encyclopaedia Britannica — Communist Party of the Soviet Union",
+      "source_date": "1922-12-30",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Централизованная партийно-государственная координация.",
+        "alternative": "Постепенная институциональная либерализация.",
+        "stress": "Расхождение между партийным управлением и общественными ожиданиями."
+      }
+    },
+    {
+      "id": "russia-perestroika",
+      "name": "Перестройка и политическая либерализация",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "СССР",
+      "description": "Реформы второй половины 1980-х годов, связанные с перестройкой государственного управления, публичной политики и информационной среды.",
+      "source": "Encyclopaedia Britannica — perestroika",
+      "source_date": "1985-03-11",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Постепенная реформа политической системы.",
+        "alternative": "Ускоренная демократизация.",
+        "stress": "Ослабление централизованного управления и рост системных конфликтов."
+      }
+    },
+    {
+      "id": "russia-1993-constitution",
+      "name": "Конституционная модель Российской Федерации 1993 года",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская Федерация",
+      "description": "Конституционная система, закрепившая современную модель федеративного государства, разделения властей и президентско-парламентского взаимодействия.",
+      "source": "Президент России — Конституция Российской Федерации",
+      "source_date": "1993-12-12",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Федеративная президентско-парламентская система.",
+        "alternative": "Изменение распределения полномочий через конституционные процедуры.",
+        "stress": "Конфликт институтов и нарушение процедурного баланса."
+      }
+    },
+    {
+      "id": "russia-1993-referendum",
+      "name": "Всенародное голосование по Конституции 1993 года",
+      "object_type": "electoral-system",
+      "status": "historical",
+      "jurisdiction": "Российская Федерация",
+      "description": "Всенародное голосование 12 декабря 1993 года, на котором была принята Конституция Российской Федерации.",
+      "source": "Центральная избирательная комиссия Российской Федерации — исторические сведения о выборах",
+      "source_date": "1993-12-12",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Прямая форма легитимации конституционного порядка.",
+        "alternative": "Использование плебисцитарных механизмов для крупных институциональных решений.",
+        "stress": "Конфликт интерпретаций результатов и процедур легитимации."
+      }
+    },
+    {
+      "id": "russia-party-system-1990s",
+      "name": "Многопартийность Российской Федерации 1990-х годов",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "Российская Федерация",
+      "description": "Период формирования конкурентной многопартийной среды после распада СССР и институционального перехода 1990-х годов.",
+      "source": "Центральная избирательная комиссия Российской Федерации — история выборов",
+      "source_date": "1993-12-12",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Высокая фрагментация партийного поля.",
+        "alternative": "Консолидация партий вокруг крупных политических блоков.",
+        "stress": "Снижение устойчивости партийных организаций и электоральная волатильность."
+      }
+    },
+    {
+      "id": "world-digital-political-communication",
+      "name": "Цифровая политическая коммуникация",
+      "object_type": "communication-environment",
+      "status": "active",
+      "jurisdiction": "Международная",
+      "description": "Среда, в которой политическая коммуникация осуществляется через цифровые платформы, социальные сети, алгоритмическую выдачу и автоматизированные системы.",
+      "source": "OECD — Digital democracy and digital government research",
+      "source_date": "2020-01-01",
+      "last_reviewed": "2026-10-05",
+      "scenario_notes": {
+        "base": "Гибридная коммуникация институтов, медиа и платформ.",
+        "alternative": "Рост роли персонализированных цифровых каналов.",
+        "stress": "Информационные пузыри, синтетический контент и снижение доверия к источникам."
+      }
+    }
+  ]
 }
