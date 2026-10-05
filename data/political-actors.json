@@ -1,0 +1,310 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-10-05",
+  "scope": "political-actors",
+  "purpose": "Историческая матрица акторов и институциональных центров влияния; связи не трактуются как современные политические аффилиации.",
+  "records": [
+    {
+      "id": "world-magna-carta",
+      "name": "Великая хартия вольностей",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Англия",
+      "source": "Encyclopaedia Britannica — Magna Carta",
+      "source_date": "1215-06-15",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "influences",
+          "target": "world-parliamentary-tradition"
+        }
+      ]
+    },
+    {
+      "id": "world-parliamentary-tradition",
+      "name": "Английская парламентская традиция",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Англия / Великобритания",
+      "source": "UK Parliament — History of Parliament",
+      "source_date": "1295-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "develops_from",
+          "target": "world-magna-carta"
+        }
+      ]
+    },
+    {
+      "id": "world-us-constitution",
+      "name": "Конституционная модель США",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "США",
+      "source": "U.S. National Archives — Constitution of the United States",
+      "source_date": "1787-09-17",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "contains",
+          "target": "world-separation-of-powers"
+        }
+      ]
+    },
+    {
+      "id": "world-french-revolution",
+      "name": "Французская революция",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Франция",
+      "source": "Encyclopaedia Britannica — French Revolution",
+      "source_date": "1789-05-05",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "transforms",
+          "target": "world-political-legitimacy"
+        }
+      ]
+    },
+    {
+      "id": "world-industrial-party-politics",
+      "name": "Массовая партийная политика индустриальной эпохи",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "Европа и Северная Америка",
+      "source": "Encyclopaedia Britannica — political party",
+      "source_date": "1900-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "world-propaganda-mass-media",
+      "name": "Массовая политическая коммуникация XX века",
+      "object_type": "communication-environment",
+      "status": "historical",
+      "jurisdiction": "Международная",
+      "source": "Encyclopaedia Britannica — propaganda",
+      "source_date": "1914-07-28",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "world-postwar-un-system",
+      "name": "Послевоенная институциональная система ООН",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Международная",
+      "source": "United Nations — History of the United Nations",
+      "source_date": "1945-10-24",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-zemstvo",
+      "name": "Земское самоуправление",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "source": "Большая российская энциклопедия — Земства",
+      "source_date": "1864-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-1905-duma",
+      "name": "Государственная дума Российской империи",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская империя",
+      "source": "Государственная Дума Российской Федерации — история парламентаризма",
+      "source_date": "1906-04-27",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-february-1917",
+      "name": "Февральская революция 1917 года",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Россия",
+      "source": "Encyclopaedia Britannica — Russian Revolution",
+      "source_date": "1917-02-23",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "transforms",
+          "target": "russia-monarchy"
+        }
+      ]
+    },
+    {
+      "id": "russia-october-1917",
+      "name": "Октябрьская революция 1917 года",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "Россия",
+      "source": "Encyclopaedia Britannica — October Revolution",
+      "source_date": "1917-11-07",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": [
+        {
+          "type": "follows",
+          "target": "russia-february-1917"
+        }
+      ]
+    },
+    {
+      "id": "russia-soviet-party-system",
+      "name": "Советская партийно-государственная система",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "СССР",
+      "source": "Encyclopaedia Britannica — Communist Party of the Soviet Union",
+      "source_date": "1922-12-30",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-perestroika",
+      "name": "Перестройка и политическая либерализация",
+      "object_type": "movement",
+      "status": "historical",
+      "jurisdiction": "СССР",
+      "source": "Encyclopaedia Britannica — perestroika",
+      "source_date": "1985-03-11",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-1993-constitution",
+      "name": "Конституционная модель Российской Федерации 1993 года",
+      "object_type": "institution",
+      "status": "historical",
+      "jurisdiction": "Российская Федерация",
+      "source": "Президент России — Конституция Российской Федерации",
+      "source_date": "1993-12-12",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "russia-party-system-1990s",
+      "name": "Многопартийность Российской Федерации 1990-х годов",
+      "object_type": "party",
+      "status": "historical",
+      "jurisdiction": "Российская Федерация",
+      "source": "Центральная избирательная комиссия Российской Федерации — история выборов",
+      "source_date": "1993-12-12",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    },
+    {
+      "id": "world-digital-political-communication",
+      "name": "Цифровая политическая коммуникация",
+      "object_type": "communication-environment",
+      "status": "active",
+      "jurisdiction": "Международная",
+      "source": "OECD — Digital democracy and digital government research",
+      "source_date": "2020-01-01",
+      "dimensions": [
+        "институциональная роль",
+        "ресурсы",
+        "коммуникации",
+        "отношения",
+        "временной контекст"
+      ],
+      "relations": []
+    }
+  ]
+}
