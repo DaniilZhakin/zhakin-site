@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Жакин">
+  <rect width="64" height="64" rx="14" fill="#101713"/>
+  <path d="M32 7 51 14v16c0 13-7.5 22.5-19 27C20.5 52.5 13 43 13 30V14L32 7Z" fill="#173a2b" stroke="#c8a85b" stroke-width="2.5"/>
+  <path d="M23 20v24m18-24v24M23 32h18M25 20l7 12 7-12" fill="none" stroke="#e0c579" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
