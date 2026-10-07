@@ -1,14 +1,5 @@
 [
   {
-    "timestamp": "2026-09-07T10:44:59Z",
-    "source_incident_snapshot": "2026-09-07T10:44:59Z",
-    "state": "stable",
-    "active_incident_count": 0,
-    "recovery_plan_count": 0,
-    "resolved_incident_count": 0,
-    "plans": []
-  },
-  {
     "timestamp": "2026-09-08T10:06:06Z",
     "source_incident_snapshot": "2026-09-08T10:06:06Z",
     "state": "stable",
@@ -263,6 +254,15 @@
   {
     "timestamp": "2026-10-06T12:14:41Z",
     "source_incident_snapshot": "2026-10-06T12:14:41Z",
+    "state": "stable",
+    "active_incident_count": 0,
+    "recovery_plan_count": 0,
+    "resolved_incident_count": 0,
+    "plans": []
+  },
+  {
+    "timestamp": "2026-10-07T12:04:58Z",
+    "source_incident_snapshot": "2026-10-07T12:04:58Z",
     "state": "stable",
     "active_incident_count": 0,
     "recovery_plan_count": 0,
