@@ -46,12 +46,16 @@ def main():
     core_pages = [
         '/', '/about.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html',
     ]
+    strategic_pages = [
+        '/political-analysis.html', '/political-objects.html', '/political-object.html',
+        '/political-methodology.html', '/political-map.html', '/political-timeline.html',
+    ]
     publication_paths = sorted({
         url.replace(SITE, '', 1)
         for url in urls
         if url.startswith(SITE + '/publications/') and url.endswith('.html')
     })
-    required = core_pages + [path for path in publication_paths if path not in core_pages]
+    required = core_pages + strategic_pages + [path for path in publication_paths if path not in core_pages and path not in strategic_pages]
     missing = [SITE + path for path in required if SITE + path not in urls]
     checks.append({'name': 'sitemap coverage', 'ok': not missing, 'missing': missing})
 
