@@ -108,7 +108,11 @@ jobs:
           from pathlib import Path
 
           catalog = Path('publications.html').read_text(encoding='utf-8')
-          publication_files = sorted(p for p in Path('publications').glob('*.html') if p.name != 'directions.html')
+          retired_publications = {'intellectual-economy.html'}
+          publication_files = sorted(
+              p for p in Path('publications').glob('*.html')
+              if p.name != 'directions.html' and p.name not in retired_publications
+          )
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           sitemap_urls = set(re.findall(r'<loc>(.*?)</loc>', sitemap))
           site = 'https://xn--80alhhq.xn--p1ai'
@@ -139,7 +143,7 @@ jobs:
               if 'og:image' not in html:
                   raise SystemExit(f'Missing OG image: {page}')
 
-          print(f'Publication catalog OK: {len(publication_files)} pages, all linked and structurally valid; directions page excluded from article set')
+          print(f'Publication catalog OK: {len(publication_files)} active pages, all linked and structurally valid; retired publications excluded: {sorted(retired_publications)}')
           PY
 
       - name: Summary
