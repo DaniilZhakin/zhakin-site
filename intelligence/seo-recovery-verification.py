@@ -21,15 +21,24 @@ def load_json(path, default):
 
 def fetch(url):
     started = time.monotonic()
-    result = subprocess.run(
-        ['curl', '-L', '--fail-with-body', '--silent', '--show-error', '--max-time', '20', '-D', '-', url],
-        text=True, capture_output=True,
-    )
+    last_error = ''
+    for attempt in range(3):
+        result = subprocess.run(
+            ['curl', '-L', '--fail-with-body', '--silent', '--show-error', '--max-time', '20', '-D', '-', url],
+            text=True, capture_output=True,
+        )
+        if result.returncode == 0:
+            parts = re.split(r'\r?\n\r?\n', result.stdout, maxsplit=1)
+            headers = parts[0]
+            body = parts[1] if len(parts) > 1 else ''
+            if body:
+                elapsed_ms = round((time.monotonic() - started) * 1000)
+                return headers, body, elapsed_ms, ''
+        last_error = result.stderr.strip() or f'curl exited with code {result.returncode}'
+        if attempt < 2:
+            time.sleep(2 * (attempt + 1))
     elapsed_ms = round((time.monotonic() - started) * 1000)
-    if result.returncode != 0:
-        return '', '', elapsed_ms, result.stderr.strip()
-    parts = re.split(r'\r?\n\r?\n', result.stdout, maxsplit=1)
-    return parts[0], parts[1] if len(parts) > 1 else '', elapsed_ms, ''
+    return '', '', elapsed_ms, last_error
 
 
 def main():
