@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-10-07T07:15:29Z",
+  "timestamp": "2026-10-07T11:50:13Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
-    "sitemap_urls": 47,
+    "sitemap_urls": 46,
     "sitemap_unique": true,
-    "required_pages": 34,
+    "required_pages": 33,
     "sitemap_coverage": true,
-    "available_pages": 34,
-    "canonical_ok_pages": 34,
-    "jsonld_pages": 34,
+    "available_pages": 33,
+    "canonical_ok_pages": 33,
+    "jsonld_pages": 33,
     "noindex_pages": 0,
-    "avg_response_time_ms": 210.4,
-    "max_response_time_ms": 636,
+    "avg_response_time_ms": 212.6,
+    "max_response_time_ms": 405,
     "health_score": 100.0,
     "health_grade": "healthy"
   },
@@ -20,10 +20,14 @@
   "health_grade": "healthy",
   "trend_direction": "stable",
   "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-07T00:43:22Z",
-  "warnings": [],
+  "baseline_timestamp": "2026-10-07T07:15:29Z",
+  "warnings": [
+    "available page count decreased",
+    "canonical coverage decreased",
+    "JSON-LD coverage decreased"
+  ],
   "page_changes": {},
   "critical_pages": [],
   "warning_pages": [],
-  "status": "ok"
+  "status": "warning"
 }
