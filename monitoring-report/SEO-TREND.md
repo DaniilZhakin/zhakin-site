@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-07T12:00:11Z`
+Snapshot: `2026-10-07T12:03:57Z`
 History points: **30**
-Status: **WARNING**
-Health score: **99.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.4)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,18 +17,15 @@ Trend: **STABLE** (+0.4)
 - `canonical_ok_pages`: **33**
 - `jsonld_pages`: **33**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **252.1**
-- `max_response_time_ms`: **557**
-- `health_score`: **99.0**
+- `avg_response_time_ms`: **201.2**
+- `max_response_time_ms`: **468**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/ai-cost-economics.html`
-- available: False -> True
-- canonical_ok: False -> True
-- jsonld: False -> True
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/ai-cost-economics.html
+No regression detected.
