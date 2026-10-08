@@ -52,6 +52,40 @@ function normalizeSources(value) {
     .map((item) => ({ title: item.title, url: item.url }));
 }
 
+
+
+function isAnalyticsQuestion(question) {
+  return /(аналитик|посещ|визит|просмотр|сесс|трафик|bounce|отказ|страниц|аудитор|конверс|метрик|статистик|сайт.*(сейчас|недел|месяц)|сейчас.*сайт)/i.test(question);
+}
+
+async function loadWebAnalytics(env) {
+  if (!env.POSTHOG_HOST || !env.POSTHOG_PROJECT_ID || !env.POSTHOG_API_KEY) {
+    return { configured: false };
+  }
+
+  const host = env.POSTHOG_HOST.replace(/\/$/, "");
+  const response = await fetch(
+    `${host}/api/projects/${encodeURIComponent(env.POSTHOG_PROJECT_ID)}/query/`,
+    {
+      method: "POST",
+      headers: {
+        "authorization": `Bearer ${env.POSTHOG_API_KEY}`,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        query: {
+          kind: "WebOverviewQuery",
+          dateRange: { date_from: "-7d" }
+        }
+      })
+    }
+  );
+
+  if (!response.ok) return { configured: true, available: false };
+  const data = await response.json();
+  return { configured: true, available: true, data };
+}
+
 async function loadKnowledge(url) {
   const response = await fetch(url, {
     headers: { "accept": "application/json" },
@@ -140,6 +174,15 @@ export default {
       return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
     }
 
+    let analytics = null;
+    if (isAnalyticsQuestion(question)) {
+      try {
+        analytics = await loadWebAnalytics(env);
+      } catch {
+        analytics = { configured: true, available: false };
+      }
+    }
+
     const system = [
       "Ты — ЖАК, публичный AI-ассистент сайта жакин.рф.",
       "Отвечай только на основе предоставленного публичного контура знаний.",
@@ -149,7 +192,14 @@ export default {
       "sources — массив объектов {title,url}; используй только источники из предоставленного контура.",
       "",
       "Публичный контур знаний:",
-      knowledge
+      knowledge,
+      "",
+      "Аналитика сайта:",
+      analytics
+        ? JSON.stringify(analytics)
+        : "Для этого вопроса аналитические данные не запрашивались.",
+      "Если аналитика запрошена и доступна, используй только переданные значения, указывай период (последние 7 дней) и не выдумывай отсутствующие метрики.",
+      "Если analytics.configured=false или analytics.available=false, честно сообщи, что серверный аналитический источник пока не подключён или недоступен."
     ].join("\n");
 
     const openaiResponse = await fetch("https://api.openai.com/v1/responses", {
