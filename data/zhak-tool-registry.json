@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "service": "zhakin-ai",
+  "purpose": "Registry of knowledge libraries and integrations available to ZHAK. Credentials are never stored here.",
+  "runtime_tools": [
+    {
+      "id": "site_library",
+      "status": "ready",
+      "sources": [
+        "/data/zhak-knowledge.json",
+        "/data/institutional-registry.json",
+        "/data/projects.json",
+        "/data/platform-graph.json",
+        "/data/intelligence-config.json"
+      ]
+    },
+    {
+      "id": "posthog_analytics",
+      "status": "runtime_configured_when_credentials_are_present",
+      "capability": "server-side website analytics"
+    }
+  ],
+  "agent_side_integrations": [
+    {"id": "github", "status": "available_to_project_agent"},
+    {"id": "posthog", "status": "available_to_project_agent"},
+    {"id": "amplitude", "status": "available_to_project_agent"},
+    {"id": "notion", "status": "available_to_project_agent"},
+    {"id": "base44", "status": "available_to_project_agent"},
+    {"id": "replit", "status": "available_to_project_agent"},
+    {"id": "canva", "status": "available_to_project_agent"},
+    {"id": "magicpath", "status": "available_to_project_agent"},
+    {"id": "openai_platform", "status": "available_to_project_agent"}
+  ],
+  "rules": [
+    "ZHAK must never claim runtime access to an integration listed only as agent_side_integrations.",
+    "Use site_library as authoritative context for facts about zhakin.rf.",
+    "Use analytics only when live server-side data is actually available.",
+    "Never store credentials, API keys, tokens, or private records in this registry."
+  ]
+}
