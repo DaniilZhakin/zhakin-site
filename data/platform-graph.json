@@ -479,11 +479,117 @@
       "from": "publication:hidden-matrix",
       "to": "direction:strategy",
       "type": "belongs_to"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "publication:food-infrastructure",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "publication:global-economy-new-assets",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "publication:global-dependence-map",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:food-infrastructure",
+      "to": "publication:global-economy-new-assets",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:money-financial-system",
+      "to": "publication:digital-ruble",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:money-financial-system",
+      "to": "publication:expensive-money",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:money-financial-system",
+      "to": "publication:money-capital-friction",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:ai-infrastructure",
+      "to": "publication:ai-infrastructure-economy",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:ai-infrastructure",
+      "to": "publication:ai-cost-economics",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:ai-parliament",
+      "to": "publication:ai-decision-responsibility",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:ai-financial-system",
+      "to": "publication:ai-infrastructure-economy",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:sanctions-new-generation",
+      "to": "publication:global-economy-after-sanctions",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:global-economy-after-sanctions",
+      "to": "publication:global-dependence-map",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:global-economy-new-assets",
+      "to": "publication:global-dependence-map",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:capital-requires-proof",
+      "to": "publication:price-discovery",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:system-workability",
+      "to": "publication:capital-requires-proof",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:economic-transition-1990s",
+      "to": "publication:intellectual-economy",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:legal-architecture",
+      "to": "publication:intellectual-economy",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:future-without-money",
+      "to": "publication:human-value-ai",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:future-without-money",
+      "to": "publication:ai-infrastructure-economy",
+      "type": "related_to"
+    },
+    {
+      "from": "publication:human-value-ai",
+      "to": "publication:ai-cost-economics",
+      "type": "related_to"
     }
   ],
   "graph_stats": {
     "publication_nodes": 28,
     "direction_nodes": 6,
-    "last_updated": "2026-10-08"
+    "last_updated": "2026-10-08",
+    "related_publication_edges": 21
   }
 }
