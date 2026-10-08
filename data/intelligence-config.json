@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "service": "zhakin-ai",
-  "status": "analytics-backend-ready",
+  "status": "general-qa-and-analytics-ready",
   "endpoint": "",
   "knowledge_core": "/data/zhak-knowledge.json",
   "public_context": {
@@ -32,5 +32,16 @@
       "POSTHOG_PROJECT_ID",
       "POSTHOG_API_KEY"
     ]
-  }
+  },
+  "capabilities": [
+    "site-knowledge",
+    "general-questions",
+    "website-analytics",
+    "economics",
+    "international-processes",
+    "security",
+    "technology",
+    "ai",
+    "future"
+  ]
 }
