@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#08110f"/><stop offset=".55" stop-color="#17352c"/><stop offset="1" stop-color="#0b1714"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c7a45a"/><stop offset="1" stop-color="#ead9aa"/></linearGradient>
+ <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#c7a45a" stroke-opacity=".08"/></pattern>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect width="1600" height="900" fill="url(#grid)"/>
+<g opacity=".85" stroke="url(#gold)" fill="none">
+ <path d="M120 690 C360 610 430 720 650 610 S1030 430 1460 500" stroke-width="4"/>
+ <path d="M150 760 C380 690 520 770 760 650 S1110 510 1480 590" stroke-width="2"/>
+</g>
+<g fill="#ead9aa" opacity=".9">
+ <circle cx="280" cy="650" r="8"/><circle cx="650" cy="610" r="8"/><circle cx="1030" cy="430" r="8"/><circle cx="1460" cy="500" r="8"/>
+</g>
+<g transform="translate(150 150)">
+ <path d="M0 390 L115 220 L240 390 Z" fill="#c7a45a" opacity=".22"/>
+ <path d="M42 390 L115 265 L198 390" stroke="#ead9aa" stroke-width="8" fill="none"/>
+ <path d="M115 265 V105" stroke="#ead9aa" stroke-width="8"/>
+ <path d="M115 125 C70 100 50 55 55 0 C110 12 132 50 115 125Z" fill="#c7a45a" opacity=".65"/>
+ <path d="M115 145 C160 120 180 75 175 20 C120 30 98 70 115 145Z" fill="#ead9aa" opacity=".4"/>
+</g>
+<text x="150" y="520" fill="#c7a45a" font-family="Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="6">FOOD • LOGISTICS • GEOECONOMICS</text>
+<text x="150" y="585" fill="#edf3ef" font-family="Arial,sans-serif" font-size="66" font-weight="700">Зерно есть.</text>
+<text x="150" y="655" fill="#edf3ef" font-family="Arial,sans-serif" font-size="66" font-weight="700">Но кто контролирует</text>
+<text x="150" y="725" fill="#ead9aa" font-family="Arial,sans-serif" font-size="66" font-weight="700">цепочку?</text>
+<text x="1450" y="805" text-anchor="end" fill="#9fb2aa" font-family="Arial,sans-serif" font-size="22">Даниил Юрьевич Жакин · 08.10.2026</text>
+</svg>
