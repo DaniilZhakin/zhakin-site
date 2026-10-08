@@ -110,7 +110,7 @@ async function loadExternalResource(resource) {
     const contentType = response.headers.get("content-type") || "";
     const raw = await response.text();
     const text = contentType.includes("html")
-      ? raw.replace(/<script[\\s\\S]*?<\\/script>/gi, " ").replace(/<style[\\s\\S]*?<\\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\\s+/g, " ").trim()
+      ? raw.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\s+/g, " ").trim()
       : raw.trim();
     return { title: resource.title, url: resource.url, type: resource.type, content: text.slice(0, MAX_EXTERNAL_CHARS) };
   } finally {
@@ -156,9 +156,9 @@ async function loadPublicSearch(question) {
 
   if (news.status === "fulfilled" && news.value) {
     const xml = news.value;
-    const items = [...xml.matchAll(/<item>[\\s\\S]*?<title>([\\s\\S]*?)<\\/title>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>/gi)];
+    const items = [...xml.matchAll(/<item>[\s\S]*?<title>([\s\S]*?)<\/title>[\s\S]*?<link>([\s\S]*?)<\/link>[\s\S]*?<\/item>/gi)];
     for (const match of items.slice(0, 3)) {
-      const title = match[1].replace(/<!\\[CDATA\\[|\\]\\]>/g, "").trim();
+      const title = match[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim();
       const url = match[2].trim();
       if (title && /^https?:\\/\\//i.test(url)) results.push({ title, url, type: "public_news_search" });
     }
@@ -295,7 +295,8 @@ export default {
 
     let external = { resources: [], status: "not_loaded", search: { status: "not_loaded", results: [] } };
     try {
-      external = await loadExternalBundle(library.bundle.tool_registry);\n      external.search = await loadPublicSearch(question);
+      external = await loadExternalBundle(library.bundle.tool_registry);
+      external.search = await loadPublicSearch(question);
     } catch {
       external = { resources: [], status: "unavailable", search: { status: "unavailable", results: [] } };
     }
