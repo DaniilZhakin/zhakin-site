@@ -118,6 +118,150 @@
       "type": "publication",
       "title": "AI-инфраструктура",
       "url": "/publications/ai-infrastructure.html"
+    },
+    {
+      "id": "publication:ai-parliament",
+      "type": "publication",
+      "title": "ИИ-парламент: каким может стать государство в эпоху искусственного интеллекта",
+      "url": "/publications/ai-parliament.html"
+    },
+    {
+      "id": "publication:digital-ruble",
+      "type": "publication",
+      "title": "Деньги становятся цифровыми. Кто заплатит за переход к новой финансовой системе?",
+      "url": "/publications/digital-ruble.html"
+    },
+    {
+      "id": "publication:ai-financial-system",
+      "type": "publication",
+      "title": "ИИ-бум уже стал финансовой системой. Кто заплатит за триллионы вложений?",
+      "url": "/publications/ai-financial-system.html"
+    },
+    {
+      "id": "publication:understanding-state-and-law",
+      "type": "publication",
+      "title": "Почему человек должен понимать, как работает государство и право",
+      "url": "/publications/understanding-state-and-law.html"
+    },
+    {
+      "id": "publication:legal-architecture",
+      "type": "publication",
+      "title": "Пока все обсуждают гостей Москвы, главное происходит в праве",
+      "url": "/publications/legal-architecture.html"
+    },
+    {
+      "id": "publication:intellectual-economy",
+      "type": "publication",
+      "title": "Следующая экономическая революция будет не цифровой. Россия уже строит её правовую архитектуру",
+      "url": "/publications/intellectual-economy.html"
+    },
+    {
+      "id": "publication:economic-transition-1990s",
+      "type": "publication",
+      "title": "Что Россия потеряла в 1990-е — и почему мы до сих пор не посчитали цену перехода",
+      "url": "/publications/economic-transition-1990s.html"
+    },
+    {
+      "id": "publication:future-without-money",
+      "type": "publication",
+      "title": "2036 год: а что, если Маск действительно прав — и деньги перестанут быть главным ограничителем?",
+      "url": "/publications/future-without-money.html"
+    },
+    {
+      "id": "publication:capital-requires-proof",
+      "type": "publication",
+      "title": "Эпоха денег за идею закончилась: капитал теперь требует доказательств",
+      "url": "/publications/capital-requires-proof.html"
+    },
+    {
+      "id": "publication:price-discovery",
+      "type": "publication",
+      "title": "Российский фондовый рынок: цена есть. А полноценного глобального price discovery больше нет?",
+      "url": "/publications/price-discovery.html"
+    },
+    {
+      "id": "publication:naruto-hidden-meanings",
+      "type": "publication",
+      "title": "Наруто: почему это история не о ниндзя, а о природе человека?",
+      "url": "/publications/naruto-hidden-meanings.html"
+    },
+    {
+      "id": "publication:ai-decision-responsibility",
+      "type": "publication",
+      "title": "Когда алгоритм становится институтом: кто отвечает за решение, принятое ИИ?",
+      "url": "/publications/ai-decision-responsibility.html"
+    },
+    {
+      "id": "publication:personal-growth-hidden-meanings",
+      "type": "publication",
+      "title": "Скрытые смыслы №2. Почему человек останавливается именно тогда, когда начинает расти",
+      "url": "/publications/personal-growth-hidden-meanings.html"
+    },
+    {
+      "id": "publication:sanctions-new-generation",
+      "type": "publication",
+      "title": "Санкции нового поколения: как формируется новая архитектура глобальной экономики",
+      "url": "/publications/sanctions-new-generation.html"
+    },
+    {
+      "id": "publication:global-economy-after-sanctions",
+      "type": "publication",
+      "title": "Мир после санкций: новая архитектура мировой экономики",
+      "url": "/publications/global-economy-after-sanctions.html"
+    },
+    {
+      "id": "publication:global-economy-new-assets",
+      "type": "publication",
+      "title": "Новая карта мировой экономики: почему технологии, энергия и ресурсы становятся главным активом XXI века",
+      "url": "/publications/global-economy-new-assets.html"
+    },
+    {
+      "id": "publication:money-capital-friction",
+      "type": "publication",
+      "title": "Деньги есть, но они не работают: где проходит главный барьер для экономики",
+      "url": "/publications/money-capital-friction.html"
+    },
+    {
+      "id": "publication:ai-infrastructure-economy",
+      "type": "publication",
+      "title": "ИИ выходит из экрана: кто будет контролировать новую инфраструктуру экономики",
+      "url": "/publications/ai-infrastructure-economy.html"
+    },
+    {
+      "id": "publication:global-dependence-map",
+      "type": "publication",
+      "title": "Экономика больше не глобальна: тарифы, нефть и ИИ создают новую карту зависимости",
+      "url": "/publications/global-dependence-map.html"
+    },
+    {
+      "id": "publication:ai-cost-economics",
+      "type": "publication",
+      "title": "ИИ уже экономит бизнесу деньги. Почему продукты от этого не становятся дешевле?",
+      "url": "/publications/ai-cost-economics.html"
+    },
+    {
+      "id": "publication:system-workability",
+      "type": "publication",
+      "title": "Экономика после эффективности: почему следующая конкуренция будет за способность систем работать",
+      "url": "/publications/system-workability.html"
+    },
+    {
+      "id": "publication:expensive-money",
+      "type": "publication",
+      "title": "Деньги стали дорогими. Но, возможно, мы вообще неправильно понимаем их роль",
+      "url": "/publications/expensive-money.html"
+    },
+    {
+      "id": "publication:human-value-ai",
+      "type": "publication",
+      "title": "Когда человек становится дорогим: как ИИ меняет цену человеческого труда",
+      "url": "/publications/human-value-ai.html"
+    },
+    {
+      "id": "publication:hidden-matrix",
+      "type": "publication",
+      "title": "Правда, которую человеку не показывают: от первого дня жизни до последнего",
+      "url": "/publications/hidden-matrix.html"
     }
   ],
   "edges": [
@@ -215,6 +359,131 @@
       "from": "service:zhakin-ai",
       "to": "service:international",
       "type": "navigates_to"
+    },
+    {
+      "from": "publication:ai-parliament",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:digital-ruble",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:ai-financial-system",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:understanding-state-and-law",
+      "to": "direction:law",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:legal-architecture",
+      "to": "direction:law",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:intellectual-economy",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:economic-transition-1990s",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:future-without-money",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:capital-requires-proof",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:price-discovery",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:naruto-hidden-meanings",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:ai-decision-responsibility",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:personal-growth-hidden-meanings",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:sanctions-new-generation",
+      "to": "direction:geoeconomics",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:global-economy-after-sanctions",
+      "to": "direction:geoeconomics",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:global-economy-new-assets",
+      "to": "direction:geoeconomics",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:money-capital-friction",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:ai-infrastructure-economy",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:global-dependence-map",
+      "to": "direction:geoeconomics",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:ai-cost-economics",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:system-workability",
+      "to": "direction:strategy",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:expensive-money",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:human-value-ai",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:hidden-matrix",
+      "to": "direction:strategy",
+      "type": "belongs_to"
     }
-  ]
+  ],
+  "graph_stats": {
+    "publication_nodes": 28,
+    "direction_nodes": 6,
+    "last_updated": "2026-10-08"
+  }
 }
