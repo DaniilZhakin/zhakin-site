@@ -1,31 +1,32 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-08T07:26:15Z`
+Snapshot: `2026-10-08T08:53:53Z`
 History points: **30**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **STABLE** (-1.0)
 
 ## Current signals
 
 - `robots_ok`: **True**
-- `sitemap_urls`: **46**
+- `sitemap_urls`: **47**
 - `sitemap_unique`: **True**
-- `required_pages`: **33**
+- `required_pages`: **34**
 - `sitemap_coverage`: **True**
-- `available_pages`: **33**
-- `canonical_ok_pages`: **33**
-- `jsonld_pages`: **33**
+- `available_pages`: **34**
+- `canonical_ok_pages`: **34**
+- `jsonld_pages`: **34**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **186.6**
-- `max_response_time_ms`: **470**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **151.6**
+- `max_response_time_ms`: **280**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/publications/grain-global-market.html`
+- new page in monitored baseline
 
 ## Anomaly detection
 
-No regression detected.
+- page-level change: /publications/grain-global-market.html

@@ -1,29 +1,37 @@
 {
-  "timestamp": "2026-10-08T07:26:15Z",
+  "timestamp": "2026-10-08T08:53:53Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
-    "sitemap_urls": 46,
+    "sitemap_urls": 47,
     "sitemap_unique": true,
-    "required_pages": 33,
+    "required_pages": 34,
     "sitemap_coverage": true,
-    "available_pages": 33,
-    "canonical_ok_pages": 33,
-    "jsonld_pages": 33,
+    "available_pages": 34,
+    "canonical_ok_pages": 34,
+    "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 186.6,
-    "max_response_time_ms": 470,
-    "health_score": 100.0,
+    "avg_response_time_ms": 151.6,
+    "max_response_time_ms": 280,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-08T01:01:24Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-08T07:26:15Z",
+  "warnings": [
+    "page-level change: /publications/grain-global-market.html"
+  ],
+  "page_changes": {
+    "/publications/grain-global-market.html": [
+      "new page in monitored baseline"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/grain-global-market.html"
+  ],
+  "status": "warning"
 }
