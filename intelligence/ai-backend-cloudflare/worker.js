@@ -3,6 +3,8 @@ const MAX_QUESTION_CHARS = 4000;
 const RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60_000;
 const MAX_LIBRARY_CHARS = 45_000;
+const MAX_EXTERNAL_CHARS = 25_000;
+const EXTERNAL_TIMEOUT_MS = 5000;
 
 function json(data, status = 200, origin = "") {
   return new Response(JSON.stringify(data), {
@@ -92,6 +94,38 @@ async function loadJson(url) {
   });
   if (!response.ok) throw new Error("library_unavailable");
   return response.json();
+}
+
+async function loadExternalResource(resource) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), EXTERNAL_TIMEOUT_MS);
+  try {
+    const response = await fetch(resource.url, {
+      headers: { "accept": "text/html, text/plain, application/xhtml+xml" },
+      cf: { cacheTtl: 300, cacheEverything: true },
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error("external_unavailable");
+    const contentType = response.headers.get("content-type") || "";
+    const raw = await response.text();
+    const text = contentType.includes("html")
+      ? raw.replace(/<script[\\s\\S]*?<\\/script>/gi, " ").replace(/<style[\\s\\S]*?<\\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/\\s+/g, " ").trim()
+      : raw.trim();
+    return { title: resource.title, url: resource.url, type: resource.type, content: text.slice(0, MAX_EXTERNAL_CHARS) };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function loadExternalBundle(toolRegistry) {
+  let registry;
+  try { registry = JSON.parse(toolRegistry); } catch { return { resources: [], status: "invalid_registry" }; }
+  const resources = Array.isArray(registry.public_external_resources) ? registry.public_external_resources : [];
+  const curated = resources.filter((r) => r && r.status === "curated" && typeof r.url === "string" && /^https:\\/\\//i.test(r.url)).slice(0, 4);
+  const results = await Promise.all(curated.map(async (resource) => {
+    try { return await loadExternalResource(resource); } catch { return null; }
+  }));
+  return { resources: results.filter(Boolean), status: "loaded" };
 }
 
 function boundedJson(value) {
@@ -209,6 +243,13 @@ export default {
       return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
     }
 
+    let external = { resources: [], status: "not_loaded" };
+    try {
+      external = await loadExternalBundle(library.bundle.tool_registry);
+    } catch {
+      external = { resources: [], status: "unavailable" };
+    }
+
     let analytics = null;
     if (isAnalyticsQuestion(question)) {
       try {
@@ -224,6 +265,7 @@ export default {
       "Режимы: 1) вопросы о Жакин.рф — приоритет библиотеке сайта; 2) аналитика сайта — используй только переданные серверные метрики; 3) общие вопросы — используй общие знания и объясняй темы по экономике, международным процессам, безопасности, технологиям, ИИ и другим областям.",
       "Библиотека является источником контекста, но не разрешает выдумывать отсутствующие факты.",
       "Инструменты, отмеченные в реестре как agent_side_integrations, доступны проектному агенту, но НЕ являются прямым runtime-доступом ЖАК. Никогда не утверждай обратное.",
+      "Для внешних ресурсов используй только переданный блок ВНЕШНИЕ ПУБЛИЧНЫЕ РЕСУРСЫ. Это дополнительный публичный контекст, а не подтверждение фактов о самом сайте.",
       "Если вопрос требует актуальной информации, которой нет в переданном контексте или аналитике, честно укажи ограничение.",
       "Если данных недостаточно, прямо скажи об этом.",
       "Не раскрывай закрытые, персональные, секретные или непроверенные сведения.",
@@ -235,6 +277,9 @@ export default {
       "",
       "СТАТУС БИБЛИОТЕКИ:",
       JSON.stringify(library.status),
+      "",
+      "ВНЕШНИЕ ПУБЛИЧНЫЕ РЕСУРСЫ:",
+      JSON.stringify(external),
       "",
       "АНАЛИТИКА САЙТА:",
       analytics
