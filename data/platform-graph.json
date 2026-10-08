@@ -322,6 +322,90 @@
       "type": "project",
       "title": "Будущие инициативы",
       "url": "/projects.html"
+    },
+    {
+      "id": "country:russia",
+      "type": "country",
+      "title": "Россия",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:saudi-arabia",
+      "type": "country",
+      "title": "Саудовская Аравия",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:china",
+      "type": "country",
+      "title": "Китай",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:india",
+      "type": "country",
+      "title": "Индия",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:usa",
+      "type": "country",
+      "title": "США",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:canada",
+      "type": "country",
+      "title": "Канада",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:australia",
+      "type": "country",
+      "title": "Австралия",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "country:argentina",
+      "type": "country",
+      "title": "Аргентина",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "concept:grain",
+      "type": "concept",
+      "title": "Зерно и продовольствие",
+      "url": "#"
+    },
+    {
+      "id": "concept:logistics",
+      "type": "concept",
+      "title": "Логистика",
+      "url": "#"
+    },
+    {
+      "id": "concept:food-security",
+      "type": "concept",
+      "title": "Продовольственная безопасность",
+      "url": "#"
+    },
+    {
+      "id": "concept:energy",
+      "type": "concept",
+      "title": "Энергия и ресурсы",
+      "url": "#"
+    },
+    {
+      "id": "concept:ai-infrastructure",
+      "type": "concept",
+      "title": "AI-инфраструктура",
+      "url": "#"
+    },
+    {
+      "id": "concept:capital",
+      "type": "concept",
+      "title": "Капитал и деньги",
+      "url": "#"
     }
   ],
   "edges": [
@@ -764,6 +848,141 @@
       "from": "project:social-initiatives",
       "to": "publication:food-infrastructure",
       "type": "supports"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "concept:grain",
+      "type": "about"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "concept:logistics",
+      "type": "about"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "concept:food-security",
+      "type": "about"
+    },
+    {
+      "from": "publication:food-infrastructure",
+      "to": "concept:grain",
+      "type": "about"
+    },
+    {
+      "from": "publication:food-infrastructure",
+      "to": "concept:food-security",
+      "type": "about"
+    },
+    {
+      "from": "publication:food-infrastructure",
+      "to": "concept:logistics",
+      "type": "about"
+    },
+    {
+      "from": "publication:global-economy-new-assets",
+      "to": "concept:energy",
+      "type": "about"
+    },
+    {
+      "from": "publication:global-economy-new-assets",
+      "to": "concept:capital",
+      "type": "about"
+    },
+    {
+      "from": "publication:ai-infrastructure",
+      "to": "concept:ai-infrastructure",
+      "type": "about"
+    },
+    {
+      "from": "publication:ai-infrastructure-economy",
+      "to": "concept:ai-infrastructure",
+      "type": "about"
+    },
+    {
+      "from": "publication:ai-financial-system",
+      "to": "concept:capital",
+      "type": "about"
+    },
+    {
+      "from": "publication:money-financial-system",
+      "to": "concept:capital",
+      "type": "about"
+    },
+    {
+      "from": "publication:digital-ruble",
+      "to": "concept:capital",
+      "type": "about"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:russia",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:saudi-arabia",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:china",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:india",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:usa",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:canada",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:australia",
+      "type": "references"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "country:argentina",
+      "type": "references"
+    },
+    {
+      "from": "project:international-cooperation",
+      "to": "country:saudi-arabia",
+      "type": "references"
+    },
+    {
+      "from": "project:international-cooperation",
+      "to": "country:russia",
+      "type": "references"
+    },
+    {
+      "from": "concept:grain",
+      "to": "concept:logistics",
+      "type": "related_to"
+    },
+    {
+      "from": "concept:grain",
+      "to": "concept:food-security",
+      "type": "related_to"
+    },
+    {
+      "from": "concept:ai-infrastructure",
+      "to": "concept:energy",
+      "type": "related_to"
+    },
+    {
+      "from": "concept:capital",
+      "to": "concept:ai-infrastructure",
+      "type": "related_to"
     }
   ],
   "graph_stats": {
@@ -774,6 +993,10 @@
     "project_nodes": 6,
     "institution_nodes": 3,
     "person_nodes": 1,
-    "project_publication_edges": 12
+    "project_publication_edges": 12,
+    "country_nodes": 8,
+    "concept_nodes": 6,
+    "country_publication_edges": 10,
+    "concept_edges": 17
   }
 }
