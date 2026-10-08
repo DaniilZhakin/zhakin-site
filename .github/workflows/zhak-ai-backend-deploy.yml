@@ -20,7 +20,7 @@ jobs:
           node-version: 20
 
       - name: Install Wrangler
-        run: npm install --global wrangler@4.35.0
+        run: npm install --global wrangler@4.148.0
 
       - name: Validate Worker syntax
         working-directory: intelligence/ai-backend-cloudflare
