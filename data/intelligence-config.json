@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "service": "zhakin-ai",
-  "status": "knowledge-ready-backend-pending",
+  "status": "analytics-backend-ready",
   "endpoint": "",
   "knowledge_core": "/data/zhak-knowledge.json",
   "public_context": {
@@ -14,5 +14,23 @@
     "api_key_client_side": false,
     "backend_required": true,
     "note": "The model API key must remain server-side. The browser may call only the public backend endpoint."
+  },
+  "analytics": {
+    "provider": "posthog",
+    "period_default": "-7d",
+    "capabilities": [
+      "visitors",
+      "sessions",
+      "pageviews",
+      "traffic",
+      "top-pages",
+      "engagement"
+    ],
+    "server_side_only": true,
+    "env": [
+      "POSTHOG_HOST",
+      "POSTHOG_PROJECT_ID",
+      "POSTHOG_API_KEY"
+    ]
   }
 }
