@@ -4,86 +4,79 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ZHAKIN Intelligence — Карта знаний</title>
-<meta name="description" content="Интерактивная карта знаний ZHAKIN Intelligence: направления, публикации и тематические связи Жакин.рф.">
+<meta name="description" content="Интерактивная карта знаний ZHAKIN Intelligence: направления, публикации, проекты и институциональные связи Жакин.рф.">
 <style>
 :root{--bg:#101413;--panel:#151b19;--panel2:#19211e;--text:#eef3ef;--muted:#9aa8a1;--gold:#c9a85b;--emerald:#1e6b55;--line:#315247;--line2:#6e5b31}
-*{box-sizing:border-box}html{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}body{margin:0;background:radial-gradient(circle at 50% -10%,#183027 0,#101413 45%);min-height:100vh}a{color:inherit}.wrap{max-width:1440px;margin:auto;padding:28px 18px 70px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:26px}.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.16em;text-transform:uppercase}.title{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:8px 0 10px}.lead{max-width:820px;color:var(--muted);line-height:1.55}.nav{display:flex;gap:10px;flex-wrap:wrap}.nav a{padding:9px 12px;border:1px solid #293732;border-radius:999px;text-decoration:none;color:#cbd5cf;font-size:13px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.stat{background:rgba(21,27,25,.85);border:1px solid #293732;border-radius:14px;padding:12px 16px}.stat b{display:block;color:var(--gold);font-size:21px}.stat span{color:var(--muted);font-size:12px}.section{margin-top:28px}.section h2{font-size:22px;margin:0 0 10px}.section p.note{color:var(--muted);font-size:13px;margin:0 0 14px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.map-filter{background:#141a18;color:#cdd7d2;border:1px solid #2b3b35;border-radius:999px;padding:9px 13px;cursor:pointer}.map-filter.active{border-color:var(--gold);color:#f0d995}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.map-card,.relation-card,.detail{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid #293732;border-radius:16px;padding:18px}.map-card h3{margin:0 0 6px;font-size:17px}.map-count{color:var(--gold);font-size:12px;margin-bottom:12px}.map-pubs{display:grid;gap:8px}.map-pubs a{text-decoration:none;color:#d9e1dc;line-height:1.35;font-size:13px}.map-pubs a:hover{color:#f0d995}.graph-shell{border:1px solid #293732;border-radius:18px;background:#0d1211;overflow:hidden}.graph-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #293732;color:var(--muted);font-size:12px}.graph-toolbar button{background:#17201d;color:#dbe5df;border:1px solid #34483f;border-radius:8px;padding:7px 10px;cursor:pointer}.graph-wrap{height:650px;overflow:hidden;position:relative}.graph-wrap svg{width:100%;height:100%;display:block;cursor:grab}.graph-wrap svg:active{cursor:grabbing}.edge{stroke:var(--line);stroke-width:1.2;opacity:.55}.edge.related{stroke:var(--gold);stroke-width:1.8;opacity:.7}.node{cursor:pointer}.node circle{stroke:#b8c7bf;stroke-width:1.2}.node.direction circle{fill:#5a4824;stroke:var(--gold);stroke-width:2}.node.publication circle{fill:#174936}.node.dim{opacity:.12}.edge.dim{opacity:.04}.node.selected circle{stroke:#fff1b5;stroke-width:3}.node text{fill:#e8eee9;font-size:10px;pointer-events:none}.node.direction text{fill:#f0d995;font-size:11px;font-weight:600}.legend{display:flex;gap:18px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid #293732;color:var(--muted);font-size:12px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:#174936;border:1px solid #b8c7bf}.legend i.dir{background:#5a4824;border-color:var(--gold)}.legend i.rel{border-radius:0;width:18px;height:2px;background:var(--gold);border:0;vertical-align:middle}.detail{margin-top:14px;min-height:90px}.detail strong{color:#f0d995}.detail a{text-decoration:none;color:#dce6e0}.detail .muted{color:var(--muted);font-size:13px;line-height:1.5}.relations{margin-top:28px}.relation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.relation-card{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font-size:13px}.relation-card a{text-decoration:none}.relation-arrow{color:var(--gold);white-space:nowrap;font-size:11px}.footer{margin-top:35px;color:#78867f;font-size:12px;border-top:1px solid #293732;padding-top:18px}@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.relation-grid{grid-template-columns:1fr}.graph-wrap{height:570px}}@media(max-width:620px){.wrap{padding:22px 12px 50px}.top{display:block}.nav{margin-top:16px}.grid{grid-template-columns:1fr}.graph-wrap{height:520px}.relation-card{grid-template-columns:1fr}.relation-arrow{justify-self:start}.graph-toolbar{align-items:flex-start}.title{font-size:36px}}
+*{box-sizing:border-box}html{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}body{margin:0;background:radial-gradient(circle at 50% -10%,#183027 0,#101413 45%);min-height:100vh}a{color:inherit}.wrap{max-width:1440px;margin:auto;padding:28px 18px 70px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:26px}.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.16em;text-transform:uppercase}.title{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:8px 0 10px}.lead{max-width:820px;color:var(--muted);line-height:1.55}.nav{display:flex;gap:10px;flex-wrap:wrap}.nav a{padding:9px 12px;border:1px solid #293732;border-radius:999px;text-decoration:none;color:#cbd5cf;font-size:13px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.stat{background:rgba(21,27,25,.85);border:1px solid #293732;border-radius:14px;padding:12px 16px}.stat b{display:block;color:var(--gold);font-size:21px}.stat span{color:var(--muted);font-size:12px}.section{margin-top:28px}.section h2{font-size:22px;margin:0 0 10px}.section p.note{color:var(--muted);font-size:13px;margin:0 0 14px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.map-filter{background:#141a18;color:#cdd7d2;border:1px solid #2b3b35;border-radius:999px;padding:9px 13px;cursor:pointer}.map-filter.active{border-color:var(--gold);color:#f0d995}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.map-card,.relation-card,.detail{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid #293732;border-radius:16px;padding:18px}.map-card h3{margin:0 0 6px;font-size:17px}.map-count{color:var(--gold);font-size:12px;margin-bottom:12px}.map-pubs{display:grid;gap:8px}.map-pubs a{text-decoration:none;color:#d9e1dc;line-height:1.35;font-size:13px}.map-pubs a:hover{color:#f0d995}.graph-shell{border:1px solid #293732;border-radius:18px;background:#0d1211;overflow:hidden}.graph-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #293732;color:var(--muted);font-size:12px}.graph-toolbar button{background:#17201d;color:#dbe5df;border:1px solid #34483f;border-radius:8px;padding:7px 10px;cursor:pointer}.graph-wrap{height:700px;overflow:hidden;position:relative}.graph-wrap svg{width:100%;height:100%;display:block;cursor:grab}.graph-wrap svg:active{cursor:grabbing}.edge{stroke:var(--line);stroke-width:1.2;opacity:.48}.edge.related{stroke:var(--gold);stroke-width:1.8;opacity:.72}.edge.supports{stroke:#7c6740;stroke-dasharray:4 4;opacity:.62}.edge.member_of,.edge.implemented_by{stroke:#507a69;stroke-dasharray:3 3;opacity:.65}.node{cursor:pointer}.node circle{stroke:#b8c7bf;stroke-width:1.2}.node.direction circle{fill:#5a4824;stroke:var(--gold);stroke-width:2}.node.publication circle{fill:#174936}.node.project circle{fill:#254a3e;stroke:#8fb5a5}.node.institution circle{fill:#293a36;stroke:#b6c5bd}.node.person circle{fill:#4c4026;stroke:var(--gold)}.node.dim{opacity:.12}.edge.dim{opacity:.04}.node.selected circle{stroke:#fff1b5;stroke-width:3}.node text{fill:#e8eee9;font-size:10px;pointer-events:none}.node.direction text{fill:#f0d995;font-size:11px;font-weight:600}.node.project text,.node.institution text{fill:#c8d8d0;font-size:10px}.node.person text{fill:#f0d995;font-weight:600}.legend{display:flex;gap:18px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid #293732;color:var(--muted);font-size:12px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:#174936;border:1px solid #b8c7bf}.legend i.dir{background:#5a4824;border-color:var(--gold)}.legend i.project{background:#254a3e;border-color:#8fb5a5}.legend i.inst{background:#293a36;border-color:#b6c5bd}.legend i.person{background:#4c4026;border-color:var(--gold)}.legend i.rel{border-radius:0;width:18px;height:2px;background:var(--gold);border:0;vertical-align:middle}.legend i.struct{border-radius:0;width:18px;height:2px;background:#507a69;border:0;vertical-align:middle}.detail{margin-top:14px;min-height:90px}.detail strong{color:#f0d995}.detail a{text-decoration:none;color:#dce6e0}.detail .muted{color:var(--muted);font-size:13px;line-height:1.65}.relations{margin-top:28px}.relation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.relation-card{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font-size:13px}.relation-card a{text-decoration:none}.relation-arrow{color:var(--gold);white-space:nowrap;font-size:11px}.footer{margin-top:35px;color:#78867f;font-size:12px;border-top:1px solid #293732;padding-top:18px}@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.relation-grid{grid-template-columns:1fr}.graph-wrap{height:620px}}@media(max-width:620px){.wrap{padding:22px 12px 50px}.top{display:block}.nav{margin-top:16px}.grid{grid-template-columns:1fr}.graph-wrap{height:560px}.relation-card{grid-template-columns:1fr}.relation-arrow{justify-self:start}.graph-toolbar{align-items:flex-start}.title{font-size:36px}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <header class="top">
-<div>
-<div class="eyebrow">ZHAKIN INTELLIGENCE</div>
-<h1 class="title">Карта знаний</h1>
-<p class="lead">Связанная структура Жакин.рф: направления, аналитические публикации и тематические переходы между материалами. Это следующий слой платформы — от каталога публикаций к единой системе знаний.</p>
-</div>
+<div><div class="eyebrow">ZHAKIN INTELLIGENCE</div><h1 class="title">Карта знаний</h1><p class="lead">Связанная структура Жакин.рф: направления, публикации, проекты и институциональные связи. Теперь карта показывает не только материалы, но и контекст, в котором они существуют.</p></div>
 <nav class="nav" aria-label="Навигация"><a href="/">Жакин.рф</a><a href="/publications.html">Публикации</a><a href="/intelligence.html">Жакин AI</a><a href="/projects.html">Проекты</a></nav>
 </header>
 <section class="stats" id="stats"></section>
 <section class="section">
 <h2>Интерактивный граф</h2>
-<p class="note">Нажмите на направление или публикацию. Соседние узлы подсветятся, а внизу появится контекст связи. Узлы можно перетаскивать.</p>
+<p class="note">Нажмите на любой узел. Соседние элементы подсветятся: направление, публикации, проекты, организации и структурные связи. Узлы можно перетаскивать.</p>
 <div class="graph-shell">
 <div class="graph-toolbar"><span id="graph-status">Загрузка графа…</span><button id="reset" type="button">Сбросить выделение</button></div>
 <div class="graph-wrap"><svg id="graph" role="img" aria-label="Интерактивная карта знаний ZHAKIN Intelligence"></svg></div>
-<div class="legend"><span><i class="dir"></i>направление</span><span><i></i>публикация</span><span><i class="rel"></i>тематическая связь</span></div>
+<div class="legend"><span><i class="dir"></i>направление</span><span><i></i>публикация</span><span><i class="project"></i>проект</span><span><i class="inst"></i>организация</span><span><i class="person"></i>персона</span><span><i class="rel"></i>тематическая связь</span><span><i class="struct"></i>структурная связь</span></div>
 </div>
 <div class="detail" id="detail"><div class="muted">Выберите узел на карте.</div></div>
 </section>
-<section class="section">
-<h2>Направления</h2>
-<div class="filters" id="filters"></div>
-<div class="grid" id="map-grid"></div>
-</section>
-<section class="section relations" id="relations">
-<h2>Связанные материалы</h2>
-<p class="note">Тематические переходы, которые уже заложены в граф знаний.</p>
-<div class="relation-grid" id="relation-grid"></div>
-</section>
+<section class="section"><h2>Направления</h2><div class="filters" id="filters"></div><div class="grid" id="map-grid"></div></section>
+<section class="section relations" id="relations"><h2>Связанные материалы</h2><p class="note">Тематические переходы, которые уже заложены в граф знаний.</p><div class="relation-grid" id="relation-grid"></div></section>
 <div class="footer">ZHAKIN Intelligence · Жакин.рф · Граф знаний является структурным слоем публичного сайта.</div>
 </main>
 <script>
 (async()=>{
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+try{
 const res=await fetch('/data/platform-graph.json',{cache:'no-store'});if(!res.ok)throw Error('graph');
 const data=await res.json();
-const dirs=data.nodes.filter(n=>n.type==='direction'),pubs=data.nodes.filter(n=>n.type==='publication');
-const byId=new Map(data.nodes.map(n=>[n.id,n])), belongs=data.edges.filter(e=>e.type==='belongs_to'),related=data.edges.filter(e=>e.type==='related_to');
+const nodes=data.nodes,byId=new Map(nodes.map(n=>[n.id,n]));
+const dirs=nodes.filter(n=>n.type==='direction'),pubs=nodes.filter(n=>n.type==='publication');
+const projects=nodes.filter(n=>n.type==='project'),institutions=nodes.filter(n=>n.type==='institution'),people=nodes.filter(n=>n.type==='person');
+const belongs=data.edges.filter(e=>e.type==='belongs_to'),related=data.edges.filter(e=>e.type==='related_to');
 const dirOf=new Map(belongs.map(e=>[e.from,e.to]));
-document.getElementById('stats').innerHTML='<div class="stat"><b>'+pubs.length+'</b><span>публикаций в графе</span></div><div class="stat"><b>'+dirs.length+'</b><span>аналитических направлений</span></div><div class="stat"><b>'+related.length+'</b><span>тематических связей</span></div>';
-document.getElementById('graph-status').textContent=pubs.length+' публикаций · '+dirs.length+' направлений · '+related.length+' тематических связей';
+const structural=['supports','member_of','implemented_by'];
+const structuralEdges=data.edges.filter(e=>structural.includes(e.type));
+document.getElementById('stats').innerHTML='<div class="stat"><b>'+pubs.length+'</b><span>публикаций</span></div><div class="stat"><b>'+dirs.length+'</b><span>направлений</span></div><div class="stat"><b>'+projects.length+'</b><span>проектов</span></div><div class="stat"><b>'+institutions.length+'</b><span>организаций</span></div><div class="stat"><b>'+related.length+'</b><span>тематических связей</span></div>';
+document.getElementById('graph-status').textContent=nodes.length+' узлов · '+data.edges.length+' связей';
 const filters=document.getElementById('filters'),grid=document.getElementById('map-grid');
 const labels=[['all','Все направления'],...dirs.map(d=>[d.id,d.title])];
-function renderFilter(active){filters.innerHTML=labels.map(([id,title])=>'<button class="map-filter '+(active===id?'active':'')+'" data-id="'+esc(id)+'">'+esc(title)+'</button>').join('');
-filters.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>renderFilter(b.dataset.id)));
-grid.innerHTML=dirs.filter(d=>active==='all'||active===d.id).map(d=>{const list=pubs.filter(p=>dirOf.get(p.id)===d.id);return '<article class="map-card"><h3>'+esc(d.title)+'</h3><div class="map-count">'+list.length+' публикаций</div><div class="map-pubs">'+list.map(p=>'<a href="'+esc(p.url)+'">'+esc(p.title)+'</a>').join('')+'</div></article>'}).join('')}
+function renderFilter(active){filters.innerHTML=labels.map(([id,title])=>'<button class="map-filter '+(active===id?'active':'')+'" data-id="'+esc(id)+'">'+esc(title)+'</button>').join('');filters.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>renderFilter(b.dataset.id)));grid.innerHTML=dirs.filter(d=>active==='all'||active===d.id).map(d=>{const list=pubs.filter(p=>dirOf.get(p.id)===d.id);return '<article class="map-card"><h3>'+esc(d.title)+'</h3><div class="map-count">'+list.length+' публикаций</div><div class="map-pubs">'+list.map(p=>'<a href="'+esc(p.url)+'">'+esc(p.title)+'</a>').join('')+'</div></article>'}).join('')}
 renderFilter('all');
-document.getElementById('relation-grid').innerHTML=related.map(e=>{const a=byId.get(e.from),b=byId.get(e.to);if(!a||!b)return '';return '<article class="relation-card"><a href="'+esc(a.url)+'">'+esc(a.title)+'</a><span class="relation-arrow">↕ связано с</span><a href="'+esc(b.url)+'">'+esc(b.title)+'</a></article>'}).join('');
+document.getElementById('relation-grid').innerHTML=related.map(e=>{const a=byId.get(e.from),b=byId.get(e.to);if(!a||!b)return '';return '<article class="relation-card"><a href="'+esc(a.url||'#')+'">'+esc(a.title)+'</a><span class="relation-arrow">↕ связано с</span><a href="'+esc(b.url||'#')+'">'+esc(b.title)+'</a></article>'}).join('');
 
-const svg=document.getElementById('graph'),NS='http://www.w3.org/2000/svg';
-let W=1200,H=650,selected=null,drag=null,pan={x:0,y:0},zoom=1;
+const svg=document.getElementById('graph'),NS='http://www.w3.org/2000/svg';let W=1200,H=700,selected=null,drag=null,pan={x:0,y:0},zoom=1;
 function el(tag,attrs={}){const x=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))x.setAttribute(k,v);return x}
 function layout(){
-const positions=new Map(), cx=W/2,cy=H/2;
-dirs.forEach((d,i)=>{const a=(Math.PI*2*i/dirs.length)-Math.PI/2;positions.set(d.id,{x:cx+Math.cos(a)*Math.min(W*.34,420),y:cy+Math.sin(a)*Math.min(H*.32,205)})});
-const groups=dirs.map(d=>({d,list:pubs.filter(p=>dirOf.get(p.id)===d.id)}));
-groups.forEach(({d,list})=>{const dp=positions.get(d.id),r=Math.min(150,Math.max(80,list.length*17));list.forEach((p,i)=>{const a=(Math.PI*2*i/Math.max(1,list.length))-Math.PI/2;positions.set(p.id,{x:dp.x+Math.cos(a)*r,y:dp.y+Math.sin(a)*r*.72})})});
-return positions}
+const p=new Map(),cx=W/2,cy=H/2;
+dirs.forEach((d,i)=>{const a=2*Math.PI*i/Math.max(1,dirs.length)-Math.PI/2;p.set(d.id,{x:cx+Math.cos(a)*390,y:cy+Math.sin(a)*225})});
+const place=(list,center,r,offset=0)=>list.forEach((n,i)=>{const a=2*Math.PI*i/Math.max(1,list.length)+offset;p.set(n.id,{x:center.x+Math.cos(a)*r,y:center.y+Math.sin(a)*r*.7})});
+dirs.forEach(d=>{const dp=p.get(d.id),list=pubs.filter(x=>dirOf.get(x.id)===d.id);place(list,dp,Math.min(150,Math.max(90,list.length*15)),0)});
+place(projects,{x:cx,y:cy},170,Math.PI/6);
+place(institutions,{x:cx,y:cy},255,Math.PI/3);
+place(people,{x:cx,y:cy},75,0);
+return p}
 let pos=layout();
+function label(n){let s=n.title||n.id;return s.length>38?s.slice(0,35)+'…':s}
 function render(){
 svg.innerHTML='';svg.setAttribute('viewBox','0 0 '+W+' '+H);
 const g=el('g',{transform:'translate('+pan.x+' '+pan.y+') scale('+zoom+')'});svg.appendChild(g);
-const edges=[...belongs.map(e=>({...e,kind:'belongs'})),...related.map(e=>({...e,kind:'related'}))];
-const edgeEls=[];
-edges.forEach(e=>{const a=pos.get(e.from),b=pos.get(e.to);if(!a||!b)return;const l=el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'edge '+(e.kind==='related'?'related':'')});g.appendChild(l);edgeEls.push({e,l})});
-const nodeEls=[];
-[...dirs,...pubs].forEach(n=>{const p=pos.get(n.id);if(!p)return;const group=el('g',{class:'node '+n.type});const r=el('circle',{cx:p.x,cy:p.y,r:n.type==='direction'?22:12});const t=el('text',{x:p.x,y:p.y+(n.type==='direction'?38:26),'text-anchor':'middle'});let label=n.title;if(label.length>42)label=label.slice(0,39)+'…';t.textContent=label;group.append(r,t);group.addEventListener('click',e=>{e.stopPropagation();select(n.id)});group.addEventListener('pointerdown',e=>{e.stopPropagation();drag={id:n.id,dx:p.x-e.offsetX,dy:p.y-e.offsetY};group.setPointerCapture?.(e.pointerId)});g.appendChild(group);nodeEls.push({n,group})});
-function select(id){selected=id;const connected=new Set([id]);data.edges.forEach(e=>{if(e.from===id)connected.add(e.to);if(e.to===id)connected.add(e.from)});nodeEls.forEach(x=>x.group.classList.toggle('dim',!connected.has(x.n.id)));edgeEls.forEach(x=>x.l.classList.toggle('dim',!(x.e.from===id||x.e.to===id)));nodeEls.forEach(x=>x.group.classList.toggle('selected',x.n.id===id));const n=byId.get(id);const rel=related.filter(e=>e.from===id||e.to===id).map(e=>byId.get(e.from===id?e.to:e.from)).filter(Boolean);const direction=n.type==='direction'?null:byId.get(dirOf.get(id));document.getElementById('detail').innerHTML='<strong>'+esc(n.title)+'</strong><div class="muted">'+(direction?'Направление: <a href="'+esc(direction.url)+'">'+esc(direction.title)+'</a><br>':'')+(rel.length?'Связано с: '+rel.map(x=>'<a href="'+esc(x.url)+'">'+esc(x.title)+'</a>').join(' · '):'')+'</div>'}
-window.select=select;
+const edges=[...belongs.map(e=>({...e,kind:'belongs'})),...related.map(e=>({...e,kind:'related'})),...structuralEdges.map(e=>({...e,kind:e.type}))];
+const edgeEls=[];edges.forEach(e=>{const a=pos.get(e.from),b=pos.get(e.to);if(!a||!b)return;const l=el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'edge '+e.kind});g.appendChild(l);edgeEls.push({e,l})});
+const all=[...dirs,...pubs,...projects,...institutions,...people],nodeEls=[];
+all.forEach(n=>{const p=pos.get(n.id);if(!p)return;const group=el('g',{class:'node '+n.type});const radius=n.type==='direction'?22:n.type==='person'?16:n.type==='project'||n.type==='institution'?15:11;const r=el('circle',{cx:p.x,cy:p.y,r:radius});const t=el('text',{x:p.x,y:p.y+radius+15,'text-anchor':'middle'});t.textContent=label(n);group.append(r,t);group.addEventListener('click',e=>{e.stopPropagation();select(n.id)});group.addEventListener('pointerdown',e=>{e.stopPropagation();drag={id:n.id};group.setPointerCapture?.(e.pointerId)});group.addEventListener('pointermove',e=>{if(!drag||drag.id!==n.id)return;const rect=svg.getBoundingClientRect();pos.set(n.id,{x:(e.clientX-rect.left)/rect.width*W,y:(e.clientY-rect.top)/rect.height*H});render()});group.addEventListener('pointerup',()=>{if(drag?.id===n.id)drag=null});g.appendChild(group);nodeEls.push({n,group})});
+function select(id){selected=id;const connected=new Set([id]);data.edges.forEach(e=>{if(e.from===id)connected.add(e.to);if(e.to===id)connected.add(e.from)});nodeEls.forEach(x=>x.group.classList.toggle('dim',!connected.has(x.n.id)));edgeEls.forEach(x=>x.l.classList.toggle('dim',!(x.e.from===id||x.e.to===id)));nodeEls.forEach(x=>x.group.classList.toggle('selected',x.n.id===id));const n=byId.get(id);const neighbors=data.edges.filter(e=>e.from===id||e.to===id).map(e=>byId.get(e.from===id?e.to:e.from)).filter(Boolean);const direction=n.type==='direction'?null:byId.get(dirOf.get(id));document.getElementById('detail').innerHTML='<strong>'+esc(n.title)+'</strong><div class="muted">'+(n.type?('Тип: '+esc(n.type)+'<br>'):'')+(direction?'Направление: <a href="'+esc(direction.url||'#')+'">'+esc(direction.title)+'</a><br>':'')+(neighbors.length?'Связи: '+neighbors.map(x=>'<a href="'+esc(x.url||'#')+'">'+esc(x.title)+'</a>').join(' · '):'Нет связанных узлов')+'</div>'}
 document.getElementById('reset').onclick=()=>{selected=null;render();document.getElementById('detail').innerHTML='<div class="muted">Выберите узел на карте.</div>'};
-svg.onclick=()=>{if(selected){selected=null;render();document.getElementById('detail').innerHTML='<div class="muted">Выберите узел на карте.</div>'}};
+svg.addEventListener('click',()=>{if(selected){selected=null;render();document.getElementById('detail').innerHTML='<div class="muted">Выберите узел на карте.</div>'}});
 render();
+}catch(e){document.getElementById('graph-status').textContent='Не удалось загрузить граф';document.getElementById('detail').innerHTML='<div class="muted">Данные графа временно недоступны.</div>'}
 })();
 </script>
 </body></html>
