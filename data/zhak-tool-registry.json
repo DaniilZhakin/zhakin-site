@@ -20,6 +20,18 @@
       "capability": "server-side website analytics"
     }
   ],
+  "public_web_search": [
+    {
+      "id": "wikipedia_ru",
+      "status": "runtime_ready",
+      "capability": "public knowledge search"
+    },
+    {
+      "id": "google_news_rss_ru",
+      "status": "runtime_ready",
+      "capability": "public current-news search"
+    }
+  ],
   "agent_side_integrations": [
     {
       "id": "github",
