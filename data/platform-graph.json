@@ -262,6 +262,66 @@
       "type": "publication",
       "title": "Правда, которую человеку не показывают: от первого дня жизни до последнего",
       "url": "/publications/hidden-matrix.html"
+    },
+    {
+      "id": "person:daniil-zhakin",
+      "type": "person",
+      "title": "Даниил Юрьевич Жакин",
+      "url": "/"
+    },
+    {
+      "id": "institution:zhakin-team",
+      "type": "institution",
+      "title": "ZHAKIN TEAM",
+      "url": "/index.html#media"
+    },
+    {
+      "id": "institution:pobeda",
+      "type": "institution",
+      "title": "ООО «ПОБЕДА»",
+      "url": "/index.html#international"
+    },
+    {
+      "id": "institution:userdie",
+      "type": "institution",
+      "title": "Благотворительный фонд «УСЕРДИЕ»",
+      "url": "/index.html#userdie"
+    },
+    {
+      "id": "project:economic-development",
+      "type": "project",
+      "title": "Экономические проекты",
+      "url": "/projects.html"
+    },
+    {
+      "id": "project:international-cooperation",
+      "type": "project",
+      "title": "Международные проекты",
+      "url": "/projects.html"
+    },
+    {
+      "id": "project:investment-directions",
+      "type": "project",
+      "title": "Инвестиционные направления",
+      "url": "/projects.html"
+    },
+    {
+      "id": "project:social-initiatives",
+      "type": "project",
+      "title": "Социальные инициативы",
+      "url": "/projects.html"
+    },
+    {
+      "id": "project:zhakin-team",
+      "type": "project",
+      "title": "ZHAKIN TEAM",
+      "url": "/projects.html"
+    },
+    {
+      "id": "project:future-initiatives",
+      "type": "project",
+      "title": "Будущие инициативы",
+      "url": "/projects.html"
     }
   ],
   "edges": [
@@ -584,12 +644,136 @@
       "from": "publication:human-value-ai",
       "to": "publication:ai-cost-economics",
       "type": "related_to"
+    },
+    {
+      "from": "person:daniil-zhakin",
+      "to": "institution:zhakin-team",
+      "type": "member_of"
+    },
+    {
+      "from": "person:daniil-zhakin",
+      "to": "institution:pobeda",
+      "type": "member_of"
+    },
+    {
+      "from": "person:daniil-zhakin",
+      "to": "institution:userdie",
+      "type": "member_of"
+    },
+    {
+      "from": "project:economic-development",
+      "to": "institution:pobeda",
+      "type": "implemented_by"
+    },
+    {
+      "from": "project:social-initiatives",
+      "to": "institution:userdie",
+      "type": "implemented_by"
+    },
+    {
+      "from": "project:zhakin-team",
+      "to": "institution:zhakin-team",
+      "type": "implemented_by"
+    },
+    {
+      "from": "project:economic-development",
+      "to": "direction:finance",
+      "type": "supports"
+    },
+    {
+      "from": "project:international-cooperation",
+      "to": "direction:geoeconomics",
+      "type": "supports"
+    },
+    {
+      "from": "project:investment-directions",
+      "to": "direction:finance",
+      "type": "supports"
+    },
+    {
+      "from": "project:social-initiatives",
+      "to": "direction:infra",
+      "type": "supports"
+    },
+    {
+      "from": "project:zhakin-team",
+      "to": "direction:strategy",
+      "type": "supports"
+    },
+    {
+      "from": "project:future-initiatives",
+      "to": "direction:strategy",
+      "type": "supports"
+    },
+    {
+      "from": "project:economic-development",
+      "to": "publication:money-financial-system",
+      "type": "supports"
+    },
+    {
+      "from": "project:economic-development",
+      "to": "publication:digital-ruble",
+      "type": "supports"
+    },
+    {
+      "from": "project:economic-development",
+      "to": "publication:ai-financial-system",
+      "type": "supports"
+    },
+    {
+      "from": "project:investment-directions",
+      "to": "publication:money-financial-system",
+      "type": "supports"
+    },
+    {
+      "from": "project:investment-directions",
+      "to": "publication:capital-requires-proof",
+      "type": "supports"
+    },
+    {
+      "from": "project:zhakin-team",
+      "to": "publication:global-economy-new-assets",
+      "type": "supports"
+    },
+    {
+      "from": "project:zhakin-team",
+      "to": "publication:ai-infrastructure-economy",
+      "type": "supports"
+    },
+    {
+      "from": "project:zhakin-team",
+      "to": "publication:global-dependence-map",
+      "type": "supports"
+    },
+    {
+      "from": "project:international-cooperation",
+      "to": "publication:sanctions-new-generation",
+      "type": "supports"
+    },
+    {
+      "from": "project:international-cooperation",
+      "to": "publication:global-economy-after-sanctions",
+      "type": "supports"
+    },
+    {
+      "from": "project:social-initiatives",
+      "to": "publication:grain-global-market",
+      "type": "supports"
+    },
+    {
+      "from": "project:social-initiatives",
+      "to": "publication:food-infrastructure",
+      "type": "supports"
     }
   ],
   "graph_stats": {
     "publication_nodes": 28,
     "direction_nodes": 6,
     "last_updated": "2026-10-08",
-    "related_publication_edges": 21
+    "related_publication_edges": 21,
+    "project_nodes": 6,
+    "institution_nodes": 3,
+    "person_nodes": 1,
+    "project_publication_edges": 12
   }
 }
