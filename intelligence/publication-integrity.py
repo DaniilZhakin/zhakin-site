@@ -55,6 +55,7 @@ direction_groups = {
         "label": "Инфраструктура и экономика",
         "paths": {
             "/publications/food-infrastructure.html",
+            "/publications/grain-global-market.html",
         },
     },
     "strategy": {
@@ -87,7 +88,7 @@ expected_direction_paths = set().union(*(group["paths"] for group in direction_g
 if not index_paths:
     errors.append("publications.html: no publication links found")
 
-if len(index_paths) != 27:
+if len(index_paths) != 28:
     errors.append(f"publication count: expected 27, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
