@@ -1,0 +1,220 @@
+{
+  "schema_version": "1.0",
+  "graph_id": "zhakin-platform-core",
+  "purpose": "Базовый граф знаний Жакин.рф: связывает публикации, направления, проекты, институциональный контур и аналитический интеллект.",
+  "node_types": [
+    "platform",
+    "direction",
+    "publication",
+    "project",
+    "institution",
+    "person",
+    "country",
+    "concept",
+    "service"
+  ],
+  "edge_types": [
+    "contains",
+    "belongs_to",
+    "related_to",
+    "supports",
+    "about",
+    "references",
+    "navigates_to"
+  ],
+  "nodes": [
+    {
+      "id": "platform:zhakin-rf",
+      "type": "platform",
+      "title": "Жакин.рф",
+      "url": "/"
+    },
+    {
+      "id": "service:zhakin-ai",
+      "type": "service",
+      "title": "Жакин AI",
+      "url": "/intelligence.html"
+    },
+    {
+      "id": "service:publications",
+      "type": "service",
+      "title": "Публикации",
+      "url": "/publications.html"
+    },
+    {
+      "id": "service:projects",
+      "type": "service",
+      "title": "Проекты",
+      "url": "/projects.html"
+    },
+    {
+      "id": "service:institutional",
+      "type": "service",
+      "title": "Институциональный контур",
+      "url": "/institutional.html"
+    },
+    {
+      "id": "service:international",
+      "type": "service",
+      "title": "Международная география",
+      "url": "/international-geography.html"
+    },
+    {
+      "id": "direction:finance",
+      "type": "direction",
+      "title": "Финансы и инвестиции",
+      "url": "/publications/directions.html?direction=finance"
+    },
+    {
+      "id": "direction:ai",
+      "type": "direction",
+      "title": "AI и государство",
+      "url": "/publications/directions.html?direction=ai"
+    },
+    {
+      "id": "direction:law",
+      "type": "direction",
+      "title": "Право и институты",
+      "url": "/publications/directions.html?direction=law"
+    },
+    {
+      "id": "direction:infra",
+      "type": "direction",
+      "title": "Инфраструктура и экономика",
+      "url": "/publications/directions.html?direction=infra"
+    },
+    {
+      "id": "direction:strategy",
+      "type": "direction",
+      "title": "Стратегическое развитие",
+      "url": "/publications/directions.html?direction=strategy"
+    },
+    {
+      "id": "direction:geoeconomics",
+      "type": "direction",
+      "title": "Геоэкономика и международные процессы",
+      "url": "/publications/directions.html?direction=geoeconomics"
+    },
+    {
+      "id": "publication:grain-global-market",
+      "type": "publication",
+      "title": "Зерно есть. Но кто заработает на мировом голоде?",
+      "url": "/publications/grain-global-market.html"
+    },
+    {
+      "id": "publication:food-infrastructure",
+      "type": "publication",
+      "title": "Продовольственная инфраструктура",
+      "url": "/publications/food-infrastructure.html"
+    },
+    {
+      "id": "publication:money-financial-system",
+      "type": "publication",
+      "title": "Деньги и финансовая система",
+      "url": "/publications/money-financial-system.html"
+    },
+    {
+      "id": "publication:ai-infrastructure",
+      "type": "publication",
+      "title": "AI-инфраструктура",
+      "url": "/publications/ai-infrastructure.html"
+    }
+  ],
+  "edges": [
+    {
+      "from": "platform:zhakin-rf",
+      "to": "service:zhakin-ai",
+      "type": "contains"
+    },
+    {
+      "from": "platform:zhakin-rf",
+      "to": "service:publications",
+      "type": "contains"
+    },
+    {
+      "from": "platform:zhakin-rf",
+      "to": "service:projects",
+      "type": "contains"
+    },
+    {
+      "from": "platform:zhakin-rf",
+      "to": "service:institutional",
+      "type": "contains"
+    },
+    {
+      "from": "platform:zhakin-rf",
+      "to": "service:international",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:finance",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:ai",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:law",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:infra",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:strategy",
+      "type": "contains"
+    },
+    {
+      "from": "service:publications",
+      "to": "direction:geoeconomics",
+      "type": "contains"
+    },
+    {
+      "from": "publication:grain-global-market",
+      "to": "direction:infra",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:food-infrastructure",
+      "to": "direction:infra",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:money-financial-system",
+      "to": "direction:finance",
+      "type": "belongs_to"
+    },
+    {
+      "from": "publication:ai-infrastructure",
+      "to": "direction:ai",
+      "type": "belongs_to"
+    },
+    {
+      "from": "service:zhakin-ai",
+      "to": "service:publications",
+      "type": "navigates_to"
+    },
+    {
+      "from": "service:zhakin-ai",
+      "to": "service:projects",
+      "type": "navigates_to"
+    },
+    {
+      "from": "service:zhakin-ai",
+      "to": "service:institutional",
+      "type": "navigates_to"
+    },
+    {
+      "from": "service:zhakin-ai",
+      "to": "service:international",
+      "type": "navigates_to"
+    }
+  ]
+}
