@@ -6,6 +6,11 @@
   "vars": {
     "ALLOWED_ORIGIN": "https://xn--80alhhq.xn--p1ai",
     "KNOWLEDGE_URL": "https://xn--80alhhq.xn--p1ai/data/zhak-knowledge.json",
+    "INSTITUTIONAL_REGISTRY_URL": "https://xn--80alhhq.xn--p1ai/data/institutional-registry.json",
+    "PROJECTS_URL": "https://xn--80alhhq.xn--p1ai/data/projects.json",
+    "PLATFORM_GRAPH_URL": "https://xn--80alhhq.xn--p1ai/data/platform-graph.json",
+    "INTELLIGENCE_CONFIG_URL": "https://xn--80alhhq.xn--p1ai/data/intelligence-config.json",
+    "TOOL_REGISTRY_URL": "https://xn--80alhhq.xn--p1ai/data/zhak-tool-registry.json",
     "OPENAI_MODEL": "SET_IN_CLOUDFLARE_RUNTIME",
     "POSTHOG_HOST": "SET_IN_CLOUDFLARE_RUNTIME",
     "POSTHOG_PROJECT_ID": "SET_IN_CLOUDFLARE_RUNTIME"
