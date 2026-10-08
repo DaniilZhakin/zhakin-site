@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/understanding-state-and-law.html': 'law',
     '/publications/legal-architecture.html': 'law',
     '/publications/food-infrastructure.html': 'infra',
+    '/publications/grain-global-market.html': 'infra',
     '/publications/economic-transition-1990s.html': 'strategy',
     '/publications/future-without-money.html': 'strategy',
     '/publications/intellectual-economy.html': 'strategy',
