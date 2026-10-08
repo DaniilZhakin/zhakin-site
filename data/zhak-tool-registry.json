@@ -21,20 +21,59 @@
     }
   ],
   "agent_side_integrations": [
-    {"id": "github", "status": "available_to_project_agent"},
-    {"id": "posthog", "status": "available_to_project_agent"},
-    {"id": "amplitude", "status": "available_to_project_agent"},
-    {"id": "notion", "status": "available_to_project_agent"},
-    {"id": "base44", "status": "available_to_project_agent"},
-    {"id": "replit", "status": "available_to_project_agent"},
-    {"id": "canva", "status": "available_to_project_agent"},
-    {"id": "magicpath", "status": "available_to_project_agent"},
-    {"id": "openai_platform", "status": "available_to_project_agent"}
+    {
+      "id": "github",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "posthog",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "amplitude",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "notion",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "base44",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "replit",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "canva",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "magicpath",
+      "status": "available_to_project_agent"
+    },
+    {
+      "id": "openai_platform",
+      "status": "available_to_project_agent"
+    }
   ],
   "rules": [
     "ZHAK must never claim runtime access to an integration listed only as agent_side_integrations.",
     "Use site_library as authoritative context for facts about zhakin.rf.",
     "Use analytics only when live server-side data is actually available.",
-    "Never store credentials, API keys, tokens, or private records in this registry."
+    "Never store credentials, API keys, tokens, or private records in this registry.",
+    "Для внешних ресурсов использовать только явно разрешённые и курируемые public_web-источники из этого реестра; произвольные URL от пользователя не превращать в доверенный источник автоматически.",
+    "Внешний источник является дополнительным контекстом: факты о сайте подтверждаются библиотекой zhakin.rf, а внешние материалы помечаются как внешний источник."
+  ],
+  "public_external_resources": [
+    {
+      "id": "vc-profile",
+      "title": "Профиль Даниила Жакина на VC.ru",
+      "url": "https://vc.ru/id1651220",
+      "type": "public_web",
+      "status": "curated",
+      "role": "внешний публичный контур публикаций и материалов автора"
+    }
   ]
 }
