@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-08T14:03:00Z",
+  "timestamp": "2026-10-08T15:38:05Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 34,
     "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 215.1,
-    "max_response_time_ms": 578,
-    "health_score": 100.0,
+    "avg_response_time_ms": 343.4,
+    "max_response_time_ms": 1060,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-08T13:36:36Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-08T14:03:00Z",
+  "warnings": [
+    "page-level change: /publications/future-without-money.html"
+  ],
+  "page_changes": {
+    "/publications/future-without-money.html": [
+      "response_time_ms: 381 -> 1060"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/future-without-money.html"
+  ],
+  "status": "warning"
 }
