@@ -5,6 +5,7 @@ const RATE_WINDOW_MS = 60_000;
 const MAX_LIBRARY_CHARS = 45_000;
 const MAX_EXTERNAL_CHARS = 25_000;
 const EXTERNAL_TIMEOUT_MS = 5000;
+const MAX_EXTERNAL_RESULTS = 6;
 
 function json(data, status = 200, origin = "") {
   return new Response(JSON.stringify(data), {
@@ -115,6 +116,55 @@ async function loadExternalResource(resource) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function needsExternalResources(question) {
+  return /(сегодня|сейчас|последн|новост|актуаль|2026|мир|миров|рынок|экономик|санкц|технолог|искусственн|ии|международ|политик|безопасност|что происходит|кто|сколько|цена|курс)/i.test(question);
+}
+
+function escapeXml(value) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+async function loadPublicSearch(question) {
+  if (!needsExternalResources(question)) {
+    return { status: "not_needed", results: [] };
+  }
+
+  const query = question.slice(0, 240);
+  const encoded = encodeURIComponent(query);
+  const wikipediaUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&format=json&utf8=1&srlimit=3&srsearch=${encoded}`;
+  const newsUrl = `https://news.google.com/rss/search?q=${encoded}&hl=ru&gl=RU&ceid=RU:ru`;
+
+  const [wiki, news] = await Promise.allSettled([
+    fetch(wikipediaUrl, { headers: { "accept": "application/json" }, signal: AbortSignal.timeout(EXTERNAL_TIMEOUT_MS) }).then(async (r) => r.ok ? r.json() : null),
+    fetch(newsUrl, { headers: { "accept": "application/rss+xml, application/xml, text/xml" }, signal: AbortSignal.timeout(EXTERNAL_TIMEOUT_MS) }).then(async (r) => r.ok ? r.text() : "")
+  ]);
+
+  const results = [];
+  if (wiki.status === "fulfilled" && wiki.value?.query?.search) {
+    for (const item of wiki.value.query.search.slice(0, 3)) {
+      const title = String(item.title || "").trim();
+      if (!title) continue;
+      results.push({
+        title: `Wikipedia: ${title}`,
+        url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, "_"))}`,
+        type: "public_web_search"
+      });
+    }
+  }
+
+  if (news.status === "fulfilled" && news.value) {
+    const xml = news.value;
+    const items = [...xml.matchAll(/<item>[\\s\\S]*?<title>([\\s\\S]*?)<\\/title>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>/gi)];
+    for (const match of items.slice(0, 3)) {
+      const title = match[1].replace(/<!\\[CDATA\\[|\\]\\]>/g, "").trim();
+      const url = match[2].trim();
+      if (title && /^https?:\\/\\//i.test(url)) results.push({ title, url, type: "public_news_search" });
+    }
+  }
+
+  return { status: results.length ? "loaded" : "unavailable", results: results.slice(0, MAX_EXTERNAL_RESULTS) };
 }
 
 async function loadExternalBundle(toolRegistry) {
@@ -243,11 +293,11 @@ export default {
       return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
     }
 
-    let external = { resources: [], status: "not_loaded" };
+    let external = { resources: [], status: "not_loaded", search: { status: "not_loaded", results: [] } };
     try {
-      external = await loadExternalBundle(library.bundle.tool_registry);
+      external = await loadExternalBundle(library.bundle.tool_registry);\n      external.search = await loadPublicSearch(question);
     } catch {
-      external = { resources: [], status: "unavailable" };
+      external = { resources: [], status: "unavailable", search: { status: "unavailable", results: [] } };
     }
 
     let analytics = null;
@@ -265,8 +315,8 @@ export default {
       "Режимы: 1) вопросы о Жакин.рф — приоритет библиотеке сайта; 2) аналитика сайта — используй только переданные серверные метрики; 3) общие вопросы — используй общие знания и объясняй темы по экономике, международным процессам, безопасности, технологиям, ИИ и другим областям.",
       "Библиотека является источником контекста, но не разрешает выдумывать отсутствующие факты.",
       "Инструменты, отмеченные в реестре как agent_side_integrations, доступны проектному агенту, но НЕ являются прямым runtime-доступом ЖАК. Никогда не утверждай обратное.",
-      "Для внешних ресурсов используй только переданный блок ВНЕШНИЕ ПУБЛИЧНЫЕ РЕСУРСЫ. Это дополнительный публичный контекст, а не подтверждение фактов о самом сайте.",
-      "Если вопрос требует актуальной информации, которой нет в переданном контексте или аналитике, честно укажи ограничение.",
+      "Для внешних ресурсов используй переданные курируемые public_web-источники и результаты публичного веб-поиска. Это дополнительный публичный контекст, а не подтверждение фактов о самом сайте.",
+      "Для актуальных и внешних вопросов используй блок внешнего поиска, если он доступен. Не выдавай результат внешнего поиска за факт из библиотеки сайта.",
       "Если данных недостаточно, прямо скажи об этом.",
       "Не раскрывай закрытые, персональные, секретные или непроверенные сведения.",
       "Верни JSON с полями answer и sources.",
