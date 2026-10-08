@@ -2,6 +2,7 @@ const MAX_BODY_BYTES = 16 * 1024;
 const MAX_QUESTION_CHARS = 4000;
 const RATE_LIMIT = 30;
 const RATE_WINDOW_MS = 60_000;
+const MAX_LIBRARY_CHARS = 45_000;
 
 function json(data, status = 200, origin = "") {
   return new Response(JSON.stringify(data), {
@@ -52,8 +53,6 @@ function normalizeSources(value) {
     .map((item) => ({ title: item.title, url: item.url }));
 }
 
-
-
 function isAnalyticsQuestion(question) {
   return /(аналитик|посещ|визит|просмотр|сесс|трафик|bounce|отказ|страниц|аудитор|конверс|метрик|статистик|сайт.*(сейчас|недел|месяц)|сейчас.*сайт)/i.test(question);
 }
@@ -86,14 +85,50 @@ async function loadWebAnalytics(env) {
   return { configured: true, available: true, data };
 }
 
-async function loadKnowledge(url) {
+async function loadJson(url) {
   const response = await fetch(url, {
     headers: { "accept": "application/json" },
     cf: { cacheTtl: 300, cacheEverything: true }
   });
-  if (!response.ok) throw new Error("knowledge_unavailable");
-  const knowledge = await response.json();
-  return JSON.stringify(knowledge);
+  if (!response.ok) throw new Error("library_unavailable");
+  return response.json();
+}
+
+function boundedJson(value) {
+  const serialized = JSON.stringify(value);
+  if (serialized.length <= MAX_LIBRARY_CHARS) return serialized;
+  return serialized.slice(0, MAX_LIBRARY_CHARS) + "\n[контекст ограничен по размеру]";
+}
+
+async function loadLibraryBundle(env) {
+  const entries = {
+    knowledge: env.KNOWLEDGE_URL,
+    institutional_registry: env.INSTITUTIONAL_REGISTRY_URL,
+    projects: env.PROJECTS_URL,
+    platform_graph: env.PLATFORM_GRAPH_URL,
+    intelligence_config: env.INTELLIGENCE_CONFIG_URL,
+    tool_registry: env.TOOL_REGISTRY_URL
+  };
+
+  const results = await Promise.all(
+    Object.entries(entries).map(async ([key, url]) => {
+      try {
+        return [key, await loadJson(url), true];
+      } catch {
+        return [key, null, false];
+      }
+    })
+  );
+
+  const bundle = {};
+  const status = {};
+  for (const [key, value, available] of results) {
+    status[key] = available;
+    if (available) bundle[key] = boundedJson(value);
+  }
+
+  if (!status.knowledge) throw new Error("knowledge_unavailable");
+  return { bundle, status };
 }
 
 export class RateLimiter {
@@ -167,9 +202,9 @@ export default {
       return json({ error: "model_not_configured" }, 503, allowedOrigin);
     }
 
-    let knowledge;
+    let library;
     try {
-      knowledge = await loadKnowledge(env.KNOWLEDGE_URL);
+      library = await loadLibraryBundle(env);
     } catch {
       return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
     }
@@ -185,22 +220,27 @@ export default {
 
     const system = [
       "Ты — ЖАК, публичный AI-ассистент сайта жакин.рф.",
-      "Отвечай в трёх режимах: 1) вопросы о Жакин.рф — опирайся на публичный контур знаний; 2) аналитика сайта — используй только переданные серверные метрики; 3) общие вопросы — можешь использовать свои общие знания и объяснять темы по экономике, международным процессам, безопасности, технологиям, ИИ и другим областям.",
-      "Для общих вопросов не выдавай непроверенные текущие факты за свежие данные: если вопрос требует актуальной информации, прямо укажи ограничение без веб-источника.",
-      "Если вопрос касается сайта и в контуре есть релевантные сведения, приоритет у контекста Жакин.рф.",
+      "Ты работаешь не только как FAQ сайта: для ответа используй подключённую библиотеку знаний, институциональный реестр, проекты, граф платформы, конфигурацию Intelligence и реестр инструментов.",
+      "Режимы: 1) вопросы о Жакин.рф — приоритет библиотеке сайта; 2) аналитика сайта — используй только переданные серверные метрики; 3) общие вопросы — используй общие знания и объясняй темы по экономике, международным процессам, безопасности, технологиям, ИИ и другим областям.",
+      "Библиотека является источником контекста, но не разрешает выдумывать отсутствующие факты.",
+      "Инструменты, отмеченные в реестре как agent_side_integrations, доступны проектному агенту, но НЕ являются прямым runtime-доступом ЖАК. Никогда не утверждай обратное.",
+      "Если вопрос требует актуальной информации, которой нет в переданном контексте или аналитике, честно укажи ограничение.",
       "Если данных недостаточно, прямо скажи об этом.",
       "Не раскрывай закрытые, персональные, секретные или непроверенные сведения.",
       "Верни JSON с полями answer и sources.",
-      "sources — массив объектов {title,url}; для вопросов о сайте используй только источники из предоставленного контура. Для общих ответов не придумывай URL; если внешнего источника нет, верни пустой массив.",
+      "sources — массив объектов {title,url}; для вопросов о сайте используй только источники из предоставленного публичного контура. Не придумывай URL.",
       "",
-      "Публичный контур знаний:",
-      knowledge,
+      "ПОДКЛЮЧЁННАЯ БИБЛИОТЕКА:",
+      JSON.stringify(library.bundle),
       "",
-      "Аналитика сайта:",
+      "СТАТУС БИБЛИОТЕКИ:",
+      JSON.stringify(library.status),
+      "",
+      "АНАЛИТИКА САЙТА:",
       analytics
         ? JSON.stringify(analytics)
         : "Для этого вопроса аналитические данные не запрашивались.",
-      "Если аналитика запрошена и доступна, используй только переданные значения, указывай период (последние 7 дней) и не выдумывай отсутствующие метрики.",
+      "Если аналитика запрошена и доступна, используй только переданные значения и указывай период (последние 7 дней).",
       "Если analytics.configured=false или analytics.available=false, честно сообщи, что серверный аналитический источник пока не подключён или недоступен."
     ].join("\n");
 
