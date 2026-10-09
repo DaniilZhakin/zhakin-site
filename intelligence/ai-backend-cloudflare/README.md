@@ -30,3 +30,15 @@ Response:
 This is **implementation-ready code, not a production deployment**. A real Cloudflare account, Worker name, secret, production URL, CORS origin, and smoke test must be verified before the endpoint is placed into `data/intelligence-config.json`.
 
 Cloudflare documents that sensitive values such as API keys should be stored as Worker secrets rather than plaintext variables: https://developers.cloudflare.com/workers/configuration/secrets/
+
+
+## Deterministic library and analytics tools
+
+The separate `POST /v1/tools` route returns ranked excerpts from the public site library, source availability flags, public search results, and (for analytics questions) the server-side PostHog response. It does **not** call the language model and does not require the OpenAI API key for this route. It is a retrieval/tools response, not a free-form generated answer.
+
+Request:
+```json
+{"question":"Какие проекты представлены на сайте?"}
+```
+
+The existing `POST /v1/ask` route and its OpenAI integration are intentionally left unchanged. The new route is isolated so it can be tested and integrated independently. The Worker still needs a real Cloudflare deployment and smoke test before either route can be considered production-ready.
