@@ -160,7 +160,7 @@ async function loadPublicSearch(question) {
     for (const match of items.slice(0, 3)) {
       const title = match[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim();
       const url = match[2].trim();
-      if (title && /^https?:\\/\\//i.test(url)) results.push({ title, url, type: "public_news_search" });
+      if (title && /^https?:\/\//i.test(url)) results.push({ title, url, type: "public_news_search" });
     }
   }
 
@@ -171,7 +171,7 @@ async function loadExternalBundle(toolRegistry) {
   let registry;
   try { registry = JSON.parse(toolRegistry); } catch { return { resources: [], status: "invalid_registry" }; }
   const resources = Array.isArray(registry.public_external_resources) ? registry.public_external_resources : [];
-  const curated = resources.filter((r) => r && r.status === "curated" && typeof r.url === "string" && /^https:\\/\\//i.test(r.url)).slice(0, 4);
+  const curated = resources.filter((r) => r && r.status === "curated" && typeof r.url === "string" && /^https:\/\//i.test(r.url)).slice(0, 4);
   const results = await Promise.all(curated.map(async (resource) => {
     try { return await loadExternalResource(resource); } catch { return null; }
   }));
@@ -182,6 +182,35 @@ function boundedJson(value) {
   const serialized = JSON.stringify(value);
   if (serialized.length <= MAX_LIBRARY_CHARS) return serialized;
   return serialized.slice(0, MAX_LIBRARY_CHARS) + "\n[контекст ограничен по размеру]";
+}
+
+
+function collectText(value, path = "", out = []) {
+  if (out.length >= 2000) return out;
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (text.length >= 30) out.push({ path, text: text.slice(0, 1800) });
+  } else if (Array.isArray(value)) {
+    value.forEach((item, index) => collectText(item, `${path}[${index}]`, out));
+  } else if (value && typeof value === "object") {
+    for (const [key, item] of Object.entries(value)) collectText(item, path ? `${path}.${key}` : key, out);
+  }
+  return out;
+}
+
+function retrieveLibraryMatches(bundle, question) {
+  const terms = [...new Set((question.toLowerCase().match(/[а-яёa-z0-9]{4,}/gi) || []))].slice(0, 20);
+  const matches = [];
+  for (const [source, serialized] of Object.entries(bundle)) {
+    let parsed;
+    try { parsed = JSON.parse(serialized); } catch { continue; }
+    for (const entry of collectText(parsed, source)) {
+      const lower = entry.text.toLowerCase();
+      const hits = terms.reduce((count, term) => count + (lower.includes(term.toLowerCase()) ? 1 : 0), 0);
+      if (hits > 0) matches.push({ source, path: entry.path, score: hits, excerpt: entry.text });
+    }
+  }
+  return matches.sort((a, b) => b.score - a.score).slice(0, 5);
 }
 
 async function loadLibraryBundle(env) {
@@ -251,7 +280,7 @@ export default {
     }
 
     const url = new URL(request.url);
-    if (url.pathname !== "/v1/ask" || request.method !== "POST") {
+    if (!["/v1/ask", "/v1/tools"].includes(url.pathname) || request.method !== "POST") {
       return json({ error: "not_found" }, 404, allowedOrigin);
     }
 
@@ -277,6 +306,43 @@ export default {
     const question = typeof body?.question === "string" ? body.question.trim() : "";
     if (!question || question.length > MAX_QUESTION_CHARS) {
       return json({ error: "invalid_question" }, 400, allowedOrigin);
+    }
+
+
+    // Deterministic tools endpoint: retrieves library evidence and live analytics without invoking the language model.
+    // The existing /v1/ask OpenAI path below is intentionally unchanged.
+    if (url.pathname === "/v1/tools") {
+      let library;
+      try {
+        library = await loadLibraryBundle(env);
+      } catch {
+        return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
+      }
+
+      let externalSearch = { status: "not_loaded", results: [] };
+      try {
+        externalSearch = await loadPublicSearch(question);
+      } catch {
+        externalSearch = { status: "unavailable", results: [] };
+      }
+
+      let analytics = { configured: false };
+      if (isAnalyticsQuestion(question)) {
+        try {
+          analytics = await loadWebAnalytics(env);
+        } catch {
+          analytics = { configured: true, available: false };
+        }
+      }
+
+      const matches = retrieveLibraryMatches(library.bundle, question);
+      return json({
+        mode: "deterministic_tools",
+        note: "Это результаты поиска по библиотеке и подключённым источникам, а не сгенерированный свободный ответ.",
+        library: { status: library.status, matches },
+        analytics,
+        external_search: externalSearch
+      }, 200, allowedOrigin);
     }
 
     if (!env.OPENAI_API_KEY) {
