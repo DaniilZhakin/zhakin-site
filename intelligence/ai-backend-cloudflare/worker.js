@@ -160,7 +160,7 @@ async function loadPublicSearch(question) {
     for (const match of items.slice(0, 3)) {
       const title = match[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim();
       const url = match[2].trim();
-      if (title && /^https?:\\/\\//i.test(url)) results.push({ title, url, type: "public_news_search" });
+      if (title && /^https?:\/\//i.test(url)) results.push({ title, url, type: "public_news_search" });
     }
   }
 
