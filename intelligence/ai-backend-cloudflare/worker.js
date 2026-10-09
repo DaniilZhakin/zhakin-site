@@ -171,7 +171,7 @@ async function loadExternalBundle(toolRegistry) {
   let registry;
   try { registry = JSON.parse(toolRegistry); } catch { return { resources: [], status: "invalid_registry" }; }
   const resources = Array.isArray(registry.public_external_resources) ? registry.public_external_resources : [];
-  const curated = resources.filter((r) => r && r.status === "curated" && typeof r.url === "string" && /^https:\\/\\//i.test(r.url)).slice(0, 4);
+  const curated = resources.filter((r) => r && r.status === "curated" && typeof r.url === "string" && /^https:\/\//i.test(r.url)).slice(0, 4);
   const results = await Promise.all(curated.map(async (resource) => {
     try { return await loadExternalResource(resource); } catch { return null; }
   }));
