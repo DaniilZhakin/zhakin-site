@@ -39,9 +39,21 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: |
+          set -eu
+          test -n "$OPENAI_API_KEY"
+          test -n "$OPENAI_MODEL"
+          test -n "$POSTHOG_HOST"
+          test -n "$POSTHOG_PROJECT_ID"
+          test -n "$POSTHOG_API_KEY"
           printf '%s' "$OPENAI_API_KEY" | wrangler secret put OPENAI_API_KEY
+          printf '%s' "$OPENAI_MODEL" | wrangler secret put OPENAI_MODEL
+          printf '%s' "$POSTHOG_HOST" | wrangler secret put POSTHOG_HOST
+          printf '%s' "$POSTHOG_PROJECT_ID" | wrangler secret put POSTHOG_PROJECT_ID
           printf '%s' "$POSTHOG_API_KEY" | wrangler secret put POSTHOG_API_KEY
 
       - name: Smoke-test endpoint
