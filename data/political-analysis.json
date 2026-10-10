@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-05",
+  "updated_at": "2026-10-10",
   "scope": "political-analysis",
   "public_route": "/political-analysis.html",
   "purpose": "Structured analytical framework for studying political institutions, parties, movements, coalitions, electoral systems, political communication and strategic scenarios.",
@@ -80,7 +80,7 @@
       "relations": [
         {
           "type": "influences",
-          "target": "world-parliamentary-tradition"
+          "target_id": "world-parliamentary-tradition"
         }
       ],
       "scenario_notes": {
@@ -109,7 +109,7 @@
       "relations": [
         {
           "type": "develops_from",
-          "target": "world-magna-carta"
+          "target_id": "world-magna-carta"
         }
       ],
       "scenario_notes": {
@@ -131,7 +131,7 @@
       "relations": [
         {
           "type": "contains",
-          "target": "world-separation-of-powers"
+          "target_id": "world-separation-of-powers"
         }
       ],
       "scenario_notes": {
@@ -153,7 +153,7 @@
       "relations": [
         {
           "type": "transforms",
-          "target": "world-political-legitimacy"
+          "target_id": "world-political-legitimacy"
         }
       ],
       "scenario_notes": {
@@ -175,7 +175,7 @@
       "relations": [
         {
           "type": "develops_through",
-          "target": "world-french-revolution"
+          "target_id": "world-french-revolution"
         }
       ],
       "scenario_notes": {
@@ -277,7 +277,7 @@
       "relations": [
         {
           "type": "transformed_by",
-          "target": "russia-february-1917"
+          "target_id": "russia-february-1917"
         }
       ],
       "scenario_notes": {
@@ -315,7 +315,7 @@
       "relations": [
         {
           "type": "transforms",
-          "target": "russia-monarchy"
+          "target_id": "russia-monarchy"
         }
       ],
       "scenario_notes": {
@@ -337,7 +337,7 @@
       "relations": [
         {
           "type": "follows",
-          "target": "russia-february-1917"
+          "target_id": "russia-february-1917"
         }
       ],
       "scenario_notes": {
