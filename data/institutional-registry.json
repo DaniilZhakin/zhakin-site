@@ -275,7 +275,7 @@
         "source": "official website"
       },
       {
-        "id": "political-analysis",
+        "id": "political-analysis-link",
         "type": "link",
         "name": "Политическая аналитика",
         "url": "/political-analysis.html",
@@ -536,7 +536,7 @@
       "source": "/data/projects.json"
     },
     {
-      "from": "political-analysis",
+      "from": "political-analysis-link",
       "type": "references",
       "to": "zhakin-team-org",
       "source": "official website"
@@ -650,21 +650,21 @@
       "source": "official website"
     },
     {
-      "from": "legal-information-document",
-      "type": "documented-by",
-      "to": "legal-information",
+      "from": "legal-information",
+      "type": "references",
+      "to": "legal-information-document",
       "source": "official website"
     },
     {
-      "from": "privacy-policy-document",
-      "type": "documented-by",
-      "to": "privacy-policy",
+      "from": "privacy-policy",
+      "type": "references",
+      "to": "privacy-policy-document",
       "source": "official website"
     },
     {
-      "from": "investment-disclaimer-document",
-      "type": "documented-by",
-      "to": "investment-disclaimer",
+      "from": "investment-disclaimer",
+      "type": "references",
+      "to": "investment-disclaimer-document",
       "source": "official website"
     }
   ],
