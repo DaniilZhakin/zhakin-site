@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-10T11:24:30Z",
+  "timestamp": "2026-10-10T12:37:45Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 34,
     "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 215.0,
-    "max_response_time_ms": 558,
-    "health_score": 100.0,
+    "avg_response_time_ms": 293.9,
+    "max_response_time_ms": 1072,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-10T10:44:37Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-10T11:24:30Z",
+  "warnings": [
+    "page-level change: /publications/food-infrastructure.html"
+  ],
+  "page_changes": {
+    "/publications/food-infrastructure.html": [
+      "response_time_ms: 119 -> 1072"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/food-infrastructure.html"
+  ],
+  "status": "warning"
 }
