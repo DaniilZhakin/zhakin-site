@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "updated_at": "2026-09-30",
+  "updated_at": "2026-10-10",
   "source": "official website institutional registry",
   "ui_route": "/institutional.html",
   "entity_types": [
@@ -145,7 +145,32 @@
         "name": "Будущие инициативы"
       }
     ],
-    "documents": [],
+    "documents": [
+      {
+        "id": "legal-information-document",
+        "type": "document",
+        "name": "Правовая информация — Жакин.рф",
+        "page": "/legal.html",
+        "status": "published",
+        "source": "official website"
+      },
+      {
+        "id": "privacy-policy-document",
+        "type": "document",
+        "name": "Политика конфиденциальности — Жакин.рф",
+        "page": "/privacy.html",
+        "status": "published",
+        "source": "official website"
+      },
+      {
+        "id": "investment-disclaimer-document",
+        "type": "document",
+        "name": "Инвестиционный дисклеймер — Жакин.рф",
+        "page": "/investment-disclaimer.html",
+        "status": "published",
+        "source": "official website"
+      }
+    ],
     "partners": [],
     "awards": [
       {
@@ -261,6 +286,27 @@
         "type": "link",
         "name": "Институциональный контур",
         "url": "/institutional.html",
+        "source": "official website"
+      },
+      {
+        "id": "legal-information",
+        "type": "link",
+        "name": "Правовая информация",
+        "url": "/legal.html",
+        "source": "official website"
+      },
+      {
+        "id": "privacy-policy",
+        "type": "link",
+        "name": "Политика конфиденциальности",
+        "url": "/privacy.html",
+        "source": "official website"
+      },
+      {
+        "id": "investment-disclaimer",
+        "type": "link",
+        "name": "Инвестиционный дисклеймер",
+        "url": "/investment-disclaimer.html",
         "source": "official website"
       }
     ],
