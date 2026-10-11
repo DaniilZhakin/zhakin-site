@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a16">
+  <title>ZHAKIN Wallet — цифровая платформа Жакин.рф</title>
+  <meta name="description" content="ZHAKIN Wallet — проект интерфейса личного кабинета и внутренних баллов ZHAKIN Points в экосистеме ZHAKIN Digital.">
+  <link rel="canonical" href="https://xn--80alhhq.xn--p1ai/wallet.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .wallet-page{max-width:1160px;margin:0 auto;padding:42px 24px 76px}
+    .wallet-eyebrow{display:inline-flex;align-items:center;gap:9px;color:#d4af37;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+    .wallet-eyebrow:before{content:"";width:24px;height:1px;background:#d4af37}
+    .wallet-intro{max-width:760px;margin:16px 0 30px}
+    .wallet-intro h1{font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.06;letter-spacing:-.04em;margin:0 0 18px;color:#f7f3e8}
+    .wallet-intro h1 span{color:#d4af37}
+    .wallet-lead{max-width:680px;color:#c5d1ca;font-size:1.05rem}
+    .wallet-status{display:flex;align-items:flex-start;gap:12px;padding:15px 17px;margin:26px 0 30px;border:1px solid rgba(212,175,55,.34);border-radius:14px;background:rgba(212,175,55,.055);color:#e9e1c9;font-size:.92rem}
+    .wallet-status-mark{flex:0 0 9px;height:9px;margin-top:7px;border-radius:50%;background:#d4af37;box-shadow:0 0 0 4px rgba(212,175,55,.12)}
+    .wallet-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:22px;align-items:stretch}
+    .wallet-card{position:relative;overflow:hidden;border:1px solid rgba(234,217,170,.17);border-radius:22px;padding:28px;background:linear-gradient(145deg,#12372c 0%,#0b251e 55%,#071a16 100%);box-shadow:0 22px 55px rgba(0,0,0,.18)}
+    .wallet-card:after{content:"";position:absolute;width:250px;height:250px;border:1px solid rgba(212,175,55,.18);border-radius:50%;right:-92px;top:-110px;box-shadow:0 0 0 26px rgba(212,175,55,.025),0 0 0 54px rgba(212,175,55,.02);pointer-events:none}
+    .wallet-card-top,.wallet-card-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .wallet-brand{font-size:.78rem;font-weight:800;letter-spacing:.19em;color:#d4af37}
+    .wallet-chip{width:34px;height:25px;border:1px solid rgba(212,175,55,.75);border-radius:7px;display:grid;place-items:center;color:#d4af37;font-size:.65rem}
+    .wallet-card-label{margin-top:42px;color:#c5d1ca;font-size:.8rem}
+    .wallet-balance{font-size:clamp(2rem,5vw,3.3rem);font-weight:750;letter-spacing:-.035em;margin:2px 0 5px;color:#f7f3e8}
+    .wallet-balance-note{color:#a9bcb1;font-size:.84rem}
+    .wallet-card-bottom{margin-top:36px;padding-top:18px;border-top:1px solid rgba(234,217,170,.16);color:#d5ded7;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-side{display:grid;gap:14px}
+    .wallet-mini{padding:22px 23px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(234,217,170,.13)}
+    .wallet-mini-label{font-size:.82rem;color:#aebeb5;margin:0 0 9px}
+    .wallet-mini h2{font-size:1.15rem;margin:0 0 8px;color:#f4f1e8}
+    .wallet-mini p{font-size:.9rem;color:#c5d1ca;margin:0}
+    .wallet-mini .wallet-mini-symbol{display:inline-grid;place-items:center;width:34px;height:34px;margin-bottom:12px;border-radius:10px;color:#d4af37;background:rgba(212,175,55,.1);font-size:1.1rem}
+    .wallet-section{margin-top:34px;padding:26px;border:1px solid rgba(234,217,170,.13);border-radius:20px;background:rgba(255,255,255,.025)}
+    .wallet-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .wallet-section-heading h2{margin:0;color:#f4f1e8;font-size:1.4rem}
+    .wallet-section-heading p{margin:0;color:#aebeb5;font-size:.85rem}
+    .wallet-empty{display:flex;align-items:center;gap:16px;padding:20px 0 5px;color:#c5d1ca}
+    .wallet-empty-icon{flex:0 0 44px;height:44px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.25);border-radius:14px;color:#d4af37;font-size:1.2rem}
+    .wallet-empty strong{display:block;color:#f4f1e8;margin-bottom:3px}
+    .wallet-empty p{margin:0;font-size:.9rem}
+    .wallet-roadmap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+    .wallet-step{padding:18px;border-radius:15px;background:rgba(255,255,255,.025);border:1px solid rgba(234,217,170,.1)}
+    .wallet-step-num{color:#d4af37;font-size:.76rem;font-weight:800;letter-spacing:.12em}
+    .wallet-step h3{margin:9px 0 7px;font-size:1rem;color:#f4f1e8}
+    .wallet-step p{margin:0;color:#b9c8bf;font-size:.87rem}
+    .wallet-disclaimer{margin:22px 0 0;color:#8fa69a;font-size:.78rem;line-height:1.65}
+    @media(max-width:760px){.wallet-page{padding:30px 17px 54px}.wallet-grid{grid-template-columns:1fr}.wallet-card{padding:23px}.wallet-card-label{margin-top:32px}.wallet-card-bottom{margin-top:29px}.wallet-roadmap{grid-template-columns:1fr}.wallet-section{padding:21px}.wallet-section-heading{display:block}.wallet-section-heading p{margin-top:5px}.wallet-intro h1{font-size:2.55rem}}
+    @media(prefers-reduced-motion:reduce){.wallet-page *{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a class="brand" href="/" aria-label="Жакин.рф — главная"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN DIGITAL • ЦИФРОВАЯ ЭКОСИСТЕМА</span></a>
+      <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+      <nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+        <a href="/">Главная</a><a href="/profiles.html">Цифровые профили</a><a href="/projects.html">Проекты</a><a href="/publications.html">Публикации</a><a href="/#userdie">Фонд «УСЕРДИЕ»</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wallet-page">
+    <div class="wallet-eyebrow">ZHAKIN DIGITAL / PERSONAL SPACE</div>
+    <section class="wallet-intro">
+      <h1>Ваш цифровой контур.<br><span>ZHAKIN Wallet.</span></h1>
+      <p class="wallet-lead">Единое пространство участника платформы: профиль, подтверждённая активность и внутренняя система баллов ZHAKIN Points — с прозрачной историей операций и контролем начислений.</p>
+    </section>
+    <div class="wallet-status" role="status">
+      <span class="wallet-status-mark" aria-hidden="true"></span>
+      <div><strong>Проект интерфейса · техническое подключение впереди.</strong><br>Личный аккаунт, реальный баланс и операции пока не подключены. На этой странице нет настоящих счетов или начислений.</div>
+    </div>
+    <div class="wallet-grid">
+      <section class="wallet-card" aria-label="Карточка ZHAKIN Points">
+        <div class="wallet-card-top"><span class="wallet-brand">ZHAKIN POINTS</span><span class="wallet-chip" aria-hidden="true">ZT</span></div>
+        <div class="wallet-card-label">Баланс внутренних баллов</div>
+        <div class="wallet-balance">— <span style="font-size:.42em;color:#d4af37;letter-spacing:0">ZP</span></div>
+        <div class="wallet-balance-note">Баланс станет доступен после защищённого входа</div>
+        <div class="wallet-card-bottom"><span>Участник ZHAKIN Digital</span><span>01 / Wallet</span></div>
+      </section>
+      <div class="wallet-side">
+        <article class="wallet-mini"><span class="wallet-mini-symbol" aria-hidden="true">◈</span><p class="wallet-mini-label">Личный профиль</p><h2>ZHAKIN ID</h2><p>Единая учётная запись участника платформы. Авторизация будет добавлена отдельным этапом.</p></article>
+        <article class="wallet-mini"><span class="wallet-mini-symbol" aria-hidden="true">✓</span><p class="wallet-mini-label">Подтверждённые действия</p><h2>Реестр активности</h2><p>Задания и результаты должны проходить проверку до возможного начисления баллов.</p></article>
+      </div>
+    </div>
+    <section class="wallet-section" aria-labelledby="history-title">
+      <div class="wallet-section-heading"><h2 id="history-title">История операций</h2><p>Прозрачность • проверяемость • контроль</p></div>
+      <div class="wallet-empty"><span class="wallet-empty-icon" aria-hidden="true">↗</span><div><strong>История пока не подключена</strong><p>Здесь будут отображаться только подтверждённые операции после запуска защищённой серверной части.</p></div></div>
+    </section>
+    <section class="wallet-section" aria-labelledby="roadmap-title">
+      <div class="wallet-section-heading"><h2 id="roadmap-title">Как развивается кошелёк</h2><p>Поэтапно — без риска для действующего сайта</p></div>
+      <div class="wallet-roadmap">
+        <article class="wallet-step"><span class="wallet-step-num">ЭТАП 01</span><h3>Интерфейс платформы</h3><p>Готовится адаптивная страница кошелька в общей визуальной системе Жакин.рф.</p></article>
+        <article class="wallet-step"><span class="wallet-step-num">ЭТАП 02</span><h3>Защищённая инфраструктура</h3><p>Потребуются авторизация, база данных, серверный реестр операций и журнал аудита.</p></article>
+        <article class="wallet-step"><span class="wallet-step-num">ЭТАП 03</span><h3>Закрытый пилот</h3><p>Проверка прав доступа, начислений, исправлений и восстановления данных до допуска участников.</p></article>
+      </div>
+      <p class="wallet-disclaimer">ZHAKIN Points задуманы как внутренние баллы учёта подтверждённой активности, а не как деньги, электронные денежные средства или инвестиционный актив. Эта страница — визуальный прототип, не предоставляет финансовых услуг и не выполняет операций. COIN УСЕРДИЕ (BFU) является отдельным проектом фонда и здесь не смешивается с ZHAKIN Points.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a></p></div></footer>
+  <script src="/assets/js/main.js?v=20260927-9"></script>
+</body>
+</html>
