@@ -1,0 +1,32 @@
+name: ZHAKIN Wallet prototype checks
+
+on:
+  push:
+    branches:
+      - feature/zhakin-wallet-foundation
+    paths:
+      - "wallet/prototype/**"
+      - ".github/workflows/zhakin-wallet-prototype.yml"
+  pull_request:
+    paths:
+      - "wallet/prototype/**"
+      - ".github/workflows/zhakin-wallet-prototype.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  wallet-prototype-tests:
+    name: Wallet prototype tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run complete prototype test suite
+        run: npm --prefix wallet/prototype test
