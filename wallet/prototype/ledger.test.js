@@ -60,3 +60,13 @@ test("rejects entries with non-integer point values when calculating balance", (
     /safe integers/,
   );
 });
+
+test("rejects a balance that overflows JavaScript's safe integer range", () => {
+  assert.throws(
+    () => calculateBalance([
+      { participantId: "p1", points: Number.MAX_SAFE_INTEGER, status: "posted" },
+      { participantId: "p1", points: 1, status: "posted" },
+    ], "p1"),
+    /safe integer range/,
+  );
+});
