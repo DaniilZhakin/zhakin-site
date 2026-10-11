@@ -28,5 +28,5 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run ledger unit tests
+      - name: Run complete prototype test suite
         run: npm --prefix wallet/prototype test
