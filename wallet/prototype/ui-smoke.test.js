@@ -40,3 +40,12 @@ test("premium visual system and responsive accessible layout are present", async
   assert.match(page, /aria-labelledby="history-title"/);
   assert.match(page, /aria-label="Баланс пока недоступен"/);
 });
+
+test("wallet page supports keyboard navigation and high-contrast preferences", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /class="wallet-skip-link" href="#wallet-main"/);
+  assert.match(page, /id="wallet-main" class="wallet-page"/);
+  assert.match(page, /\.wallet-page a:focus-visible/);
+  assert.match(page, /@media\(forced-colors:active\)/);
+  assert.match(page, /prefers-reduced-motion:reduce/);
+});
