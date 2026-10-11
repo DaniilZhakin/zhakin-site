@@ -17,7 +17,11 @@ export function calculateBalance(entries, participantId) {
       if (!Number.isSafeInteger(entry.points)) {
         throw new TypeError("ledger points must be safe integers");
       }
-      return total + entry.points;
+      const nextTotal = total + entry.points;
+      if (!Number.isSafeInteger(nextTotal)) {
+        throw new RangeError("calculated balance exceeds the safe integer range");
+      }
+      return nextTotal;
     }, 0);
 }
 
