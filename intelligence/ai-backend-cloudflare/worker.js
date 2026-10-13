@@ -423,7 +423,7 @@ export default {
 
     let library;
     try {
-      library = await loadLibraryBundle(env);
+      library = await loadLibraryBundle(env, question);
     } catch {
       return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
     }
