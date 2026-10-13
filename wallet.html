@@ -89,6 +89,25 @@
     .wallet-step h3{margin:17px 0 8px;font-size:.98rem;font-weight:560;color:#f2efe6}
     .wallet-step p{margin:0;color:#a8b5ac;font-size:.81rem;line-height:1.75}
     .wallet-disclaimer{margin:24px 0 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);color:#819187;font-size:.76rem;line-height:1.85}
+
+    .wallet-dashboard{margin:0 0 22px;padding:22px;border:1px solid rgba(226,203,139,.17);border-radius:5px;background:linear-gradient(120deg,rgba(21,34,27,.94),rgba(13,20,16,.9));box-shadow:0 18px 48px rgba(0,0,0,.14)}
+    .wallet-dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
+    .wallet-dashboard-head h2{margin:0;color:#f3f0e7;font-size:1.1rem;font-weight:560;letter-spacing:-.025em}
+    .wallet-dashboard-head p{margin:0;color:#9daea2;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .wallet-overview-item{min-width:0;padding:16px 17px;border:1px solid rgba(255,255,255,.075);border-radius:3px;background:rgba(255,255,255,.018)}
+    .wallet-overview-label{display:block;color:#aab8ae;font-size:.7rem;line-height:1.5;letter-spacing:.055em}
+    .wallet-overview-value{display:block;margin:9px 0 6px;color:#f0dfae;font-size:1.45rem;font-weight:560;letter-spacing:-.04em}
+    .wallet-overview-note{display:block;color:#8f9f94;font-size:.72rem;line-height:1.55}
+    .wallet-shortcuts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:15px}
+    .wallet-shortcuts-label{margin-right:4px;color:#8f9f94;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-shortcut{display:inline-flex;align-items:center;gap:8px;min-height:37px;padding:8px 12px;border:1px solid rgba(216,189,120,.22);border-radius:3px;color:#e3d4a7;text-decoration:none;font-size:.75rem;transition:background .18s ease,border-color .18s ease}
+    .wallet-shortcut:hover{background:rgba(216,189,120,.07);border-color:rgba(216,189,120,.48)}
+    .wallet-shortcut:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:3px}
+    .wallet-security-line{display:flex;align-items:flex-start;gap:11px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);color:#9eada2;font-size:.76rem;line-height:1.65}
+    .wallet-security-icon{flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;border:1px solid rgba(216,189,120,.32);border-radius:50%;color:#e6d39f;font-size:.75rem}
+    .wallet-security-line strong{color:#d9e0d9;font-weight:600}
+    @media(max-width:600px){.wallet-dashboard{padding:17px 14px}.wallet-dashboard-head{align-items:flex-start;flex-direction:column;gap:6px}.wallet-overview-grid{grid-template-columns:1fr;gap:8px}.wallet-overview-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;padding:12px}.wallet-overview-label{grid-column:1}.wallet-overview-value{grid-column:2;grid-row:1/3;margin:0;font-size:1.2rem}.wallet-overview-note{grid-column:1}.wallet-shortcuts{gap:7px}.wallet-shortcuts-label{flex-basis:100%;margin-bottom:2px}.wallet-shortcut{min-height:40px;padding:9px 10px}.wallet-security-line{font-size:.73rem}}
     .wallet-skip-link{position:absolute;z-index:20;top:8px;left:8px;transform:translateY(-160%);padding:11px 15px;background:var(--zw-gold-light);color:#101610;font-weight:700;border-radius:2px}
     .wallet-skip-link:focus{transform:translateY(0)}
     .wallet-page a:focus-visible,.site-header a:focus-visible,.site-header button:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:4px;border-radius:2px}
@@ -112,14 +131,24 @@
     </div>
   </header>
   <main id="wallet-main" class="wallet-page">
-    <div class="wallet-topline"><div class="wallet-kicker">ZHAKIN DIGITAL / PERSONAL SPACE</div><div class="wallet-prototype-label">Концепция интерфейса · версия 02</div></div>
+    <div class="wallet-topline"><div class="wallet-kicker">ZHAKIN DIGITAL / PERSONAL SPACE</div><div class="wallet-prototype-label">Концепция интерфейса · версия 03</div></div>
     <section class="wallet-intro">
       <div><h1>Цифровое пространство.<span>ZHAKIN Wallet.</span></h1><p class="wallet-lead">Личное пространство участника экосистемы: профиль, подтверждённая активность и внутренние баллы учёта подтверждённой активности ZHAKIN Points — с прозрачной историей операций и контролем начислений.</p></div>
       <aside class="wallet-intro-aside"><strong>Принцип платформы</strong>Каждое действие должно быть проверяемым. Каждое начисление — иметь основание. Каждое изменение — оставлять след в журнале аудита.</aside>
     </section>
     <div class="wallet-status" role="status"><span class="wallet-status-mark" aria-hidden="true"></span><div><strong>Визуальный прототип · подключение сервисов ещё не выполнено.</strong><br>Личный аккаунт, реальный баланс и операции пока не подключены. На этой странице нет настоящих счетов или начислений.</div></div>
+    <section class="wallet-dashboard" aria-labelledby="wallet-overview-title">
+      <div class="wallet-dashboard-head"><h2 id="wallet-overview-title">Обзор кошелька</h2><p>Личное пространство · статус подключения</p></div>
+      <div class="wallet-overview-grid">
+        <article class="wallet-overview-item"><span class="wallet-overview-label">Доступный баланс</span><strong class="wallet-overview-value" aria-label="Баланс недоступен">— ZP</strong><span class="wallet-overview-note">Личный счёт ещё не подключён</span></article>
+        <article class="wallet-overview-item"><span class="wallet-overview-label">Подтверждённые начисления</span><strong class="wallet-overview-value">—</strong><span class="wallet-overview-note">Нет подключённого реестра начислений</span></article>
+        <article class="wallet-overview-item"><span class="wallet-overview-label">История операций</span><strong class="wallet-overview-value" style="font-size:1.02rem;letter-spacing:-.01em">Не подключена</strong><span class="wallet-overview-note">Операции не выполняются</span></article>
+      </div>
+      <nav class="wallet-shortcuts" aria-label="Быстрые разделы кошелька"><span class="wallet-shortcuts-label">Быстрый переход</span><a class="wallet-shortcut" href="#wallet-card">◈ Карта ZP</a><a class="wallet-shortcut" href="#wallet-collection-title">Кошельки и возможности</a><a class="wallet-shortcut" href="#history-title">История операций</a></nav>
+      <div class="wallet-security-line"><span class="wallet-security-icon" aria-hidden="true">✓</span><span><strong>Безопасность — прежде всего.</strong> Реальный баланс и финансовые действия появятся только после внедрения авторизации, серверной проверки и журнала операций.</span></div>
+    </section>
     <div class="wallet-grid">
-      <section class="wallet-card" aria-label="Карточка ZHAKIN Points">
+      <section id="wallet-card" class="wallet-card" aria-label="Карточка ZHAKIN Points">
         <div class="wallet-card-top"><span class="wallet-brand">ZHAKIN POINTS</span><span class="wallet-emblem" aria-hidden="true">ZT</span></div>
         <div class="wallet-card-chiprow" aria-hidden="true"><span class="wallet-chip"><span class="wallet-chip-inner"></span></span><span class="wallet-contactless">)))</span></div>
         <div class="wallet-card-label">Баланс внутренних баллов</div>
