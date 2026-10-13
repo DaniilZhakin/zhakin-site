@@ -253,15 +253,15 @@ async function loadSiteContext(env, question) {
         });
         if (!pageResponse.ok) return { title: page.title, url: page.url, path: page.path, section: page.section, content: "" };
         const html = (await pageResponse.text()).slice(0, 180000);
-        const title = (html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i) || [])[1] || page.title || page.path;
-        const main = (html.match(/<main[^>]*>([\\s\\S]*?)<\\/main>/i) || [])[1] || html;
+        const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || page.title || page.path;
+        const main = (html.match(/<main[^>]*>([\s\S]*?)<\/main>/i) || [])[1] || html;
         const content = main
-          .replace(/<(script|style|svg|nav|header|footer|form)[^>]*>[\\s\\S]*?<\\/\\1>/gi, " ")
+          .replace(/<(script|style|svg|nav|header|footer|form)[^>]*>[\s\S]*?<\/\1>/gi, " ")
           .replace(/<[^>]+>/g, " ")
           .replace(/&nbsp;|&#160;/gi, " ")
           .replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
           .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
-          .replace(/\\s+/g, " ").trim().slice(0, 3500);
+          .replace(/\s+/g, " ").trim().slice(0, 3500);
         return { title: title.replace(/<[^>]+>/g, "").trim(), url: page.url, path: page.path, section: page.section, content };
       } catch {
         return { title: page.title, url: page.url, path: page.path, section: page.section, content: "" };
