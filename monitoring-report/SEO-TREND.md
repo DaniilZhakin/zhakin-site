@@ -1,6 +1,6 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-13T13:42:03Z`
+Snapshot: `2026-10-13T14:17:36Z`
 History points: **30**
 Status: **WARNING**
 Health score: **99.0/100 (HEALTHY)**
@@ -17,16 +17,16 @@ Trend: **STABLE** (-1.0)
 - `canonical_ok_pages`: **34**
 - `jsonld_pages`: **34**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **256**
-- `max_response_time_ms`: **1768**
+- `avg_response_time_ms`: **286.1**
+- `max_response_time_ms`: **1080**
 - `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/directions.html`
-- response_time_ms: 228 -> 1768
+### `/publications/capital-requires-proof.html`
+- response_time_ms: 160 -> 1080
 
 ## Anomaly detection
 
-- page-level change: /publications/directions.html
+- page-level change: /publications/capital-requires-proof.html
