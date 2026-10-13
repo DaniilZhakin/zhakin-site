@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-13T13:09:55Z`
+Snapshot: `2026-10-13T13:25:25Z`
 History points: **30**
-Status: **CRITICAL**
-Health score: **92.7/100 (HEALTHY)**
-Trend: **DECLINING** (-7.3)
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.3)
 
 ## Current signals
 
@@ -13,28 +13,22 @@ Trend: **DECLINING** (-7.3)
 - `sitemap_unique`: **True**
 - `required_pages`: **34**
 - `sitemap_coverage`: **True**
-- `available_pages`: **33**
-- `canonical_ok_pages`: **33**
-- `jsonld_pages`: **33**
+- `available_pages`: **34**
+- `canonical_ok_pages`: **34**
+- `jsonld_pages`: **34**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **246.2**
-- `max_response_time_ms`: **1168**
-- `health_score`: **92.7**
+- `avg_response_time_ms`: **293.1**
+- `max_response_time_ms`: **858**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/ai-infrastructure-economy.html`
-- response_time_ms: 278 -> 1168
 ### `/publications/digital-ruble.html`
-- available: True -> False
-- canonical_ok: True -> False
-- jsonld: True -> False
+- available: False -> True
+- canonical_ok: False -> True
+- jsonld: False -> True
 
 ## Anomaly detection
 
-- available page count decreased
-- canonical coverage decreased
-- JSON-LD coverage decreased
-- critical page regression: /publications/digital-ruble.html
-- page-level change: /publications/ai-infrastructure-economy.html
+- page-level change: /publications/digital-ruble.html
