@@ -213,7 +213,72 @@ function retrieveLibraryMatches(bundle, question) {
   return matches.sort((a, b) => b.score - a.score).slice(0, 5);
 }
 
-async function loadLibraryBundle(env) {
+
+async function loadSiteContext(env, question) {
+  let origin;
+  try { origin = new URL(env.KNOWLEDGE_URL).origin; } catch { return { available: false, pages: [] }; }
+  try {
+    const response = await fetch(`${origin}/data/site-index.json`, {
+      headers: { accept: "application/json" },
+      cf: { cacheTtl: 300, cacheEverything: true }
+    });
+    if (!response.ok) return { available: false, pages: [] };
+    const index = await response.json();
+    const pages = Array.isArray(index.pages) ? index.pages : [];
+    const terms = [...new Set((String(question || "").toLowerCase().match(/[а-яёa-z0-9]{3,}/gi) || []))].slice(0, 20);
+    const corePaths = new Set(["/", "/projects.html", "/publications.html", "/institutional.html", "/international-geography.html", "/reception.html"]);
+    const ranked = pages.map(page => {
+      const haystack = `${page.title || ""} ${page.path || ""} ${page.section || ""}`.toLowerCase();
+      const score = terms.reduce((sum, term) => sum + (haystack.includes(term) ? 1 : 0), 0);
+      return { ...page, score };
+    }).sort((a, b) => b.score - a.score);
+    const chosen = [];
+    for (const page of pages) if (corePaths.has(page.path) && chosen.length < 3) chosen.push(page);
+    for (const page of ranked) {
+      if (chosen.length >= 6) break;
+      if (!chosen.some(item => item.path === page.path) && page.score > 0) chosen.push(page);
+    }
+    if (chosen.length < 4) {
+      for (const page of ranked) {
+        if (chosen.length >= 4) break;
+        if (!chosen.some(item => item.path === page.path)) chosen.push(page);
+      }
+    }
+    const contentPages = await Promise.all(chosen.map(async page => {
+      try {
+        const pageUrl = new URL(page.path, origin).toString();
+        const pageResponse = await fetch(pageUrl, {
+          headers: { accept: "text/html" },
+          cf: { cacheTtl: 300, cacheEverything: true }
+        });
+        if (!pageResponse.ok) return { title: page.title, url: page.url, path: page.path, section: page.section, content: "" };
+        const html = (await pageResponse.text()).slice(0, 180000);
+        const title = (html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i) || [])[1] || page.title || page.path;
+        const main = (html.match(/<main[^>]*>([\\s\\S]*?)<\\/main>/i) || [])[1] || html;
+        const content = main
+          .replace(/<(script|style|svg|nav|header|footer|form)[^>]*>[\\s\\S]*?<\\/\\1>/gi, " ")
+          .replace(/<[^>]+>/g, " ")
+          .replace(/&nbsp;|&#160;/gi, " ")
+          .replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+          .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+          .replace(/\\s+/g, " ").trim().slice(0, 3500);
+        return { title: title.replace(/<[^>]+>/g, "").trim(), url: page.url, path: page.path, section: page.section, content };
+      } catch {
+        return { title: page.title, url: page.url, path: page.path, section: page.section, content: "" };
+      }
+    }));
+    return {
+      available: true,
+      page_count: pages.length,
+      catalog: pages.map(({ path, title, section, url }) => ({ path, title, section, url })),
+      pages: contentPages.filter(page => page.content)
+    };
+  } catch {
+    return { available: false, pages: [] };
+  }
+}
+
+async function loadLibraryBundle(env, question = "") {
   const entries = {
     knowledge: env.KNOWLEDGE_URL,
     institutional_registry: env.INSTITUTIONAL_REGISTRY_URL,
@@ -239,6 +304,10 @@ async function loadLibraryBundle(env) {
     status[key] = available;
     if (available) bundle[key] = boundedJson(value);
   }
+
+  const siteContext = await loadSiteContext(env, question);
+  status.site_index = siteContext.available;
+  if (siteContext.available) bundle.site_context = boundedJson(siteContext);
 
   if (!status.knowledge) throw new Error("knowledge_unavailable");
   return { bundle, status };
@@ -314,7 +383,7 @@ export default {
     if (url.pathname === "/v1/tools") {
       let library;
       try {
-        library = await loadLibraryBundle(env);
+        library = await loadLibraryBundle(env, question);
       } catch {
         return json({ error: "knowledge_unavailable" }, 503, allowedOrigin);
       }
