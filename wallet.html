@@ -34,7 +34,7 @@
     .wallet-card-top,.wallet-card-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px}
     .wallet-brand{font-size:.77rem;font-weight:800;letter-spacing:.25em;color:var(--zw-gold-light)}
     .wallet-emblem{width:41px;height:41px;border:1px solid rgba(216,189,120,.62);border-radius:50%;display:grid;place-items:center;color:var(--zw-gold-light);font-size:.7rem;letter-spacing:.04em}
-    .wallet-card-label{margin-top:54px;color:#b8c7bc;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-card-label{margin-top:22px;color:#b8c7bc;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase}
     .wallet-balance{font-size:clamp(2.6rem,5.6vw,4.2rem);font-weight:520;letter-spacing:-.06em;margin:8px 0 7px;color:#f5f2e9;line-height:1.05}
     .wallet-balance span{font-size:.32em;color:var(--zw-gold-light);letter-spacing:.04em;margin-left:5px}
     .wallet-balance-note{color:#a8b9ad;font-size:.8rem}
@@ -46,7 +46,26 @@
     .wallet-planned-value{color:#f0dfae;font-size:clamp(1.7rem,4vw,2.45rem);font-weight:560;letter-spacing:-.045em;line-height:1.1}
     .wallet-planned-copy{max-width:560px;margin:8px 0 0;color:#aab8ae;font-size:.82rem;line-height:1.7}
     .wallet-planned-tag{display:inline-flex;align-items:center;justify-content:center;max-width:145px;padding:9px 12px;border:1px solid rgba(216,189,120,.3);color:#dfcca0;font-size:.66rem;line-height:1.5;letter-spacing:.08em;text-align:center;text-transform:uppercase}
-    .wallet-card-bottom{margin-top:43px;padding-top:18px;border-top:1px solid rgba(226,203,139,.2);color:#cbd4cc;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+    .wallet-card-chiprow{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-top:25px}
+    .wallet-chip{position:relative;width:43px;height:32px;border:1px solid rgba(240,223,174,.76);border-radius:7px;background:linear-gradient(135deg,rgba(240,223,174,.24),rgba(216,189,120,.06));box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
+    .wallet-chip:before,.wallet-chip:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(240,223,174,.55)}
+    .wallet-chip:after{left:50%;right:auto;top:0;bottom:0;width:1px;height:auto}
+    .wallet-chip-inner{position:absolute;inset:7px 11px;border:1px solid rgba(240,223,174,.55);border-radius:3px}
+    .wallet-contactless{font-size:1.55rem;color:rgba(240,223,174,.72);transform:rotate(90deg);line-height:1}
+    .wallet-collection{margin-top:34px}
+    .wallet-collection-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px}
+    .wallet-collection-heading h2{margin:0;color:#f2efe5;font-size:clamp(1.35rem,2.5vw,1.8rem);font-weight:540;letter-spacing:-.035em}
+    .wallet-collection-heading p{margin:0;color:#9eada2;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;text-align:right}
+    .wallet-collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .wallet-pocket{position:relative;min-height:190px;overflow:hidden;padding:21px 22px;border:1px solid rgba(226,203,139,.17);border-radius:4px;background:linear-gradient(145deg,rgba(26,48,37,.82),rgba(13,22,17,.94));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+    .wallet-pocket:after{content:"";position:absolute;width:145px;height:145px;right:-70px;top:-75px;border:1px solid rgba(216,189,120,.18);border-radius:50%;box-shadow:0 0 0 15px rgba(216,189,120,.025),0 0 0 32px rgba(216,189,120,.018);pointer-events:none}
+    .wallet-pocket-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
+    .wallet-pocket-icon{display:grid;place-items:center;width:35px;height:35px;border:1px solid rgba(216,189,120,.4);border-radius:50%;color:#f0dfae;font-size:1rem}
+    .wallet-pocket-status{color:#b7c3b8;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+    .wallet-pocket h3{position:relative;z-index:1;margin:0 0 7px;color:#f0eee5;font-size:1.05rem;font-weight:560}
+    .wallet-pocket p{position:relative;z-index:1;margin:0;color:#aab8ae;font-size:.78rem;line-height:1.65}
+    .wallet-pocket-note{display:inline-block;margin-top:13px;color:#d9c58f;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-card-bottom{margin-top:35px;padding-top:18px;border-top:1px solid rgba(226,203,139,.2);color:#cbd4cc;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
     .wallet-side{display:grid;gap:14px}
     .wallet-mini{position:relative;padding:23px 25px 24px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.014));transition:border-color .2s ease,transform .2s ease}
     .wallet-mini:hover{border-color:rgba(216,189,120,.35);transform:translateY(-2px)}
@@ -76,7 +95,7 @@
     .wallet-page :target{scroll-margin-top:24px}
     @media(forced-colors:active){.wallet-card,.wallet-mini,.wallet-section,.wallet-step,.wallet-status{border:1px solid CanvasText}.wallet-intro h1 span{color:CanvasText;background:none}.wallet-kicker,.wallet-step-num{color:CanvasText}}
     @media(max-width:850px){.wallet-intro{grid-template-columns:1fr;gap:15px}.wallet-intro-aside{max-width:600px}.wallet-grid{grid-template-columns:1fr}.wallet-card{min-height:330px}.wallet-side{grid-template-columns:repeat(2,minmax(0,1fr))}.wallet-roadmap{grid-template-columns:1fr 1fr}.wallet-step:last-child{grid-column:1/-1}}
-    @media(max-width:600px){.wallet-planned{grid-template-columns:1fr;gap:13px;padding:19px}.wallet-planned-tag{justify-self:start}.wallet-actions{gap:7px}.wallet-action{padding:10px 11px}.wallet-page{padding:30px 17px 58px}.wallet-topline{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:35px;padding-bottom:18px}.wallet-intro{margin-bottom:25px}.wallet-intro h1{font-size:clamp(2.65rem,12vw,3.65rem);margin:17px 0}.wallet-lead{font-size:.94rem;line-height:1.8}.wallet-intro-aside{font-size:.8rem}.wallet-status{padding:14px 15px;font-size:.81rem}.wallet-card{min-height:320px;padding:24px 22px 21px}.wallet-card-label{margin-top:44px}.wallet-card-bottom{margin-top:38px;font-size:.59rem;letter-spacing:.07em}.wallet-side{grid-template-columns:1fr}.wallet-mini{padding:20px}.wallet-section{padding:22px 18px}.wallet-section-heading{align-items:flex-start;flex-direction:column;gap:7px}.wallet-section-heading p{line-height:1.6}.wallet-roadmap{grid-template-columns:1fr}.wallet-step,.wallet-step:last-child{grid-column:auto;min-height:0;padding:19px}.wallet-step h3{margin-top:11px}.wallet-empty{align-items:flex-start}.wallet-empty-icon{flex-basis:38px;height:38px}}
+    @media(max-width:600px){.wallet-collection-heading{align-items:flex-start;flex-direction:column;gap:7px}.wallet-collection-heading p{text-align:left;line-height:1.6}.wallet-collection-grid{grid-template-columns:1fr}.wallet-pocket{min-height:0;padding:19px}.wallet-pocket-top{margin-bottom:18px}.wallet-card-chiprow{margin-top:22px}.wallet-planned{grid-template-columns:1fr;gap:13px;padding:19px}.wallet-planned-tag{justify-self:start}.wallet-actions{gap:7px}.wallet-action{padding:10px 11px}.wallet-page{padding:30px 17px 58px}.wallet-topline{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:35px;padding-bottom:18px}.wallet-intro{margin-bottom:25px}.wallet-intro h1{font-size:clamp(2.65rem,12vw,3.65rem);margin:17px 0}.wallet-lead{font-size:.94rem;line-height:1.8}.wallet-intro-aside{font-size:.8rem}.wallet-status{padding:14px 15px;font-size:.81rem}.wallet-card{min-height:320px;padding:24px 22px 21px}.wallet-card-label{margin-top:18px}.wallet-card-bottom{margin-top:38px;font-size:.59rem;letter-spacing:.07em}.wallet-side{grid-template-columns:1fr}.wallet-mini{padding:20px}.wallet-section{padding:22px 18px}.wallet-section-heading{align-items:flex-start;flex-direction:column;gap:7px}.wallet-section-heading p{line-height:1.6}.wallet-roadmap{grid-template-columns:1fr}.wallet-step,.wallet-step:last-child{grid-column:auto;min-height:0;padding:19px}.wallet-step h3{margin-top:11px}.wallet-empty{align-items:flex-start}.wallet-empty-icon{flex-basis:38px;height:38px}}
     @media(hover:none){.wallet-mini:hover{transform:none}}
     @media(prefers-reduced-motion:reduce){.wallet-page *{scroll-behavior:auto;transition:none!important}}
   </style>
@@ -95,16 +114,17 @@
   <main id="wallet-main" class="wallet-page">
     <div class="wallet-topline"><div class="wallet-kicker">ZHAKIN DIGITAL / PERSONAL SPACE</div><div class="wallet-prototype-label">Концепция интерфейса · версия 02</div></div>
     <section class="wallet-intro">
-      <div><h1>Цифровое пространство.<span>ZHAKIN Wallet.</span></h1><p class="wallet-lead">Личное пространство участника экосистемы: профиль, подтверждённая активность и внутренняя система ZHAKIN Points — с прозрачной историей операций и контролем начислений.</p></div>
+      <div><h1>Цифровое пространство.<span>ZHAKIN Wallet.</span></h1><p class="wallet-lead">Личное пространство участника экосистемы: профиль, подтверждённая активность и внутренние баллы учёта подтверждённой активности ZHAKIN Points — с прозрачной историей операций и контролем начислений.</p></div>
       <aside class="wallet-intro-aside"><strong>Принцип платформы</strong>Каждое действие должно быть проверяемым. Каждое начисление — иметь основание. Каждое изменение — оставлять след в журнале аудита.</aside>
     </section>
     <div class="wallet-status" role="status"><span class="wallet-status-mark" aria-hidden="true"></span><div><strong>Визуальный прототип · подключение сервисов ещё не выполнено.</strong><br>Личный аккаунт, реальный баланс и операции пока не подключены. На этой странице нет настоящих счетов или начислений.</div></div>
     <div class="wallet-grid">
       <section class="wallet-card" aria-label="Карточка ZHAKIN Points">
         <div class="wallet-card-top"><span class="wallet-brand">ZHAKIN POINTS</span><span class="wallet-emblem" aria-hidden="true">ZT</span></div>
+        <div class="wallet-card-chiprow" aria-hidden="true"><span class="wallet-chip"><span class="wallet-chip-inner"></span></span><span class="wallet-contactless">)))</span></div>
         <div class="wallet-card-label">Баланс внутренних баллов</div>
         <div class="wallet-balance" aria-label="Баланс пока недоступен">— <span>ZP</span></div>
-        <div class="wallet-balance-note">Ваш личный баланс будет отображаться после защищённой авторизации</div>
+        <div class="wallet-balance-note">Данные появятся после защищённой авторизации</div>
         <div class="wallet-actions" aria-label="Планируемые действия с баллами"><button class="wallet-action" type="button" disabled aria-disabled="true">＋ Пополнить</button><button class="wallet-action" type="button" disabled aria-disabled="true">↗ Подарить</button><button class="wallet-action" type="button" disabled aria-disabled="true">⇄ Передать</button></div>
         <div class="wallet-card-bottom"><span>Участник ZHAKIN Digital</span><span>Wallet / 01</span></div>
       </section>
@@ -114,6 +134,14 @@
       </div>
     </div>
     <section class="wallet-planned" aria-label="Планируемый объём системы ZHAKIN Points"><div><div class="wallet-planned-label">Планируемый объём бонусной системы</div><div class="wallet-planned-value">3 000 000 000 000 <span style="font-size:.46em;letter-spacing:.02em">ZP</span></div><p class="wallet-planned-copy">Проектный ориентир для всей системы ZHAKIN Points. Это не личный баланс пользователя, не выпущенный объём и не доступные для операций средства.</p></div><span class="wallet-planned-tag">План развития<br>не запущено</span></section>
+    <section class="wallet-collection" aria-labelledby="wallet-collection-title">
+      <div class="wallet-collection-heading"><h2 id="wallet-collection-title">Кошельки и возможности</h2><p>Единый интерфейс · поэтапное подключение</p></div>
+      <div class="wallet-collection-grid">
+        <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">◈</span><span class="wallet-pocket-status">Планируется</span></div><h3>ZHAKIN Points</h3><p>Основной бонусный кошелёк для будущих начислений внутренних баллов за подтверждённую активность.</p><span class="wallet-pocket-note">Баланс не подключён</span></article>
+        <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✧</span><span class="wallet-pocket-status">Концепция</span></div><h3>«Помоги себе сам»</h3><p>Будущий сценарий целевого использования бонусов с понятными правилами и подтверждением действий.</p><span class="wallet-pocket-note">Правила требуют проработки</span></article>
+        <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">⇄</span><span class="wallet-pocket-status">Не активен</span></div><h3>Подарки и переводы</h3><p>Возможность подарить или передать ZP будет рассматриваться после настройки авторизации, защиты от злоупотреблений и журнала операций.</p><span class="wallet-pocket-note">Операции отключены</span></article>
+      </div>
+    </section>
     <section class="wallet-section" aria-labelledby="history-title">
       <div class="wallet-section-heading"><h2 id="history-title">История операций</h2><p>ПРОЗРАЧНОСТЬ&nbsp; / &nbsp;ПРОВЕРЯЕМОСТЬ&nbsp; / &nbsp;КОНТРОЛЬ</p></div>
       <div class="wallet-empty"><span class="wallet-empty-icon" aria-hidden="true">↗</span><div><strong>История пока не подключена</strong><p>Здесь будут отображаться только подтверждённые операции после запуска защищённой серверной части.</p></div></div>
@@ -125,7 +153,7 @@
         <article class="wallet-step"><span class="wallet-step-num">ЭТАП 02</span><h3>Защищённая инфраструктура</h3><p>Авторизация, база данных, серверный реестр и журнал аудита.</p></article>
         <article class="wallet-step"><span class="wallet-step-num">ЭТАП 03</span><h3>Закрытый пилот</h3><p>Проверка доступа, начислений, исправлений и восстановления данных до допуска участников.</p></article>
       </div>
-      <p class="wallet-disclaimer">ZHAKIN Points (ZP) — планируемые внутренние бонусные баллы ZHAKIN Wallet, отдельно от COIN УСЕРДИЕ (BFU). Объём 3 трлн ZP — проектный ориентир системы, а не личный баланс и не подтверждение выпуска. Кнопки «Пополнить», «Подарить» и «Передать» показаны исключительно как элементы будущего интерфейса: они отключены и не выполняют операций. Страница остаётся визуальным прототипом; авторизация, начисления, переводы и история операций не подключены.</p>
+      <p class="wallet-disclaimer">ZHAKIN Points (ZP) — планируемые внутренние баллы учёта подтверждённой активности ZHAKIN Wallet. COIN УСЕРДИЕ (BFU) является отдельным проектом фонда и не связан с ZHAKIN Points. Объём 3 трлн ZP — проектный ориентир системы, а не личный баланс и не подтверждение выпуска. Кнопки «Пополнить», «Подарить» и «Передать» показаны исключительно как элементы будущего интерфейса: они отключены и не выполняют операций. Страница остаётся визуальным прототипом; авторизация, начисления, переводы и история операций не подключены.</p>
     </section>
   </main>
   <footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a></p></div></footer>
