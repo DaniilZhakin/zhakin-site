@@ -10,6 +10,7 @@
     "Не раскрывать API-ключи и серверную конфигурацию."
   ],
   "knowledge_sources": [
+    {"id":"site-wide-index","path":"/data/site-index.json","role":"полный каталог публичных страниц сайта, разделов и маршрутов для навигации и выборочного поиска"},
     {"id":"institutional-registry","path":"/data/institutional-registry.json","role":"организации, направления, проекты, награды и связи"},
     {"id":"projects","path":"/data/projects.json","role":"публичный каталог проектов"},
     {"id":"publications","path":"/publications.html","role":"публичный контур публикаций"},
