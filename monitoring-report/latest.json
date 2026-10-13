@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-13T13:05:55Z",
+  "timestamp": "2026-10-13T13:09:55Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -7,23 +7,42 @@
     "sitemap_unique": true,
     "required_pages": 34,
     "sitemap_coverage": true,
-    "available_pages": 34,
-    "canonical_ok_pages": 34,
-    "jsonld_pages": 34,
+    "available_pages": 33,
+    "canonical_ok_pages": 33,
+    "jsonld_pages": 33,
     "noindex_pages": 0,
-    "avg_response_time_ms": 192.2,
-    "max_response_time_ms": 447,
-    "health_score": 100.0,
+    "avg_response_time_ms": 246.2,
+    "max_response_time_ms": 1168,
+    "health_score": 92.7,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 92.7,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-13T12:58:35Z",
-  "warnings": [],
-  "page_changes": {},
-  "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "trend_direction": "declining",
+  "trend_delta": -7.3,
+  "baseline_timestamp": "2026-10-13T13:05:55Z",
+  "warnings": [
+    "available page count decreased",
+    "canonical coverage decreased",
+    "JSON-LD coverage decreased",
+    "critical page regression: /publications/digital-ruble.html",
+    "page-level change: /publications/ai-infrastructure-economy.html"
+  ],
+  "page_changes": {
+    "/publications/ai-infrastructure-economy.html": [
+      "response_time_ms: 278 -> 1168"
+    ],
+    "/publications/digital-ruble.html": [
+      "available: True -> False",
+      "canonical_ok: True -> False",
+      "jsonld: True -> False"
+    ]
+  },
+  "critical_pages": [
+    "/publications/digital-ruble.html"
+  ],
+  "warning_pages": [
+    "/publications/ai-infrastructure-economy.html"
+  ],
+  "status": "critical"
 }
