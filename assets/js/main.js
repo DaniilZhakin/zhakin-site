@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>Карта-схема публично показывает ключевые международные направления, страны СНГ и рынки БРИКС. Персональные данные и закрытые контакты не публикуются.</p>
           <p><a href="/international-geography.html">Открыть структурированный обзор международной географии →</a></p>
         </div>
-        <div class="geo-map" role="img" aria-label="Схематическая карта международных деловых направлений, стран СНГ и рынков БРИКС">
+        <div class="geo-map" role="group" aria-label="Интерактивная схема международных деловых направлений, стран СНГ и рынков БРИКС">
           <div class="geo-grid" aria-hidden="true"></div><div class="geo-orbit geo-orbit-a" aria-hidden="true"></div>
           <div class="geo-orbit geo-orbit-b" aria-hidden="true"></div><div class="geo-route geo-route-a" aria-hidden="true"></div>
           <div class="geo-route geo-route-b" aria-hidden="true"></div>${markers}
