@@ -1,0 +1,297 @@
+{
+  "schema_version": "1.0",
+  "generated_from": "sitemap.xml",
+  "purpose": "Индекс публичных страниц сайта Жакин.рф для навигации и выборочного поиска содержимого ЖАК.",
+  "updated_at": "2026-10-13",
+  "page_count": 48,
+  "pages": [
+    {
+      "path": "/",
+      "title": "Главная страница Жакин.рф",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/"
+    },
+    {
+      "path": "/about.html",
+      "title": "About",
+      "section": "Профиль и институциональная структура",
+      "url": "https://xn--80alhhq.xn--p1ai/about.html"
+    },
+    {
+      "path": "/professional-history.html",
+      "title": "Professional History",
+      "section": "Профиль и институциональная структура",
+      "url": "https://xn--80alhhq.xn--p1ai/professional-history.html"
+    },
+    {
+      "path": "/profiles.html",
+      "title": "Profiles",
+      "section": "Профиль и институциональная структура",
+      "url": "https://xn--80alhhq.xn--p1ai/profiles.html"
+    },
+    {
+      "path": "/projects.html",
+      "title": "Projects",
+      "section": "Проекты и взаимодействие",
+      "url": "https://xn--80alhhq.xn--p1ai/projects.html"
+    },
+    {
+      "path": "/publications.html",
+      "title": "Publications",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/publications.html"
+    },
+    {
+      "path": "/publications/directions.html",
+      "title": "Directions",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/directions.html"
+    },
+    {
+      "path": "/reception.html",
+      "title": "Reception",
+      "section": "Проекты и взаимодействие",
+      "url": "https://xn--80alhhq.xn--p1ai/reception.html"
+    },
+    {
+      "path": "/institutional.html",
+      "title": "Institutional",
+      "section": "Профиль и институциональная структура",
+      "url": "https://xn--80alhhq.xn--p1ai/institutional.html"
+    },
+    {
+      "path": "/intelligence.html",
+      "title": "Intelligence",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/intelligence.html"
+    },
+    {
+      "path": "/publications/money-financial-system.html",
+      "title": "Money Financial System",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/money-financial-system.html"
+    },
+    {
+      "path": "/publications/ai-parliament.html",
+      "title": "Ai Parliament",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-parliament.html"
+    },
+    {
+      "path": "/publications/digital-ruble.html",
+      "title": "Digital Ruble",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/digital-ruble.html"
+    },
+    {
+      "path": "/publications/ai-financial-system.html",
+      "title": "Ai Financial System",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-financial-system.html"
+    },
+    {
+      "path": "/publications/ai-infrastructure.html",
+      "title": "Ai Infrastructure",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-infrastructure.html"
+    },
+    {
+      "path": "/publications/understanding-state-and-law.html",
+      "title": "Understanding State And Law",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/understanding-state-and-law.html"
+    },
+    {
+      "path": "/publications/legal-architecture.html",
+      "title": "Legal Architecture",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/legal-architecture.html"
+    },
+    {
+      "path": "/publications/economic-transition-1990s.html",
+      "title": "Economic Transition 1990s",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/economic-transition-1990s.html"
+    },
+    {
+      "path": "/publications/future-without-money.html",
+      "title": "Future Without Money",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/future-without-money.html"
+    },
+    {
+      "path": "/publications/food-infrastructure.html",
+      "title": "Food Infrastructure",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/food-infrastructure.html"
+    },
+    {
+      "path": "/publications/capital-requires-proof.html",
+      "title": "Capital Requires Proof",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/capital-requires-proof.html"
+    },
+    {
+      "path": "/publications/price-discovery.html",
+      "title": "Price Discovery",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/price-discovery.html"
+    },
+    {
+      "path": "/international-geography.html",
+      "title": "International Geography",
+      "section": "Карты и международные процессы",
+      "url": "https://xn--80alhhq.xn--p1ai/international-geography.html"
+    },
+    {
+      "path": "/publications/naruto-hidden-meanings.html",
+      "title": "Naruto Hidden Meanings",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/naruto-hidden-meanings.html"
+    },
+    {
+      "path": "/publications/ai-decision-responsibility.html",
+      "title": "Ai Decision Responsibility",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-decision-responsibility.html"
+    },
+    {
+      "path": "/publications/personal-growth-hidden-meanings.html",
+      "title": "Personal Growth Hidden Meanings",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/personal-growth-hidden-meanings.html"
+    },
+    {
+      "path": "/publications/sanctions-new-generation.html",
+      "title": "Sanctions New Generation",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/sanctions-new-generation.html"
+    },
+    {
+      "path": "/publications/global-economy-after-sanctions.html",
+      "title": "Global Economy After Sanctions",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/global-economy-after-sanctions.html"
+    },
+    {
+      "path": "/publications/global-economy-new-assets.html",
+      "title": "Global Economy New Assets",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/global-economy-new-assets.html"
+    },
+    {
+      "path": "/publications/money-capital-friction.html",
+      "title": "Money Capital Friction",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/money-capital-friction.html"
+    },
+    {
+      "path": "/publications/ai-infrastructure-economy.html",
+      "title": "Ai Infrastructure Economy",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-infrastructure-economy.html"
+    },
+    {
+      "path": "/publications/global-dependence-map.html",
+      "title": "Global Dependence Map",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/global-dependence-map.html"
+    },
+    {
+      "path": "/publications/ai-cost-economics.html",
+      "title": "Ai Cost Economics",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/ai-cost-economics.html"
+    },
+    {
+      "path": "/publications/grain-global-market.html",
+      "title": "Grain Global Market",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/grain-global-market.html"
+    },
+    {
+      "path": "/privacy.html",
+      "title": "Privacy",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/privacy.html"
+    },
+    {
+      "path": "/legal.html",
+      "title": "Legal",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/legal.html"
+    },
+    {
+      "path": "/investment-disclaimer.html",
+      "title": "Investment Disclaimer",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/investment-disclaimer.html"
+    },
+    {
+      "path": "/political-analysis.html",
+      "title": "Political Analysis",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-analysis.html"
+    },
+    {
+      "path": "/political-objects.html",
+      "title": "Political Objects",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-objects.html"
+    },
+    {
+      "path": "/political-object.html",
+      "title": "Political Object",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-object.html"
+    },
+    {
+      "path": "/political-methodology.html",
+      "title": "Political Methodology",
+      "section": "Основные разделы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-methodology.html"
+    },
+    {
+      "path": "/publications/system-workability.html",
+      "title": "System Workability",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/system-workability.html"
+    },
+    {
+      "path": "/publications/expensive-money.html",
+      "title": "Expensive Money",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/expensive-money.html"
+    },
+    {
+      "path": "/publications/human-value-ai.html",
+      "title": "Human Value Ai",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/human-value-ai.html"
+    },
+    {
+      "path": "/publications/hidden-matrix.html",
+      "title": "Hidden Matrix",
+      "section": "Публикации и аналитика",
+      "url": "https://xn--80alhhq.xn--p1ai/publications/hidden-matrix.html"
+    },
+    {
+      "path": "/political-map.html",
+      "title": "Political Map",
+      "section": "Карты и международные процессы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-map.html"
+    },
+    {
+      "path": "/political-timeline.html",
+      "title": "Political Timeline",
+      "section": "Карты и международные процессы",
+      "url": "https://xn--80alhhq.xn--p1ai/political-timeline.html"
+    },
+    {
+      "path": "/intelligence-map.html",
+      "title": "Intelligence Map",
+      "section": "Карты и международные процессы",
+      "url": "https://xn--80alhhq.xn--p1ai/intelligence-map.html"
+    }
+  ]
+}
