@@ -1,6 +1,6 @@
 # SEO 3.2 — Persistent Anomaly Intelligence
 
-Snapshot: `2026-10-12T13:34:02Z`
+Snapshot: `2026-10-14T10:38:47Z`
 History points: **30**
 Persistent anomalies: **0**
 Transient signals: **0**
