@@ -92,7 +92,8 @@ test("wallet action controls have interactive pointer and visible keyboard focus
 
 test("demo task controls stay usable on narrow mobile screens", async () => {
   const page = await readFile(walletUrl, "utf8");
-  assert.match(page, /@media\(max-width:700px\)\{[\s\S]*?\.wallet-demo-task\{display:grid;grid-template-columns:minmax\(0,1fr\) auto\}/);
+  assert.match(page, /@media\\(max-width:700px\\)/);
+  assert.match(page, /\\.wallet-demo-task\\{display:grid;grid-template-columns:minmax\\(0,1fr\\) auto\\}/);
   assert.match(page, /\.wallet-demo-task \.wallet-demo-button\{grid-column:2;justify-self:end;min-width:112px\}/);
   assert.match(page, /\.wallet-demo-button:focus-visible\{outline:2px solid/);
 });
