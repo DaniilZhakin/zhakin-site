@@ -80,3 +80,11 @@ test("wallet transfer controls explain the limitation rather than executing oper
   assert.match(page, /data-wallet-info="Переводы"/);
   assert.match(page, /Функция пока не подключена/);
 });
+
+
+test("wallet action controls have interactive pointer and visible keyboard focus", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /\.wallet-action\{[^}]*cursor:pointer/);
+  assert.match(page, /\.wallet-action:focus-visible\{outline:2px solid/);
+  assert.doesNotMatch(page, /\\n    \.wallet-skip-link/);
+});
