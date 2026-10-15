@@ -66,7 +66,7 @@ test("non-safe or malformed repository balances are rejected", async () => {
   assert.equal((await body(response)).error, "ledger_unavailable");
 });
 
-test("admin routes require server-verified coordinator or admin role", async () => {
+test("activity review routes require a server-verified coordinator or admin role", async () => {
   const participant = createWalletHandler({
     authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
   });
@@ -78,6 +78,46 @@ test("admin routes require server-verified coordinator or admin role", async () 
   });
   const notImplemented = await coordinator(request("/api/v1/admin/activities"));
   assert.equal(notImplemented.status, 501);
+
+  const reviewDenied = await participant(request("/api/v1/admin/activities/a-1/review", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ decision: "approve" }),
+  }));
+  assert.equal(reviewDenied.status, 403);
+});
+
+test("ledger adjustments are restricted to admins, not coordinators", async () => {
+  const coordinator = createWalletHandler({
+    authenticate: async () => ({ id: "c-1", roles: ["coordinator"] }),
+  });
+  const denied = await coordinator(request("/api/v1/admin/ledger-adjustments", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ points: 10 }),
+  }));
+  assert.equal(denied.status, 403);
+
+  const admin = createWalletHandler({
+    authenticate: async () => ({ id: "a-1", roles: ["admin"] }),
+  });
+  const disabled = await admin(request("/api/v1/admin/ledger-adjustments", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ points: 10 }),
+  }));
+  assert.equal(disabled.status, 501);
+});
+
+test("unknown admin routes return not found and known routes enforce methods", async () => {
+  const admin = createWalletHandler({
+    authenticate: async () => ({ id: "a-1", roles: ["admin"] }),
+  });
+  const unknown = await admin(request("/api/v1/admin/secret-operation"));
+  assert.equal(unknown.status, 404);
+
+  const wrongMethod = await admin(request("/api/v1/admin/activities", { method: "POST" }));
+  assert.equal(wrongMethod.status, 405);
 });
 
 test("unsupported HTTP methods are rejected", async () => {
