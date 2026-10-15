@@ -86,7 +86,6 @@ test("unsupported HTTP methods are rejected", async () => {
   assert.equal(response.status, 405);
 });
 
-
 test("authentication adapter failures return a generic 401 without leaking internals", async () => {
   const handle = createWalletHandler({
     authenticate: async () => { throw new Error("private provider diagnostic"); },
@@ -143,4 +142,24 @@ test("all unimplemented write requests stay disabled", async () => {
   }));
   assert.equal(response.status, 501);
   assert.equal((await body(response)).error, "not_implemented");
+});
+
+test("ledger page contract preserves the next cursor from a persistent repository", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "verified-participant");
+        assert.equal(options.limit, 50);
+        assert.equal(options.cursor, "cursor-2");
+        return { entries: [{ id: "entry-1", points: 5 }], next_cursor: "cursor-3" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger?cursor=cursor-2"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "cursor-3",
+  });
 });
