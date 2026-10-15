@@ -49,3 +49,34 @@ test("wallet page supports keyboard navigation and high-contrast preferences", a
   assert.match(page, /@media\(forced-colors:active\)/);
   assert.match(page, /prefers-reduced-motion:reduce/);
 });
+
+test("interactive wallet demo is explicitly synthetic and separate from the real balance", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /id="wallet-demo"[^>]*data-demo-only="true"/);
+  assert.match(page, /Демо-режим · только тестовые данные/);
+  assert.match(page, /Условный демо-баланс/);
+  assert.match(page, /class="wallet-balance" aria-label="Баланс пока недоступен">—/);
+  assert.match(page, /Синтетическая запись/);
+  assert.match(page, /data-demo-task="intro"/);
+  assert.match(page, /data-demo-task="rules"/);
+  assert.match(page, /data-demo-task="history"/);
+  assert.match(page, /wallet-demo-reset/);
+  assert.match(page, /COIN УСЕРДИЕ \(BFU\) является отдельным проектом фонда/);
+});
+
+test("demo state is in-memory only and actions do not call a real wallet API", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /let demoBalance = initialBalance/);
+  assert.match(page, /completed\.clear\(\)/);
+  assert.doesNotMatch(page, /localStorage|sessionStorage|fetch\s*\(|XMLHttpRequest|sendBeacon/);
+  assert.match(page, /Никаких операций не выполнено/);
+  assert.match(page, /aria-live="polite"/);
+});
+
+test("wallet transfer controls explain the limitation rather than executing operations", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /data-wallet-info="Пополнение"/);
+  assert.match(page, /data-wallet-info="Подарки"/);
+  assert.match(page, /data-wallet-info="Переводы"/);
+  assert.match(page, /Функция пока не подключена/);
+});
