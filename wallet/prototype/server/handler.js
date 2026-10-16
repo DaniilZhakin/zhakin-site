@@ -4,6 +4,8 @@
  * All trust decisions and persistence must be supplied by server-side adapters.
  */
 
+const MAX_LEDGER_CURSOR_LENGTH = 512;
+
 const json = (status, payload) => new Response(JSON.stringify(payload), {
   status,
   headers: {
@@ -82,9 +84,14 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
+        const cursor = url.searchParams.get("cursor");
+        if (cursor !== null && cursor.length > MAX_LEDGER_CURSOR_LENGTH) {
+          return json(400, { error: "invalid_cursor" });
+        }
+
         const entries = await repository.listLedger(principal.id, {
           limit: 50,
-          cursor: url.searchParams.get("cursor"),
+          cursor,
         });
         if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
         return json(200, { entries });
