@@ -120,3 +120,23 @@ test("unsupported HTTP methods are rejected", async () => {
   const response = await handle(request("/health", { method: "DELETE" }));
   assert.equal(response.status, 405);
 });
+
+
+test("ledger pagination metadata is returned separately from entry fields", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "p-1");
+        assert.equal(options.limit, 50);
+        return { entries: [{ id: "entry-1", points: 5 }], nextCursor: "opaque-next" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "opaque-next",
+  });
+});
