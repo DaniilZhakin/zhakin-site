@@ -4,6 +4,8 @@
  * All trust decisions and persistence must be supplied by server-side adapters.
  */
 
+const MAX_LEDGER_CURSOR_LENGTH = 512;
+
 const json = (status, payload) => new Response(JSON.stringify(payload), {
   status,
   headers: {
@@ -82,12 +84,25 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
-        const entries = await repository.listLedger(principal.id, {
+        const cursor = url.searchParams.get("cursor");
+        if (cursor !== null && cursor.length > MAX_LEDGER_CURSOR_LENGTH) {
+          return json(400, { error: "invalid_cursor" });
+        }
+
+        const page = await repository.listLedger(principal.id, {
           limit: 50,
-          cursor: url.searchParams.get("cursor"),
+          cursor,
         });
-        if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
+        // Accept the legacy array shape for test doubles, but production adapters
+        // return pagination metadata separately from ledger entry fields.
+        if (Array.isArray(page)) return json(200, { entries: page });
+        if (!page || !Array.isArray(page.entries)) {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, {
+          entries: page.entries,
+          next_cursor: typeof page.nextCursor === "string" ? page.nextCursor : null,
+        });
       } catch {
         return json(503, { error: "ledger_unavailable" });
       }

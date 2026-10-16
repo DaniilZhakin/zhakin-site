@@ -66,6 +66,41 @@ test("non-safe or malformed repository balances are rejected", async () => {
   assert.equal((await body(response)).error, "ledger_unavailable");
 });
 
+test("oversized ledger cursor is rejected before repository access", async () => {
+  let repositoryCalled = false;
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async () => {
+        repositoryCalled = true;
+        return [];
+      },
+    },
+  });
+  const response = await handle(request(`/api/v1/me/ledger?cursor=${"x".repeat(513)}`));
+  assert.equal(response.status, 400);
+  assert.equal((await body(response)).error, "invalid_cursor");
+  assert.equal(repositoryCalled, false);
+});
+
+test("ledger cursor at the maximum accepted length is passed through unchanged", async () => {
+  const cursor = "x".repeat(512);
+  let receivedCursor;
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async (_participantId, options) => {
+        receivedCursor = options.cursor;
+        return [];
+      },
+    },
+  });
+  const response = await handle(request(`/api/v1/me/ledger?cursor=${cursor}`));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), { entries: [] });
+  assert.equal(receivedCursor, cursor);
+});
+
 test("admin routes require server-verified coordinator or admin role", async () => {
   const participant = createWalletHandler({
     authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
@@ -84,4 +119,24 @@ test("unsupported HTTP methods are rejected", async () => {
   const handle = createWalletHandler();
   const response = await handle(request("/health", { method: "DELETE" }));
   assert.equal(response.status, 405);
+});
+
+
+test("ledger pagination metadata is returned separately from entry fields", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "p-1");
+        assert.equal(options.limit, 50);
+        return { entries: [{ id: "entry-1", points: 5 }], nextCursor: "opaque-next" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "opaque-next",
+  });
 });
