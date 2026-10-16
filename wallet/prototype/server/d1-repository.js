@@ -105,13 +105,14 @@ export function createD1WalletRepository(db) {
 
       const rows = result.results;
       const hasMore = rows.length > limit;
-      const page = rows.slice(0, limit);
-      return page.map((row, index) => ({
-        ...row,
-        ...(hasMore && index === page.length - 1
-          ? { nextCursor: encodeCursor(row.createdAt, row.id) }
-          : {}),
-      }));
+      const entries = rows.slice(0, limit);
+      const lastEntry = entries.at(-1);
+      return {
+        entries,
+        nextCursor: hasMore && lastEntry
+          ? encodeCursor(lastEntry.createdAt, lastEntry.id)
+          : null,
+      };
     },
   });
 }
