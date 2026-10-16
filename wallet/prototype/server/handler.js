@@ -89,12 +89,20 @@ export function createWalletHandler({ authenticate, repository } = {}) {
           return json(400, { error: "invalid_cursor" });
         }
 
-        const entries = await repository.listLedger(principal.id, {
+        const page = await repository.listLedger(principal.id, {
           limit: 50,
           cursor,
         });
-        if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
+        // Accept the legacy array shape for test doubles, but production adapters
+        // return pagination metadata separately from ledger entry fields.
+        if (Array.isArray(page)) return json(200, { entries: page });
+        if (!page || !Array.isArray(page.entries)) {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, {
+          entries: page.entries,
+          next_cursor: typeof page.nextCursor === "string" ? page.nextCursor : null,
+        });
       } catch {
         return json(503, { error: "ledger_unavailable" });
       }
