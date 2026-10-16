@@ -66,6 +66,41 @@ test("non-safe or malformed repository balances are rejected", async () => {
   assert.equal((await body(response)).error, "ledger_unavailable");
 });
 
+test("oversized ledger cursor is rejected before repository access", async () => {
+  let repositoryCalled = false;
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async () => {
+        repositoryCalled = true;
+        return [];
+      },
+    },
+  });
+  const response = await handle(request(`/api/v1/me/ledger?cursor=${"x".repeat(513)}`));
+  assert.equal(response.status, 400);
+  assert.equal((await body(response)).error, "invalid_cursor");
+  assert.equal(repositoryCalled, false);
+});
+
+test("ledger cursor at the maximum accepted length is passed through unchanged", async () => {
+  const cursor = "x".repeat(512);
+  let receivedCursor;
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
+    repository: {
+      listLedger: async (_participantId, options) => {
+        receivedCursor = options.cursor;
+        return [];
+      },
+    },
+  });
+  const response = await handle(request(`/api/v1/me/ledger?cursor=${cursor}`));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), { entries: [] });
+  assert.equal(receivedCursor, cursor);
+});
+
 test("admin routes require server-verified coordinator or admin role", async () => {
   const participant = createWalletHandler({
     authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
