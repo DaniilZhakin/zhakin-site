@@ -51,10 +51,10 @@ test("ledger query scopes rows to the participant and bounds the page", async ()
   const db = fakeD1({ allResult: { results: rows } });
   const repository = createD1WalletRepository(db);
 
-  const entries = await repository.listLedger("verified-participant", { limit: 2 });
-  assert.equal(entries.length, 2);
-  assert.equal(typeof entries[1].nextCursor, "string");
-  assert.equal(entries[0].nextCursor, undefined);
+  const page = await repository.listLedger("verified-participant", { limit: 2 });
+  assert.equal(page.entries.length, 2);
+  assert.equal(typeof page.nextCursor, "string");
+  assert.equal(page.entries[0].nextCursor, undefined);
   assert.match(db.calls[0].sql, /participant_id = \?/);
   assert.match(db.calls[0].sql, /ORDER BY created_at DESC, id DESC LIMIT \?/);
   assert.deepEqual(db.calls[0].values, ["verified-participant", 3]);
