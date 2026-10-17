@@ -1,29 +1,47 @@
 {
-  "timestamp": "2026-10-17T11:11:16Z",
+  "timestamp": "2026-10-17T11:52:20Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
-    "sitemap_urls": 49,
+    "sitemap_urls": 52,
     "sitemap_unique": true,
-    "required_pages": 34,
+    "required_pages": 37,
     "sitemap_coverage": true,
-    "available_pages": 34,
-    "canonical_ok_pages": 34,
-    "jsonld_pages": 34,
+    "available_pages": 37,
+    "canonical_ok_pages": 37,
+    "jsonld_pages": 37,
     "noindex_pages": 0,
-    "avg_response_time_ms": 259.3,
-    "max_response_time_ms": 477,
-    "health_score": 100.0,
+    "avg_response_time_ms": 203.8,
+    "max_response_time_ms": 491,
+    "health_score": 97.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 97.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-17T10:50:08Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -3.0,
+  "baseline_timestamp": "2026-10-17T11:11:16Z",
+  "warnings": [
+    "page-level change: /publications/digital-assets-settlement.html",
+    "page-level change: /publications/emergency-readiness.html",
+    "page-level change: /publications/robotics-economics.html"
+  ],
+  "page_changes": {
+    "/publications/digital-assets-settlement.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/emergency-readiness.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/robotics-economics.html": [
+      "new page in monitored baseline"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/digital-assets-settlement.html",
+    "/publications/emergency-readiness.html",
+    "/publications/robotics-economics.html"
+  ],
+  "status": "warning"
 }
