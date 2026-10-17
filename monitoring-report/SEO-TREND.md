@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-17T11:52:20Z`
+Snapshot: `2026-10-17T13:43:54Z`
 History points: **30**
-Status: **WARNING**
-Health score: **97.0/100 (HEALTHY)**
-Trend: **DECLINING** (-3.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,22 +17,15 @@ Trend: **DECLINING** (-3.0)
 - `canonical_ok_pages`: **37**
 - `jsonld_pages`: **37**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **203.8**
-- `max_response_time_ms`: **491**
-- `health_score`: **97.0**
+- `avg_response_time_ms`: **217.9**
+- `max_response_time_ms`: **488**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/digital-assets-settlement.html`
-- new page in monitored baseline
-### `/publications/emergency-readiness.html`
-- new page in monitored baseline
-### `/publications/robotics-economics.html`
-- new page in monitored baseline
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/digital-assets-settlement.html
-- page-level change: /publications/emergency-readiness.html
-- page-level change: /publications/robotics-economics.html
+No regression detected.
