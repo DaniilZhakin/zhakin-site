@@ -28,7 +28,8 @@ main .cover img {
   display: block;
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   margin-left: auto;
   margin-right: auto;
 }
@@ -36,6 +37,7 @@ main .cover {
   width: 100%;
   max-width: 100%;
   margin: 28px 0 36px;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 main table {
