@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-17T04:27:28Z",
+  "timestamp": "2026-10-17T09:22:21Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,27 +11,19 @@
     "canonical_ok_pages": 34,
     "jsonld_pages": 34,
     "noindex_pages": 0,
-    "avg_response_time_ms": 292.3,
-    "max_response_time_ms": 1248,
-    "health_score": 99.0,
+    "avg_response_time_ms": 290.6,
+    "max_response_time_ms": 660,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 99.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": -1.0,
-  "baseline_timestamp": "2026-10-16T23:36:32Z",
-  "warnings": [
-    "page-level change: /publications/ai-parliament.html"
-  ],
-  "page_changes": {
-    "/publications/ai-parliament.html": [
-      "response_time_ms: 279 -> 1248"
-    ]
-  },
+  "trend_delta": 0.0,
+  "baseline_timestamp": "2026-10-17T04:27:28Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications/ai-parliament.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
