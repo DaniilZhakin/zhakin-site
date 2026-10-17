@@ -1,13 +1,5 @@
 [
   {
-    "timestamp": "2026-09-16T09:55:07Z",
-    "history_points": 30,
-    "persistent_anomaly_count": 0,
-    "transient_signal_count": 0,
-    "anomalies": [],
-    "transient_signals": []
-  },
-  {
     "timestamp": "2026-09-17T10:27:44Z",
     "history_points": 30,
     "persistent_anomaly_count": 0,
@@ -233,6 +225,14 @@
   },
   {
     "timestamp": "2026-10-16T10:09:14Z",
+    "history_points": 30,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
+  },
+  {
+    "timestamp": "2026-10-17T09:43:25Z",
     "history_points": 30,
     "persistent_anomaly_count": 0,
     "transient_signal_count": 0,
