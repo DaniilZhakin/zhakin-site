@@ -23,7 +23,14 @@ main figure {
   margin-left: auto;
   margin-right: auto;
 }
-main figure img,
+main figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
 main .cover img {
   display: block;
   width: 100%;
@@ -34,6 +41,7 @@ main .cover img {
   margin-right: auto;
 }
 main .cover {
+  box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   margin: 28px 0 36px;
