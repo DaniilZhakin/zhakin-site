@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-18T11:43:53Z`
+Snapshot: `2026-10-18T14:35:18Z`
 History points: **30**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **STABLE** (-1.0)
 
 ## Current signals
 
@@ -17,15 +17,16 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **37**
 - `jsonld_pages`: **37**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **95.8**
-- `max_response_time_ms`: **886**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **300.5**
+- `max_response_time_ms`: **2889**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/publications/ai-financial-system.html`
+- response_time_ms: 61 -> 2889
 
 ## Anomaly detection
 
-No regression detected.
+- page-level change: /publications/ai-financial-system.html
