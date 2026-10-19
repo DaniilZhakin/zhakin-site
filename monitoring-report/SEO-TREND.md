@@ -1,6 +1,6 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-19T07:47:22Z`
+Snapshot: `2026-10-19T11:18:09Z`
 History points: **30**
 Status: **WARNING**
 Health score: **99.0/100 (HEALTHY)**
@@ -17,16 +17,16 @@ Trend: **STABLE** (-1.0)
 - `canonical_ok_pages`: **37**
 - `jsonld_pages`: **37**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **235.6**
-- `max_response_time_ms`: **1178**
+- `avg_response_time_ms`: **199.8**
+- `max_response_time_ms`: **1041**
 - `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/emergency-readiness.html`
-- response_time_ms: 139 -> 1178
+### `/publications/grain-global-market.html`
+- response_time_ms: 145 -> 1041
 
 ## Anomaly detection
 
-- page-level change: /publications/emergency-readiness.html
+- page-level change: /publications/grain-global-market.html
