@@ -1,0 +1,55 @@
+/* Shared layout for analytical publication pages. Loaded after page-level styles. */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: clip; }
+body > main {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 920px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 40px clamp(16px, 3vw, 24px) 80px !important;
+}
+main img, main video, main svg { max-width: 100%; }
+main img { height: auto; }
+main figure {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+main figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+main .cover {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 28px 0 36px;
+  overflow: hidden;
+}
+main .cover img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
+  object-fit: contain;
+  margin: 0 auto;
+}
+main table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+main pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+  body > main { padding: 32px 16px 56px !important; }
+  main .cover { margin-top: 22px; margin-bottom: 28px; }
+  main figure { margin-left: 0; margin-right: 0; }
+  main h1 { overflow-wrap: anywhere; }
+}
