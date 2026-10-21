@@ -27,6 +27,7 @@ jobs:
         run: node --check worker.js
 
       - name: Preflight required production settings
+        shell: bash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -39,20 +40,13 @@ jobs:
         run: |
           set -eu
           for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID OPENAI_API_KEY OPENAI_MODEL POSTHOG_HOST POSTHOG_PROJECT_ID POSTHOG_API_KEY ZHAK_AI_SMOKE_URL; do
-            eval "value=\${$name}"
+            value="${!name}"
             if [ -z "$value" ]; then
               echo "Missing required GitHub Actions secret: $name"
               exit 1
             fi
           done
           echo "PASS: required production settings are present."
-
-      - name: Deploy Worker
-        working-directory: intelligence/ai-backend-cloudflare
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: wrangler deploy
 
       - name: Configure Worker runtime secrets
         working-directory: intelligence/ai-backend-cloudflare
@@ -71,6 +65,13 @@ jobs:
           printf '%s' "$POSTHOG_HOST" | wrangler secret put POSTHOG_HOST
           printf '%s' "$POSTHOG_PROJECT_ID" | wrangler secret put POSTHOG_PROJECT_ID
           printf '%s' "$POSTHOG_API_KEY" | wrangler secret put POSTHOG_API_KEY
+
+      - name: Deploy Worker
+        working-directory: intelligence/ai-backend-cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: wrangler deploy
 
       - name: Smoke-test library and tools endpoint
         working-directory: intelligence/ai-backend-cloudflare
