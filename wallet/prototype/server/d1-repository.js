@@ -156,6 +156,14 @@ export function createD1WalletRepository(db) {
       if (!["success", "denied", "failed"].includes(auditEvent.outcome)) {
         throw new TypeError("auditEvent.outcome is invalid");
       }
+      // A ledger row represents a completed mutation. Denied/failed attempts
+      // belong in the audit log only and must never be paired with a ledger row.
+      if (auditEvent.outcome !== "success") {
+        throw new TypeError("ledger entries require a successful audit outcome");
+      }
+      if (auditEvent.actorId !== entry.actorId) {
+        throw new TypeError("entry and audit actor IDs must match");
+      }
 
       const ledgerInsert = db.prepare(`
         INSERT INTO wallet_ledger_entries
