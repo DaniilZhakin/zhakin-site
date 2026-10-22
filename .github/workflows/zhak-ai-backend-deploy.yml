@@ -88,6 +88,28 @@ jobs:
             -o /tmp/zhak-tools-smoke.json
           node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('/tmp/zhak-tools-smoke.json','utf8')); if(d.mode!=='deterministic_tools'||d.library?.status?.knowledge!==true) { console.error('Tools/library smoke test failed'); process.exit(1); } console.log('PASS: tools endpoint and public knowledge library are available.');"
 
+      - name: Smoke-test PostHog analytics data
+        working-directory: intelligence/ai-backend-cloudflare
+        run: |
+          set -eu
+          node <<'NODE'
+          const fs = require('fs');
+          const response = JSON.parse(fs.readFileSync('/tmp/zhak-tools-smoke.json', 'utf8'));
+          const analytics = response.analytics;
+          const data = analytics && analytics.data;
+          if (
+            analytics?.configured !== true ||
+            analytics?.available !== true ||
+            data === null ||
+            typeof data !== 'object' ||
+            Object.keys(data).length === 0
+          ) {
+            console.error('PostHog smoke test failed: analytics is not configured, available, or returned a non-empty data payload.');
+            process.exit(1);
+          }
+          console.log('PASS: PostHog returned a non-empty analytics payload for the requested 7-day window.');
+          NODE
+
       - name: Smoke-test real AI answer endpoint
         working-directory: intelligence/ai-backend-cloudflare
         env:
