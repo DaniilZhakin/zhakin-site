@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-23T10:33:02Z",
+  "timestamp": "2026-10-23T11:44:46Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 37,
     "jsonld_pages": 37,
     "noindex_pages": 0,
-    "avg_response_time_ms": 249.6,
-    "max_response_time_ms": 665,
-    "health_score": 100.0,
+    "avg_response_time_ms": 238.1,
+    "max_response_time_ms": 1154,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-23T10:04:23Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-23T10:33:02Z",
+  "warnings": [
+    "page-level change: /publications/ai-cost-economics.html"
+  ],
+  "page_changes": {
+    "/publications/ai-cost-economics.html": [
+      "response_time_ms: 128 -> 1154"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/ai-cost-economics.html"
+  ],
+  "status": "warning"
 }
