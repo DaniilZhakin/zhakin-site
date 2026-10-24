@@ -97,3 +97,13 @@ test("demo task controls stay usable on narrow mobile screens", async () => {
   assert.match(page, /\.wallet-demo-task \.wallet-demo-button\{grid-column:2;justify-self:end;min-width:112px\}/);
   assert.match(page, /\.wallet-demo-button:focus-visible\{outline:2px solid/);
 });
+
+test("wallet visual polish provides rounded app surfaces and iPhone-sized controls", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /Visual polish v2: more app-like hierarchy/);
+  assert.match(page, /\.wallet-card\{[^}]*border-radius:16px/);
+  assert.match(page, /\.wallet-demo\{[^}]*border-radius:12px/);
+  assert.match(page, /\.wallet-action\{[^}]*min-height:44px/);
+  assert.match(page, /@media\(max-width:600px\)/);
+  assert.match(page, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+});
