@@ -160,6 +160,85 @@
     @media(max-width:600px){.wallet-collection-heading{align-items:flex-start;flex-direction:column;gap:7px}.wallet-collection-heading p{text-align:left;line-height:1.6}.wallet-collection-grid{grid-template-columns:1fr}.wallet-pocket{min-height:0;padding:19px}.wallet-pocket-top{margin-bottom:18px}.wallet-card-chiprow{margin-top:22px}.wallet-planned{grid-template-columns:1fr;gap:13px;padding:19px}.wallet-planned-tag{justify-self:start}.wallet-actions{gap:7px}.wallet-action{padding:10px 11px}.wallet-page{padding:30px 17px 58px}.wallet-topline{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:35px;padding-bottom:18px}.wallet-intro{margin-bottom:25px}.wallet-intro h1{font-size:clamp(2.65rem,12vw,3.65rem);margin:17px 0}.wallet-lead{font-size:.94rem;line-height:1.8}.wallet-intro-aside{font-size:.8rem}.wallet-status{padding:14px 15px;font-size:.81rem}.wallet-card{min-height:320px;padding:24px 22px 21px}.wallet-card-label{margin-top:18px}.wallet-card-bottom{margin-top:38px;font-size:.59rem;letter-spacing:.07em}.wallet-side{grid-template-columns:1fr}.wallet-mini{padding:20px}.wallet-section{padding:22px 18px}.wallet-section-heading{align-items:flex-start;flex-direction:column;gap:7px}.wallet-section-heading p{line-height:1.6}.wallet-roadmap{grid-template-columns:1fr}.wallet-step,.wallet-step:last-child{grid-column:auto;min-height:0;padding:19px}.wallet-step h3{margin-top:11px}.wallet-empty{align-items:flex-start}.wallet-empty-icon{flex-basis:38px;height:38px}}
     @media(hover:none){.wallet-mini:hover{transform:none}}
     @media(prefers-reduced-motion:reduce){.wallet-page *{scroll-behavior:auto;transition:none!important}}
+
+    /* Visual polish v2: more app-like hierarchy, softer surfaces and iPhone touch targets. */
+    .wallet-page{max-width:1180px;padding-top:38px}
+    .wallet-topline{margin-bottom:38px;padding-bottom:18px}
+    .wallet-prototype-label{padding:8px 11px;border:1px solid rgba(216,189,120,.22);border-radius:999px;background:rgba(216,189,120,.045)}
+    .wallet-intro{gap:34px;margin-bottom:28px}
+    .wallet-intro h1{max-width:720px}
+    .wallet-intro-aside{border-left-width:2px}
+    .wallet-status{border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+    .wallet-dashboard,.wallet-demo,.wallet-section{border-radius:14px}
+    .wallet-dashboard{padding:24px}
+    .wallet-overview-item{border-radius:9px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012))}
+    .wallet-overview-value{font-variant-numeric:tabular-nums}
+    .wallet-shortcut,.wallet-action,.wallet-demo-button{border-radius:8px}
+    .wallet-shortcut{min-height:42px;padding-inline:14px}
+    .wallet-grid{gap:22px}
+    .wallet-card{min-height:350px;border-radius:16px;padding:30px;box-shadow:0 24px 65px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07)}
+    .wallet-card:after{right:-115px;top:-145px}
+    .wallet-emblem{width:45px;height:45px}
+    .wallet-actions{gap:10px}
+    .wallet-action{min-height:43px;padding:11px 15px}
+    .wallet-mini{border-radius:12px;padding:24px}
+    .wallet-mini-symbol{width:40px;height:40px}
+    .wallet-planned{border-radius:12px;padding:24px 27px}
+    .wallet-planned-tag{border-radius:7px}
+    .wallet-collection{margin-top:38px}
+    .wallet-pocket{border-radius:12px;padding:23px}
+    .wallet-pocket-icon{width:39px;height:39px}
+    .wallet-section{padding:28px}
+    .wallet-step{border-radius:9px}
+    .wallet-demo{padding:26px}
+    .wallet-demo-badge{border-radius:999px;padding:7px 11px}
+    .wallet-demo-panel{border-radius:10px}
+    .wallet-demo-balance{border-radius:10px}
+    .wallet-demo-task{gap:15px}
+    .wallet-demo-task .wallet-demo-button{min-width:112px}
+    .wallet-dialog{border-radius:14px}
+    @media(max-width:850px){
+      .wallet-page{padding-top:30px}
+      .wallet-grid{gap:16px}
+      .wallet-card{min-height:330px}
+    }
+    @media(max-width:600px){
+      .wallet-page{padding:24px 15px 48px;overflow-wrap:anywhere}
+      .wallet-topline{margin-bottom:27px}
+      .wallet-prototype-label{font-size:.64rem;letter-spacing:.06em}
+      .wallet-intro{gap:12px}
+      .wallet-intro h1{font-size:clamp(2.45rem,11vw,3.45rem);line-height:1.02;letter-spacing:-.06em}
+      .wallet-lead{font-size:.92rem;line-height:1.72}
+      .wallet-status{border-radius:9px;margin-bottom:18px}
+      .wallet-dashboard{padding:16px 13px;border-radius:12px}
+      .wallet-grid{gap:12px}
+      .wallet-card{min-height:0;padding:22px 19px 18px;border-radius:13px}
+      .wallet-card-label{font-size:.68rem}
+      .wallet-balance{font-size:clamp(2.35rem,10vw,3.25rem)}
+      .wallet-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+      .wallet-action{min-width:0;min-height:44px;padding:10px 5px;font-size:.68rem;letter-spacing:0}
+      .wallet-card-bottom{margin-top:26px;padding-top:14px;font-size:.56rem;letter-spacing:.04em}
+      .wallet-mini{border-radius:10px;padding:18px}
+      .wallet-planned{border-radius:11px;padding:18px}
+      .wallet-planned-value{font-size:clamp(1.45rem,7vw,2rem);overflow-wrap:anywhere}
+      .wallet-collection{margin-top:28px}
+      .wallet-pocket{border-radius:10px;padding:18px}
+      .wallet-section{padding:20px 16px;border-radius:11px}
+      .wallet-demo{padding:17px 13px;border-radius:12px}
+      .wallet-demo-head{margin-top:12px}
+      .wallet-demo-balance{padding:15px;border-radius:9px}
+      .wallet-demo-panel{padding:13px;border-radius:9px}
+      .wallet-demo-task{gap:9px}
+      .wallet-demo-task .wallet-demo-button{min-width:104px;min-height:42px;padding:9px 10px}
+      .wallet-demo-footer{gap:10px}
+      .wallet-shortcut{min-height:44px}
+      .wallet-empty{gap:12px}
+    }
+    @media(hover:hover){
+      .wallet-pocket,.wallet-step{transition:border-color .18s ease,transform .18s ease}
+      .wallet-pocket:hover,.wallet-step:hover{border-color:rgba(216,189,120,.32);transform:translateY(-2px)}
+    }
+
   </style>
 </head>
 <body>
