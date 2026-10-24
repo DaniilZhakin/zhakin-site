@@ -22,6 +22,19 @@ function hasRole(principal, roles) {
   return Array.isArray(principal?.roles) && roles.some((role) => principal.roles.includes(role));
 }
 
+function adminRoutePolicy(method, path) {
+  if (path === "/api/v1/admin/activities") {
+    return { methods: ["GET"], roles: ["admin", "coordinator"] };
+  }
+  if (/^\/api\/v1\/admin\/activities\/[^/]+\/review$/.test(path)) {
+    return { methods: ["POST"], roles: ["admin", "coordinator"] };
+  }
+  if (path === "/api/v1/admin/ledger-adjustments") {
+    return { methods: ["POST"], roles: ["admin"] };
+  }
+  return null;
+}
+
 /**
  * Dependencies:
  * - authenticate(request, env): returns a server-verified principal or null.
@@ -93,12 +106,19 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       }
     }
 
-    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin", "coordinator"])) {
-      return json(403, { error: "forbidden" });
+    if (path.startsWith("/api/v1/admin/")) {
+      const policy = adminRoutePolicy(request.method, path);
+      if (!policy) return json(404, { error: "not_found" });
+      if (!policy.methods.includes(request.method)) {
+        return json(405, { error: "method_not_allowed" });
+      }
+      if (!hasRole(principal, policy.roles)) return json(403, { error: "forbidden" });
+
+      // Mutations remain disabled until transactional repository, durable
+      // idempotency, review workflow and audit adapter are implemented.
+      return json(501, { error: "not_implemented" });
     }
 
-    // Mutations intentionally remain disabled until transactional repository,
-    // persistent idempotency, review workflow and audit adapter are implemented.
-    return json(501, { error: "not_implemented" });
+    return json(404, { error: "not_found" });
   };
 }
