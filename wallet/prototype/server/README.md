@@ -1,31 +1,33 @@
 # ZHAKIN Wallet API scaffold
 
-**Status: isolated scaffold only — not deployed and not production-ready.**
+**Status: isolated prototype only — not deployed and not production-ready.**
 
-This module is a deliberately fail-closed HTTP handler for future server-side integration. It is not wired to a real identity provider, session verifier, database, Cloudflare Worker, or public website.
+The handler and Cloudflare D1 repository adapter are separate building blocks. The adapter implements only read operations for a supplied, server-verified participant ID. It is not wired to a Worker, identity provider, or any database.
 
 ## Current behavior
 
-- `GET /health`: reports `ready: false`; it does not claim that the service is operational.
-- `GET /api/v1/me`: requires an injected server-side authentication adapter.
-- `GET /api/v1/me/balance` and `GET /api/v1/me/ledger`: require both verified identity and an injected repository.
-- `/api/v1/admin/*`: denies callers without a server-verified coordinator/admin role.
-- All unimplemented routes and mutations are disabled; no points can be accrued or reversed through this scaffold.
-- Missing adapters fail closed. There is no mock identity, demo balance, or client-provided participant identity fallback.
+- `GET /health` reports `ready: false`; it is not a readiness guarantee.
+- `GET /api/v1/me` requires an injected server-side authentication adapter.
+- Balance and history require verified identity plus an injected repository.
+- Ledger history uses a bounded page size and an opaque, validated cursor.
+- Personal/account responses use `Cache-Control: no-store`.
+- Admin routes deny callers without a server-verified coordinator/admin role.
+- All mutations remain disabled. No points can be accrued, reversed, transferred, or topped up through this scaffold.
+- Missing adapters fail closed. There is no mock identity, fabricated balance, or browser-provided participant ID fallback.
 
 ## Before any deployment
 
-1. Select and configure a supported identity provider; validate issuer, audience, expiry, signature, revocation/session rules, and role assignment server-side.
-2. Implement a persistent repository with transactional ledger writes, durable idempotency, and atomic audit events.
-3. Add schema migrations, least-privilege database access, input limits, rate limits, CORS/CSRF policy appropriate to the chosen auth method, privacy/retention rules, and monitoring.
-4. Test authorization boundaries, replay/idempotency, concurrency, rollback, backup and recovery.
-5. Review legal terms and participant/admin operating procedures.
-6. Configure secrets only in the server environment. Never commit tokens, passwords, or production personal data.
+1. Configure a real identity/session provider and verify signature, issuer, audience, expiry, revocation and server-side role assignment.
+2. Review and apply migrations only to a disposable, non-production D1 database first; inspect schema and data compatibility.
+3. Implement transactional activity approval, ledger write, durable idempotency and atomic audit writes.
+4. Add rate limits, explicit CORS/CSRF policy, privacy/retention rules, monitoring and least-privilege database access.
+5. Test authorization bypass, replay, concurrent requests, rollback, backup and restore.
+6. Complete legal and operational review before real participants or any practical value for points.
 
-Run the current domain and handler tests from `wallet/prototype` with Node.js 20+:
+Run the synthetic test suite from `wallet/prototype` with Node.js 20+:
 
 ```sh
 npm test
 ```
 
-This scaffold does not connect to the main site, the ЖАК assistant, analytics infrastructure, AppDeploy backups, or COIN УСЕРДИЕ / BFU. Do not treat it as an operational wallet.
+This scaffold is not connected to the public site, ЖАК backend, analytics, AppDeploy, or COIN УСЕРДИЕ / BFU. Do not treat it as an operational wallet.

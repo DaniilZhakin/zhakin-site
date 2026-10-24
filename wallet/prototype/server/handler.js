@@ -3,6 +3,7 @@
  * Not deployed. No provider or database is configured by this module.
  * All trust decisions and persistence must be supplied by server-side adapters.
  */
+const MAX_LEDGER_CURSOR_LENGTH = 512;
 
 const json = (status, payload) => new Response(JSON.stringify(payload), {
   status,
@@ -22,15 +23,18 @@ function hasRole(principal, roles) {
   return Array.isArray(principal?.roles) && roles.some((role) => principal.roles.includes(role));
 }
 
+function isInvalidCursorError(error) {
+  return error instanceof TypeError && /cursor/i.test(error.message);
+}
+
 /**
  * Dependencies:
  * - authenticate(request, env): returns a server-verified principal or null.
  * - repository.getBalance(participantId)
- * - repository.listLedger(participantId, { limit, cursor })
+ * - repository.listLedger(participantId, { limit, cursor }) returns
+ *   { entries, nextCursor } (legacy test adapters may return an array).
  *
- * No request body, header, query parameter, or browser-supplied ID is accepted
- * as proof of identity. Authentication must validate a real session/token in
- * a trusted provider adapter before this handler can be used.
+ * Never accept browser-supplied identity, role, balance, or approval status.
  */
 export function createWalletHandler({ authenticate, repository } = {}) {
   return async function handleWalletRequest(request, env = {}) {
@@ -44,8 +48,6 @@ export function createWalletHandler({ authenticate, repository } = {}) {
     if (!["GET", "POST"].includes(request.method)) {
       return json(405, { error: "method_not_allowed" });
     }
-
-    // Fail closed when no trusted authentication adapter is wired.
     if (typeof authenticate !== "function") return unavailable();
 
     let principal;
@@ -68,9 +70,7 @@ export function createWalletHandler({ authenticate, repository } = {}) {
     if (request.method === "GET" && (
       path === "/api/v1/me/balance" || path === "/api/v1/me/ledger"
     )) {
-      // No public or in-memory fallback is permitted for account data.
       if (!repository) return unavailable();
-
       try {
         if (path === "/api/v1/me/balance") {
           if (typeof repository.getBalance !== "function") return unavailable();
@@ -82,13 +82,20 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
-        const entries = await repository.listLedger(principal.id, {
-          limit: 50,
-          cursor: url.searchParams.get("cursor"),
-        });
-        if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
-      } catch {
+        const cursor = url.searchParams.get("cursor");
+        if (cursor && (cursor.length > MAX_LEDGER_CURSOR_LENGTH ||
+            !/^[A-Za-z0-9_-]+$/.test(cursor))) {
+          return json(400, { error: "invalid_cursor" });
+        }
+        const page = await repository.listLedger(principal.id, { limit: 50, cursor });
+        if (Array.isArray(page)) return json(200, { entries: page, next_cursor: null });
+        if (!page || !Array.isArray(page.entries) ||
+            !(page.nextCursor === null || typeof page.nextCursor === "string")) {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, { entries: page.entries, next_cursor: page.nextCursor });
+      } catch (error) {
+        if (isInvalidCursorError(error)) return json(400, { error: "invalid_cursor" });
         return json(503, { error: "ledger_unavailable" });
       }
     }
@@ -97,8 +104,8 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       return json(403, { error: "forbidden" });
     }
 
-    // Mutations intentionally remain disabled until transactional repository,
-    // persistent idempotency, review workflow and audit adapter are implemented.
+    // Writes stay disabled until the transactional workflow, persistent
+    // idempotency, authorization and audit adapters are implemented and reviewed.
     return json(501, { error: "not_implemented" });
   };
 }
