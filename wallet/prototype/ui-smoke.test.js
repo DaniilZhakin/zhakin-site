@@ -97,3 +97,23 @@ test("demo task controls stay usable on narrow mobile screens", async () => {
   assert.match(page, /\.wallet-demo-task \.wallet-demo-button\{grid-column:2;justify-self:end;min-width:112px\}/);
   assert.match(page, /\.wallet-demo-button:focus-visible\{outline:2px solid/);
 });
+
+test("wallet planned points volume and welcome bonus are disclosed as future-only", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.ok(page.includes("Общий плановый объём бонусов"));
+  assert.ok(page.includes("3 000 000 000 000"));
+  assert.ok(page.includes("Планируемый стартовый бонус участника"));
+  assert.ok(page.includes("10 000"));
+  assert.ok(page.includes("Сейчас бонус не начисляется"));
+  assert.ok(page.includes("COIN УСЕРДИЕ (BFU) является отдельным проектом фонда"));
+});
+
+test("wallet visual polish preserves responsive accessible controls", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.ok(page.includes("Visual polish v2: more app-like hierarchy"));
+  assert.ok(page.includes("border-radius:13px"));
+  assert.ok(page.includes("border-radius:12px"));
+  assert.ok(page.includes("min-height:44px"));
+  assert.ok(page.includes("@media(max-width:600px)"));
+  assert.ok(page.includes("prefers-reduced-motion:reduce"));
+});
