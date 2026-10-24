@@ -39,8 +39,10 @@
     .wallet-balance span{font-size:.32em;color:var(--zw-gold-light);letter-spacing:.04em;margin-left:5px}
     .wallet-balance-note{color:#a8b9ad;font-size:.8rem}
     .wallet-actions{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:9px;margin-top:23px}
-    .wallet-action{appearance:none;border:1px solid rgba(216,189,120,.36);border-radius:3px;background:rgba(5,14,10,.28);color:#e7d7a8;padding:10px 13px;font:inherit;font-size:.74rem;font-weight:650;letter-spacing:.035em;opacity:.72;cursor:not-allowed}
-    .wallet-action:disabled{opacity:.72}
+    .wallet-action{appearance:none;border:1px solid rgba(216,189,120,.36);border-radius:3px;background:rgba(5,14,10,.28);color:#e7d7a8;padding:10px 13px;font:inherit;font-size:.74rem;font-weight:650;letter-spacing:.035em;cursor:pointer;transition:background .18s ease,border-color .18s ease}
+    .wallet-action:hover{background:rgba(216,189,120,.12);border-color:rgba(216,189,120,.65)}
+    .wallet-action:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:3px}
+    .wallet-action:disabled{opacity:.72;cursor:not-allowed}
     .wallet-planned{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px;margin-top:20px;padding:22px 25px;border:1px solid rgba(216,189,120,.2);border-radius:4px;background:linear-gradient(105deg,rgba(40,74,58,.38),rgba(255,255,255,.015))}
     .wallet-planned-label{color:#aebdb1;font-size:.69rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:7px}
     .wallet-planned-value{color:#f0dfae;font-size:clamp(1.7rem,4vw,2.45rem);font-weight:560;letter-spacing:-.045em;line-height:1.1}
@@ -108,6 +110,47 @@
     .wallet-security-icon{flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;border:1px solid rgba(216,189,120,.32);border-radius:50%;color:#e6d39f;font-size:.75rem}
     .wallet-security-line strong{color:#d9e0d9;font-weight:600}
     @media(max-width:600px){.wallet-dashboard{padding:17px 14px}.wallet-dashboard-head{align-items:flex-start;flex-direction:column;gap:6px}.wallet-overview-grid{grid-template-columns:1fr;gap:8px}.wallet-overview-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;padding:12px}.wallet-overview-label{grid-column:1}.wallet-overview-value{grid-column:2;grid-row:1/3;margin:0;font-size:1.2rem}.wallet-overview-note{grid-column:1}.wallet-shortcuts{gap:7px}.wallet-shortcuts-label{flex-basis:100%;margin-bottom:2px}.wallet-shortcut{min-height:40px;padding:9px 10px}.wallet-security-line{font-size:.73rem}}
+
+    .wallet-demo{margin:22px 0 26px;padding:24px;border:1px solid rgba(216,189,120,.36);border-radius:5px;background:linear-gradient(125deg,rgba(27,54,40,.78),rgba(13,22,17,.96));box-shadow:0 16px 44px rgba(0,0,0,.18)}
+    .wallet-demo-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid rgba(216,189,120,.4);color:#f0dfae;font-size:.65rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
+    .wallet-demo-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#d8bd78}
+    .wallet-demo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:14px 0 20px}
+    .wallet-demo-head h2{margin:0 0 8px;color:#f5f2e9;font-size:clamp(1.4rem,3vw,2rem);font-weight:560;letter-spacing:-.035em}
+    .wallet-demo-head p{max-width:700px;margin:0;color:#aebbb2;font-size:.84rem;line-height:1.7}
+    .wallet-demo-balance{padding:18px 20px;border:1px solid rgba(216,189,120,.22);background:rgba(0,0,0,.16)}
+    .wallet-demo-balance-label{color:#aebdb1;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+    .wallet-demo-balance-value{display:block;margin:8px 0 4px;color:#f0dfae;font-size:clamp(2rem,5vw,3rem);font-weight:560;letter-spacing:-.05em}
+    .wallet-demo-balance-note{color:#9eada2;font-size:.75rem;line-height:1.6}
+    .wallet-demo-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:15px;margin-top:15px}
+    .wallet-demo-panel{min-width:0;padding:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.018)}
+    .wallet-demo-panel h3{margin:0 0 13px;color:#f2efe6;font-size:1rem;font-weight:600}
+    .wallet-demo-task{display:flex;align-items:center;justify-content:space-between;gap:13px;padding:13px 0;border-top:1px solid rgba(255,255,255,.07)}
+    .wallet-demo-task:first-of-type{border-top:0}
+    .wallet-demo-task strong{display:block;color:#e9eee8;font-size:.83rem;font-weight:600}
+    .wallet-demo-task small{display:block;margin-top:5px;color:#a4b1a7;font-size:.73rem;line-height:1.5}
+    .wallet-demo-reward{flex:0 0 auto;color:#f0dfae;font-size:.78rem;font-weight:700}
+    .wallet-demo-button{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:9px 12px;border:1px solid rgba(216,189,120,.43);border-radius:3px;background:rgba(216,189,120,.07);color:#f0dfae;font:inherit;font-size:.74rem;font-weight:650;cursor:pointer;transition:background .18s ease,border-color .18s ease}
+    .wallet-demo-button:hover:not(:disabled){background:rgba(216,189,120,.15);border-color:rgba(216,189,120,.7)}
+    .wallet-demo-button:focus-visible{outline:2px solid #f0dfae;outline-offset:3px}
+    .wallet-demo-button:disabled{opacity:.55;cursor:default}
+    .wallet-demo-history{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .wallet-demo-history li{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07);color:#d5ded6;font-size:.78rem;line-height:1.5}
+    .wallet-demo-history li:last-child{border-bottom:0;padding-bottom:0}
+    .wallet-demo-history small{display:block;margin-top:3px;color:#899a8e;font-size:.68rem}
+    .wallet-demo-history strong{white-space:nowrap;color:#d9e9dc;font-size:.78rem}
+    .wallet-demo-progress{height:5px;overflow:hidden;margin:12px 0 9px;background:rgba(255,255,255,.09)}
+    .wallet-demo-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#8cae91,#d8bd78);transition:width .2s ease}
+    .wallet-demo-progress-copy{color:#aebbb2;font-size:.74rem;line-height:1.6}
+    .wallet-demo-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.08)}
+    .wallet-demo-footer p{margin:0;color:#9eada2;font-size:.72rem;line-height:1.6}
+    .wallet-demo-message{min-height:1.5em;margin:12px 0 0;color:#f0dfae;font-size:.78rem;line-height:1.6}
+    .wallet-dialog{max-width:min(440px,calc(100% - 32px));padding:25px;border:1px solid rgba(216,189,120,.45);border-radius:5px;background:#101916;color:#f5f2e9;box-shadow:0 25px 90px rgba(0,0,0,.65)}
+    .wallet-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+    .wallet-dialog h2{margin:0 0 10px;font-size:1.25rem;font-weight:600}
+    .wallet-dialog p{margin:0 0 18px;color:#b8c7bc;font-size:.87rem;line-height:1.75}
+    .wallet-dialog-actions{display:flex;justify-content:flex-end}
+    @media(max-width:700px){.wallet-demo{padding:17px 14px}.wallet-demo-head{flex-direction:column;gap:9px}.wallet-demo-grid{grid-template-columns:1fr}.wallet-demo-panel{padding:15px}.wallet-demo-task{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}.wallet-demo-task>div{min-width:0}.wallet-demo-task .wallet-demo-button{grid-column:2;justify-self:end;min-width:112px}.wallet-demo-footer{align-items:flex-start;flex-direction:column}}
+
     .wallet-skip-link{position:absolute;z-index:20;top:8px;left:8px;transform:translateY(-160%);padding:11px 15px;background:var(--zw-gold-light);color:#101610;font-weight:700;border-radius:2px}
     .wallet-skip-link:focus{transform:translateY(0)}
     .wallet-page a:focus-visible,.site-header a:focus-visible,.site-header button:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:4px;border-radius:2px}
@@ -226,6 +269,22 @@
       <aside class="wallet-intro-aside"><strong>Принцип платформы</strong>Каждое действие должно быть проверяемым. Каждое начисление — иметь основание. Каждое изменение — оставлять след в журнале аудита.</aside>
     </section>
     <div class="wallet-status" role="status"><span class="wallet-status-mark" aria-hidden="true"></span><div><strong>Визуальный прототип · подключение сервисов ещё не выполнено.</strong><br>Личный аккаунт, реальный баланс и операции пока не подключены. На этой странице нет настоящих счетов или начислений.</div></div>
+    <section class="wallet-demo" id="wallet-demo" aria-labelledby="wallet-demo-title" data-demo-only="true">
+      <span class="wallet-demo-badge">Демо-режим · только тестовые данные</span>
+      <div class="wallet-demo-head"><div><h2 id="wallet-demo-title">Попробуйте ZHAKIN Wallet</h2><p>Интерактивный макет показывает, как могут выглядеть задания, бонусные начисления и журнал активности. Это отдельный учебный сценарий — он не связан с личным счётом.</p></div><span class="wallet-prototype-label">Сессия без сохранения</span></div>
+      <div class="wallet-demo-balance"><span class="wallet-demo-balance-label">Условный демо-баланс</span><strong class="wallet-demo-balance-value" id="wallet-demo-balance" aria-live="polite">1 250 ZP</strong><span class="wallet-demo-balance-note">Вымышленное значение для демонстрации интерфейса. Не реальные баллы, деньги или актив.</span></div>
+      <div class="wallet-demo-grid">
+        <section class="wallet-demo-panel" aria-labelledby="wallet-demo-tasks-title"><h3 id="wallet-demo-tasks-title">Тестовые задания</h3>
+          <div class="wallet-demo-task"><div><strong>Изучить возможности кошелька</strong><small>Пример подтверждённой активности</small></div><span class="wallet-demo-reward">+25 ZP</span><button class="wallet-demo-button" type="button" data-demo-task="intro" data-reward="25">Выполнить</button></div>
+          <div class="wallet-demo-task"><div><strong>Ознакомиться с правилами</strong><small>Пример образовательного задания</small></div><span class="wallet-demo-reward">+50 ZP</span><button class="wallet-demo-button" type="button" data-demo-task="rules" data-reward="50">Выполнить</button></div>
+          <div class="wallet-demo-task"><div><strong>Проверить журнал операций</strong><small>Пример задания на прозрачность</small></div><span class="wallet-demo-reward">+75 ZP</span><button class="wallet-demo-button" type="button" data-demo-task="history" data-reward="75">Выполнить</button></div>
+        </section>
+        <section class="wallet-demo-panel" aria-labelledby="wallet-demo-history-title"><h3 id="wallet-demo-history-title">Демо-история</h3><ul class="wallet-demo-history" id="wallet-demo-history" aria-live="polite"><li><span>Стартовый пример<small>Синтетическая запись · не реальная операция</small></span><strong>1 250 ZP</strong></li></ul>
+          <h3 style="margin-top:20px">Прогресс демо-сессии</h3><div class="wallet-demo-progress" role="progressbar" aria-label="Выполненные демо-задания" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" id="wallet-demo-progress"><span></span></div><p class="wallet-demo-progress-copy" id="wallet-demo-progress-copy">Выполнено 0 из 3 заданий. Пройдите любое задание, чтобы увидеть пример начисления.</p><p class="wallet-demo-message" id="wallet-demo-message" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      <div class="wallet-demo-footer"><p>Данные хранятся только в памяти открытой страницы и сбрасываются при перезагрузке.</p><button class="wallet-demo-button" type="button" id="wallet-demo-reset">Сбросить демо</button></div>
+    </section>
     <section class="wallet-dashboard" aria-labelledby="wallet-overview-title">
       <div class="wallet-dashboard-head"><h2 id="wallet-overview-title">Обзор кошелька</h2><p>Личное пространство · статус подключения</p></div>
       <div class="wallet-overview-grid">
@@ -243,7 +302,7 @@
         <div class="wallet-card-label">Баланс внутренних баллов</div>
         <div class="wallet-balance" aria-label="Баланс пока недоступен">— <span>ZP</span></div>
         <div class="wallet-balance-note">Данные появятся после защищённой авторизации</div>
-        <div class="wallet-actions" aria-label="Планируемые действия с баллами"><button class="wallet-action" type="button" disabled aria-disabled="true">＋ Пополнить</button><button class="wallet-action" type="button" disabled aria-disabled="true">↗ Подарить</button><button class="wallet-action" type="button" disabled aria-disabled="true">⇄ Передать</button></div>
+        <div class="wallet-actions" aria-label="Планируемые действия с баллами"><button class="wallet-action" type="button" data-wallet-info="Пополнение">＋ Пополнить</button><button class="wallet-action" type="button" data-wallet-info="Подарки">↗ Подарить</button><button class="wallet-action" type="button" data-wallet-info="Переводы">⇄ Передать</button></div>
         <div class="wallet-card-bottom"><span>Участник ZHAKIN Digital</span><span>Wallet / 01</span></div>
       </section>
       <div class="wallet-side">
@@ -271,10 +330,98 @@
         <article class="wallet-step"><span class="wallet-step-num">ЭТАП 02</span><h3>Защищённая инфраструктура</h3><p>Авторизация, база данных, серверный реестр и журнал аудита.</p></article>
         <article class="wallet-step"><span class="wallet-step-num">ЭТАП 03</span><h3>Закрытый пилот</h3><p>Проверка доступа, начислений, исправлений и восстановления данных до допуска участников.</p></article>
       </div>
-      <p class="wallet-disclaimer">ZHAKIN Points (ZP) — планируемые внутренние баллы учёта подтверждённой активности ZHAKIN Wallet. COIN УСЕРДИЕ (BFU) является отдельным проектом фонда и не связан с ZHAKIN Points. Объём 3 трлн ZP — проектный ориентир системы, а не личный баланс и не подтверждение выпуска. Кнопки «Пополнить», «Подарить» и «Передать» показаны исключительно как элементы будущего интерфейса: они отключены и не выполняют операций. Страница остаётся визуальным прототипом; авторизация, начисления, переводы и история операций не подключены.</p>
+      <p class="wallet-disclaimer">ZHAKIN Points (ZP) — планируемые внутренние баллы учёта подтверждённой активности ZHAKIN Wallet. COIN УСЕРДИЕ (BFU) является отдельным проектом фонда и не связан с ZHAKIN Points. Объём 3 трлн ZP — проектный ориентир системы, а не личный баланс и не подтверждение выпуска. Кнопки «Пополнить», «Подарить» и «Передать» открывают только пояснение и не выполняют операций. Демо-баланс и демо-задания синтетические, существуют только в памяти страницы и не имеют денежной ценности. Страница остаётся прототипом: авторизация, реальные начисления, переводы и история операций не подключены.</p>
     </section>
   </main>
   <footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Жакин • ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a></p></div></footer>
+  <dialog class="wallet-dialog" id="wallet-info-dialog" aria-labelledby="wallet-info-title"><h2 id="wallet-info-title">Функция пока не подключена</h2><p id="wallet-info-copy">Этот элемент показывает будущую возможность ZHAKIN Wallet. Реальные операции недоступны.</p><div class="wallet-dialog-actions"><button class="wallet-demo-button" type="button" id="wallet-info-close">Понятно</button></div></dialog>
+  <script>
+    (() => {
+      const balance = document.getElementById("wallet-demo-balance");
+      const history = document.getElementById("wallet-demo-history");
+      const message = document.getElementById("wallet-demo-message");
+      const progress = document.getElementById("wallet-demo-progress");
+      const progressCopy = document.getElementById("wallet-demo-progress-copy");
+      const reset = document.getElementById("wallet-demo-reset");
+      const dialog = document.getElementById("wallet-info-dialog");
+      const dialogCopy = document.getElementById("wallet-info-copy");
+      const closeDialog = document.getElementById("wallet-info-close");
+      if (!balance || !history || !reset) return;
+
+      const initialBalance = 1250;
+      const tasks = [
+        { id: "intro", label: "Изучено: возможности кошелька", reward: 25 },
+        { id: "rules", label: "Изучены: правила", reward: 50 },
+        { id: "history", label: "Проверен: журнал операций", reward: 75 }
+      ];
+      let demoBalance = initialBalance;
+      const completed = new Set();
+
+      const formatPoints = value => new Intl.NumberFormat("ru-RU").format(value) + " ZP";
+      const renderProgress = () => {
+        const count = completed.size;
+        progress.setAttribute("aria-valuenow", String(count));
+        progress.firstElementChild.style.width = (count / tasks.length * 100) + "%";
+        progressCopy.textContent = "Выполнено " + count + " из " + tasks.length + " заданий." +
+          (count === tasks.length ? " Демо-достижение открыто: «Первый шаг»." : " Пройдите любое задание, чтобы увидеть пример начисления.");
+      };
+      const addHistory = (label, reward) => {
+        const item = document.createElement("li");
+        const description = document.createElement("span");
+        description.textContent = label;
+        const note = document.createElement("small");
+        note.textContent = "Синтетическая запись · только демо";
+        description.append(note);
+        const amount = document.createElement("strong");
+        amount.textContent = "+" + formatPoints(reward);
+        item.append(description, amount);
+        history.prepend(item);
+      };
+      document.querySelectorAll("[data-demo-task]").forEach(button => {
+        button.addEventListener("click", () => {
+          const task = tasks.find(item => item.id === button.dataset.demoTask);
+          if (!task || completed.has(task.id)) return;
+          completed.add(task.id);
+          demoBalance += task.reward;
+          balance.textContent = formatPoints(demoBalance);
+          button.disabled = true;
+          button.textContent = "Выполнено ✓";
+          addHistory(task.label, task.reward);
+          message.textContent = "Демо-начисление +" + formatPoints(task.reward) + ". Реальные баллы не начислялись.";
+          renderProgress();
+        });
+      });
+      reset.addEventListener("click", () => {
+        demoBalance = initialBalance;
+        completed.clear();
+        balance.textContent = formatPoints(initialBalance);
+        history.replaceChildren();
+        const item = document.createElement("li");
+        const label = document.createElement("span");
+        label.textContent = "Стартовый пример";
+        const note = document.createElement("small");
+        note.textContent = "Синтетическая запись · не реальная операция";
+        label.append(note);
+        const amount = document.createElement("strong");
+        amount.textContent = formatPoints(initialBalance);
+        item.append(label, amount);
+        history.append(item);
+        document.querySelectorAll("[data-demo-task]").forEach(button => { button.disabled = false; button.textContent = "Выполнить"; });
+        message.textContent = "Демо-сессия сброшена. Это не повлияло на реальные данные.";
+        renderProgress();
+      });
+      document.querySelectorAll("[data-wallet-info]").forEach(button => {
+        button.addEventListener("click", () => {
+          dialogCopy.textContent = button.dataset.walletInfo + " — функция пока не подключена. В этой версии нельзя пополнить счёт, подарить или передать баллы. Никаких операций не выполнено.";
+          if (typeof dialog.showModal === "function") dialog.showModal();
+          else message.textContent = dialogCopy.textContent;
+        });
+      });
+      closeDialog.addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+      renderProgress();
+    })();
+  </script>
   <script src="/assets/js/main.js?v=20260927-9"></script>
 </body>
 </html>
