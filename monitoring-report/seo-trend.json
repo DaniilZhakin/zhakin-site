@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-24T18:10:14Z",
+  "timestamp": "2026-10-24T20:50:36Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,37 @@
     "canonical_ok_pages": 37,
     "jsonld_pages": 37,
     "noindex_pages": 0,
-    "avg_response_time_ms": 252.9,
-    "max_response_time_ms": 708,
-    "health_score": 100.0,
+    "avg_response_time_ms": 248.2,
+    "max_response_time_ms": 1149,
+    "health_score": 97.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 97.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-24T14:34:04Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -3.0,
+  "baseline_timestamp": "2026-10-24T18:10:14Z",
+  "warnings": [
+    "page-level change: /projects.html",
+    "page-level change: /publications/ai-cost-economics.html",
+    "page-level change: /publications/ai-infrastructure-economy.html"
+  ],
+  "page_changes": {
+    "/projects.html": [
+      "response_time_ms: 363 -> 1121"
+    ],
+    "/publications/ai-cost-economics.html": [
+      "response_time_ms: 673 -> 1027"
+    ],
+    "/publications/ai-infrastructure-economy.html": [
+      "response_time_ms: 196 -> 1149"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/projects.html",
+    "/publications/ai-cost-economics.html",
+    "/publications/ai-infrastructure-economy.html"
+  ],
+  "status": "warning"
 }
