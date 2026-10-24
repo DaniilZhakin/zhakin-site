@@ -1,0 +1,71 @@
+/* Shared visual rules for long-form analytical publications. */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: clip; }
+body > main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(16px, 3vw, 24px);
+  padding-right: clamp(16px, 3vw, 24px);
+}
+main img,
+main video,
+main svg {
+  max-width: 100%;
+}
+main img {
+  height: auto;
+}
+main figure {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+main figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+main .cover img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  margin-left: auto;
+  margin-right: auto;
+}
+main .cover {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 28px 0 36px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+main table {
+  max-width: 100%;
+}
+main pre,
+main table {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  body > main {
+    padding-top: 32px;
+    padding-bottom: 56px;
+  }
+  main .cover {
+    margin-top: 22px;
+    margin-bottom: 28px;
+  }
+  main figure {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
