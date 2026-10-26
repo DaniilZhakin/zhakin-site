@@ -364,6 +364,20 @@
       </div>
       <div class="wallet-demo-footer"><p>Данные хранятся только в памяти открытой страницы и сбрасываются при перезагрузке.</p><button class="wallet-demo-button" type="button" id="wallet-demo-reset">Сбросить демо</button></div>
     </section>
+    <section class="market-board" aria-labelledby="wallet-markets-title" data-market-board>
+      <p class="wallet-kicker">MARKET INTELLIGENCE · READ ONLY</p>
+      <h2 id="wallet-markets-title">Рынки и валютные курсы</h2>
+      <p>Публичные котировки Binance, OKX и Bybit и официальные валютные данные Банка России и ЕЦБ. Справочная информация; торговые операции и подключения аккаунтов недоступны.</p>
+      <button type="button" data-market-refresh>Обновить данные</button>
+      <p data-market-status role="status" aria-live="polite">Загрузка публичных данных…</p>
+      <label>Валюта отображения <select data-market-currency aria-label="Валюта отображения"><option>USD</option><option>EUR</option><option>RUB</option></select></label>
+      <h3>Криптоактивы · 24 часа</h3>
+      <div style="overflow-x:auto"><table><thead><tr><th>Актив</th><th>Цена</th><th>24 ч.</th><th>Источник</th></tr></thead><tbody data-market-crypto><tr><td colspan="4">Загрузка…</td></tr></tbody></table></div>
+      <h3>Официальные валютные курсы</h3>
+      <p>Банк России указывает рубли за единицу валюты; ЕЦБ — количество единиц валюты за 1 EUR.</p>
+      <div style="overflow-x:auto"><table><thead><tr><th>Валюта</th><th>Значение</th><th>Источник</th></tr></thead><tbody data-market-fx><tr><td colspan="3">Загрузка…</td></tr></tbody></table></div>
+      <p data-market-updated>Время успешного обновления пока отсутствует.</p>
+    </section>
     <section class="wallet-dashboard" aria-labelledby="wallet-overview-title">
       <div class="wallet-dashboard-head"><h2 id="wallet-overview-title">Обзор кошелька</h2><p>Личное пространство · статус подключения</p></div>
       <div class="wallet-overview-grid">
@@ -502,6 +516,7 @@
       renderProgress();
     })();
   </script>
+  <script src="/assets/js/wallet-markets.js?v=20261026-1" defer></script>
   <script src="/assets/js/main.js?v=20260927-9"></script>
 </body>
 </html>
