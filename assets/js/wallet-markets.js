@@ -2,6 +2,32 @@
   "use strict";
   const root = document.querySelector("[data-market-board]");
   if (!root) return;
+  if (!document.querySelector("#wallet-market-styles")) {
+    const style = document.createElement("style");
+    style.id = "wallet-market-styles";
+    style.textContent = `
+      .market-board { margin: 1.5rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid rgba(190, 158, 91, .38); border-radius: 22px; background: linear-gradient(145deg, #171b19, #101311); color: #f4f0e6; box-shadow: 0 16px 42px rgba(0,0,0,.16); }
+      .market-board h2 { margin: .3rem 0 .75rem; font-size: clamp(1.45rem, 4vw, 2rem); letter-spacing: -.035em; }
+      .market-board h3 { margin: 1.5rem 0 .7rem; font-size: 1.05rem; }
+      .market-board > p { line-height: 1.6; color: #c9c9bf; }
+      .market-board .wallet-kicker { color: #c9a96a; font-size: .72rem; letter-spacing: .15em; font-weight: 700; }
+      .market-board button, .market-board select { min-height: 42px; border-radius: 10px; border: 1px solid rgba(201,169,106,.55); padding: .65rem .9rem; background: #202721; color: #f4f0e6; font: inherit; }
+      .market-board button { cursor: pointer; margin: .35rem .5rem .35rem 0; }
+      .market-board button:disabled { opacity: .65; cursor: wait; }
+      .market-board label { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; color: #d9d7ce; }
+      .market-board [data-market-status] { font-size: .88rem; }
+      .market-board table { width: 100%; border-collapse: collapse; min-width: 430px; font-size: .9rem; }
+      .market-board th, .market-board td { text-align: left; padding: .8rem .65rem; border-bottom: 1px solid rgba(255,255,255,.09); vertical-align: top; }
+      .market-board th { color: #c9a96a; font-weight: 650; font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+      .market-board td strong, .market-board td small { display: block; }
+      .market-board td small, .market-board .market-source { color: #a9b3aa; font-size: .8rem; }
+      .market-board .market-positive { color: #76d6a0; }
+      .market-board .market-negative { color: #f19a8e; }
+      .market-board [data-market-updated] { font-size: .8rem; color: #a9b3aa; }
+      @media (max-width: 560px) { .market-board { border-radius: 16px; padding: 1rem; } .market-board th, .market-board td { padding: .7rem .5rem; } .market-board table { font-size: .82rem; } }
+    `;
+    document.head.append(style);
+  }
 
   const $ = (selector) => root.querySelector(selector);
   const status = $("[data-market-status]");
@@ -144,8 +170,9 @@
       const row = document.createElement("tr");
       const asset = document.createElement("td");
       asset.append(text("strong", q.base), text("small", q.name));
-      const price = q.price * (state.currency === "USD" ? 1 : state.currency === "EUR" ? (state.usdToEur || 1) : (state.usdToRub || 1));
-      row.append(asset, text("td", fmt(price, price < 1 ? 6 : 2) + " " + state.currency));
+      const factor = state.currency === "USD" ? 1 : state.currency === "EUR" ? state.usdToEur : state.usdToRub;
+      const price = factor === null || factor === undefined || !Number.isFinite(factor) ? null : q.price * factor;
+      row.append(asset, text("td", price === null ? "—" : fmt(price, price < 1 ? 6 : 2) + " " + state.currency));
       const change = q.change;
       const changeCell = text("td", change === null ? "—" : (change > 0 ? "+" : "") + fmt(change, 2) + "%", change > 0 ? "market-positive" : change < 0 ? "market-negative" : "");
       row.append(changeCell, text("td", q.source, "market-source"));
