@@ -93,3 +93,60 @@ test("example report fields stay within the declared shape and safety limits", (
     assert.ok(robot.summary.length <= schema.properties.robots.items.properties.summary.maxLength);
   }
 });
+
+
+function matchesJsonType(value, type) {
+  if (type === "null") return value === null;
+  if (type === "array") return Array.isArray(value);
+  if (type === "object") return value !== null && typeof value === "object" && !Array.isArray(value);
+  if (type === "integer") return Number.isInteger(value);
+  if (type === "number") return typeof value === "number" && Number.isFinite(value);
+  if (type === "boolean") return typeof value === "boolean";
+  if (type === "string") return typeof value === "string";
+  return true;
+}
+
+function collectSchemaErrors(value, definition, path = "$") {
+  const errors = [];
+  if (definition.type) {
+    const types = Array.isArray(definition.type) ? definition.type : [definition.type];
+    if (!types.some((type) => matchesJsonType(value, type))) {
+      return [`${path}: expected type ${types.join(" or ")}`];
+    }
+  }
+
+  if (Object.hasOwn(definition, "const") && value !== definition.const) {
+    errors.push(`${path}: does not match const`);
+  }
+  if (definition.enum && !definition.enum.some((item) => item === value)) {
+    errors.push(`${path}: value is outside enum`);
+  }
+  if (typeof value === "string") {
+    if (definition.minLength !== undefined && value.length < definition.minLength) errors.push(`${path}: shorter than minLength`);
+    if (definition.maxLength !== undefined && value.length > definition.maxLength) errors.push(`${path}: longer than maxLength`);
+    if (definition.pattern && !new RegExp(definition.pattern).test(value)) errors.push(`${path}: does not match pattern`);
+    if (definition.format === "date-time" && Number.isNaN(Date.parse(value))) errors.push(`${path}: invalid date-time`);
+  }
+  if (Array.isArray(value) && definition.items) {
+    value.forEach((item, index) => errors.push(...collectSchemaErrors(item, definition.items, `${path}[${index}]`)));
+  }
+  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+    for (const required of definition.required ?? []) {
+      if (!Object.hasOwn(value, required)) errors.push(`${path}: missing required property ${required}`);
+    }
+    if (definition.additionalProperties === false && definition.properties) {
+      for (const key of Object.keys(value)) {
+        if (!Object.hasOwn(definition.properties, key)) errors.push(`${path}: unexpected property ${key}`);
+      }
+    }
+    for (const [key, child] of Object.entries(definition.properties ?? {})) {
+      if (Object.hasOwn(value, key)) errors.push(...collectSchemaErrors(value[key], child, `${path}.${key}`));
+    }
+  }
+  return errors;
+}
+
+test("example report satisfies the schema's declared local contract checks", () => {
+  const errors = collectSchemaErrors(example, schema);
+  assert.deepEqual(errors, [], errors.join("\n"));
+});
