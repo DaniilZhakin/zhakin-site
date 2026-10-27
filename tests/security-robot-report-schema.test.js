@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const schema = JSON.parse(await readFile(new URL("../data/security-robot-report.schema.json", import.meta.url), "utf8"));
+const registry = JSON.parse(await readFile(new URL("../data/security-robot-registry.json", import.meta.url), "utf8"));
 
 test("report schema declares the expected JSON Schema dialect and object root", () => {
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
@@ -40,4 +41,21 @@ test("robot results, findings and recommendations reject undeclared fields", () 
   assert.equal(schema.properties.robots.items.additionalProperties, false);
   assert.equal(schema.properties.findings.items.additionalProperties, false);
   assert.equal(schema.properties.recommendations.items.additionalProperties, false);
+});
+
+test("report robot IDs map to the central registry", () => {
+  const registryIds = new Set(registry.robots.map((robot) => robot.id));
+  const reportRobotId = schema.properties.robots.items.properties.robot_id;
+  const findingRobotId = schema.properties.findings.items.properties.robot_id;
+
+  assert.equal(reportRobotId.type, "string");
+  assert.equal(findingRobotId.type.includes("string"), true);
+  assert.equal(reportRobotId.pattern, "^[a-z0-9]+(?:-[a-z0-9]+)*$");
+  assert.ok(registryIds.size > 0);
+
+  // A report may contain a subset of robots, but every reported robot must be registered.
+  for (const robot of registry.robots) {
+    assert.match(robot.id, new RegExp(reportRobotId.pattern));
+  }
+  assert.equal(registry.robots.some((robot) => robot.id === registry.coordinator_id), true);
 });
