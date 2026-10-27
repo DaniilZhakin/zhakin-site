@@ -8,6 +8,7 @@ on:
       - "data/security-robot-registry.json"
       - "tests/security-robot-registry.test.js"
       - "data/security-robot-report.schema.json"
+      - "data/security-robot-report.example.json"
       - "tests/security-robot-report-schema.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
   pull_request:
@@ -15,6 +16,7 @@ on:
       - "data/security-robot-registry.json"
       - "tests/security-robot-registry.test.js"
       - "data/security-robot-report.schema.json"
+      - "data/security-robot-report.example.json"
       - "tests/security-robot-report-schema.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
 
@@ -40,6 +42,9 @@ jobs:
 
       - name: Validate report schema JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-report.schema.json', 'utf8'))"
+
+      - name: Validate example report JSON
+        run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-report.example.json', 'utf8'))"
 
       - name: Run security robot tests
         run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js
