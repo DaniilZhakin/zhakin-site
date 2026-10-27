@@ -51,7 +51,7 @@
   const dateFmt = (value) => new Intl.DateTimeFormat("ru-RU", {
     dateStyle: "medium", timeStyle: "short"
   }).format(value);
-  const safeNumber = (value) => Number.isFinite(Number(value)) ? Number(value) : null;
+  const safeNumber = (value) => value === null || value === undefined || String(value).trim() === "" ? null : (Number.isFinite(Number(value)) ? Number(value) : null);
   const text = (tag, value, className) => {
     const el = document.createElement(tag);
     el.textContent = value;
@@ -129,7 +129,9 @@
         url: "https://api.bybit.com/v5/market/tickers?category=spot",
         parse: (data) => symbols.map((s) => {
           const q = data?.result?.list?.find((item) => item.symbol === s.symbol);
-          return q ? { ...s, source: "Bybit", price: safeNumber(q.lastPrice), change: safeNumber(q.price24hPcnt) * 100 } : null;
+          if (!q) return null;
+          const percent = safeNumber(q.price24hPcnt);
+          return { ...s, source: "Bybit", price: safeNumber(q.lastPrice), change: percent === null ? null : percent * 100 };
         }).filter(Boolean)
       }
     ];
@@ -158,7 +160,7 @@
   }
   function renderCrypto() {
     cryptoBody.replaceChildren();
-    const rows = state.quotes.filter((q) => q.price !== null && Number.isFinite(q.price));
+    const rows = state.quotes.filter((q) => q.price !== null && Number.isFinite(q.price) && q.price > 0);
     if (!rows.length) {
       cryptoBody.append(text("tr", "", "market-empty-row"));
       const cell = text("td", "Котировки временно недоступны");
@@ -210,7 +212,9 @@
     const outcomes = await Promise.allSettled([loadCrypto(), loadFx()]);
     let good = 0;
     if (outcomes[0].status === "fulfilled") { state.quotes = outcomes[0].value; good++; }
+    else { state.quotes = []; }
     if (outcomes[1].status === "fulfilled") { state.fx = outcomes[1].value; good++; }
+    else { state.fx = []; }
     const cbr = state.fx.find((group) => group.source === "Банк России");
     const ecb = state.fx.find((group) => group.source === "ЕЦБ");
     const usdRub = cbr?.rows.find((r) => r.code === "USD")?.value;
@@ -229,7 +233,7 @@
     }
     renderCrypto();
     renderFx();
-    refreshed.textContent = state.lastSuccess ? "Последнее успешное обновление: " + dateFmt(state.lastSuccess) : "Время успешного обновления пока отсутствует";
+    refreshed.textContent = state.lastSuccess ? "Последнее успешное полное обновление: " + dateFmt(state.lastSuccess) : "Время успешного полного обновления пока отсутствует";
     refreshButton.disabled = false;
     refreshButton.textContent = "Обновить данные";
   }
