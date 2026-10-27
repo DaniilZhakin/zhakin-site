@@ -51,6 +51,9 @@ test("report robot IDs map to the central registry", () => {
   assert.equal(reportRobotId.type, "string");
   assert.equal(findingRobotId.type.includes("string"), true);
   assert.equal(reportRobotId.pattern, "^[a-z0-9]+(?:-[a-z0-9]+)*$");
+  assert.deepEqual(new Set(reportRobotId.enum), registryIds);
+  assert.deepEqual(new Set(findingRobotId.enum.filter((id) => id !== null)), registryIds);
+  assert.equal(findingRobotId.enum.includes(null), true);
   assert.ok(registryIds.size > 0);
 
   // A report may contain a subset of robots, but every reported robot must be registered.
