@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const schema = JSON.parse(await readFile(new URL("../data/security-robot-report.schema.json", import.meta.url), "utf8"));
 const registry = JSON.parse(await readFile(new URL("../data/security-robot-registry.json", import.meta.url), "utf8"));
+const example = JSON.parse(await readFile(new URL("../data/security-robot-report.example.json", import.meta.url), "utf8"));
 
 test("report schema declares the expected JSON Schema dialect and object root", () => {
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
@@ -56,9 +57,39 @@ test("report robot IDs map to the central registry", () => {
   assert.equal(findingRobotId.enum.includes(null), true);
   assert.ok(registryIds.size > 0);
 
-  // A report may contain a subset of robots, but every reported robot must be registered.
   for (const robot of registry.robots) {
     assert.match(robot.id, new RegExp(reportRobotId.pattern));
   }
   assert.equal(registry.robots.some((robot) => robot.id === registry.coordinator_id), true);
+});
+
+test("example report uses only registered robots and marks all checks as not checked", () => {
+  const registryIds = new Set(registry.robots.map((robot) => robot.id));
+  assert.equal(example.schema_version, schema.properties.schema_version.const);
+  assert.equal(example.operating_mode, "observe_and_recommend");
+  assert.equal(example.production_connected, false);
+  assert.equal(example.automatic_actions_enabled, false);
+  assert.equal(example.human_approval_required, true);
+  assert.equal(example.overall_status, "unknown");
+  assert.equal(example.environment, "unknown");
+  assert.equal(Number.isNaN(Date.parse(example.generated_at)), false);
+  assert.equal(example.robots.length, registryIds.size);
+  assert.deepEqual(new Set(example.robots.map((robot) => robot.robot_id)), registryIds);
+  assert.ok(example.robots.every((robot) => robot.status === "not_checked" && robot.checked_at === null));
+  assert.deepEqual(example.findings, []);
+  assert.deepEqual(example.recommendations, []);
+  assert.ok(example.summary.includes("No robots have been connected"));
+});
+
+test("example report fields stay within the declared shape and safety limits", () => {
+  const topLevelKeys = new Set(Object.keys(schema.properties));
+  assert.ok(Object.keys(example).every((key) => topLevelKeys.has(key)));
+  assert.deepEqual(Object.keys(example).sort(), [...schema.required].sort());
+
+  for (const robot of example.robots) {
+    const allowed = new Set(Object.keys(schema.properties.robots.items.properties));
+    assert.ok(Object.keys(robot).every((key) => allowed.has(key)));
+    assert.ok(schema.properties.robots.items.required.every((key) => Object.hasOwn(robot, key)));
+    assert.ok(robot.summary.length <= schema.properties.robots.items.properties.summary.maxLength);
+  }
 });
