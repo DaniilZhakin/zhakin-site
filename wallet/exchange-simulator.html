@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d0c">
+  <title>ZHAKIN Wallet — учебный симулятор обмена</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080d0c;--panel:#101916;--line:rgba(226,203,139,.24);--gold:#d8bd78;--text:#f5f2e9;--muted:#a6b3aa;--green:#284a3a}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% 0%,rgba(42,91,65,.22),transparent 42%),var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{width:min(900px,100% - 32px);margin:0 auto;padding:36px 0 64px}.eyebrow{color:var(--gold);font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+    h1{font-size:clamp(2rem,7vw,3.7rem);line-height:1.05;letter-spacing:-.05em;margin:12px 0}.lead{color:#c2ccc4;max-width:720px}
+    .warning{margin:24px 0;padding:15px 17px;border:1px solid rgba(216,189,120,.45);background:rgba(216,189,120,.07);color:#f0dfae}
+    .panel{margin-top:18px;padding:clamp(18px,4vw,28px);border:1px solid var(--line);background:linear-gradient(145deg,#14221a,#0d1410);box-shadow:0 18px 50px #0003}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px;color:var(--muted);font-size:.85rem}
+    input,select,button{min-height:46px;width:100%;border:1px solid rgba(216,189,120,.38);border-radius:4px;padding:10px 12px;background:#0a110d;color:var(--text);font:inherit}
+    button{background:var(--green);color:#f0dfae;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+    .quote{margin-top:18px;padding:17px;border:1px solid rgba(255,255,255,.09);background:#080e0b}.quote dl{display:grid;grid-template-columns:1fr auto;gap:7px 16px;margin:0}.quote dt{color:var(--muted)}.quote dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.secondary{background:transparent;border-color:rgba(255,255,255,.18);color:var(--text)}
+    .status{min-height:1.6em;margin:12px 0 0;color:var(--gold);font-size:.88rem}h2{font-size:1.2rem;margin:0 0 12px}.history{display:grid;gap:10px;padding:0;list-style:none}.history li{padding:12px;border-bottom:1px solid rgba(255,255,255,.09);display:flex;justify-content:space-between;gap:12px}.history small{display:block;color:var(--muted)}.foot{color:var(--muted);font-size:.8rem;margin-top:22px}
+    @media(max-width:560px){main{width:min(100% - 22px,900px);padding-top:24px}.grid,.actions{grid-template-columns:1fr}.quote dl{gap:8px 10px}.history li{display:block}.history strong{display:block;margin-top:5px}}
+  </style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">ZHAKIN WALLET · EXCHANGE LAB</p>
+  <h1>Учебный симулятор обмена</h1>
+  <p class="lead">Изолированный прототип для проверки расчёта курса, комиссии, оценочного проскальзывания, срока котировки и подтверждения. Биржи не вызываются, аккаунты не подключаются, сделки не отправляются.</p>
+  <div class="warning" role="note"><strong>Только симуляция.</strong> Все цены ниже синтетические и заданы для теста. Никакие реальные активы, балансы, ZP или BFU COIN не используются. История хранится только в памяти этой страницы.</div>
+  <section class="panel" aria-labelledby="exchange-title">
+    <h2 id="exchange-title">Параметры учебной заявки</h2>
+    <div class="grid">
+      <label class="field">Отдаёте
+        <select id="from"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="USDT">USDT</option></select>
+      </label>
+      <label class="field">Получаете
+        <select id="to"><option value="USDT">USDT</option><option value="BTC">BTC</option><option value="ETH">ETH</option></select>
+      </label>
+      <label class="field">Количество
+        <input id="amount" type="number" inputmode="decimal" min="0.00000001" step="any" value="0.01" autocomplete="off">
+      </label>
+      <div class="field">Учебные параметры
+        <div style="padding:10px 0;color:#f0dfae">Комиссия 0,50% · проскальзывание 0,30%</div>
+      </div>
+    </div>
+    <div class="quote" aria-live="polite">
+      <dl>
+        <dt>Синтетический ориентир</dt><dd id="reference">—</dd>
+        <dt>Комиссия</dt><dd id="fee">—</dd>
+        <dt>Оценка проскальзывания</dt><dd id="slippage">—</dd>
+        <dt>Итог к получению</dt><dd id="result"><strong>—</strong></dd>
+        <dt>Котировка действует до</dt><dd id="expires">—</dd>
+      </dl>
+      <p id="status" class="status" role="status">Сформируйте учебную котировку.</p>
+    </div>
+    <div class="actions">
+      <button id="refresh" type="button">Рассчитать учебную котировку</button>
+      <button id="confirm" type="button" disabled>Подтвердить учебную операцию</button>
+    </div>
+  </section>
+  <section class="panel" aria-labelledby="history-title">
+    <h2 id="history-title">История учебных операций</h2>
+    <ul id="history" class="history"><li><span>Пока нет учебных операций.</span></li></ul>
+    <button id="reset" class="secondary" type="button">Сбросить историю и котировку</button>
+  </section>
+  <p class="foot">Этот файл намеренно не подключён к основной странице кошелька и не является биржевым адаптером. Для будущей реальной функциональности потребуются отдельные техническое, безопасностное, правовое и финансовое согласования. ZP и BFU COIN остаются раздельными проектными контурами.</p>
+</main>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const usd = Object.freeze({ BTC: 65000, ETH: 3200, USDT: 1 });
+  const feeRate = 0.005;
+  const slippageRate = 0.003;
+  const quoteLifetimeMs = 30000;
+  let quote = null;
+  let history = [];
+  const money = (n, max = 8) => new Intl.NumberFormat("ru-RU", { maximumFractionDigits: max }).format(n);
+  const assetAmount = (n, asset) => money(n, asset === "USDT" ? 2 : 8) + " " + asset;
+  const status = (message, mode = "info") => { $("status").textContent = message; $("status").dataset.state = mode; };
+  function validInput() {
+    const from = $("from").value;
+    const to = $("to").value;
+    const amount = Number($("amount").value);
+    return from !== to && Number.isFinite(amount) && amount > 0 && amount <= 1e12;
+  }
+  function clearQuote(message) {
+    quote = null;
+    $("reference").textContent = "—";
+    $("fee").textContent = "—";
+    $("slippage").textContent = "—";
+    $("result").textContent = "—";
+    $("expires").textContent = "—";
+    $("confirm").disabled = true;
+    status(message);
+  }
+  function calculate() {
+    if (!validInput()) {
+      clearQuote("Выберите разные активы и укажите положительное конечное количество.");
+      return;
+    }
+    const from = $("from").value;
+    const to = $("to").value;
+    const amount = Number($("amount").value);
+    const gross = amount * usd[from] / usd[to];
+    const feeAmount = gross * feeRate;
+    const slipAmount = gross * slippageRate;
+    const net = gross - feeAmount - slipAmount;
+    if (![gross, feeAmount, slipAmount, net].every(Number.isFinite) || net <= 0) {
+      clearQuote("Не удалось рассчитать котировку для введённых значений.");
+      return;
+    }
+    quote = { id: "SIM-" + (history.length + 1) + "-" + Date.now(), from, to, amount, gross, feeAmount, slipAmount, net, createdAt: Date.now(), expiresAt: Date.now() + quoteLifetimeMs };
+    $("reference").textContent = "1 " + from + " ≈ " + money(usd[from] / usd[to], 8) + " " + to;
+    $("fee").textContent = assetAmount(feeAmount, to) + " (0,50%)";
+    $("slippage").textContent = assetAmount(slipAmount, to) + " (0,30%)";
+    $("result").textContent = assetAmount(net, to);
+    $("expires").textContent = new Date(quote.expiresAt).toLocaleTimeString("ru-RU");
+    $("confirm").disabled = false;
+    status("Учебная котировка рассчитана. Подтверждение возможно в течение 30 секунд.");
+  }
+  function renderHistory() {
+    const list = $("history");
+    list.replaceChildren();
+    if (!history.length) {
+      const li = document.createElement("li");
+      li.textContent = "Пока нет учебных операций.";
+      list.append(li);
+      return;
+    }
+    history.slice().reverse().forEach(item => {
+      const li = document.createElement("li");
+      const details = document.createElement("span");
+      details.textContent = item.fromAmount + " → " + item.toAmount;
+      const note = document.createElement("small");
+      note.textContent = item.id + " · " + new Date(item.time).toLocaleString("ru-RU") + " · учебная запись";
+      details.append(note);
+      const label = document.createElement("strong");
+      label.textContent = "Симуляция";
+      li.append(details, label);
+      list.append(li);
+    });
+  }
+  $("refresh").addEventListener("click", calculate);
+  $("confirm").addEventListener("click", () => {
+    if (!quote || Date.now() >= quote.expiresAt) {
+      clearQuote("Срок котировки истёк. Рассчитайте новую котировку; операция не создана.");
+      return;
+    }
+    history.push({ id: quote.id, fromAmount: assetAmount(quote.amount, quote.from), toAmount: assetAmount(quote.net, quote.to), time: Date.now() });
+    renderHistory();
+    quote = null;
+    $("confirm").disabled = true;
+    status("Учебная запись добавлена в историю. Реальная сделка не отправлялась.", "success");
+  });
+  $("reset").addEventListener("click", () => {
+    history = [];
+    renderHistory();
+    clearQuote("История и котировка сброшены. Реальные данные не затрагивались.");
+  });
+  ["from", "to", "amount"].forEach(id => $(id).addEventListener("input", () => {
+    if (quote) clearQuote("Параметры изменились. Рассчитайте новую котировку перед подтверждением.");
+  }));
+  setInterval(() => {
+    if (quote && Date.now() >= quote.expiresAt) {
+      quote = null;
+      $("confirm").disabled = true;
+      status("Срок котировки истёк. Рассчитайте новую котировку; подтверждение отключено.");
+    }
+  }, 250);
+  renderHistory();
+})();
+</script>
+</body>
+</html>
