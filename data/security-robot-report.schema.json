@@ -81,7 +81,20 @@
         "properties": {
           "robot_id": {
             "type": "string",
-            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "enum": [
+              "zhakin-command-ai",
+              "sentinel-ai",
+              "anti-ddos-guard",
+              "botguard-ai",
+              "identity-guard",
+              "wallet-shield",
+              "exchange-guard",
+              "data-guardian",
+              "infrastructure-guard",
+              "audit-sentinel",
+              "recovery-ai"
+            ]
           },
           "status": {
             "type": "string",
@@ -156,7 +169,21 @@
               "string",
               "null"
             ],
-            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "enum": [
+              null,
+              "zhakin-command-ai",
+              "sentinel-ai",
+              "anti-ddos-guard",
+              "botguard-ai",
+              "identity-guard",
+              "wallet-shield",
+              "exchange-guard",
+              "data-guardian",
+              "infrastructure-guard",
+              "audit-sentinel",
+              "recovery-ai"
+            ]
           },
           "evidence_refs": {
             "type": "array",
