@@ -7,11 +7,15 @@ on:
     paths:
       - "data/security-robot-registry.json"
       - "tests/security-robot-registry.test.js"
+      - "data/security-robot-report.schema.json"
+      - "tests/security-robot-report-schema.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
   pull_request:
     paths:
       - "data/security-robot-registry.json"
       - "tests/security-robot-registry.test.js"
+      - "data/security-robot-report.schema.json"
+      - "tests/security-robot-report-schema.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
 
 permissions:
@@ -19,7 +23,7 @@ permissions:
 
 jobs:
   registry-tests:
-    name: Validate security robot registry
+    name: Validate security robot registry and report schema
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -34,5 +38,8 @@ jobs:
       - name: Validate registry JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-registry.json', 'utf8'))"
 
-      - name: Run registry safety tests
-        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js
+      - name: Validate report schema JSON
+        run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-report.schema.json', 'utf8'))"
+
+      - name: Run security robot tests
+        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js
