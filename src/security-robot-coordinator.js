@@ -118,7 +118,6 @@ export function coordinateReports({ reports, registry, now = Date.now(), maxAgeM
     operating_mode: "observe_and_recommend", production_connected: false, automatic_actions_enabled: false,
     human_approval_required: true, overall_status,
     summary: "Accepted " + accepted.length + " current robot report(s); rejected " + rejected.length + ". Missing or rejected reports are not considered healthy.",
-    robots: robotResults, findings, recommendations,
-    coordinator_meta: { accepted_report_count: accepted.length, rejected_reports: rejected }
+    robots: robotResults, findings, recommendations
   };
 }
