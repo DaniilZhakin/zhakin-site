@@ -58,20 +58,27 @@ export function coordinateReports({ reports, registry, now = Date.now(), maxAgeM
   const registeredIds = new Set(registry.robots.map((robot) => robot.id).filter((id) => typeof id === "string"));
   const accepted = [];
   const rejected = [];
-  const seenSources = new Set();
+  const validReports = [];
+  const sourceCounts = new Map();
 
+  // Count sources before accepting anything so conflicting duplicates never
+  // produce a result that depends on input order.
   for (const envelope of reports) {
     const errors = validateRobotEnvelope(envelope, registeredIds, now, maxAgeMs);
     if (errors.length) {
       rejected.push({ source_robot_id: isRecord(envelope) && typeof envelope.source_robot_id === "string" ? envelope.source_robot_id : null, reasons: errors });
       continue;
     }
-    if (seenSources.has(envelope.source_robot_id)) {
-      rejected.push({ source_robot_id: envelope.source_robot_id, reasons: ["duplicate report from the same robot in one batch"] });
-      continue;
-    }
-    seenSources.add(envelope.source_robot_id);
-    accepted.push(envelope);
+    validReports.push(envelope);
+    sourceCounts.set(envelope.source_robot_id, (sourceCounts.get(envelope.source_robot_id) || 0) + 1);
+  }
+
+  const conflictingSources = new Set([...sourceCounts].filter(([, count]) => count > 1).map(([id]) => id));
+  for (const source_robot_id of conflictingSources) {
+    rejected.push({ source_robot_id, reasons: ["conflicting duplicate reports from the same robot; all reports from this source rejected"] });
+  }
+  for (const envelope of validReports) {
+    if (!conflictingSources.has(envelope.source_robot_id)) accepted.push(envelope);
   }
 
   const robotResults = registry.robots.map((robot) => {
