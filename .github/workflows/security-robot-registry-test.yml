@@ -20,6 +20,8 @@ on:
       - "data/security-robot-report.schema.json"
       - "data/security-robot-report.example.json"
       - "tests/security-robot-report-schema.test.js"
+      - "src/security-robot-coordinator.js"
+      - "tests/security-robot-coordinator.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
 
 permissions:
@@ -38,6 +40,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Install standards-compliant JSON Schema validator
+        run: npm install --no-save ajv@8 ajv-formats@3
 
       - name: Validate registry JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-registry.json', 'utf8'))"
