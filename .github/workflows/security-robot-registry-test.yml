@@ -10,6 +10,8 @@ on:
       - "data/security-robot-report.schema.json"
       - "data/security-robot-report.example.json"
       - "tests/security-robot-report-schema.test.js"
+      - "src/security-robot-coordinator.js"
+      - "tests/security-robot-coordinator.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
   pull_request:
     paths:
@@ -47,4 +49,4 @@ jobs:
         run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-report.example.json', 'utf8'))"
 
       - name: Run security robot tests
-        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js
+        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js tests/security-robot-coordinator.test.js
