@@ -42,10 +42,38 @@ test("missing reports remain unavailable and overall status stays unknown", () =
   assert.ok(result.robots.every((robot) => robot.status === "unavailable"));
 });
 
-test("rejects duplicate source reports rather than silently selecting one", () => {
-  const result = coordinateReports({ reports: [report("sentinel-ai"), report("sentinel-ai", { summary: "Conflicting second report" })], registry, now: NOW });
-  assert.equal(result.robots.find((robot) => robot.robot_id === "sentinel-ai").summary, "Test-only synthetic report.");
-  assert.match(result.summary, /rejected 1/);
+test("duplicate source reports fail closed independent of input order", () => {
+  const first = report("sentinel-ai", { summary: "First synthetic report" });
+  const second = report("sentinel-ai", { summary: "Second synthetic report", status: "critical" });
+  for (const batch of [[first, second], [second, first]]) {
+    const result = coordinateReports({ reports: batch, registry, now: NOW });
+    const robot = result.robots.find((item) => item.robot_id === "sentinel-ai");
+    assert.equal(robot.status, "unavailable");
+    assert.equal(robot.checked_at, null);
+    assert.match(robot.summary, /No valid current report/);
+    assert.equal(result.overall_status, "unknown");
+    assert.match(result.summary, /rejected 2/);
+  }
+});
+
+test("accepts one current synthetic report from every registered robot", () => {
+  const reports = registry.robots.map((robot) => report(robot.id));
+  const result = coordinateReports({ reports, registry, now: NOW });
+  assert.equal(result.robots.length, 11);
+  assert.equal(result.robots.filter((robot) => robot.status === "ok").length, 11);
+  assert.equal(result.overall_status, "ok");
+  assert.equal(result.findings.length, 0);
+  assert.equal(result.automatic_actions_enabled, false);
+});
+
+test("rejects malformed evidence references", () => {
+  const malformed = report("sentinel-ai", { evidence_refs: ["test://valid", { detail: "not a reference" }] });
+  assert.ok(validateRobotEnvelope(malformed, IDS, NOW).some((error) => error.includes("evidence_refs")));
+  const malformedFinding = report("sentinel-ai", { findings: [{
+    id: "evidence-1", severity: "high", title: "Synthetic finding",
+    description: "Test-only", evidence_refs: [null]
+  }] });
+  assert.ok(validateRobotEnvelope(malformedFinding, IDS, NOW).some((error) => error.includes("evidence_refs")));
 });
 
 test("deduplicates equivalent findings, preserves evidence, and keeps highest severity", () => {
