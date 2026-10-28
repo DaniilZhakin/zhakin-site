@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
+import { coordinateReports } from "../src/security-robot-coordinator.js";
 
 const schema = JSON.parse(await readFile(new URL("../data/security-robot-report.schema.json", import.meta.url), "utf8"));
 const registry = JSON.parse(await readFile(new URL("../data/security-robot-registry.json", import.meta.url), "utf8"));
@@ -95,58 +98,40 @@ test("example report fields stay within the declared shape and safety limits", (
 });
 
 
-function matchesJsonType(value, type) {
-  if (type === "null") return value === null;
-  if (type === "array") return Array.isArray(value);
-  if (type === "object") return value !== null && typeof value === "object" && !Array.isArray(value);
-  if (type === "integer") return Number.isInteger(value);
-  if (type === "number") return typeof value === "number" && Number.isFinite(value);
-  if (type === "boolean") return typeof value === "boolean";
-  if (type === "string") return typeof value === "string";
-  return true;
-}
+const ajv = new Ajv2020({ allErrors: true, strict: true });
+addFormats(ajv);
+const validateReport = ajv.compile(schema);
 
-function collectSchemaErrors(value, definition, path = "$") {
-  const errors = [];
-  if (definition.type) {
-    const types = Array.isArray(definition.type) ? definition.type : [definition.type];
-    if (!types.some((type) => matchesJsonType(value, type))) {
-      return [`${path}: expected type ${types.join(" or ")}`];
-    }
-  }
+test("full JSON Schema 2020-12 validator accepts the example report", () => {
+  assert.equal(validateReport(example), true, JSON.stringify(validateReport.errors));
+});
 
-  if (Object.hasOwn(definition, "const") && value !== definition.const) {
-    errors.push(`${path}: does not match const`);
+test("full JSON Schema validator rejects missing fields, unsafe flags, unknown robots, and extra properties", () => {
+  const invalidCases = [
+    { ...example, summary: undefined },
+    { ...example, automatic_actions_enabled: true },
+    { ...example, robots: [{ ...example.robots[0], robot_id: "unknown-robot" }, ...example.robots.slice(1)] },
+    { ...example, unexpected: "not allowed" },
+    { ...example, recommendations: [{ id: "r1", priority: "urgent", description: "test", requires_human_approval: false }] }
+  ];
+  for (const candidate of invalidCases) {
+    assert.equal(validateReport(candidate), false);
   }
-  if (definition.enum && !definition.enum.some((item) => item === value)) {
-    errors.push(`${path}: value is outside enum`);
-  }
-  if (typeof value === "string") {
-    if (definition.minLength !== undefined && value.length < definition.minLength) errors.push(`${path}: shorter than minLength`);
-    if (definition.maxLength !== undefined && value.length > definition.maxLength) errors.push(`${path}: longer than maxLength`);
-    if (definition.pattern && !new RegExp(definition.pattern).test(value)) errors.push(`${path}: does not match pattern`);
-    if (definition.format === "date-time" && Number.isNaN(Date.parse(value))) errors.push(`${path}: invalid date-time`);
-  }
-  if (Array.isArray(value) && definition.items) {
-    value.forEach((item, index) => errors.push(...collectSchemaErrors(item, definition.items, `${path}[${index}]`)));
-  }
-  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
-    for (const required of definition.required ?? []) {
-      if (!Object.hasOwn(value, required)) errors.push(`${path}: missing required property ${required}`);
-    }
-    if (definition.additionalProperties === false && definition.properties) {
-      for (const key of Object.keys(value)) {
-        if (!Object.hasOwn(definition.properties, key)) errors.push(`${path}: unexpected property ${key}`);
-      }
-    }
-    for (const [key, child] of Object.entries(definition.properties ?? {})) {
-      if (Object.hasOwn(value, key)) errors.push(...collectSchemaErrors(value[key], child, `${path}.${key}`));
-    }
-  }
-  return errors;
-}
+});
 
-test("example report satisfies the schema's declared local contract checks", () => {
-  const errors = collectSchemaErrors(example, schema);
-  assert.deepEqual(errors, [], errors.join("\n"));
+test("coordinator output conforms to the complete report schema", () => {
+  const now = Date.parse("2026-10-28T12:00:00.000Z");
+  const report = {
+    source_robot_id: "sentinel-ai",
+    generated_at: new Date(now).toISOString(),
+    status: "ok",
+    summary: "Synthetic test report only.",
+    findings: [],
+    evidence_refs: ["test://evidence/one"]
+  };
+  const coordinated = coordinateReports({ reports: [report], registry, now });
+  assert.equal(validateReport(coordinated), true, JSON.stringify(validateReport.errors));
+  assert.equal(coordinated.production_connected, false);
+  assert.equal(coordinated.automatic_actions_enabled, false);
+  assert.equal(coordinated.human_approval_required, true);
 });
