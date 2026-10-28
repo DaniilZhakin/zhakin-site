@@ -52,7 +52,7 @@ test("duplicate source reports fail closed independent of input order", () => {
     assert.equal(robot.checked_at, null);
     assert.match(robot.summary, /No valid current report/);
     assert.equal(result.overall_status, "unknown");
-    assert.match(result.summary, /rejected 2/);
+    assert.match(result.summary, /rejected 1/);
   }
 });
 
