@@ -78,3 +78,16 @@ WHEN NEW.activity_id IS NOT NULL AND NOT EXISTS (
 BEGIN
   SELECT RAISE(ABORT, 'wallet activity participant mismatch');
 END;
+
+
+-- Ledger identity and ownership are immutable; only lifecycle status may change.
+CREATE TRIGGER IF NOT EXISTS trg_wallet_ledger_identity_immutable
+BEFORE UPDATE OF participant_id, activity_id, id, idempotency_key
+ON wallet_ledger_entries
+WHEN NEW.participant_id != OLD.participant_id
+  OR NEW.activity_id IS NOT OLD.activity_id
+  OR NEW.id != OLD.id
+  OR NEW.idempotency_key != OLD.idempotency_key
+BEGIN
+  SELECT RAISE(ABORT, 'wallet ledger identity is immutable');
+END;
