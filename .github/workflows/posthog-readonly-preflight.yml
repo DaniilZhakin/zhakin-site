@@ -2,12 +2,27 @@ name: PostHog read-only preflight
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/posthog-readonly-preflight.yml"
 
 permissions:
   contents: read
 
 jobs:
+  validate-workflow:
+    if: github.event_name == 'pull_request'
+    name: Validate workflow YAML without accessing secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Parse workflow YAML
+        run: ruby -e 'require "yaml"; YAML.load_file(".github/workflows/posthog-readonly-preflight.yml"); puts "PASS: workflow YAML parsed successfully"'
+
   preflight:
+    if: github.event_name == 'workflow_dispatch'
     name: Verify PostHog credentials and read-only query access
     runs-on: ubuntu-latest
     environment: production
