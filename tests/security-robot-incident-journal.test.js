@@ -59,3 +59,38 @@ test("recorded history is preserved and resolution is explicit", () => {
   assert.equal(resolved.incident.history.length, 2);
   assert.equal(resolved.incident.created_at, base().created_at);
 });
+
+
+test("stale resolved event is recorded but cannot close a newer incident", () => {
+  const opened = mergeIncident(base(), event({ occurred_at: "2026-10-29T10:10:00.000Z", recorded_at: "2026-10-29T10:10:01.000Z" }));
+  const newer = mergeIncident(opened.incident, event({
+    event_id: "evt-updated-newer", idempotency_key: "idem-updated-newer",
+    event_type: "updated", occurred_at: "2026-10-29T10:20:00.000Z", recorded_at: "2026-10-29T10:20:01.000Z"
+  }));
+  const staleResolved = mergeIncident(newer.incident, event({
+    event_id: "evt-resolved-stale", idempotency_key: "idem-resolved-stale",
+    event_type: "resolved", occurred_at: "2026-10-29T10:15:00.000Z", recorded_at: "2026-10-29T10:21:00.000Z"
+  }));
+  assert.equal(staleResolved.accepted, true);
+  assert.equal(staleResolved.reason, "stale_event_recorded");
+  assert.equal(staleResolved.incident.status, "open");
+  assert.equal(staleResolved.incident.updated_at, newer.incident.updated_at);
+  assert.equal(staleResolved.incident.history.length, 3);
+});
+
+test("stale reopened event cannot reopen an incident resolved by a newer event", () => {
+  const opened = mergeIncident(base(), event({ occurred_at: "2026-10-29T10:10:00.000Z", recorded_at: "2026-10-29T10:10:01.000Z" }));
+  const resolved = mergeIncident(opened.incident, event({
+    event_id: "evt-resolved-newer", idempotency_key: "idem-resolved-newer",
+    event_type: "resolved", occurred_at: "2026-10-29T10:30:00.000Z", recorded_at: "2026-10-29T10:30:01.000Z"
+  }));
+  const staleReopened = mergeIncident(resolved.incident, event({
+    event_id: "evt-reopened-stale", idempotency_key: "idem-reopened-stale",
+    event_type: "reopened", occurred_at: "2026-10-29T10:25:00.000Z", recorded_at: "2026-10-29T10:31:00.000Z"
+  }));
+  assert.equal(staleReopened.accepted, true);
+  assert.equal(staleReopened.reason, "stale_event_recorded");
+  assert.equal(staleReopened.incident.status, "resolved");
+  assert.equal(staleReopened.incident.updated_at, resolved.incident.updated_at);
+  assert.equal(staleReopened.incident.history.length, 3);
+});
