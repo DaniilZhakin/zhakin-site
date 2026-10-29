@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { appendIncidentEvent, mergeIncident, validateIncidentEvent } from "../src/security-robot-incident-journal.js";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
+import incidentSchema from "../data/security-robot-incident-event.schema.json" with { type: "json" };
 
 const event = (overrides = {}) => ({
   schema_version: "1.0", event_id: "evt-001", idempotency_key: "idem-001", incident_id: "inc-001",
@@ -16,6 +19,17 @@ test("accepts a valid synthetic event", () => assert.deepEqual(validateIncidentE
 test("rejects unknown fields and missing human approval", () => {
   assert.ok(validateIncidentEvent(event({ surprise: true })).some((e) => e.includes("undeclared")));
   assert.ok(validateIncidentEvent(event({ decision: { status: "accepted", rationale: "No approval", human_approval_required: false } })).some((e) => e.includes("decision is invalid")));
+  assert.ok(validateIncidentEvent(event({ decision: { status: "accepted", rationale: "Accepted without approver", human_approval_required: true } })).some((e) => e.includes("requires a named approver")));
+  assert.ok(validateIncidentEvent(event({ event_id: "contains spaces" })).some((e) => e.includes("event_id format")));
+});
+
+test("JSON Schema enforces explicit approval metadata for accepted decisions", () => {
+  const ajv = new Ajv2020({ allErrors: true });
+  addFormats(ajv);
+  const validate = ajv.compile(incidentSchema);
+  assert.equal(validate(event()), true);
+  assert.equal(validate(event({ decision: { status: "accepted", rationale: "Approved", human_approval_required: true } })), false);
+  assert.equal(validate(event({ decision: { status: "accepted", rationale: "Approved", human_approval_required: true, approved_by: "human-reviewer", approved_at: "2026-10-29T10:02:00.000Z" } })), true);
 });
 test("idempotency key and event ID prevent duplicate history entries", () => {
   const first = appendIncidentEvent([], event());
