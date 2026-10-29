@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-29T11:48:53Z",
+  "timestamp": "2026-10-29T13:09:18Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 37,
     "jsonld_pages": 37,
     "noindex_pages": 0,
-    "avg_response_time_ms": 257.2,
-    "max_response_time_ms": 477,
-    "health_score": 100.0,
+    "avg_response_time_ms": 338.2,
+    "max_response_time_ms": 1316,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-10-29T07:06:45Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-10-29T11:48:53Z",
+  "warnings": [
+    "page-level change: /publications/ai-financial-system.html"
+  ],
+  "page_changes": {
+    "/publications/ai-financial-system.html": [
+      "response_time_ms: 355 -> 1316"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/ai-financial-system.html"
+  ],
+  "status": "warning"
 }
