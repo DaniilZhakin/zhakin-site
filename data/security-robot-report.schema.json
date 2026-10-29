@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhakin.ru/schemas/security-robot-report.schema.json",
+  "title": "Security Robot Team Report",
+  "description": "A read-only, recommendation-only report emitted by the security robot team. This schema does not authorize actions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "environment",
+    "operating_mode",
+    "production_connected",
+    "automatic_actions_enabled",
+    "human_approval_required",
+    "overall_status",
+    "summary",
+    "robots",
+    "findings",
+    "recommendations"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "development",
+        "staging",
+        "production",
+        "unknown"
+      ]
+    },
+    "operating_mode": {
+      "type": "string",
+      "const": "observe_and_recommend"
+    },
+    "production_connected": {
+      "type": "boolean",
+      "const": false
+    },
+    "automatic_actions_enabled": {
+      "type": "boolean",
+      "const": false
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "attention_required",
+        "critical",
+        "unknown"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "robots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "robot_id",
+          "status",
+          "checked_at",
+          "summary"
+        ],
+        "properties": {
+          "robot_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "enum": [
+              "zhakin-command-ai",
+              "sentinel-ai",
+              "anti-ddos-guard",
+              "botguard-ai",
+              "identity-guard",
+              "wallet-shield",
+              "exchange-guard",
+              "data-guardian",
+              "infrastructure-guard",
+              "audit-sentinel",
+              "recovery-ai"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "attention_required",
+              "critical",
+              "not_checked",
+              "unavailable"
+            ]
+          },
+          "checked_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "robot_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "enum": [
+              null,
+              "zhakin-command-ai",
+              "sentinel-ai",
+              "anti-ddos-guard",
+              "botguard-ai",
+              "identity-guard",
+              "wallet-shield",
+              "exchange-guard",
+              "data-guardian",
+              "infrastructure-guard",
+              "audit-sentinel",
+              "recovery-ai"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "priority",
+          "description",
+          "requires_human_approval"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "requires_human_approval": {
+            "type": "boolean",
+            "const": true
+          },
+          "target_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          }
+        }
+      }
+    }
+  }
+}

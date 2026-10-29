@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-28T00:00:00Z",
+  "environment": "unknown",
+  "operating_mode": "observe_and_recommend",
+  "production_connected": false,
+  "automatic_actions_enabled": false,
+  "human_approval_required": true,
+  "overall_status": "unknown",
+  "summary": "Example template only. No robots have been connected to production or checked; this sample contains no live operational evidence.",
+  "robots": [
+    { "robot_id": "zhakin-command-ai", "status": "not_checked", "checked_at": null, "summary": "Not checked; coordinator is defined in the registry only." },
+    { "robot_id": "sentinel-ai", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live health signal is connected." },
+    { "robot_id": "anti-ddos-guard", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live traffic signal is connected." },
+    { "robot_id": "botguard-ai", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live abuse signal is connected." },
+    { "robot_id": "identity-guard", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live identity signal is connected." },
+    { "robot_id": "wallet-shield", "status": "not_checked", "checked_at": null, "summary": "Not checked; no ledger or wallet signal is connected." },
+    { "robot_id": "exchange-guard", "status": "not_checked", "checked_at": null, "summary": "Not checked; no public market quote source is connected." },
+    { "robot_id": "data-guardian", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live data-flow evidence is connected." },
+    { "robot_id": "infrastructure-guard", "status": "not_checked", "checked_at": null, "summary": "Not checked; no live configuration source is connected." },
+    { "robot_id": "audit-sentinel", "status": "not_checked", "checked_at": null, "summary": "Not checked; no audit-event source is connected." },
+    { "robot_id": "recovery-ai", "status": "not_checked", "checked_at": null, "summary": "Not checked; no backup-readiness evidence is connected." }
+  ],
+  "findings": [],
+  "recommendations": []
+}
