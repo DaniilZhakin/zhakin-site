@@ -97,3 +97,45 @@ test("invalid ledger mutation fails before touching the database", async () => {
   }), /non-zero safe integer/);
   assert.equal(db.batches.length, 0);
 });
+
+
+test("ledger rejects accrual/reversal signs that would invert their meaning", async () => {
+  const db = fakeDb();
+  const repo = createD1WalletRepository(db);
+  const baseEntry = {
+    id: "ledger-sign", participantId: "participant-verified", activityId: null,
+    reason: "synthetic sign test", actorId: "admin-verified",
+    idempotencyKey: "idem-sign", createdAt: "2026-10-29T12:00:00Z",
+  };
+  const audit = {
+    id: "audit-sign", actorId: "admin-verified", action: "ledger.test",
+    targetType: "wallet_ledger_entry", targetId: "ledger-sign",
+    outcome: "success", createdAt: "2026-10-29T12:00:00Z",
+  };
+  await assert.rejects(() => repo.postLedgerEntry({ ...baseEntry, type: "accrual", points: -5 }, audit), /sign does not match/);
+  await assert.rejects(() => repo.postLedgerEntry({ ...baseEntry, type: "reversal", points: 5 }, audit), /sign does not match/);
+  assert.equal(db.batches.length, 0);
+});
+
+test("ledger permits only the expected sign for accrual and reversal", async () => {
+  const db = fakeDb();
+  const repo = createD1WalletRepository(db);
+  const audit = {
+    id: "audit-sign-ok", actorId: "admin-verified", action: "ledger.test",
+    targetType: "wallet_ledger_entry", targetId: "ledger-sign-ok",
+    outcome: "success", createdAt: "2026-10-29T12:00:00Z",
+  };
+  const common = {
+    id: "ledger-sign-ok", participantId: "participant-verified", activityId: null,
+    reason: "synthetic sign test", actorId: "admin-verified",
+    idempotencyKey: "idem-sign-ok", createdAt: "2026-10-29T12:00:00Z",
+  };
+  await repo.postLedgerEntry({ ...common, type: "accrual", points: 5 }, audit);
+  assert.equal(db.batches.length, 1);
+  const reversalDb = fakeDb();
+  await createD1WalletRepository(reversalDb).postLedgerEntry(
+    { ...common, id: "ledger-reversal-ok", idempotencyKey: "idem-reversal-ok", type: "reversal", points: -5 },
+    { ...audit, id: "audit-reversal-ok", targetId: "ledger-reversal-ok" }
+  );
+  assert.equal(reversalDb.batches.length, 1);
+});
