@@ -44,6 +44,8 @@ assert.equal(schema.properties.content_id.maxLength, 128);
 
 const migration = fs.readFileSync(new URL('./migrations/0000_create_engagement_daily.sql', import.meta.url), 'utf8');
 assertSql.match(migration, /content_id TEXT NOT NULL DEFAULT ''/);
-assertSql.match(migration, /ON CONFLICT/); // Schema and aggregation contract must preserve a stable key for events without content_id.
+const worker = fs.readFileSync(new URL('./worker.js', import.meta.url), 'utf8');
+assertSql.match(worker, /ON CONFLICT\(event_day, event_type, path, content_id, referrer_class\) DO UPDATE/);
+assertSql.match(worker, /const contentId = event\.content_id \|\| '';/);
 
 console.log('PASS: Cloudflare collector schema drift gate');
