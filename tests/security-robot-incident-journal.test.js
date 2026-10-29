@@ -94,3 +94,17 @@ test("stale reopened event cannot reopen an incident resolved by a newer event",
   assert.equal(staleReopened.incident.updated_at, resolved.incident.updated_at);
   assert.equal(staleReopened.incident.history.length, 3);
 });
+
+
+test("a delayed first event is not rejected by ingestion timestamps", () => {
+  const delayedFirst = event({
+    event_type: "resolved",
+    occurred_at: "2026-10-29T09:59:00.000Z",
+    recorded_at: "2026-10-29T10:05:00.000Z"
+  });
+  const result = mergeIncident(base(), delayedFirst);
+  assert.equal(result.accepted, true);
+  assert.equal(result.reason, "updated");
+  assert.equal(result.incident.status, "resolved");
+  assert.equal(result.incident.updated_at, delayedFirst.recorded_at);
+});
