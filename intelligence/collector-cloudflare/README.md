@@ -8,6 +8,13 @@ This directory contains the first provider-specific implementation of the indepe
 
 The public website remains static. The collector is an isolated external service and is designed so the site remains functional if the collector is unavailable.
 
+## Endpoint contract
+
+- Canonical ingestion route: `POST /v1/events`.
+- `OPTIONS /v1/events` is used for CORS preflight.
+- The legacy `/api/events` route is intentionally rejected; the website must not send events to it.
+- This route correction does not enable browser collection or imply a production deployment.
+
 ## Data model
 
 The collector stores **aggregate anonymous counters only** in D1. It does not persist:
