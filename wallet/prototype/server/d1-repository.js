@@ -145,6 +145,13 @@ export function createD1WalletRepository(db) {
       if (!["accrual", "reversal", "adjustment"].includes(entry.type)) {
         throw new TypeError("entry.type is invalid");
       }
+      if ((entry.type === "accrual" && entry.points < 0) ||
+          (entry.type === "reversal" && entry.points > 0)) {
+        throw new TypeError("entry.points sign does not match entry.type");
+      }
+      if (entry.activityId != null && (typeof entry.activityId !== "string" || !entry.activityId)) {
+        throw new TypeError("entry.activityId must be a non-empty string or null");
+      }
       if (typeof entry.idempotencyKey !== "string" || entry.idempotencyKey.length > 200) {
         throw new TypeError("entry.idempotencyKey is invalid");
       }
