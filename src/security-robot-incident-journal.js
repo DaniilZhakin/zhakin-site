@@ -58,18 +58,34 @@ export function mergeIncident(current, event) {
   const appended = appendIncidentEvent(current.history || [], event);
   if (!appended.accepted) return { accepted: false, reason: appended.reason, errors: appended.errors, incident: current };
   if (current.incident_id !== event.incident_id) return { accepted: false, reason: "incident_id_mismatch", errors: [], incident: current };
-  const latestRecorded = Date.parse(current.updated_at || current.created_at || 0);
+  const incomingOccurred = Date.parse(event.occurred_at);
   const incomingRecorded = Date.parse(event.recorded_at);
+  const latestStateEvent = (current.history || []).reduce((latest, item) => {
+    if (!latest) return item;
+    const itemOccurred = Date.parse(item.occurred_at);
+    const latestOccurred = Date.parse(latest.occurred_at);
+    if (itemOccurred > latestOccurred) return item;
+    if (itemOccurred === latestOccurred && Date.parse(item.recorded_at) > Date.parse(latest.recorded_at)) return item;
+    return latest;
+  }, null);
+  // Without prior event history there is no event-time watermark yet.
+  // created_at/updated_at are ingestion timestamps and must not reject a delayed first event.
+  const latestOccurred = latestStateEvent ? Date.parse(latestStateEvent.occurred_at) : Number.NEGATIVE_INFINITY;
+  const latestEventRecorded = latestStateEvent ? Date.parse(latestStateEvent.recorded_at) : Number.NEGATIVE_INFINITY;
+  const stale = incomingOccurred < latestOccurred ||
+    (incomingOccurred === latestOccurred && incomingRecorded < latestEventRecorded);
   const nextSeverity = SEVERITY[event.severity] > SEVERITY[current.severity] ? event.severity : current.severity;
   return {
-    accepted: true, reason: "updated", errors: [],
+    accepted: true, reason: stale ? "stale_event_recorded" : "updated", errors: [],
     incident: {
       ...current,
       incident_id: current.incident_id,
       created_at: current.created_at || event.recorded_at,
-      updated_at: Number.isFinite(incomingRecorded) && incomingRecorded >= latestRecorded ? event.recorded_at : (current.updated_at || current.created_at || event.recorded_at),
+      updated_at: stale ? (current.updated_at || current.created_at || event.recorded_at) : event.recorded_at,
       severity: nextSeverity,
-      status: event.event_type === "resolved" ? "resolved" : event.event_type === "reopened" ? "open" : (current.status || "open"),
+      status: stale ? (current.status || "open") :
+        event.event_type === "resolved" ? "resolved" :
+        event.event_type === "reopened" ? "open" : (current.status || "open"),
       history: appended.history
     }
   };
