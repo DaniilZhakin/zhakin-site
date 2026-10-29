@@ -23,6 +23,8 @@ jobs:
           test -n "$POSTHOG_HOST"
           test -n "$POSTHOG_PROJECT_ID"
           test -n "$POSTHOG_API_KEY"
+          POSTHOG_HOST="${POSTHOG_HOST%/}"
+          echo "POSTHOG_HOST=$POSTHOG_HOST" >> "$GITHUB_ENV"
 
           case "$POSTHOG_HOST" in
             https://us.posthog.com|https://eu.posthog.com) ;;
