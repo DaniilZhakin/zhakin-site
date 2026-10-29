@@ -103,4 +103,30 @@ const allowedHeaders = { Origin: 'https://xn--80alhhq.xn--p1ai', 'Content-Type':
   assert.equal(result.cutoff, '2026-06-04'); assert.equal(result.retentionDays, 90); assert.equal(calls.length, 1);
 }
 
+
+{
+  const prepared = [];
+  const env = createRateLimiterEnv();
+  env.DB = {
+    prepare: (sql) => ({
+      bind: (...params) => {
+        const statement = { sql, params };
+        prepared.push(statement);
+        return statement;
+      },
+    }),
+    batch: async (statements) => { assert.equal(statements.length, 1); },
+  };
+  const response = await worker.fetch(new Request('https://collector.example/v1/events', {
+    method: 'POST',
+    body: JSON.stringify({ event_type: 'page_view', path: '/about.html', schema_version: '3.0' }),
+    headers: allowedHeaders,
+  }), env);
+  assert.equal(response.status, 202);
+  assert.equal(prepared.length, 1);
+  assert.match(prepared[0].sql, /ON CONFLICT\(event_day, event_type, path, content_id, referrer_class\) DO UPDATE SET event_count = event_count \+ 1/);
+  assert.equal(prepared[0].params[3], '');
+  assert.equal(prepared[0].params[5], undefined); // event_count is the SQL literal 1, not a bound parameter.
+}
+
 console.log('PASS: Cloudflare collector contract + RFC3339 + rate-limit + HTTP + retention tests');
