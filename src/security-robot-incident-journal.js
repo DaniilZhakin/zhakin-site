@@ -68,8 +68,10 @@ export function mergeIncident(current, event) {
     if (itemOccurred === latestOccurred && Date.parse(item.recorded_at) > Date.parse(latest.recorded_at)) return item;
     return latest;
   }, null);
-  const latestOccurred = latestStateEvent ? Date.parse(latestStateEvent.occurred_at) : Date.parse(current.created_at || 0);
-  const latestEventRecorded = latestStateEvent ? Date.parse(latestStateEvent.recorded_at) : Date.parse(current.updated_at || current.created_at || 0);
+  // Without prior event history there is no event-time watermark yet.
+  // created_at/updated_at are ingestion timestamps and must not reject a delayed first event.
+  const latestOccurred = latestStateEvent ? Date.parse(latestStateEvent.occurred_at) : Number.NEGATIVE_INFINITY;
+  const latestEventRecorded = latestStateEvent ? Date.parse(latestStateEvent.recorded_at) : Number.NEGATIVE_INFINITY;
   const stale = incomingOccurred < latestOccurred ||
     (incomingOccurred === latestOccurred && incomingRecorded < latestEventRecorded);
   const nextSeverity = SEVERITY[event.severity] > SEVERITY[current.severity] ? event.severity : current.severity;
