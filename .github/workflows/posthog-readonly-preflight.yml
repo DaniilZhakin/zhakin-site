@@ -43,7 +43,6 @@ jobs:
 
       - name: Run read-only WebOverviewQuery
         env:
-          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
           POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: |
