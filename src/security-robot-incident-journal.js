@@ -10,24 +10,33 @@ export function validateIncidentEvent(event) {
   for (const key of Object.keys(event)) if (!allowed.has(key)) errors.push("undeclared field: " + key);
   if (event.schema_version !== "1.0") errors.push("schema_version must be 1.0");
   for (const key of ["event_id", "idempotency_key", "incident_id", "summary"]) if (typeof event[key] !== "string" || !event[key].trim()) errors.push(key + " must be a non-empty string");
+  if (typeof event.event_id === "string" && (event.event_id.length > 120 || !/^[A-Za-z0-9._:-]+$/.test(event.event_id))) errors.push("event_id format is invalid");
+  if (typeof event.incident_id === "string" && (event.incident_id.length > 120 || !/^[A-Za-z0-9._:-]+$/.test(event.incident_id))) errors.push("incident_id format is invalid");
+  if (typeof event.idempotency_key === "string" && event.idempotency_key.length > 160) errors.push("idempotency_key is too long");
+  if (typeof event.summary === "string" && event.summary.length > 2000) errors.push("summary is too long");
   if (!EVENT_TYPES.has(event.event_type)) errors.push("event_type is invalid");
   if (!Object.hasOwn(SEVERITY, event.severity)) errors.push("severity is invalid");
   for (const key of ["occurred_at", "recorded_at"]) if (typeof event[key] !== "string" || Number.isNaN(Date.parse(event[key]))) errors.push(key + " must be a valid timestamp");
   if (!event.classification || typeof event.classification !== "object" || Array.isArray(event.classification)) errors.push("classification must be an object");
   else {
     for (const key of ["facts", "hypotheses", "recommendations"]) {
-      if (!Array.isArray(event.classification[key]) || event.classification[key].some((v) => typeof v !== "string" || !v.trim())) errors.push("classification." + key + " must be an array of non-empty strings");
+      if (!Array.isArray(event.classification[key]) || event.classification[key].some((v) => typeof v !== "string" || !v.trim() || v.length > 2000)) errors.push("classification." + key + " must be an array of non-empty strings up to 2000 characters");
     }
     for (const key of Object.keys(event.classification)) if (!["facts", "hypotheses", "recommendations"].includes(key)) errors.push("undeclared classification field: " + key);
   }
   if (!Array.isArray(event.sources)) errors.push("sources must be an array");
   else for (const source of event.sources) {
-    if (!source || typeof source !== "object" || typeof source.source_id !== "string" || typeof source.reference !== "string" || typeof source.observed_at !== "string" || Number.isNaN(Date.parse(source.observed_at))) errors.push("each source needs source_id, reference, and a valid observed_at");
+    if (!source || typeof source !== "object" || Array.isArray(source) || typeof source.source_id !== "string" || !source.source_id.trim() || source.source_id.length > 120 || typeof source.reference !== "string" || !source.reference.trim() || source.reference.length > 500 || typeof source.observed_at !== "string" || Number.isNaN(Date.parse(source.observed_at))) errors.push("each source needs bounded source_id, reference, and a valid observed_at");
     else if (Object.keys(source).some((key) => !["source_id", "reference", "observed_at"].includes(key))) errors.push("source contains undeclared fields");
   }
   const decision = event.decision;
-  if (!decision || typeof decision !== "object" || !["pending_review", "accepted", "rejected", "deferred", "not_applicable"].includes(decision.status) || typeof decision.rationale !== "string" || decision.human_approval_required !== true) errors.push("decision is invalid or omits mandatory human approval");
-  else if (Object.keys(decision).some((key) => !["status", "rationale", "human_approval_required", "approved_by", "approved_at"].includes(key))) errors.push("decision contains undeclared fields");
+  if (!decision || typeof decision !== "object" || Array.isArray(decision) || !["pending_review", "accepted", "rejected", "deferred", "not_applicable"].includes(decision.status) || typeof decision.rationale !== "string" || !decision.rationale.trim() || decision.rationale.length > 2000 || decision.human_approval_required !== true) errors.push("decision is invalid or omits mandatory human approval");
+  else {
+    if (Object.keys(decision).some((key) => !["status", "rationale", "human_approval_required", "approved_by", "approved_at"].includes(key))) errors.push("decision contains undeclared fields");
+    if (decision.approved_by !== undefined && decision.approved_by !== null && (typeof decision.approved_by !== "string" || !decision.approved_by.trim() || decision.approved_by.length > 120)) errors.push("decision.approved_by is invalid");
+    if (decision.approved_at !== undefined && decision.approved_at !== null && (typeof decision.approved_at !== "string" || Number.isNaN(Date.parse(decision.approved_at)))) errors.push("decision.approved_at is invalid");
+    if (decision.status === "accepted" && (typeof decision.approved_by !== "string" || !decision.approved_by.trim() || typeof decision.approved_at !== "string" || Number.isNaN(Date.parse(decision.approved_at)))) errors.push("accepted decision requires a named approver and valid approval timestamp");
+  }
   if (event.supersedes_event_id !== undefined && event.supersedes_event_id !== null && typeof event.supersedes_event_id !== "string") errors.push("supersedes_event_id must be a string or null");
   return errors;
 }
