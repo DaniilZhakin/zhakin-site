@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/security-robot-team-stage1
+      - feature/security-robot-incident-journal
     paths:
       - "data/security-robot-registry.json"
       - "tests/security-robot-registry.test.js"
@@ -13,6 +14,9 @@ on:
       - "src/security-robot-coordinator.js"
       - "tests/security-robot-coordinator.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
+      - "data/security-robot-incident-event.schema.json"
+      - "src/security-robot-incident-journal.js"
+      - "tests/security-robot-incident-journal.test.js"
   pull_request:
     paths:
       - "data/security-robot-registry.json"
@@ -23,6 +27,9 @@ on:
       - "src/security-robot-coordinator.js"
       - "tests/security-robot-coordinator.test.js"
       - ".github/workflows/security-robot-registry-test.yml"
+      - "data/security-robot-incident-event.schema.json"
+      - "src/security-robot-incident-journal.js"
+      - "tests/security-robot-incident-journal.test.js"
 
 permissions:
   contents: read
@@ -53,5 +60,8 @@ jobs:
       - name: Validate example report JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-report.example.json', 'utf8'))"
 
+      - name: Validate incident event schema JSON
+        run: node -e "JSON.parse(require('node:fs').readFileSync('data/security-robot-incident-event.schema.json', 'utf8'))"
+
       - name: Run security robot tests
-        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js tests/security-robot-coordinator.test.js
+        run: node --experimental-default-type=module --test tests/security-robot-registry.test.js tests/security-robot-report-schema.test.js tests/security-robot-coordinator.test.js tests/security-robot-incident-journal.test.js
