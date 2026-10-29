@@ -1,0 +1,72 @@
+name: PostHog read-only preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    name: Verify PostHog credentials and read-only query access
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 3
+    steps:
+      - name: Validate configuration without exposing secrets
+        env:
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: |
+          set -eu
+          test -n "$POSTHOG_HOST"
+          test -n "$POSTHOG_PROJECT_ID"
+          test -n "$POSTHOG_API_KEY"
+
+          case "$POSTHOG_HOST" in
+            https://us.posthog.com|https://eu.posthog.com) ;;
+            *)
+              echo "Preflight stopped: POSTHOG_HOST must be the official US or EU PostHog Cloud API host."
+              exit 1
+              ;;
+          esac
+
+          printf '%s' "$POSTHOG_PROJECT_ID" | grep -Eq '^[0-9]+$' || {
+            echo "Preflight stopped: POSTHOG_PROJECT_ID must contain digits only."
+            exit 1
+          }
+
+          echo "Required PostHog configuration is present; secret values are not printed."
+
+      - name: Run read-only WebOverviewQuery
+        env:
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: |
+          set -eu
+          HTTP_STATUS="$(curl --silent --show-error --max-time 20 \
+            --output /tmp/posthog-preflight.json \
+            --write-out '%{http_code}' \
+            --request POST "$POSTHOG_HOST/api/projects/$POSTHOG_PROJECT_ID/query/" \
+            --header "Authorization: Bearer $POSTHOG_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{"query":{"kind":"WebOverviewQuery","dateRange":{"date_from":"-7d"}}}')"
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Preflight failed: PostHog returned HTTP $HTTP_STATUS. Response body is intentionally not printed."
+            exit 1
+          fi
+
+          node --input-type=commonjs -e '
+            const fs = require("node:fs");
+            let data;
+            try { data = JSON.parse(fs.readFileSync("/tmp/posthog-preflight.json", "utf8")); }
+            catch { console.error("Preflight failed: response was not valid JSON."); process.exit(1); }
+            if (!data || typeof data !== "object" || Array.isArray(data)) {
+              console.error("Preflight failed: response shape was not an object.");
+              process.exit(1);
+            }
+            console.log("PASS: PostHog credentials and project query access verified for the last 7 days.");
+          '
