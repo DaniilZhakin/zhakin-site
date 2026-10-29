@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { coordinateReports, validateRobotEnvelope } from "../src/security-robot-coordinator.js";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
+import reportSchema from "../data/security-robot-report.schema.json" with { type: "json" };
 import registry from "../data/security-robot-registry.json" with { type: "json" };
 
 const NOW = Date.parse("2026-10-28T12:00:00.000Z");
@@ -102,4 +105,22 @@ test("malformed input fails closed and never marks the system healthy", () => {
   const result = coordinateReports({ reports: [null, report("unregistered")], registry, now: NOW });
   assert.equal(result.overall_status, "unknown");
   assert.equal(result.robots.find((robot) => robot.robot_id === "sentinel-ai").status, "unavailable");
+});
+
+
+test("coordinator output conforms to the published report schema", () => {
+  const ajv = new Ajv2020({ allErrors: true });
+  addFormats(ajv);
+  const validate = ajv.compile(reportSchema);
+  const empty = coordinateReports({ reports: [], registry, now: NOW });
+  assert.equal(validate(empty), true, JSON.stringify(validate.errors));
+
+  const healthy = coordinateReports({ reports: registry.robots.map((robot) => report(robot.id)), registry, now: NOW });
+  assert.equal(validate(healthy), true, JSON.stringify(validate.errors));
+
+  const withFinding = coordinateReports({ reports: [report("sentinel-ai", {
+    findings: [{ id: "schema-check", severity: "high", title: "Synthetic issue", description: "Schema contract test", evidence_refs: ["test://finding/1"] }]
+  })], registry, now: NOW });
+  assert.equal(validate(withFinding), true, JSON.stringify(validate.errors));
+  assert.equal(withFinding.recommendations[0].requires_human_approval, true);
 });
