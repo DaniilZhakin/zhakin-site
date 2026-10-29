@@ -32,7 +32,12 @@ CREATE TABLE IF NOT EXISTS wallet_ledger_entries (
   participant_id TEXT NOT NULL REFERENCES wallet_participants(id),
   activity_id TEXT REFERENCES wallet_activities(id),
   entry_type TEXT NOT NULL CHECK (entry_type IN ('accrual', 'reversal', 'adjustment')),
-  points INTEGER NOT NULL CHECK (typeof(points) = 'integer' AND points != 0),
+  points INTEGER NOT NULL CHECK (
+    typeof(points) = 'integer' AND points != 0 AND
+    ((entry_type = 'accrual' AND points > 0) OR
+     (entry_type = 'reversal' AND points < 0) OR
+     (entry_type = 'adjustment' AND points != 0))
+  ),
   reason TEXT NOT NULL,
   actor_id TEXT NOT NULL,
   idempotency_key TEXT NOT NULL UNIQUE,
@@ -58,3 +63,18 @@ CREATE INDEX IF NOT EXISTS idx_wallet_ledger_participant_created
   ON wallet_ledger_entries(participant_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_wallet_audit_target_created
   ON wallet_audit_events(target_type, target_id, created_at);
+
+
+-- Prevent a ledger entry from being attached to an activity owned by another participant.
+-- This is a database-level invariant, not a substitute for request authorization.
+CREATE TRIGGER IF NOT EXISTS trg_wallet_ledger_activity_owner
+BEFORE INSERT ON wallet_ledger_entries
+WHEN NEW.activity_id IS NOT NULL AND NOT EXISTS (
+  SELECT 1
+  FROM wallet_activities AS activity
+  WHERE activity.id = NEW.activity_id
+    AND activity.participant_id = NEW.participant_id
+)
+BEGIN
+  SELECT RAISE(ABORT, 'wallet activity participant mismatch');
+END;
