@@ -41,8 +41,8 @@
     const sourceType = typeof rawEvent.type === 'string'
       ? rawEvent.type
       : rawEvent.event_type;
+    if (!Object.prototype.hasOwnProperty.call(EVENT_TYPES, sourceType)) return null;
     const eventType = EVENT_TYPES[sourceType];
-    if (!eventType) return null;
 
     const path = normalizePath(rawEvent.path, origin);
     if (!path) return null;
@@ -75,11 +75,13 @@
     }
   }
 
-  function resolveEndpoint(rawEndpoint) {
+  function resolveEndpoint(rawEndpoint, origin) {
     if (typeof rawEndpoint !== 'string' || !rawEndpoint.trim()) return null;
     try {
       const url = new URL(rawEndpoint);
-      if (url.protocol !== 'https:' || url.pathname !== '/v1/events' || url.search || url.hash) return null;
+      const expectedOrigin = new URL(origin).origin;
+      if (url.protocol !== 'https:' || url.origin !== expectedOrigin ||
+          url.pathname !== '/v1/events' || url.search || url.hash) return null;
       return url.href;
     } catch (_) {
       return null;
@@ -88,11 +90,11 @@
 
   function createTransport(options) {
     const settings = options || {};
-    const endpoint = resolveEndpoint(settings.endpoint);
+    const origin = typeof settings.origin === 'string' ? settings.origin : DEFAULT_ORIGIN;
+    const endpoint = resolveEndpoint(settings.endpoint, origin);
     const fetchImpl = typeof settings.fetchImpl === 'function'
       ? settings.fetchImpl
       : (typeof fetch === 'function' ? fetch.bind(globalThis) : null);
-    const origin = typeof settings.origin === 'string' ? settings.origin : DEFAULT_ORIGIN;
 
     return Object.freeze({
       enabled: Boolean(endpoint && fetchImpl),
