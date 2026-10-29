@@ -52,48 +52,48 @@ const foreignHeaders = { Origin: 'https://evil.example', 'Content-Type': 'applic
 const allowedHeaders = { Origin: 'https://xn--80alhhq.xn--p1ai', 'Content-Type': 'application/json' };
 
 {
-  const response = await request('POST', '/api/events', JSON.stringify(validEvent), foreignHeaders);
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), foreignHeaders);
   assert.equal(response.status, 403); assert.equal((await response.json()).error, 'cors_forbidden');
 }
 {
-  const response = await request('OPTIONS', '/api/events', null, foreignHeaders); assert.equal(response.status, 403);
+  const response = await request('OPTIONS', '/v1/events', null, foreignHeaders); assert.equal(response.status, 403);
 }
 {
-  const response = await request('OPTIONS', '/api/events', null, allowedHeaders);
+  const response = await request('OPTIONS', '/v1/events', null, allowedHeaders);
   assert.equal(response.status, 204); assert.equal(response.headers.get('access-control-allow-origin'), 'https://xn--80alhhq.xn--p1ai');
 }
 {
-  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), allowedHeaders); assert.equal(response.status, 404);
+  const response = await request('POST', '/api/events', JSON.stringify(validEvent), allowedHeaders); assert.equal(response.status, 404);
 }
 {
-  const response = await request('GET', '/api/events', null, allowedHeaders); assert.equal(response.status, 405);
+  const response = await request('GET', '/v1/events', null, allowedHeaders); assert.equal(response.status, 405);
 }
 {
-  const response = await request('POST', '/api/events', '{invalid', allowedHeaders);
+  const response = await request('POST', '/v1/events', '{invalid', allowedHeaders);
   assert.equal(response.status, 400); assert.equal((await response.json()).error, 'invalid_json');
 }
 {
-  const response = await request('POST', '/api/events', JSON.stringify(Array.from({ length: 11 }, () => validEvent)), allowedHeaders);
+  const response = await request('POST', '/v1/events', JSON.stringify(Array.from({ length: 11 }, () => validEvent)), allowedHeaders);
   assert.equal(response.status, 400); assert.equal((await response.json()).error, 'invalid_event_count');
 }
 {
-  const response = await request('POST', '/api/events', 'x'.repeat(8200), allowedHeaders); assert.equal(response.status, 413);
+  const response = await request('POST', '/v1/events', 'x'.repeat(8200), allowedHeaders); assert.equal(response.status, 413);
 }
 {
-  const response = await request('POST', '/api/events', JSON.stringify({ ...validEvent, event_type: 'navigation_click' }), allowedHeaders);
+  const response = await request('POST', '/v1/events', JSON.stringify({ ...validEvent, event_type: 'navigation_click' }), allowedHeaders);
   assert.equal(response.status, 400); assert.equal((await response.json()).error, 'schema_validation_failed');
 }
 {
-  const response = await request('POST', '/api/events', JSON.stringify(validEvent), allowedHeaders);
+  const response = await request('POST', '/v1/events', JSON.stringify(validEvent), allowedHeaders);
   assert.equal(response.status, 202); assert.equal((await response.json()).accepted, 1);
 }
 {
-  const response = await worker.fetch(new Request('https://collector.example/api/events', { method: 'POST', body: JSON.stringify(validEvent), headers: allowedHeaders }), createRateLimiterEnv({ allowed: false, retry_after: 17 }));
+  const response = await worker.fetch(new Request('https://collector.example/v1/events', { method: 'POST', body: JSON.stringify(validEvent), headers: allowedHeaders }), createRateLimiterEnv({ allowed: false, retry_after: 17 }));
   assert.equal(response.status, 429); assert.equal(response.headers.get('retry-after'), '17');
 }
 {
   const env = createRateLimiterEnv(); env.DB = { prepare: () => ({ bind: () => ({}) }), batch: async () => { throw new Error('D1 unavailable'); } };
-  const response = await worker.fetch(new Request('https://collector.example/api/events', { method: 'POST', body: JSON.stringify(validEvent), headers: allowedHeaders }), env);
+  const response = await worker.fetch(new Request('https://collector.example/v1/events', { method: 'POST', body: JSON.stringify(validEvent), headers: allowedHeaders }), env);
   assert.equal(response.status, 503);
 }
 {
