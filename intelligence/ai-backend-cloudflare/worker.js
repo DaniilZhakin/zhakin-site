@@ -85,8 +85,15 @@ async function loadWebAnalytics(env) {
   );
 
   if (!response.ok) return { configured: true, available: false };
-  const data = await response.json();
-  if (data === null || typeof data !== "object") {
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    return { configured: true, available: false };
+  }
+
+  if (data === null || typeof data !== "object" || Array.isArray(data)) {
     return { configured: true, available: false };
   }
   return { configured: true, available: true, data };
