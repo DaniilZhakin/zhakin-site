@@ -84,5 +84,16 @@ jobs:
               console.error("Preflight failed: response shape was not an object.");
               process.exit(1);
             }
-            console.log("PASS: PostHog credentials and project query access verified for the last 7 days.");
+            if (!Array.isArray(data.results)) {
+              console.error("Preflight failed: response did not contain a results array.");
+              process.exit(1);
+            }
+            const required = ["visitors", "views", "sessions"];
+            const returned = new Set(data.results.map((item) => item && item.key).filter((key) => typeof key === "string"));
+            const missing = required.filter((key) => !returned.has(key));
+            if (missing.length) {
+              console.error("Preflight failed: expected web analytics metrics were missing.");
+              process.exit(1);
+            }
+            console.log("PASS: PostHog credentials, project query access, and web analytics response schema verified for the last 7 days.");
           '
