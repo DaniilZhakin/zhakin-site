@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createTransport, normalizeEvent } = require('./transport.js');
 
-const ENDPOINT = 'https://collector.example/v1/events';
+const ENDPOINT = 'https://xn--80alhhq.xn--p1ai/v1/events';
 const ORIGIN = 'https://xn--80alhhq.xn--p1ai';
 
 test('maps browser event names to canonical contract names and strips query/hash', () => {
@@ -34,6 +34,7 @@ test('maps menu events and allows only the canonical event allowlist', () => {
   assert.equal(normalizeEvent({ type: 'menu_toggle', path: '/' }, { origin: ORIGIN }).event_type, 'menu_interaction');
   assert.equal(normalizeEvent({ type: 'geography_interest', path: '/' }, { origin: ORIGIN }), null);
   assert.equal(normalizeEvent({ type: 'accessibility_text_scale', path: '/' }, { origin: ORIGIN }), null);
+  assert.equal(normalizeEvent({ type: 'toString', path: '/' }, { origin: ORIGIN }), null);
 });
 
 test('rejects external paths, malformed paths, and invalid content identifiers', () => {
@@ -80,8 +81,16 @@ test('does not send when endpoint is missing or invalid', async () => {
   assert.equal(calls, 0);
 
   assert.equal(createTransport({
-    endpoint: 'http://collector.example/v1/events',
+    endpoint: 'http://xn--80alhhq.xn--p1ai/v1/events',
     hasConsent: true,
+    origin: ORIGIN,
+    fetchImpl: async () => ({ ok: true })
+  }).enabled, false);
+
+  assert.equal(createTransport({
+    endpoint: 'https://collector.example/v1/events',
+    hasConsent: true,
+    origin: ORIGIN,
     fetchImpl: async () => ({ ok: true })
   }).enabled, false);
 });
