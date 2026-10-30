@@ -101,19 +101,17 @@ export async function createOfficeTask({ db, principal, input, requestId, now = 
   const id = jsonId();
   const description = input.description ?? "";
   const priority = input.priority ?? "normal";
+  const audit = auditStatement({
+    id: jsonId(), principal, role: authorization.role, action: "task:create",
+    objectId: id, requestId, now,
+  });
   const statements = [
     db.prepare(`INSERT INTO office_tasks
       (id, organization_id, workspace, owner_role, status, priority, title, description, created_by, created_at, version)
       VALUES (?, ?, ?, ?, 'open', ?, ?, ?, ?, ?, 1)`)
       .bind(id, principal.organizationId, authorization.workspace, authorization.role,
         priority, input.title.trim(), description, principal.subjectId, now),
-    db.prepare(auditStatement({
-      id: jsonId(), principal, role: authorization.role, action: "task:create",
-      objectId: id, requestId, now,
-    }).sql).bind(...auditStatement({
-      id: "unused", principal, role: authorization.role, action: "task:create",
-      objectId: id, requestId, now,
-    }).values),
+    db.prepare(audit.sql).bind(...audit.values),
   ];
   await db.batch(statements);
   return { id, organization_id: principal.organizationId, workspace: authorization.workspace,
