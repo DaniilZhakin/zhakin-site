@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-30T01:00:31Z",
+  "timestamp": "2026-10-30T07:07:30Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,27 +11,19 @@
     "canonical_ok_pages": 37,
     "jsonld_pages": 37,
     "noindex_pages": 0,
-    "avg_response_time_ms": 157.1,
-    "max_response_time_ms": 1656,
-    "health_score": 99.0,
+    "avg_response_time_ms": 239.9,
+    "max_response_time_ms": 531,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 99.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": -1.0,
-  "baseline_timestamp": "2026-10-29T20:19:03Z",
-  "warnings": [
-    "page-level change: /publications/sanctions-new-generation.html"
-  ],
-  "page_changes": {
-    "/publications/sanctions-new-generation.html": [
-      "response_time_ms: 125 -> 1656"
-    ]
-  },
+  "trend_delta": 0.0,
+  "baseline_timestamp": "2026-10-30T01:00:31Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications/sanctions-new-generation.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
