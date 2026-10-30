@@ -99,5 +99,30 @@ class RobotOfficeSchemaTests(unittest.TestCase):
             )
 
 
+    def test_handoff_summary_is_minimized_and_idempotent(self):
+        self.db.execute(
+            """INSERT INTO office_tasks
+               (id,organization_id,workspace,owner_role,title,created_by,created_at)
+               VALUES('task-h1','org-test','treasury','treasury_agent','Ledger review','robot-1',100)"""
+        )
+        self.db.execute(
+            """INSERT INTO office_handoff_summaries
+               (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+               VALUES('h1','org-test','task-h1','treasury',2,'Needs human review','robot-1',101,'idem-h1')"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_handoff_summaries
+                   (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+                   VALUES('h2','org-test','task-h1','treasury',2,'Duplicate version','robot-1',102,'idem-h2')"""
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_handoff_summaries
+                   (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+                   VALUES('h3','org-test','task-h1','treasury',3,?, 'robot-1',103,'idem-h3')""",
+                ("x" * 1001,),
+            )
+
 if __name__ == "__main__":
     unittest.main()
