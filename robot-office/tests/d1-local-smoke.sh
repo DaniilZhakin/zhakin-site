@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-CONFIG="$(mktemp)"
+CONFIG="$(mktemp "$ROOT/.wrangler-d1-XXXXXX.toml")"
 trap 'rm -f "$CONFIG"' EXIT
 
 cat > "$CONFIG" <<'EOF'
@@ -19,7 +19,7 @@ EOF
 cd "$ROOT"
 
 run_d1() {
-  npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config "$CONFIG" "$@"
+  npx --yes wrangler@4 d1 execute DB --local --config "$CONFIG" "$@"
 }
 
 expect_failure() {
@@ -35,24 +35,24 @@ expect_failure() {
 
 echo "Applying migrations to Wrangler's disposable local D1 database..."
 run_d1 --command "SELECT 1 AS bootstrap_check" >/dev/null
-npx --yes wrangler@4 d1 migrations apply robot-office-d1-smoke --local --config "$CONFIG"
+npx --yes wrangler@4 d1 migrations apply DB --local --config "$CONFIG"
 
 echo "Seeding synthetic organization, role grant, and task..."
 run_d1 --command "INSERT INTO office_organizations(id,name,created_at) VALUES('org-d1-test','Synthetic D1 Test',100); INSERT INTO office_role_grants(id,subject_id,organization_id,role,scope,granted_by,granted_at) VALUES('grant-d1','robot-d1','org-d1-test','treasury_agent','workspace','admin-d1',100); INSERT INTO office_tasks(id,organization_id,workspace,owner_role,title,created_by,created_at) VALUES('task-d1','org-d1-test','treasury','treasury_agent','D1 concurrency probe','robot-d1',100);" >/dev/null
 
 echo "Checking task compare-and-swap and stale-version rejection..."
 run_d1 --command "UPDATE office_tasks SET status='handed_off',version=version+1 WHERE id='task-d1' AND organization_id='org-d1-test' AND workspace='treasury' AND version=1 AND status IN ('open','in_progress','blocked');" >/dev/null
-expect_failure "stale version cannot create another handoff summary" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) SELECT 'handoff-stale','org-d1-test',id,'treasury',2,'stale replay','robot-d1',101,'idem-stale' FROM office_tasks WHERE id='task-d1' AND version=1\""
+expect_failure "stale version cannot create another handoff summary" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) SELECT 'handoff-stale','org-d1-test',id,'treasury',2,'stale replay','robot-d1',101,'idem-stale' FROM office_tasks WHERE id='task-d1' AND version=1\""
 
 echo "Checking handoff idempotency and task-version uniqueness..."
 run_d1 --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-d1','org-d1-test','task-d1','treasury',2,'Synthetic minimized summary','robot-d1',101,'idem-d1');" >/dev/null
-expect_failure "duplicate idempotency key" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-duplicate','org-d1-test','task-d1','treasury',3,'duplicate key','robot-d1',102,'idem-d1')\""
-expect_failure "duplicate task version" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-version-duplicate','org-d1-test','task-d1','treasury',2,'duplicate version','robot-d1',102,'idem-d2')\""
+expect_failure "duplicate idempotency key" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-duplicate','org-d1-test','task-d1','treasury',3,'duplicate key','robot-d1',102,'idem-d1')\""
+expect_failure "duplicate task version" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-version-duplicate','org-d1-test','task-d1','treasury',2,'duplicate version','robot-d1',102,'idem-d2')\""
 
 echo "Checking append-only audit constraints..."
 run_d1 --command "INSERT INTO office_audit_events(id,organization_id,actor_id,actor_role,action,object_type,object_id,outcome,request_id,occurred_at) VALUES('audit-d1','org-d1-test','robot-d1','treasury_agent','task:handoff','task','task-d1','success','req-d1',101);" >/dev/null
-expect_failure "audit update is forbidden" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config '$CONFIG' --command \"UPDATE office_audit_events SET action='tampered' WHERE id='audit-d1'\""
-expect_failure "audit delete is forbidden" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute robot-office-d1-smoke --local --config '$CONFIG' --command \"DELETE FROM office_audit_events WHERE id='audit-d1'\""
+expect_failure "audit update is forbidden" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"UPDATE office_audit_events SET action='tampered' WHERE id='audit-d1'\""
+expect_failure "audit delete is forbidden" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"DELETE FROM office_audit_events WHERE id='audit-d1'\""
 
 echo "Checking role revocation is persisted and visible to subsequent reads..."
 run_d1 --command "UPDATE office_role_grants SET revoked_at=102 WHERE id='grant-d1';" >/dev/null
