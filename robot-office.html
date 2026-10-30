@@ -44,13 +44,23 @@
     .robot-open-link{display:inline-flex;align-items:center;min-height:38px;margin-top:13px;padding:8px 11px;border:1px solid rgba(216,189,120,.32);color:#e5cf91;text-decoration:none;font-size:.72rem;letter-spacing:.025em;transition:background .18s ease,border-color .18s ease}
     .robot-open-link:hover{background:rgba(216,189,120,.08);border-color:rgba(216,189,120,.6)}
     .robot-open-link:focus-visible{outline:2px solid #f0dfae;outline-offset:3px}
+    .cabinet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .cabinet-card{min-width:0;padding:22px;border:1px solid rgba(216,189,120,.24);background:linear-gradient(145deg,rgba(40,74,58,.2),rgba(255,255,255,.018))}
+    .cabinet-card h3{margin:0;color:#f0dfae;font-size:1.08rem}
+    .cabinet-intro{margin:8px 0 18px;color:#aebbb2;font-size:.8rem;line-height:1.7}
+    .cabinet-workflow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .cabinet-step{padding:12px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.12)}
+    .cabinet-step strong{display:block;margin-bottom:5px;color:#e5cf91;font-size:.72rem}
+    .cabinet-step span{display:block;color:#aebbb2;font-size:.72rem;line-height:1.6}
+    .cabinet-handoff{margin-top:13px;padding:12px;border-left:2px solid #d8bd78;background:rgba(216,189,120,.045);color:#cbd5cc;font-size:.74rem;line-height:1.65}
+    .cabinet-status{display:inline-flex;margin-bottom:12px;padding:5px 8px;border:1px solid rgba(216,189,120,.25);color:#e5cf91;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
     .office-principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
     .office-principle{padding:18px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.018)}
     .office-principle strong{display:block;margin-bottom:8px;color:#e5cf91;font-size:.77rem}
     .office-principle p{margin:0;color:#aebbb2;font-size:.78rem;line-height:1.7}
     .office-footnote{margin:28px 0 0;padding-top:17px;border-top:1px solid rgba(255,255,255,.09);color:#8f9e94;font-size:.72rem;line-height:1.7}
-    @media(max-width:800px){.office-head{grid-template-columns:1fr}.robot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.office-principles{grid-template-columns:1fr}}
-    @media(max-width:560px){.robot-office{padding:32px 16px 64px}.robot-grid{grid-template-columns:1fr}.office-coordinator{grid-template-columns:auto 1fr;padding:17px}.office-coordinator>.office-pill{grid-column:1/-1;justify-self:start}.office-section-head{align-items:start;flex-direction:column}.robot-card p{min-height:0}}
+    @media(max-width:800px){.office-head{grid-template-columns:1fr}.robot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cabinet-grid{grid-template-columns:1fr}.office-principles{grid-template-columns:1fr}}
+    @media(max-width:560px){.robot-office{padding:32px 16px 64px}.robot-grid{grid-template-columns:1fr}.cabinet-workflow{grid-template-columns:1fr}.cabinet-card{padding:17px}.office-coordinator{grid-template-columns:auto 1fr;padding:17px}.office-coordinator>.office-pill{grid-column:1/-1;justify-self:start}.office-section-head{align-items:start;flex-direction:column}.robot-card p{min-height:0}}
   </style>
 </head>
 <body>
@@ -93,6 +103,35 @@
         <article class="robot-card"><div class="robot-card-top"><span class="robot-index">10 / RECOVERY</span><span class="office-pill">Не подключён</span></div><h3>Recovery AI</h3><div class="robot-role">Восстановление и устойчивость</div><p>Проверка документальных свидетельств резервирования и готовности восстановления.</p><div class="robot-permission"><b>Граница:</b> не запускает восстановление самостоятельно.</div></article>
         <article class="robot-card"><div class="robot-card-top"><span class="robot-index">11 / TREASURY</span><span class="office-pill">Не подключён</span></div><h3>Treasury Guard</h3><div class="robot-role">Казначейство и финансовый контроль</div><p>Сверка утверждённых бюджетов, реестров поступлений и выплат, подготовка платёжного календаря и отчётов о движении средств.</p><div class="robot-permission"><b>Граница:</b> только чтение и аналитика; не распоряжается счетами, не создаёт и не подтверждает платежи, не меняет балансы ZP или BFU.</div></article>
         <article class="robot-card"><div class="robot-card-top"><span class="robot-index">12 / LEGAL</span><span class="office-pill">Не подключён</span></div><h3>Legal Counsel AI</h3><div class="robot-role">Юридическое сопровождение и комплаенс</div><p>Первичный анализ договоров и нормативных требований, контроль сроков и обязательств, подготовка правовых справок и перечней рисков для юриста.</p><div class="robot-permission"><b>Граница:</b> не подписывает документы, не представляет организацию, не направляет юридически значимые заявления; выводы проверяет квалифицированный юрист.</div></article>
+      </div>
+    </section>
+    <section class="office-section" aria-labelledby="cabinet-title">
+      <div class="office-section-head"><h2 id="cabinet-title">Рабочие кабинеты</h2><span>Казначейство и юридическое сопровождение</span></div>
+      <div class="cabinet-grid">
+        <article class="cabinet-card" id="treasury-cabinet" aria-labelledby="treasury-cabinet-title">
+          <span class="cabinet-status">Макет кабинета · не подключён</span>
+          <h3 id="treasury-cabinet-title">Treasury Guard / Казначейство</h3>
+          <p class="cabinet-intro">Рабочий контур финансового контроля. Предназначен для подготовки проверяемых сводок и передачи финансовых вопросов уполномоченному человеку.</p>
+          <div class="cabinet-workflow">
+            <div class="cabinet-step"><strong>01 · Очередь задач</strong><span>Сверка бюджетов, поступлений, выплат и расхождений. Реальные задачи не загружены.</span></div>
+            <div class="cabinet-step"><strong>02 · Документы</strong><span>Реестр утверждённых бюджетов, подтверждающих документов и версий. Хранилище не подключено.</span></div>
+            <div class="cabinet-step"><strong>03 · Отчётность</strong><span>Проект отчёта о движении средств, отклонениях и статусе сверки. Финансовые данные отсутствуют.</span></div>
+            <div class="cabinet-step"><strong>04 · Контроль</strong><span>Проверка полноты подтверждений, дат, сумм и согласований без проведения операций.</span></div>
+          </div>
+          <div class="cabinet-handoff"><b>Передача руководителю:</b> сводка, выявленные расхождения, ссылки на доказательства и вопросы, требующие решения человека.</div>
+        </article>
+        <article class="cabinet-card" id="legal-cabinet" aria-labelledby="legal-cabinet-title">
+          <span class="cabinet-status">Макет кабинета · не подключён</span>
+          <h3 id="legal-cabinet-title">Legal Counsel AI / Юридический отдел</h3>
+          <p class="cabinet-intro">Контур предварительного юридического анализа и контроля обязательств. Не заменяет квалифицированного юриста и не выдаёт автоматические заключения.</p>
+          <div class="cabinet-workflow">
+            <div class="cabinet-step"><strong>01 · Очередь задач</strong><span>Первичный разбор договоров, запросов, сроков и нормативных изменений. Реальные задачи не загружены.</span></div>
+            <div class="cabinet-step"><strong>02 · Документы</strong><span>Проекты договоров, версии, приложения и перечень подтверждающих материалов. Хранилище не подключено.</span></div>
+            <div class="cabinet-step"><strong>03 · Правовые справки</strong><span>Структура анализа: вопрос, применимые нормы, факты, риски и вопросы для проверки юристом.</span></div>
+            <div class="cabinet-step"><strong>04 · Комплаенс</strong><span>Календарь обязательств, контрольных дат и требуемых согласований. Реестр пока не ведётся.</span></div>
+          </div>
+          <div class="cabinet-handoff"><b>Передача руководителю:</b> краткое резюме, правовые риски, сроки, источники норм и вопросы, требующие решения юриста или руководителя.</div>
+        </article>
       </div>
     </section>
     <section class="office-section" aria-labelledby="rules-title">
