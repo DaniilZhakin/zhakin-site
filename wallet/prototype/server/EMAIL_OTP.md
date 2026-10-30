@@ -5,6 +5,7 @@
 ## Design
 
 - Email is normalized server-side.
+- The Worker must pass a trusted source identifier from request metadata (for example, Cloudflare's connecting-IP value); the service HMACs both email and source keys before storage. Source identifiers from body/query parameters are forbidden.
 - OTP is six digits, generated with cryptographic randomness, valid for 10 minutes, and limited to five attempts.
 - Only an HMAC of the OTP is persisted; the raw code is passed only to the injected mail-delivery adapter.
 - Successful verification consumes the challenge and creates a random 256-bit session token.
@@ -17,7 +18,7 @@
 
 The D1 adapter must implement these methods with correct atomic semantics:
 
-- `createOtpChallenge({ challengeId, email, codeHash, createdAt, expiresAt })` — persist challenge, enforce per-email and per-source rate limits atomically, and return `{ deliverable: boolean }`. It must not disclose account existence to the caller.
+- `createOtpChallenge({ challengeId, email, codeHash, emailRateKey, sourceRateKey, createdAt, expiresAt })` — persist challenge, enforce per-email and per-source rate limits atomically using the keyed subjects, and return `{ deliverable: boolean }`. It must not disclose account existence to the caller.
 - `consumeOtpChallenge({ challengeId, codeHash, now, maxAttempts })` — atomically increment failed attempts; on a matching unexpired code below the attempt limit, consume once and return `{ email }`; all other outcomes return null.
 - `revokeOtpChallenge({ challengeId, revokedAt })`
 - `findParticipantByEmail(email)`
@@ -30,7 +31,7 @@ The `wallet_auth_rate_limits` table is only a schema starting point. The future 
 
 ## Required before integration
 
-1. Choose and configure an email delivery provider using secrets stored only in the server environment.
+1. Choose and configure an email delivery provider using secrets stored only in the server environment. Pass a trusted source identifier from Worker request metadata into `requestCode(email, { sourceKey })`.
 2. Implement the D1 repository contract with atomic challenge consumption, rate limiting, session revocation and participant lookup.
 3. Add Worker routes for request-code, verify-code, logout and protected reads. Enforce POST-only mutations, same-origin checks, content-type validation, body limits and generic responses.
 4. Add abuse controls: per-email and per-source limits, resend cooldown, challenge invalidation, monitoring without OTP/token logging, and delivery failure handling.
