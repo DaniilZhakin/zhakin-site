@@ -7,12 +7,14 @@ on:
       - feat/robot-office-access-policy-2026-10-31
       - feat/robot-office-service-layer-2026-10-31
       - feat/robot-office-worker-adapter-2026-10-31
+      - feat/robot-office-handoff-2026-10-31
   pull_request:
     branches:
       - feat/zhakin-robot-office-current-main-2026-10-30
       - feat/robot-office-data-layer-2026-10-31
       - feat/robot-office-access-policy-2026-10-31
       - feat/robot-office-service-layer-2026-10-31
+      - feat/robot-office-worker-adapter-2026-10-31
 
 permissions:
   contents: read
