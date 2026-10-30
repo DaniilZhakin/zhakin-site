@@ -155,3 +155,26 @@ test("GET handoff summaries route is restricted to COMMAND AI grants", async () 
   assert.equal(queried, true);
   assert.equal((await res.json()).data[0].summary, "Minimized only");
 });
+
+test("handoff uniqueness collision returns a sanitized HTTP 409 conflict", async () => {
+  const db = {
+    prepare(sql) {
+      return { sql, bind() { return this; }, async all() {
+        return { results: sql.includes("office_role_grants") ? [grant] :
+          [{ id: "task-conflict", workspace: "treasury", status: "open", version: 1 }] };
+      } };
+    },
+    async batch() {
+      throw new Error("UNIQUE constraint failed: office_handoff_summaries.idempotency_key");
+    },
+  };
+  const req = new Request("https://zhakin.example/api/robot-office/tasks/task-conflict/handoff", {
+    method: "POST", headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: JSON.stringify({ expectedVersion: 1, summary: "Review.", idempotencyKey: "replayed-key" }),
+  });
+  const res = await handleRobotOfficeRequest(req, options(db));
+  assert.equal(res.status, 409);
+  assert.deepEqual(await res.json(), {
+    error: "CONFLICT", requestId: res.headers.get("x-request-id"),
+  });
+});

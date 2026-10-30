@@ -191,7 +191,22 @@ export async function handoffOfficeTask({
       taskId, principal.organizationId, authorization.workspace, nextVersion),
   ];
 
-  const results = await db.batch(statements);
+  let results;
+  try {
+    results = await db.batch(statements);
+  } catch (error) {
+    // D1/SQLite uniqueness collisions are expected under replay or concurrent
+    // handoff attempts. Convert only the two known handoff constraints to 409;
+    // preserve all other database failures as server errors.
+    const message = String(error?.message ?? "");
+    const isHandoffUniqueConflict =
+      /UNIQUE constraint failed: office_handoff_summaries\.idempotency_key/i.test(message) ||
+      /UNIQUE constraint failed: office_handoff_summaries\.task_id,\\s*office_handoff_summaries\.task_version/i.test(message);
+    if (isHandoffUniqueConflict) {
+      throw Object.assign(new Error("Handoff conflict"), { status: 409 });
+    }
+    throw error;
+  }
   const changed = (index) => Number(results?.[index]?.meta?.changes ?? results?.[index]?.changes ?? 0);
   if (changed(0) !== 1 || changed(1) !== 1 || changed(2) !== 1) {
     throw Object.assign(new Error("Task version conflict"), { status: 409 });
