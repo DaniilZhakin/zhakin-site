@@ -200,8 +200,8 @@ export async function handoffOfficeTask({
     // preserve all other database failures as server errors.
     const message = String(error?.message ?? "");
     const isHandoffUniqueConflict =
-      /UNIQUE constraint failed: office_handoff_summaries\\.idempotency_key/i.test(message) ||
-      /UNIQUE constraint failed: office_handoff_summaries\\.task_id,\\s*office_handoff_summaries\\.task_version/i.test(message);
+      /UNIQUE constraint failed: office_handoff_summaries\.idempotency_key/i.test(message) ||
+      /UNIQUE constraint failed: office_handoff_summaries\.task_id,\\s*office_handoff_summaries\.task_version/i.test(message);
     if (isHandoffUniqueConflict) {
       throw Object.assign(new Error("Handoff conflict"), { status: 409 });
     }
