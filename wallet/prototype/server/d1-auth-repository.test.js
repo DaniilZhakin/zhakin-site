@@ -48,12 +48,14 @@ test("challenge creation atomically increments keyed email and source windows", 
     expiresAt: 1_800_000_600_000,
   });
   assert.deepEqual(result, { deliverable: true });
-  assert.equal(db.calls[0].batchSize, 2);
-  assert.match(db.calls[1].sql, /email_normalized = \? AND status = 'active'/);
-  assert.deepEqual(db.calls[1].values.slice(0, 3), [
+  assert.equal(db.calls[2].batchSize, 2);
+  assert.match(db.calls[0].sql, /ON CONFLICT\(subject_hmac, window_started_at\)/);
+  assert.match(db.calls[1].sql, /ON CONFLICT\(subject_hmac, window_started_at\)/);
+  assert.match(db.calls[3].sql, /email_normalized = \? AND status = 'active'/);
+  assert.deepEqual(db.calls[3].values.slice(0, 3), [
     "c".repeat(32), "member@example.org", HASH,
   ]);
-  assert.equal(db.calls[1].values[5], "member@example.org");
+  assert.equal(db.calls[3].values[5], "member@example.org");
 });
 
 test("challenge is not inserted when either rate counter is exhausted", async () => {
@@ -65,7 +67,7 @@ test("challenge is not inserted when either rate counter is exhausted", async ()
     createdAt: 1_800_000_000_000, expiresAt: 1_800_000_600_000,
   });
   assert.deepEqual(result, { deliverable: false });
-  assert.equal(db.calls.length, 1);
+  assert.equal(db.calls.length, 3);
 });
 
 test("OTP consumption is one conditional update with expiry, attempt and replay guards", async () => {
