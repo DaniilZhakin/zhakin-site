@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-10-30T23:04:46Z`
+Snapshot: `2026-10-30T23:47:50Z`
 History points: **30**
-Status: **WARNING**
-Health score: **97.0/100 (HEALTHY)**
-Trend: **DECLINING** (-3.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,22 +17,15 @@ Trend: **DECLINING** (-3.0)
 - `canonical_ok_pages`: **40**
 - `jsonld_pages`: **40**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **273.3**
-- `max_response_time_ms`: **717**
-- `health_score`: **97.0**
+- `avg_response_time_ms`: **185.9**
+- `max_response_time_ms`: **540**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/ai-markets-valuation.html`
-- new page in monitored baseline
-### `/publications/digital-sovereignty-satellite-networks.html`
-- new page in monitored baseline
-### `/publications/platform-economy-infrastructure.html`
-- new page in monitored baseline
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/ai-markets-valuation.html
-- page-level change: /publications/digital-sovereignty-satellite-networks.html
-- page-level change: /publications/platform-economy-infrastructure.html
+No regression detected.

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-30T23:04:46Z",
+  "timestamp": "2026-10-30T23:47:50Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,37 +11,19 @@
     "canonical_ok_pages": 40,
     "jsonld_pages": 40,
     "noindex_pages": 0,
-    "avg_response_time_ms": 273.3,
-    "max_response_time_ms": 717,
-    "health_score": 97.0,
+    "avg_response_time_ms": 185.9,
+    "max_response_time_ms": 540,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 97.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
-  "trend_direction": "declining",
-  "trend_delta": -3.0,
-  "baseline_timestamp": "2026-10-30T23:02:15Z",
-  "warnings": [
-    "page-level change: /publications/ai-markets-valuation.html",
-    "page-level change: /publications/digital-sovereignty-satellite-networks.html",
-    "page-level change: /publications/platform-economy-infrastructure.html"
-  ],
-  "page_changes": {
-    "/publications/ai-markets-valuation.html": [
-      "new page in monitored baseline"
-    ],
-    "/publications/digital-sovereignty-satellite-networks.html": [
-      "new page in monitored baseline"
-    ],
-    "/publications/platform-economy-infrastructure.html": [
-      "new page in monitored baseline"
-    ]
-  },
+  "trend_direction": "stable",
+  "trend_delta": 0.0,
+  "baseline_timestamp": "2026-10-30T23:04:46Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications/ai-markets-valuation.html",
-    "/publications/digital-sovereignty-satellite-networks.html",
-    "/publications/platform-economy-infrastructure.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
