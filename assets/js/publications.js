@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/price-discovery.html': 'finance',
     '/publications/money-capital-friction.html': 'finance',
     '/publications/expensive-money.html': 'finance',
+    '/publications/ai-markets-valuation.html': 'finance',
     '/publications/ai-parliament.html': 'ai',
     '/publications/ai-infrastructure.html': 'ai',
     '/publications/robotics-economics.html': 'ai',
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/food-infrastructure.html': 'infra',
     '/publications/grain-global-market.html': 'infra',
     '/publications/emergency-readiness.html': 'infra',
+    '/publications/platform-economy-infrastructure.html': 'infra',
     '/publications/economic-transition-1990s.html': 'strategy',
     '/publications/future-without-money.html': 'strategy',
     '/publications/intellectual-economy.html': 'strategy',
@@ -46,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/global-economy-after-sanctions.html': 'geoeconomics',
     '/publications/global-economy-new-assets.html': 'geoeconomics',
     '/publications/global-dependence-map.html': 'geoeconomics',
-    '/publications/digital-assets-settlement.html': 'geoeconomics'
+    '/publications/digital-assets-settlement.html': 'geoeconomics',
+    '/publications/digital-sovereignty-satellite-networks.html': 'geoeconomics'
   };
 
   const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
