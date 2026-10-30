@@ -98,24 +98,34 @@ export function createEmailOtpAuth({ repository, deliverEmail, secret, now = () 
      * a challenge and enforce per-email + per-source rate limits atomically.
      * It returns { deliverable: boolean }; false means no registered account.
      */
-    async requestCode(rawEmail) {
+    async requestCode(rawEmail, { sourceKey } = {}) {
       const email = normalizeEmail(rawEmail);
-      if (!email) return { accepted: true, challenge_id: null, expires_in: OTP_TTL_MS / 1000 };
+      // sourceKey must come from trusted Worker request metadata (for example,
+      // CF-Connecting-IP), never from the request body or query string.
+      if (!email || typeof sourceKey !== "string" || sourceKey.length < 3 || sourceKey.length > 256) {
+        return { accepted: true, challenge_id: null, expires_in: OTP_TTL_MS / 1000 };
+      }
 
       const challengeId = toHex(randomBytes(16));
       const code = randomOtp();
       const createdAt = now();
       const expiresAt = createdAt + OTP_TTL_MS;
       const codeHash = await hmac(secret, `otp:${challengeId}:${code}`);
+      const emailRateKey = await hmac(secret, `email-rate:${email}`);
+      const sourceRateKey = await hmac(secret, `source-rate:${sourceKey}`);
 
       const result = await repository.createOtpChallenge({
-        challengeId, email, codeHash, createdAt, expiresAt,
+        challengeId, email, codeHash, emailRateKey, sourceRateKey, createdAt, expiresAt,
       });
       if (result?.deliverable === true) {
         try {
           await deliverEmail({ to: email, code, expiresAt });
         } catch {
-          await repository.revokeOtpChallenge({ challengeId, revokedAt: now() });
+          try {
+            await repository.revokeOtpChallenge({ challengeId, revokedAt: now() });
+          } catch {
+            // The challenge still expires after ten minutes; never expose provider/storage errors.
+          }
           // Do not reveal delivery/provider state to the public caller.
         }
       }
