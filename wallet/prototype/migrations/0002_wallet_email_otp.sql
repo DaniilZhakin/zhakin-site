@@ -1,7 +1,15 @@
 -- Email OTP and server-side session records for ZHAKIN Wallet.
 -- Prototype schema only. Not applied to a live Cloudflare D1 database.
+-- This migration depends on 0001_wallet_schema.sql (wallet_participants).
 -- Rate-limit enforcement and challenge consumption MUST be atomic in the
 -- future D1 repository adapter; this schema alone does not enforce that logic.
+-- email_normalized is personal data: apply access minimization, retention,
+-- deletion and privacy controls before any real participant is registered.
+
+ALTER TABLE wallet_participants ADD COLUMN email_normalized TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_wallet_participants_email_normalized
+  ON wallet_participants(email_normalized)
+  WHERE email_normalized IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS wallet_otp_challenges (
   id TEXT PRIMARY KEY,
