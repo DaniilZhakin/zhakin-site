@@ -4,14 +4,15 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MIGRATION = ROOT / "migrations" / "0001_robot_office_schema.sql"
+MIGRATIONS = [ROOT / "migrations" / "0001_robot_office_schema.sql", ROOT / "migrations" / "0002_handoff_summaries.sql"]
 
 
 class RobotOfficeSchemaTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys = ON")
-        self.db.executescript(MIGRATION.read_text(encoding="utf-8"))
+        for migration in MIGRATIONS:
+            self.db.executescript(migration.read_text(encoding="utf-8"))
         self.db.execute(
             "INSERT INTO office_organizations(id,name,created_at) VALUES(?,?,?)",
             ("org-test", "Synthetic Test Org", 100),
@@ -97,6 +98,31 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                    VALUES('t1','missing-org','command','command_agent','Task','tester',100)"""
             )
 
+
+    def test_handoff_summary_is_minimized_and_idempotent(self):
+        self.db.execute(
+            """INSERT INTO office_tasks
+               (id,organization_id,workspace,owner_role,title,created_by,created_at)
+               VALUES('task-h1','org-test','treasury','treasury_agent','Ledger review','robot-1',100)"""
+        )
+        self.db.execute(
+            """INSERT INTO office_handoff_summaries
+               (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+               VALUES('h1','org-test','task-h1','treasury',2,'Needs human review','robot-1',101,'idem-h1')"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_handoff_summaries
+                   (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+                   VALUES('h2','org-test','task-h1','treasury',2,'Duplicate version','robot-1',102,'idem-h2')"""
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_handoff_summaries
+                   (id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key)
+                   VALUES('h3','org-test','task-h1','treasury',3,?, 'robot-1',103,'idem-h3')""",
+                ("x" * 1001,),
+            )
 
 if __name__ == "__main__":
     unittest.main()

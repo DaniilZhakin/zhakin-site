@@ -10,7 +10,7 @@
  *
  * This module is not wired to the site's Worker entrypoint or production.
  */
-import { createOfficeTask, listOfficeTasks } from "./office-service.mjs";
+import { createOfficeTask, listOfficeTasks, handoffOfficeTask, listOfficeHandoffSummaries } from "./office-service.mjs";
 
 const MAX_BODY_BYTES = 12_000;
 const JSON_HEADERS = {
@@ -52,9 +52,13 @@ export async function handleRobotOfficeRequest(request, {
   const requestId = crypto.randomUUID();
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
+  const handoffMatch = url.pathname.match(/^\/api\/robot-office\/tasks\/([^/]+)\/handoff$/);
+  const isTaskCollection = url.pathname === "/api/robot-office/tasks" && ["GET", "POST"].includes(method);
+  const isHandoffList = url.pathname === "/api/robot-office/handoffs" && method === "GET";
+  const isHandoffMutation = Boolean(handoffMatch) && method === "POST";
   const isMutation = method === "POST";
 
-  if (url.pathname !== "/api/robot-office/tasks" || !["GET", "POST"].includes(method)) {
+  if (!isTaskCollection && !isHandoffList && !isHandoffMutation) {
     return response(404, { error: "NOT_FOUND", requestId }, requestId);
   }
   if (!originAllowed(request, allowedOrigins, isMutation)) {
@@ -70,6 +74,10 @@ export async function handleRobotOfficeRequest(request, {
       return response(401, { error: "AUTHENTICATION_REQUIRED", requestId }, requestId);
     }
 
+    if (method === "GET" && isHandoffList) {
+      const summaries = await listOfficeHandoffSummaries({ db: env.ROBOT_OFFICE_DB, principal, now });
+      return response(200, { data: summaries, requestId }, requestId);
+    }
     if (method === "GET") {
       const tasks = await listOfficeTasks({ db: env.ROBOT_OFFICE_DB, principal, now });
       return response(200, { data: tasks, requestId }, requestId);
@@ -91,6 +99,17 @@ export async function handleRobotOfficeRequest(request, {
     try { input = JSON.parse(raw); }
     catch { return response(400, { error: "INVALID_JSON", requestId }, requestId); }
 
+    if (isHandoffMutation) {
+      let taskId;
+      try { taskId = decodeURIComponent(handoffMatch[1]); }
+      catch { return response(400, { error: "INVALID_TASK_ID", requestId }, requestId); }
+      const handoff = await handoffOfficeTask({
+        db: env.ROBOT_OFFICE_DB, principal, taskId,
+        expectedVersion: input.expectedVersion, summary: input.summary,
+        idempotencyKey: input.idempotencyKey, requestId, now,
+      });
+      return response(201, { data: handoff, requestId }, requestId);
+    }
     const task = await createOfficeTask({
       db: env.ROBOT_OFFICE_DB, principal, input, requestId, now,
     });

@@ -118,3 +118,112 @@ export async function createOfficeTask({ db, principal, input, requestId, now = 
     owner_role: authorization.role, status: "open", priority, title: input.title.trim(),
     description, created_by: principal.subjectId, created_at: now, version: 1 };
 }
+
+
+/**
+ * Hand a task to the office lead using a minimized summary.
+ * Task version update, summary insert and audit append are a single D1 batch.
+ * A version conflict or idempotency collision must not create a second handoff.
+ */
+export async function handoffOfficeTask({
+  db, principal, taskId, expectedVersion, summary, idempotencyKey, requestId, now = Date.now(),
+}) {
+  assertPrincipal(principal);
+  if (!validText(taskId, 200) || !Number.isInteger(expectedVersion) || expectedVersion < 1 ||
+      !validText(summary, 1000) || !validText(idempotencyKey, 200) ||
+      !validText(requestId, 200)) {
+    throw Object.assign(new Error("Invalid handoff input"), { status: 400 });
+  }
+
+  const grants = await loadGrants(db, principal, now);
+  let authorization;
+  for (const grant of grants.filter((g) => TASK_ROLES.has(g.role))) {
+    const workspace = WORKSPACE_BY_ROLE[grant.role];
+    const result = authorizeOfficeAccess({
+      principal, grants: [grant], action: "tasks:handoff",
+      resource: { organizationId: principal.organizationId, workspace, kind: "task" }, now,
+    });
+    if (result.allowed) { authorization = { role: result.role, workspace }; break; }
+  }
+  if (!authorization) throw Object.assign(new Error("Forbidden"), { status: 403 });
+
+  const found = await db.prepare(`
+    SELECT id, organization_id, workspace, status, version
+    FROM office_tasks
+    WHERE id = ? AND organization_id = ? AND workspace = ?
+    LIMIT 1
+  `).bind(taskId, principal.organizationId, authorization.workspace).all();
+  const task = found.results?.[0];
+  if (!task) throw Object.assign(new Error("Task not found"), { status: 404 });
+  if (task.version !== expectedVersion || !["open", "in_progress", "blocked"].includes(task.status)) {
+    throw Object.assign(new Error("Task version conflict"), { status: 409 });
+  }
+
+  const nextVersion = expectedVersion + 1;
+  const handoffId = jsonId();
+  const auditId = jsonId();
+  const statements = [
+    db.prepare(`
+      UPDATE office_tasks
+      SET status = 'handed_off', version = version + 1
+      WHERE id = ? AND organization_id = ? AND workspace = ?
+        AND version = ? AND status IN ('open', 'in_progress', 'blocked')
+    `).bind(taskId, principal.organizationId, authorization.workspace, expectedVersion),
+    db.prepare(`
+      INSERT INTO office_handoff_summaries
+        (id, organization_id, task_id, workspace, task_version, summary, created_by, created_at, idempotency_key)
+      SELECT ?, organization_id, id, workspace, version, ?, ?, ?, ?
+      FROM office_tasks
+      WHERE id = ? AND organization_id = ? AND workspace = ?
+        AND version = ? AND status = 'handed_off'
+    `).bind(handoffId, summary.trim(), principal.subjectId, now, idempotencyKey,
+      taskId, principal.organizationId, authorization.workspace, nextVersion),
+    db.prepare(`
+      INSERT INTO office_audit_events
+        (id, organization_id, actor_id, actor_role, action, object_type, object_id,
+         outcome, request_id, occurred_at, details_redacted)
+      SELECT ?, organization_id, ?, ?, 'task:handoff', 'task', id,
+        'success', ?, ?, ''
+      FROM office_tasks
+      WHERE id = ? AND organization_id = ? AND workspace = ?
+        AND version = ? AND status = 'handed_off'
+    `).bind(auditId, principal.subjectId, authorization.role, requestId, now,
+      taskId, principal.organizationId, authorization.workspace, nextVersion),
+  ];
+
+  const results = await db.batch(statements);
+  const changed = (index) => Number(results?.[index]?.meta?.changes ?? results?.[index]?.changes ?? 0);
+  if (changed(0) !== 1 || changed(1) !== 1 || changed(2) !== 1) {
+    throw Object.assign(new Error("Task version conflict"), { status: 409 });
+  }
+  return {
+    id: handoffId, task_id: taskId, organization_id: principal.organizationId,
+    workspace: authorization.workspace, task_version: nextVersion,
+    summary: summary.trim(), created_by: principal.subjectId, created_at: now,
+  };
+}
+
+/** COMMAND AI receives only summary rows, never task descriptions or documents. */
+export async function listOfficeHandoffSummaries({ db, principal, now = Date.now() }) {
+  assertPrincipal(principal);
+  const grants = await loadGrants(db, principal, now);
+  const commandGrants = grants.filter((grant) => grant.role === "command_agent");
+  const workspaces = ["treasury", "legal"].filter((workspace) =>
+    commandGrants.some((grant) => authorizeOfficeAccess({
+      principal, grants: [grant], action: "tasks:read_summary",
+      resource: {
+        organizationId: principal.organizationId, workspace,
+        kind: "handoff_summary", isHandoffSummary: true,
+      }, now,
+    }).allowed)
+  );
+  if (workspaces.length === 0) throw Object.assign(new Error("Forbidden"), { status: 403 });
+  const placeholders = workspaces.map(() => "?").join(", ");
+  const result = await db.prepare(`
+    SELECT id, task_id, workspace, task_version, summary, created_by, created_at
+    FROM office_handoff_summaries
+    WHERE organization_id = ? AND workspace IN (${placeholders})
+    ORDER BY created_at DESC LIMIT 100
+  `).bind(principal.organizationId, ...workspaces).all();
+  return result.results ?? [];
+}

@@ -106,3 +106,52 @@ test("unknown paths and methods are not routed", async () => {
   );
   assert.equal(method.status, 404);
 });
+
+
+test("POST task handoff route dispatches to the controlled handoff service", async () => {
+  const db = {
+    prepare(sql) {
+      return { sql, values: [], bind(...values) { this.values = values; return this; },
+        async all() {
+          if (sql.includes("office_role_grants")) return { results: [grant] };
+          return { results: [{ id: "task-route-1", workspace: "treasury", status: "open", version: 2 }] };
+        },
+      };
+    },
+    async batch(statements) { return statements.map(() => ({ meta: { changes: 1 } })); },
+  };
+  const req = new Request("https://zhakin.example/api/robot-office/tasks/task-route-1/handoff", {
+    method: "POST", headers: {
+      Origin: ORIGIN, "Content-Type": "application/json",
+    }, body: JSON.stringify({
+      expectedVersion: 2, summary: "Human review required.", idempotencyKey: "route-handoff-1",
+    }),
+  });
+  const res = await handleRobotOfficeRequest(req, options(db));
+  assert.equal(res.status, 201);
+  const payload = await res.json();
+  assert.equal(payload.data.task_id, "task-route-1");
+  assert.equal(payload.data.task_version, 3);
+});
+
+test("GET handoff summaries route is restricted to COMMAND AI grants", async () => {
+  const commandPrincipal = { authenticated: true, subjectId: "command-1", organizationId: "org-1" };
+  const commandGrant = { ...grant, subject_id: "command-1", role: "command_agent", scope: "workspace" };
+  let queried = false;
+  const db = {
+    prepare(sql) {
+      return { sql, values: [], bind(...values) { this.values = values; return this; },
+        async all() {
+          if (sql.includes("office_role_grants")) return { results: [commandGrant] };
+          queried = sql.includes("office_handoff_summaries");
+          return { results: [{ id: "summary-1", workspace: "treasury", summary: "Minimized only" }] };
+        },
+      };
+    },
+  };
+  const req = new Request("https://zhakin.example/api/robot-office/handoffs", { method: "GET" });
+  const res = await handleRobotOfficeRequest(req, options(db, async () => commandPrincipal));
+  assert.equal(res.status, 200);
+  assert.equal(queried, true);
+  assert.equal((await res.json()).data[0].summary, "Minimized only");
+});

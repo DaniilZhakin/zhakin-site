@@ -82,3 +82,78 @@ test("listing rejects a role from another workspace", async () => {
   const query = db.calls.find((c) => c.kind === "all" && c.sql.includes("office_tasks"));
   assert.deepEqual(query.values.slice(1), ["legal"]);
 });
+
+
+test("handoff changes task version and atomically records summary plus audit", async () => {
+  const { handoffOfficeTask } = await import("../src/office-service.mjs");
+  const calls = [];
+  const db = {
+    prepare(sql) {
+      return { sql, values: [], bind(...values) { this.values = values; return this; },
+        async all() {
+          calls.push({ sql, values: this.values });
+          if (sql.includes("office_role_grants")) return { results: [activeGrant] };
+          return { results: [{ id: "task-1", organization_id: "org-a", workspace: "treasury", status: "in_progress", version: 4 }] };
+        },
+      };
+    },
+    async batch(statements) {
+      calls.push({ batch: statements });
+      return statements.map(() => ({ meta: { changes: 1 } }));
+    },
+  };
+  const result = await handoffOfficeTask({
+    db, principal, taskId: "task-1", expectedVersion: 4,
+    summary: "Reconciliation requires human review.",
+    idempotencyKey: "handoff-once-001", requestId: "req-handoff", now: NOW,
+  });
+  assert.equal(result.task_version, 5);
+  assert.equal(result.workspace, "treasury");
+  const batch = calls.find((call) => call.batch)?.batch;
+  assert.equal(batch.length, 3);
+  assert.match(batch[0].sql, /version = version \+ 1/);
+  assert.match(batch[1].sql, /INSERT INTO office_handoff_summaries/);
+  assert.match(batch[2].sql, /INSERT INTO office_audit_events/);
+});
+
+test("handoff fails on stale task version without issuing a write batch", async () => {
+  const { handoffOfficeTask } = await import("../src/office-service.mjs");
+  const db = {
+    writes: 0,
+    prepare(sql) {
+      return { sql, bind() { return this; }, async all() {
+        return { results: sql.includes("office_role_grants") ? [activeGrant] :
+          [{ id: "task-1", workspace: "treasury", status: "open", version: 5 }] };
+      } };
+    },
+    async batch() { this.writes += 1; return []; },
+  };
+  await assert.rejects(() => handoffOfficeTask({
+    db, principal, taskId: "task-1", expectedVersion: 4, summary: "Review this.",
+    idempotencyKey: "handoff-stale-1", requestId: "req-stale", now: NOW,
+  }), { status: 409 });
+  assert.equal(db.writes, 0);
+});
+
+test("COMMAND AI summary query is restricted to explicitly granted handoff summaries", async () => {
+  const { listOfficeHandoffSummaries } = await import("../src/office-service.mjs");
+  const commandPrincipal = { authenticated: true, subjectId: "command-1", organizationId: "org-a" };
+  const commandGrant = { ...activeGrant, subject_id: "command-1", role: "command_agent", scope: "workspace" };
+  let summaryQuery;
+  const db = {
+    prepare(sql) {
+      return { sql, values: [], bind(...values) { this.values = values; return this; },
+        async all() {
+          if (sql.includes("office_role_grants")) return { results: [commandGrant] };
+          summaryQuery = { sql, values: this.values };
+          return { results: [{ id: "h1", task_id: "task-1", workspace: "treasury", summary: "Minimized" }] };
+        },
+      };
+    },
+  };
+  const rows = await listOfficeHandoffSummaries({ db, principal: commandPrincipal, now: NOW });
+  assert.equal(rows.length, 1);
+  assert.match(summaryQuery.sql, /office_handoff_summaries/);
+  assert.doesNotMatch(summaryQuery.sql, /office_tasks/);
+  assert.deepEqual(summaryQuery.values, ["org-a", "treasury", "legal"]);
+});
