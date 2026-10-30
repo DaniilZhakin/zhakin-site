@@ -1,0 +1,140 @@
+name: Robot Office disposable remote D1 smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type CREATE_AND_DELETE_DISPOSABLE_D1 to authorize a temporary test database'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: robot-office-remote-d1-disposable
+  cancel-in-progress: false
+
+jobs:
+  remote-d1-smoke:
+    if: ${{ inputs.confirmation == 'CREATE_AND_DELETE_DISPOSABLE_D1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify credentials and provision isolated database
+        id: provision
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if [[ -z "${CLOUDFLARE_API_TOKEN:-}" || -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+            echo "::error::Missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID repository secret."
+            exit 1
+          fi
+          DB_NAME="robot-office-disposable-${GITHUB_RUN_ID}"
+          echo "db_name=$DB_NAME" >> "$GITHUB_OUTPUT"
+          response="$(curl --fail-with-body --silent --show-error \
+            -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/d1/database" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -nc --arg name "$DB_NAME" '{name:$name}')")"
+          DB_ID="$(jq -er '.result.uuid' <<<"$response")"
+          echo "::add-mask::$DB_ID"
+          echo "db_id=$DB_ID" >> "$GITHUB_OUTPUT"
+          echo "Disposable D1 database provisioned: $DB_NAME"
+
+      - name: Apply migrations and run remote D1 checks
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DB_NAME: ${{ steps.provision.outputs.db_name }}
+          DB_ID: ${{ steps.provision.outputs.db_id }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CONFIG="$RUNNER_TEMP/robot-office-disposable-d1.toml"
+          cat > "$CONFIG" <<EOF
+          name = "robot-office-disposable-d1-test"
+          compatibility_date = "2026-10-31"
+          [[d1_databases]]
+          binding = "DB"
+          database_name = "$DB_NAME"
+          database_id = "$DB_ID"
+          migrations_dir = "$GITHUB_WORKSPACE/robot-office/migrations"
+          EOF
+
+          run_remote() {
+            npx --yes wrangler@4 d1 execute DB --remote --config "$CONFIG" "$@"
+          }
+
+          echo "Applying Robot Office migrations to the newly created disposable remote D1..."
+          npx --yes wrangler@4 d1 migrations apply DB --remote --config "$CONFIG"
+
+          echo "Checking schema and synthetic-only test data..."
+          run_remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='office_tasks';" >/dev/null
+          run_remote --command "INSERT INTO office_organizations(id,name,created_at) VALUES('remote-test-org','Synthetic Remote D1 Test',100);" >/dev/null
+          run_remote --command "INSERT INTO office_role_grants(id,subject_id,organization_id,role,scope,granted_by,granted_at) VALUES('remote-test-grant','remote-test-robot','remote-test-org','treasury_agent','workspace','remote-test-admin',100);" >/dev/null
+          run_remote --command "INSERT INTO office_tasks(id,organization_id,workspace,owner_role,title,created_by,created_at) VALUES('remote-test-task','remote-test-org','treasury','treasury_agent','Disposable remote D1 probe','remote-test-robot',100);" >/dev/null
+
+          echo "Running two concurrent compare-and-swap attempts against the same task version..."
+          run_remote --command "UPDATE office_tasks SET status='handed_off',version=version+1 WHERE id='remote-test-task' AND version=1 AND status IN ('open','in_progress','blocked');" >/dev/null &
+          p1=$!
+          run_remote --command "UPDATE office_tasks SET status='handed_off',version=version+1 WHERE id='remote-test-task' AND version=1 AND status IN ('open','in_progress','blocked');" >/dev/null &
+          p2=$!
+          wait "$p1"
+          wait "$p2"
+          version="$(run_remote --command "SELECT version FROM office_tasks WHERE id='remote-test-task';" --json | jq -er '.. | objects | .version? // empty' | tail -n 1)"
+          if [[ "$version" != "2" ]]; then
+            echo "::error::Concurrent compare-and-swap invariant failed; expected version 2, got $version."
+            exit 1
+          fi
+          echo "PASS: concurrent compare-and-swap advanced the task exactly once."
+
+          echo "Checking remote uniqueness constraints..."
+          run_remote --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('remote-handoff-1','remote-test-org','remote-test-task','treasury',2,'Synthetic minimized summary','remote-test-robot',101,'remote-idem-1');" >/dev/null
+          if run_remote --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('remote-handoff-duplicate','remote-test-org','remote-test-task','treasury',3,'Duplicate key probe','remote-test-robot',102,'remote-idem-1');" >/dev/null 2>&1; then
+            echo "::error::Remote D1 accepted a duplicate idempotency key."
+            exit 1
+          fi
+          echo "PASS: remote D1 rejected duplicate idempotency key."
+
+          echo "Checking persisted role revocation..."
+          run_remote --command "UPDATE office_role_grants SET revoked_at=103 WHERE id='remote-test-grant';" >/dev/null
+          revoked="$(run_remote --command "SELECT COUNT(*) AS active FROM office_role_grants WHERE id='remote-test-grant' AND revoked_at IS NULL;" --json | jq -er '.. | objects | .active? // empty' | tail -n 1)"
+          if [[ "$revoked" != "0" ]]; then
+            echo "::error::Remote D1 still reports the revoked role grant as active."
+            exit 1
+          fi
+          echo "PASS: role revocation persisted in remote D1."
+
+          echo "::notice::Remote D1 smoke checks passed. This run does NOT validate D1 binding .batch atomicity, rollback, Worker-level authorization races, or production integration."
+
+      - name: Delete disposable remote D1 (always)
+        if: always() && steps.provision.outputs.db_id != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DB_ID: ${{ steps.provision.outputs.db_id }}
+          DB_NAME: ${{ steps.provision.outputs.db_name }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          response="$(curl --fail-with-body --silent --show-error \
+            -X DELETE "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/d1/database/${DB_ID}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")"
+          if [[ "$(jq -r '.success' <<<"$response")" != "true" ]]; then
+            echo "::error::Cloudflare did not confirm deletion of disposable D1 $DB_NAME."
+            jq -c '.errors' <<<"$response"
+            exit 1
+          fi
+          echo "Disposable remote D1 deleted: $DB_NAME"
