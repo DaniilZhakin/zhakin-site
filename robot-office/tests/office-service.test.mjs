@@ -157,3 +157,39 @@ test("COMMAND AI summary query is restricted to explicitly granted handoff summa
   assert.doesNotMatch(summaryQuery.sql, /office_tasks/);
   assert.deepEqual(summaryQuery.values, ["org-a", "treasury", "legal"]);
 });
+
+test("handoff idempotency uniqueness collision is a controlled conflict", async () => {
+  const { handoffOfficeTask } = await import("../src/office-service.mjs");
+  const db = {
+    prepare(sql) {
+      return { sql, bind() { return this; }, async all() {
+        return { results: sql.includes("office_role_grants") ? [activeGrant] :
+          [{ id: "task-1", workspace: "treasury", status: "open", version: 1 }] };
+      } };
+    },
+    async batch() {
+      throw new Error("UNIQUE constraint failed: office_handoff_summaries.idempotency_key");
+    },
+  };
+  await assert.rejects(() => handoffOfficeTask({
+    db, principal, taskId: "task-1", expectedVersion: 1, summary: "Review.",
+    idempotencyKey: "already-used", requestId: "req-replay", now: NOW,
+  }), { status: 409, message: "Handoff conflict" });
+});
+
+test("handoff does not disguise unrelated database failures", async () => {
+  const { handoffOfficeTask } = await import("../src/office-service.mjs");
+  const db = {
+    prepare(sql) {
+      return { sql, bind() { return this; }, async all() {
+        return { results: sql.includes("office_role_grants") ? [activeGrant] :
+          [{ id: "task-1", workspace: "treasury", status: "open", version: 1 }] };
+      } };
+    },
+    async batch() { throw new Error("database unavailable"); },
+  };
+  await assert.rejects(() => handoffOfficeTask({
+    db, principal, taskId: "task-1", expectedVersion: 1, summary: "Review.",
+    idempotencyKey: "fresh-key", requestId: "req-db-error", now: NOW,
+  }), /database unavailable/);
+});
