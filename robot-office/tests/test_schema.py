@@ -4,14 +4,14 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MIGRATION = ROOT / "migrations" / "0001_robot_office_schema.sql"
+MIGRATIONS = [ROOT / "migrations" / "0001_robot_office_schema.sql", ROOT / "migrations" / "0002_handoff_summaries.sql""
 
 
 class RobotOfficeSchemaTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys = ON")
-        self.db.executescript(MIGRATION.read_text(encoding="utf-8"))
+        for migration in MIGRATIONS:\n            self.db.executescript(migration.read_text(encoding="utf-8"))
         self.db.execute(
             "INSERT INTO office_organizations(id,name,created_at) VALUES(?,?,?)",
             ("org-test", "Synthetic Test Org", 100),
