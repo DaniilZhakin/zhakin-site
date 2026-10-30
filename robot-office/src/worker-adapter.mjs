@@ -118,6 +118,8 @@ export async function handleRobotOfficeRequest(request, {
     const status = statusOf(error);
     const publicCode = status === 401 ? "AUTHENTICATION_REQUIRED"
       : status === 403 ? "FORBIDDEN"
+      : status === 404 ? "TASK_NOT_FOUND"
+      : status === 409 ? "CONFLICT"
       : status === 400 ? "INVALID_REQUEST" : "INTERNAL_ERROR";
     // Do not expose SQL, provider, session, or stack details to the client.
     return response(status, { error: publicCode, requestId }, requestId);
