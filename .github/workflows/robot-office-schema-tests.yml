@@ -8,6 +8,7 @@ on:
       - feat/robot-office-service-layer-2026-10-31
       - feat/robot-office-worker-adapter-2026-10-31
       - feat/robot-office-handoff-2026-10-31
+      - fix/robot-office-handoff-conflicts-2026-10-31
       - test/robot-office-d1-local-emulator-2026-10-31
   pull_request:
     branches:
