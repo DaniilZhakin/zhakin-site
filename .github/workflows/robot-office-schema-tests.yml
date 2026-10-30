@@ -5,10 +5,12 @@ on:
     branches:
       - feat/robot-office-data-layer-2026-10-31
       - feat/robot-office-access-policy-2026-10-31
+      - feat/robot-office-service-layer-2026-10-31
   pull_request:
     branches:
       - feat/zhakin-robot-office-current-main-2026-10-30
       - feat/robot-office-data-layer-2026-10-31
+      - feat/robot-office-access-policy-2026-10-31
 
 permissions:
   contents: read
@@ -32,4 +34,4 @@ jobs:
         with:
           node-version: '20'
       - name: Run authorization policy tests
-        run: node --test robot-office/tests/access-policy.test.mjs
+        run: node --test robot-office/tests/*.test.mjs
