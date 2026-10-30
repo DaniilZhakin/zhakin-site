@@ -38,11 +38,20 @@ run_d1 --command "SELECT 1 AS bootstrap_check" >/dev/null
 npx --yes wrangler@4 d1 migrations apply DB --local --config "$CONFIG"
 
 echo "Seeding synthetic organization, role grant, and task..."
-run_d1 --command "INSERT INTO office_organizations(id,name,created_at) VALUES('org-d1-test','Synthetic D1 Test',100); INSERT INTO office_role_grants(id,subject_id,organization_id,role,scope,granted_by,granted_at) VALUES('grant-d1','robot-d1','org-d1-test','treasury_agent','workspace','admin-d1',100); INSERT INTO office_tasks(id,organization_id,workspace,owner_role,title,created_by,created_at) VALUES('task-d1','org-d1-test','treasury','treasury_agent','D1 concurrency probe','robot-d1',100);" >/dev/null
+run_d1 --command "INSERT INTO office_organizations(id,name,created_at) VALUES('org-d1-test','Synthetic D1 Test',100);" >/dev/null
+run_d1 --command "INSERT INTO office_role_grants(id,subject_id,organization_id,role,scope,granted_by,granted_at) VALUES('grant-d1','robot-d1','org-d1-test','treasury_agent','workspace','admin-d1',100);" >/dev/null
+run_d1 --command "INSERT INTO office_tasks(id,organization_id,workspace,owner_role,title,created_by,created_at) VALUES('task-d1','org-d1-test','treasury','treasury_agent','D1 concurrency probe','robot-d1',100);" >/dev/null
 
 echo "Checking task compare-and-swap and stale-version rejection..."
 run_d1 --command "UPDATE office_tasks SET status='handed_off',version=version+1 WHERE id='task-d1' AND organization_id='org-d1-test' AND workspace='treasury' AND version=1 AND status IN ('open','in_progress','blocked');" >/dev/null
-expect_failure "stale version cannot create another handoff summary" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) SELECT 'handoff-stale','org-d1-test',id,'treasury',2,'stale replay','robot-d1',101,'idem-stale' FROM office_tasks WHERE id='task-d1' AND version=1\""
+run_d1 --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) SELECT 'handoff-stale','org-d1-test',id,'treasury',2,'stale replay','robot-d1',101,'idem-stale' FROM office_tasks WHERE id='task-d1' AND version=1;" >/dev/null
+result="$(run_d1 --command "SELECT COUNT(*) AS stale_rows FROM office_handoff_summaries WHERE id='handoff-stale';" --json)"
+if ! grep -Eq '"stale_rows"[[:space:]]*:[[:space:]]*0' <<<"$result"; then
+  echo "FAIL: stale task version created a handoff summary"
+  printf '%s\\n' "$result"
+  exit 1
+fi
+echo "PASS: stale task version creates no handoff summary"
 
 echo "Checking handoff idempotency and task-version uniqueness..."
 run_d1 --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) VALUES('handoff-d1','org-d1-test','task-d1','treasury',2,'Synthetic minimized summary','robot-d1',101,'idem-d1');" >/dev/null
