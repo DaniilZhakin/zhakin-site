@@ -52,7 +52,11 @@ function grantCoversResource(grant, resource, role) {
       (grant.scope === "workspace" || grant.scope === "workspace:command" || grant.scope === "organization:handoff-summaries");
   }
 
-  if (role === "access_admin") {\n    return resource.kind === "role_grant" && grant.scope === "organization";\n  }\n\n  if (role === "auditor") {
+  if (role === "access_admin") {
+    return resource.kind === "role_grant" && grant.scope === "organization";
+  }
+
+  if (role === "auditor") {
     return resource.kind === "audit" &&
       (grant.scope === "organization:audit" || grant.scope === "organization");
   }
