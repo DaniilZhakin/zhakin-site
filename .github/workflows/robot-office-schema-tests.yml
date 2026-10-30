@@ -15,6 +15,7 @@ on:
       - feat/robot-office-access-policy-2026-10-31
       - feat/robot-office-service-layer-2026-10-31
       - feat/robot-office-worker-adapter-2026-10-31
+      - feat/robot-office-handoff-2026-10-31
 
 permissions:
   contents: read
