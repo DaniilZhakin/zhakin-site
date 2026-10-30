@@ -16,6 +16,8 @@
 
 ## Required repository contract
 
+The email OTP migration 0002_wallet_email_otp.sql depends on 0001_wallet_schema.sql from PR #57. It adds a normalized participant email field and a unique lookup index. Treat this as personal data: restrict access, define retention/deletion, and complete the privacy review before storing real addresses.
+
 The D1 adapter must implement these methods with correct atomic semantics:
 
 - `createOtpChallenge({ challengeId, email, codeHash, emailRateKey, sourceRateKey, createdAt, expiresAt })` — persist challenge, enforce per-email and per-source rate limits atomically using the keyed subjects, and return `{ deliverable: boolean }`. It must not disclose account existence to the caller.
