@@ -11,7 +11,8 @@ class RobotOfficeSchemaTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys = ON")
-        for migration in MIGRATIONS:\n            self.db.executescript(migration.read_text(encoding="utf-8"))
+        for migration in MIGRATIONS:
+            self.db.executescript(migration.read_text(encoding="utf-8"))
         self.db.execute(
             "INSERT INTO office_organizations(id,name,created_at) VALUES(?,?,?)",
             ("org-test", "Synthetic Test Org", 100),
