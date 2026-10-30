@@ -52,7 +52,7 @@ export async function handleRobotOfficeRequest(request, {
   const requestId = crypto.randomUUID();
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
-  const handoffMatch = url.pathname.match(/^\\/api\\/robot-office\\/tasks\\/([^/]+)\\/handoff$/);
+  const handoffMatch = url.pathname.match(/^\/api\/robot-office\/tasks\/([^/]+)\/handoff$/);
   const isTaskCollection = url.pathname === "/api/robot-office/tasks" && ["GET", "POST"].includes(method);
   const isHandoffList = url.pathname === "/api/robot-office/handoffs" && method === "GET";
   const isHandoffMutation = Boolean(handoffMatch) && method === "POST";
