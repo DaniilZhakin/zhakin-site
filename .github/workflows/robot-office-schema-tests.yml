@@ -24,3 +24,10 @@ jobs:
           python-version: '3.12'
       - name: Run isolated schema tests
         run: python -m unittest discover -s robot-office/tests -v
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run authorization policy tests
+        run: node --test robot-office/tests/access-policy.test.mjs
