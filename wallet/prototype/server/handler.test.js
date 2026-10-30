@@ -47,6 +47,29 @@ test("participant identity comes from the server-verified principal, not query i
   assert.deepEqual(seen, ["verified-participant"]);
 });
 
+test("ledger endpoint preserves the D1 page entries and continuation cursor", async () => {
+  const seen = [];
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      listLedger: async (id, options) => {
+        seen.push({ id, options });
+        return { entries: [{ id: "entry-1", points: 5 }], next_cursor: "opaque-next" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger?cursor=opaque-prev"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "opaque-next",
+  });
+  assert.deepEqual(seen, [{
+    id: "verified-participant",
+    options: { limit: 50, cursor: "opaque-prev" },
+  }]);
+});
+
 test("missing repository never fabricates a balance", async () => {
   const handle = createWalletHandler({
     authenticate: async () => ({ id: "p-1", roles: ["participant"] }),

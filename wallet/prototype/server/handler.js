@@ -82,12 +82,20 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
-        const entries = await repository.listLedger(principal.id, {
+        const page = await repository.listLedger(principal.id, {
           limit: 50,
           cursor: url.searchParams.get("cursor"),
         });
-        if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
+        // Accept the D1 adapter's bounded page contract and preserve its
+        // continuation cursor; legacy array adapters remain supported.
+        if (Array.isArray(page)) return json(200, { entries: page, next_cursor: null });
+        if (!page || !Array.isArray(page.entries)) {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, {
+          entries: page.entries,
+          next_cursor: typeof page.next_cursor === "string" ? page.next_cursor : null,
+        });
       } catch {
         return json(503, { error: "ledger_unavailable" });
       }
