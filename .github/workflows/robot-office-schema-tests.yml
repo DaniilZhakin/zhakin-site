@@ -40,3 +40,6 @@ jobs:
           node-version: '20'
       - name: Run authorization policy tests
         run: node --test robot-office/tests/*.test.mjs
+
+      - name: Run disposable Cloudflare D1 local-emulator smoke tests
+        run: bash robot-office/tests/d1-local-smoke.sh
