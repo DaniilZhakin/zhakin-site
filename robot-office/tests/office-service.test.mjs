@@ -71,7 +71,8 @@ test("listing is tenant-filtered and workspace-scoped from server grants", async
   const query = db.calls.find((c) => c.kind === "all" && c.sql.includes("office_tasks"));
   assert.ok(query);
   assert.equal(query.values[0], "org-a");
-  assert.deepEqual(query.values.slice(1), ["treasury"]);
+  assert.deepEqual(query.values, ["org-a", "treasury", "treasury_agent", "robot-1"]);
+  assert.match(query.sql, /owner_role = \? AND created_by = \?/);
 });
 
 test("listing rejects a role from another workspace", async () => {
@@ -80,9 +81,46 @@ test("listing rejects a role from another workspace", async () => {
   // Legal is permitted to list legal tasks, but the query must never include treasury.
   await listOfficeTasks({ db, principal, now: NOW });
   const query = db.calls.find((c) => c.kind === "all" && c.sql.includes("office_tasks"));
-  assert.deepEqual(query.values.slice(1), ["legal"]);
+  assert.deepEqual(query.values, ["org-a", "legal", "legal_agent", "robot-1"]);
+  assert.match(query.sql, /owner_role = \? AND created_by = \?/);
 });
 
+
+
+test("agent handoff lookup is object-scoped to the agent role and creator", async () => {
+  const { handoffOfficeTask } = await import("../src/office-service.mjs");
+  let taskLookup;
+  let writes = 0;
+  const db = {
+    prepare(sql) {
+      return { sql, values: [], bind(...values) { this.values = values; return this; },
+        async all() {
+          if (sql.includes("office_role_grants")) return { results: [activeGrant] };
+          taskLookup = { sql, values: this.values };
+          // Simulate the database predicate rejecting a task created by another principal.
+          return { results: [] };
+        },
+      };
+    },
+    async batch() { writes += 1; return []; },
+  };
+  await assert.rejects(() => handoffOfficeTask({
+    db, principal, taskId: "another-robot-task", expectedVersion: 1,
+    summary: "Review.", idempotencyKey: "agent-scope-1", requestId: "agent-scope-req", now: NOW,
+  }), { status: 404 });
+  assert.match(taskLookup.sql, /owner_role = \? AND created_by = \?/);
+  assert.deepEqual(taskLookup.values, ["another-robot-task", "org-a", "treasury", 1, "treasury_agent", "robot-1"]);
+  assert.equal(writes, 0);
+});
+
+test("human treasury reviewer can list the full workspace without agent ownership filter", async () => {
+  const humanGrant = { ...activeGrant, role: "human_treasury" };
+  const db = fakeDb({ grants: [humanGrant] });
+  await listOfficeTasks({ db, principal, now: NOW });
+  const query = db.calls.find((c) => c.kind === "all" && c.sql.includes("office_tasks"));
+  assert.deepEqual(query.values, ["org-a", "treasury"]);
+  assert.doesNotMatch(query.sql, /created_by = \?/);
+});
 
 test("handoff changes task version and atomically records summary plus audit", async () => {
   const { handoffOfficeTask } = await import("../src/office-service.mjs");
@@ -93,7 +131,7 @@ test("handoff changes task version and atomically records summary plus audit", a
         async all() {
           calls.push({ sql, values: this.values });
           if (sql.includes("office_role_grants")) return { results: [activeGrant] };
-          return { results: [{ id: "task-1", organization_id: "org-a", workspace: "treasury", status: "in_progress", version: 4 }] };
+          return { results: [{ id: "task-1", organization_id: "org-a", workspace: "treasury", owner_role: "treasury_agent", created_by: "robot-1", status: "in_progress", version: 4 }] };
         },
       };
     },
@@ -123,7 +161,7 @@ test("handoff fails on stale task version without issuing a write batch", async 
     prepare(sql) {
       return { sql, bind() { return this; }, async all() {
         return { results: sql.includes("office_role_grants") ? [activeGrant] :
-          [{ id: "task-1", workspace: "treasury", status: "open", version: 5 }] };
+          [{ id: "task-1", workspace: "treasury", owner_role: "treasury_agent", created_by: "robot-1", status: "open", version: 5 }] };
       } };
     },
     async batch() { this.writes += 1; return []; },
@@ -164,7 +202,7 @@ test("handoff idempotency uniqueness collision is a controlled conflict", async 
     prepare(sql) {
       return { sql, bind() { return this; }, async all() {
         return { results: sql.includes("office_role_grants") ? [activeGrant] :
-          [{ id: "task-1", workspace: "treasury", status: "open", version: 1 }] };
+          [{ id: "task-1", workspace: "treasury", owner_role: "treasury_agent", created_by: "robot-1", status: "open", version: 1 }] };
       } };
     },
     async batch() {
