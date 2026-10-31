@@ -57,6 +57,21 @@ function audit(db, {principal, action, objectId, requestId, now, details}) {
     action, objectId, requestId, now, details);
 }
 
+function auditDecision(db, {principal, approvalRequestId, requestId, decision, now, role}) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type, object_id,
+       outcome, request_id, occurred_at, details_redacted)
+    SELECT ?, ?, ?, 'human_reviewer', 'role:decision', 'role_approval',
+      id, 'success', ?, ?, ?
+    FROM office_role_approval_requests
+    WHERE id = ? AND organization_id = ? AND status = ?
+      AND reviewer_id = ? AND decided_at = ?
+  `).bind(id(), principal.organizationId, principal.subjectId, requestId, now,
+    `decision=${decision};role=${role}`, approvalRequestId,
+    principal.organizationId, decision, principal.subjectId, now);
+}
+
 /** Access administrator creates a bounded request; it does not grant a role. */
 export async function createRoleGrantApprovalRequest({
   db, principal, subjectId, role, requestId, idempotencyKey, grantExpiresAt = null,
@@ -145,8 +160,8 @@ export async function decideRoleGrantApproval({
       WHERE id = ? AND organization_id = ? AND status = 'pending' AND expires_at > ?
     `).bind(nextStatus, principal.subjectId, now, reason.trim(), tokenHash,
       tokenExpiresAt, approvalRequestId, principal.organizationId, now),
-    audit(db, {principal, action:"role:decision", objectId:approvalRequestId,
-      requestId:approvalRequestId, now, details:`decision=${decision};role=${request.role}`}),
+    auditDecision(db, {principal, approvalRequestId, requestId:approvalRequestId,
+      decision, now, role:request.role}),
   ];
   const results = await db.batch(statements);
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
