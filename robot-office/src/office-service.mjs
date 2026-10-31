@@ -62,13 +62,29 @@ export async function listOfficeTasks({ db, principal, now = Date.now() }) {
   }).allowed);
   const workspaces = [...new Set(permitted.map((g) => WORKSPACE_BY_ROLE[g.role]))];
   if (workspaces.length === 0) throw Object.assign(new Error("Forbidden"), { status: 403 });
-  const placeholders = workspaces.map(() => "?").join(", ");
+
+  // Human workspace reviewers may inspect all tasks in their workspace.
+  // Robot agents see only tasks they created under their own agent role.
+  const visibility = [];
+  const visibilityBindings = [];
+  for (const workspace of workspaces) {
+    const workspaceGrants = permitted.filter((grant) => WORKSPACE_BY_ROLE[grant.role] === workspace);
+    if (workspaceGrants.some((grant) => grant.role.startsWith("human_"))) {
+      visibility.push("workspace = ?");
+      visibilityBindings.push(workspace);
+      continue;
+    }
+    for (const grant of workspaceGrants) {
+      visibility.push("(workspace = ? AND owner_role = ? AND created_by = ?)");
+      visibilityBindings.push(workspace, grant.role, principal.subjectId);
+    }
+  }
   const result = await db.prepare(`
     SELECT id, workspace, owner_role, status, priority, title, description, created_by, created_at, due_at, version
     FROM office_tasks
-    WHERE organization_id = ? AND workspace IN (${placeholders})
+    WHERE organization_id = ? AND (${visibility.join(" OR ")})
     ORDER BY created_at DESC LIMIT 100
-  `).bind(principal.organizationId, ...workspaces).all();
+  `).bind(principal.organizationId, ...visibilityBindings).all();
   return result.results ?? [];
 }
 
@@ -147,12 +163,15 @@ export async function handoffOfficeTask({
   }
   if (!authorization) throw Object.assign(new Error("Forbidden"), { status: 403 });
 
+  const agentRole = authorization.role.endsWith("_agent");
   const found = await db.prepare(`
-    SELECT id, organization_id, workspace, status, version
+    SELECT id, organization_id, workspace, owner_role, created_by, status, version
     FROM office_tasks
     WHERE id = ? AND organization_id = ? AND workspace = ?
+      AND (? = 0 OR (owner_role = ? AND created_by = ?))
     LIMIT 1
-  `).bind(taskId, principal.organizationId, authorization.workspace).all();
+  `).bind(taskId, principal.organizationId, authorization.workspace,
+    agentRole ? 1 : 0, authorization.role, principal.subjectId).all();
   const task = found.results?.[0];
   if (!task) throw Object.assign(new Error("Task not found"), { status: 404 });
   if (task.version !== expectedVersion || !["open", "in_progress", "blocked"].includes(task.status)) {
