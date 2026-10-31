@@ -243,7 +243,12 @@ export async function retrieveRoleGrantApprovalCredential({
       c.iv, c.ciphertext, c.key_version, c.retrieval_key_hash, c.recovery_until
     FROM office_role_approval_requests r
     JOIN office_role_approval_credentials c ON c.approval_request_id = r.id
-    WHERE r.id = ? AND r.organization_id = ? LIMIT 1
+    WHERE r.id = ? AND r.organization_id = ?
+      AND NOT EXISTS (
+        SELECT 1 FROM office_role_approval_revocations v
+        WHERE v.approval_request_id = r.id AND v.organization_id = r.organization_id
+      )
+    LIMIT 1
   `).bind(approvalRequestId, principal.organizationId).all();
   const request = found.results?.[0];
   if (!request || request.status !== "approved" || request.requested_by !== principal.subjectId ||
@@ -261,6 +266,11 @@ export async function retrieveRoleGrantApprovalCredential({
         SET retrieval_key_hash = ?, retrieved_at = ?, recovery_until = ?
         WHERE approval_request_id = ? AND organization_id = ?
           AND retrieval_key_hash IS NULL
+          AND NOT EXISTS (
+            SELECT 1 FROM office_role_approval_revocations v
+            WHERE v.approval_request_id = office_role_approval_credentials.approval_request_id
+              AND v.organization_id = office_role_approval_credentials.organization_id
+          )
       `).bind(keyHash, now, recoveryUntil, approvalRequestId, principal.organizationId),
       db.prepare(`
         INSERT INTO office_audit_events
@@ -271,6 +281,11 @@ export async function retrieveRoleGrantApprovalCredential({
         FROM office_role_approval_credentials
         WHERE approval_request_id = ? AND organization_id = ?
           AND retrieval_key_hash = ? AND retrieved_at = ?
+          AND NOT EXISTS (
+            SELECT 1 FROM office_role_approval_revocations v
+            WHERE v.approval_request_id = office_role_approval_credentials.approval_request_id
+              AND v.organization_id = office_role_approval_credentials.organization_id
+          )
           AND NOT EXISTS (
             SELECT 1 FROM office_audit_events
             WHERE action = 'role:credential_retrieve'
@@ -300,6 +315,96 @@ export async function retrieveRoleGrantApprovalCredential({
   }
 }
 
+/** Revoke an approved, unconsumed credential at the requester's direction. */
+export async function revokeRoleGrantApproval({
+  db, principal, approvalRequestId, requestId, reason = "", now = Date.now(),
+}) {
+  assertPrincipal(principal);
+  if (!text(approvalRequestId) || !text(requestId) ||
+      typeof reason !== "string" || reason.length > 1000) {
+    fail(400, "Invalid approval revocation");
+  }
+  const grants = await activeGrants(db, principal, now);
+  authorize(principal, grants, "access:grant",
+    {organizationId:principal.organizationId, kind:"role_grant"}, now);
+
+  const found = await db.prepare(`
+    SELECT id, organization_id, requested_by, status
+    FROM office_role_approval_requests
+    WHERE id = ? AND organization_id = ? LIMIT 1
+  `).bind(approvalRequestId, principal.organizationId).all();
+  const approval = found.results?.[0];
+  if (!approval || approval.status !== "approved" || approval.requested_by !== principal.subjectId) {
+    fail(409, "Approval cannot be revoked");
+  }
+
+  const revokedAt = now;
+  const statements = [
+    db.prepare(`
+      INSERT INTO office_role_approval_revocations
+        (approval_request_id, organization_id, revoked_by, revoked_at, request_id, reason)
+      SELECT r.id, r.organization_id, ?, ?, ?, ?
+      FROM office_role_approval_requests r
+      WHERE r.id = ? AND r.organization_id = ? AND r.requested_by = ?
+        AND r.status = 'approved'
+        AND NOT EXISTS (
+          SELECT 1 FROM office_role_approval_revocations v
+          WHERE v.approval_request_id = r.id AND v.organization_id = r.organization_id
+        )
+        AND EXISTS (
+          SELECT 1 FROM office_role_approval_credentials c
+          WHERE c.approval_request_id = r.id AND c.organization_id = r.organization_id
+        )
+    `).bind(principal.subjectId, revokedAt, requestId, reason.trim(),
+      approvalRequestId, principal.organizationId, principal.subjectId),
+    db.prepare(`
+      DELETE FROM office_role_approval_credentials
+      WHERE approval_request_id = ? AND organization_id = ?
+        AND EXISTS (
+          SELECT 1 FROM office_role_approval_revocations v
+          WHERE v.approval_request_id = office_role_approval_credentials.approval_request_id
+            AND v.organization_id = office_role_approval_credentials.organization_id
+            AND v.revoked_by = ? AND v.revoked_at = ? AND v.request_id = ?
+        )
+    `).bind(approvalRequestId, principal.organizationId,
+      principal.subjectId, revokedAt, requestId),
+    db.prepare(`
+      INSERT INTO office_audit_events
+        (id, organization_id, actor_id, actor_role, action, object_type,
+         object_id, outcome, request_id, occurred_at, details_redacted)
+      SELECT ?, ?, ?, 'access_admin', 'role:credential_revoke',
+        'role_approval', approval_request_id, 'success', ?, ?, ?
+      FROM office_role_approval_revocations
+      WHERE approval_request_id = ? AND organization_id = ?
+        AND revoked_by = ? AND revoked_at = ? AND request_id = ?
+        AND NOT EXISTS (
+          SELECT 1 FROM office_audit_events
+          WHERE action = 'role:credential_revoke'
+            AND object_type = 'role_approval' AND object_id = ?
+            AND actor_id = ? AND request_id = ?
+        )
+    `).bind(id(), principal.organizationId, principal.subjectId,
+      requestId, revokedAt, "credential=revoked;envelope=deleted",
+      approvalRequestId, principal.organizationId, principal.subjectId,
+      revokedAt, requestId, approvalRequestId, principal.subjectId, requestId),
+  ];
+  let results;
+  try {
+    results = await db.batch(statements);
+  } catch (error) {
+    if (/UNIQUE constraint failed: office_role_approval_revocations\.approval_request_id/i.test(String(error?.message ?? ""))) {
+      fail(409, "Approval already revoked");
+    }
+    throw error;
+  }
+  if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
+      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1 ||
+      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1) {
+    fail(409, "Approval revocation conflict");
+  }
+  return {id:approvalRequestId, status:"revoked", revoked_at:revokedAt};
+}
+
 /** Hash-only lookup; called by grantOfficeRole and consumed in the same D1 batch as the grant. */
 export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, expiresAt = null, grantId, now = Date.now()}) {
   assertPrincipal(principal);
@@ -313,6 +418,11 @@ export async function findApprovedRoleGrantToken({db, token, principal, subjectI
       AND EXISTS (
         SELECT 1 FROM office_role_approval_credentials c
         WHERE c.approval_request_id = office_role_approval_requests.id
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM office_role_approval_revocations v
+        WHERE v.approval_request_id = office_role_approval_requests.id
+          AND v.organization_id = office_role_approval_requests.organization_id
       )
     LIMIT 1
   `).bind(tokenHash, principal.organizationId, subjectId, role).all();
@@ -330,6 +440,11 @@ export async function findApprovedRoleGrantToken({db, token, principal, subjectI
       UPDATE office_role_approval_requests SET status = 'consumed', consumed_at = ?, consumed_grant_id = ?
       WHERE id = ? AND organization_id = ? AND status = 'approved'
         AND token_hash = ? AND token_expires_at > ? AND expires_at > ? AND consumed_at IS NULL
+        AND NOT EXISTS (
+          SELECT 1 FROM office_role_approval_revocations v
+          WHERE v.approval_request_id = office_role_approval_requests.id
+            AND v.organization_id = office_role_approval_requests.organization_id
+        )
     `).bind(now, grantId, approval.id, principal.organizationId, tokenHash, now, now),
   };
 }
