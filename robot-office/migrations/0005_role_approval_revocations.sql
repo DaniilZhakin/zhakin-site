@@ -36,3 +36,20 @@ WHEN NOT EXISTS (
 BEGIN
   SELECT RAISE(ABORT, 'only the original requester may revoke an approved credential');
 END;
+
+
+-- Audit is database-enforced so a successful revocation can never commit
+-- without its corresponding immutable audit event.
+CREATE TRIGGER IF NOT EXISTS office_role_approval_revocation_audit
+AFTER INSERT ON office_role_approval_revocations
+BEGIN
+  INSERT INTO office_audit_events
+    (id, organization_id, actor_id, actor_role, action, object_type,
+     object_id, outcome, request_id, occurred_at, details_redacted)
+  VALUES (
+    lower(hex(randomblob(16))), NEW.organization_id, NEW.revoked_by,
+    'access_admin', 'role:credential_revoke', 'role_approval',
+    NEW.approval_request_id, 'success', NEW.request_id, NEW.revoked_at,
+    'credential=revoked;envelope=deleted'
+  );
+END;
