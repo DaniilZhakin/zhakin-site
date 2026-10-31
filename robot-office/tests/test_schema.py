@@ -112,7 +112,7 @@ class RobotOfficeSchemaTests(unittest.TestCase):
         self.db.execute(
             """UPDATE office_role_approval_requests
                SET status='approved', reviewer_id='reviewer', decided_at=110,
-                   token_hash='hash-1', token_expires_at=120
+                   decision_event_id='decision-1', token_hash='hash-1', token_expires_at=120
                WHERE id='ra-approved'"""
         )
         with self.assertRaises(sqlite3.IntegrityError):
