@@ -16,7 +16,7 @@
 
 ## Required repository contract
 
-The email OTP migration 0002_wallet_email_otp.sql depends on 0001_wallet_schema.sql from PR #57. It adds a normalized participant email field and a unique lookup index. Treat this as personal data: restrict access, define retention/deletion, and complete the privacy review before storing real addresses.
+The email OTP migration 0002_wallet_email_otp.sql depends on 0001_wallet_schema.sql from PR #57. It adds a normalized participant email field and a unique lookup index. Migration 0003_wallet_role_registry.sql adds a server-side registry for `admin` and `coordinator` grants. The authentication adapter loads only active, unexpired, non-revoked grants into the principal; browser claims are never used. Role assignment/revocation endpoints are intentionally not implemented and must require a separate authorized human workflow. Treat email as personal data: restrict access, define retention/deletion, and complete the privacy review before storing real addresses.
 
 The D1 adapter must implement these methods with correct atomic semantics:
 
@@ -29,7 +29,7 @@ The D1 adapter must implement these methods with correct atomic semantics:
 - `getParticipantById(participantId)`
 - `revokeSession({ tokenHash, revokedAt })`
 
-The `wallet_auth_rate_limits` table is only a schema starting point. The future repository must enforce rate limits atomically and apply retention/purge rules.
+The `wallet_auth_rate_limits` table is only a schema starting point. The repository enforces email/source counters through D1 batch operations, but retention/purge rules still need to be designed and tested. The role registry is read-only in this scaffold; no API route can grant or revoke roles.
 
 ## Required before integration
 
