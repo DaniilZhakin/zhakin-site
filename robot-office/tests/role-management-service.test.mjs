@@ -47,6 +47,7 @@ test("grant requires access_admin and independently verified approval", async ()
   assert.match(batch[0].sql, /UPDATE office_role_approval_requests SET status = 'consumed'/);
   assert.match(batch[1].sql, /INSERT INTO office_role_grants/);
   assert.match(batch[2].sql, /INSERT INTO office_audit_events/);
+  assert.match(batch[3].sql, /DELETE FROM office_role_approval_credentials/);
 });
 
 test("grant cannot create a role or success audit when approval consumption loses a race", async () => {
