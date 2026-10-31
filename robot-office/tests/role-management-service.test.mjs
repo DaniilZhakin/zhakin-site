@@ -15,7 +15,7 @@ function fakeDb({ grants = [adminGrant], target = null, approval = {
   reviewer_id: "independent-human", status: "approved",
   expires_at: NOW + 60_000, grant_expires_at: null,
   token_expires_at: NOW + 60_000, consumed_at: null, consumed_grant_id: null,
-}, batchChanges = [1, 1, 1] } = {}) {
+}, batchChanges = [1, 1, 1, 1] } = {}) {
   const calls = [];
   return {
     calls,
