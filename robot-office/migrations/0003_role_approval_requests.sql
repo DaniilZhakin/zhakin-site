@@ -9,9 +9,12 @@ CREATE TABLE IF NOT EXISTS office_role_approval_requests (
     'treasury_agent', 'legal_agent', 'command_agent',
     'human_treasury', 'human_legal'
   )),
-  scope TEXT NOT NULL CHECK (scope IN (
-    'workspace:treasury', 'workspace:legal', 'organization:handoff-summaries'
-  )),
+  scope TEXT NOT NULL CHECK (
+    (role IN ('treasury_agent','human_treasury') AND scope = 'workspace:treasury') OR
+    (role IN ('legal_agent','human_legal') AND scope = 'workspace:legal') OR
+    (role = 'command_agent' AND scope = 'organization:handoff-summaries')
+  ),
+  grant_expires_at INTEGER,
   status TEXT NOT NULL DEFAULT 'pending'
     CHECK (status IN ('pending', 'approved', 'rejected', 'consumed', 'expired', 'cancelled')),
   request_id TEXT NOT NULL,
@@ -25,6 +28,7 @@ CREATE TABLE IF NOT EXISTS office_role_approval_requests (
   token_expires_at INTEGER,
   consumed_at INTEGER,
   CHECK (expires_at > created_at),
+  CHECK (grant_expires_at IS NULL OR grant_expires_at > created_at),
   CHECK (
     (status = 'pending' AND reviewer_id IS NULL AND decided_at IS NULL AND token_hash IS NULL AND consumed_at IS NULL) OR
     (status = 'approved' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND token_hash IS NOT NULL AND token_expires_at IS NOT NULL AND consumed_at IS NULL) OR
