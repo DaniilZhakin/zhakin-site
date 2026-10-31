@@ -56,7 +56,7 @@ run_d1 --command "UPDATE office_role_approval_requests SET status='approved', re
 echo "Checking encrypted approval credential envelope claim is immutable..."
 run_d1 --command "INSERT INTO office_role_approval_credentials(approval_request_id,organization_id,iv,ciphertext,key_version,created_at) VALUES('role-approval-d1','org-d1-test','AAAAAAAAAAAAAAAA','synthetic-ciphertext','v1',110);" >/dev/null
 run_d1 --command "UPDATE office_role_approval_credentials SET retrieval_key_hash='synthetic-key-hash', retrieved_at=111, recovery_until=140 WHERE approval_request_id='role-approval-d1';" >/dev/null
-expect_failure "credential envelope cannot be claimed or rebound a second time" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \\"UPDATE office_role_approval_credentials SET retrieval_key_hash='different-key' WHERE approval_request_id='role-approval-d1'\\""
+expect_failure "credential envelope cannot be claimed or rebound a second time" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"UPDATE office_role_approval_credentials SET retrieval_key_hash='different-key' WHERE approval_request_id='role-approval-d1'\""
 run_d1 --command "UPDATE office_role_approval_requests SET status='consumed', consumed_at=120, consumed_grant_id='grant-role-d1' WHERE id='role-approval-d1' AND status='approved';" >/dev/null
 expect_failure "consumed approval cannot be replayed or rebound to another grant" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"UPDATE office_role_approval_requests SET consumed_grant_id='grant-role-replay' WHERE id='role-approval-d1'\""
 echo "PASS: approval request scope, independence, and initial state constraints"
