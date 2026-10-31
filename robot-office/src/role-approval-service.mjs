@@ -254,14 +254,38 @@ export async function retrieveRoleGrantApprovalCredential({
   const keyHash = await sha256(retrievalIdempotencyKey);
   if (request.retrieval_key_hash === null) {
     const recoveryUntil = Math.min(request.token_expires_at, now + 120_000);
-    const result = await db.prepare(`
-      UPDATE office_role_approval_credentials
-      SET retrieval_key_hash = ?, retrieved_at = ?, recovery_until = ?
-      WHERE approval_request_id = ? AND organization_id = ?
-        AND retrieval_key_hash IS NULL
-    `).bind(keyHash, now, recoveryUntil, approvalRequestId, principal.organizationId).run();
-    const changed = Number(result?.meta?.changes ?? result?.changes ?? 0);
-    if (changed !== 1) fail(409, "Credential retrieval conflict");
+    const eventId = id();
+    const results = await db.batch([
+      db.prepare(`
+        UPDATE office_role_approval_credentials
+        SET retrieval_key_hash = ?, retrieved_at = ?, recovery_until = ?
+        WHERE approval_request_id = ? AND organization_id = ?
+          AND retrieval_key_hash IS NULL
+      `).bind(keyHash, now, recoveryUntil, approvalRequestId, principal.organizationId),
+      db.prepare(`
+        INSERT INTO office_audit_events
+          (id, organization_id, actor_id, actor_role, action, object_type,
+           object_id, outcome, request_id, occurred_at, details_redacted)
+        SELECT ?, ?, ?, 'access_admin', 'role:credential_retrieve',
+          'role_approval', approval_request_id, 'success', ?, ?, ?
+        FROM office_role_approval_credentials
+        WHERE approval_request_id = ? AND organization_id = ?
+          AND retrieval_key_hash = ? AND retrieved_at = ?
+          AND NOT EXISTS (
+            SELECT 1 FROM office_audit_events
+            WHERE action = 'role:credential_retrieve'
+              AND object_type = 'role_approval' AND object_id = ?
+              AND actor_id = ? AND request_id = ?
+          )
+      `).bind(eventId, principal.organizationId, principal.subjectId,
+        approvalRequestId, now, "credential=claimed;recovery_window_seconds=120",
+        approvalRequestId, principal.organizationId, keyHash, now,
+        approvalRequestId, principal.subjectId, approvalRequestId),
+    ]);
+    if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
+        Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1) {
+      fail(409, "Credential retrieval conflict");
+    }
     request.retrieval_key_hash = keyHash;
     request.recovery_until = recoveryUntil;
   } else if (request.retrieval_key_hash !== keyHash || request.recovery_until <= now) {
