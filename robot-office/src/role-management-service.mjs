@@ -2,8 +2,8 @@
  * Server-only role grant lifecycle for the isolated Robot Office prototype.
  *
  * Not routed through the Worker adapter. Callers must provide a trusted
- * principal and an approvalVerifier backed by a server-side, one-time approval
- * workflow. Never accept a client-supplied { approved: true } object.
+ * principal and a server-side, single-use human approval token. The token
+ * is consumed atomically with the grant. Never accept client approval claims.
  */
 import { authorizeOfficeAccess } from "./access-policy.mjs";
 import { findApprovedRoleGrantToken } from "./role-approval-service.mjs";
