@@ -113,6 +113,8 @@ test("revocation updates only an active operational grant and appends audit", as
   const batch = db.calls.find((call) => call.type === "batch").statements;
   assert.match(batch[0].sql, /UPDATE office_role_grants SET revoked_at/);
   assert.match(batch[1].sql, /INSERT INTO office_audit_events/);
+  assert.match(batch[1].sql, /SELECT .*FROM office_role_grants/s);
+  assert.match(batch[1].sql, /revoked_at = \\?/);
 });
 
 test("revocation cannot target self or protected access roles", async () => {
