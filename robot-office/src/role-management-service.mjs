@@ -2,10 +2,11 @@
  * Server-only role grant lifecycle for the isolated Robot Office prototype.
  *
  * Not routed through the Worker adapter. Callers must provide a trusted
- * principal and an approvalVerifier backed by a server-side, one-time approval
- * workflow. Never accept a client-supplied { approved: true } object.
+ * principal and a server-side, single-use human approval token. The token
+ * is consumed atomically with the grant. Never accept client approval claims.
  */
 import { authorizeOfficeAccess } from "./access-policy.mjs";
+import { findApprovedRoleGrantToken } from "./role-approval-service.mjs";
 
 const ASSIGNABLE_SCOPES = Object.freeze({
   treasury_agent: "workspace:treasury",
@@ -66,13 +67,12 @@ function auditInsert(db, { id, principal, action, objectId, requestId, now, deta
  */
 export async function grantOfficeRole({
   db, principal, subjectId, role, expiresAt = null, requestId, approvalToken,
-  approvalVerifier, now = Date.now(),
+  now = Date.now(),
 }) {
   assertPrincipal(principal);
   if (!isText(subjectId) || !ASSIGNABLE_ROLES.has(role) ||
       (expiresAt !== null && (!Number.isSafeInteger(expiresAt) || expiresAt <= now)) ||
-      !isText(requestId) || !isText(approvalToken, 2000) ||
-      typeof approvalVerifier !== "function") {
+      !isText(requestId) || !isText(approvalToken, 200)) {
     fail(400, "Invalid role grant input");
   }
   if (subjectId === principal.subjectId) fail(403, "Self-assignment is forbidden");
@@ -80,39 +80,52 @@ export async function grantOfficeRole({
   const grants = await loadActiveGrants(db, principal, now);
   assertAccessAdmin(principal, grants, "access:grant", now);
 
-  const approval = await approvalVerifier(approvalToken, {
-    organizationId: principal.organizationId, subjectId, role, expiresAt, requestId,
-  });
-  if (!approval || approval.approved !== true ||
-      !isText(approval.approvalId) || !isText(approval.approvedBy) ||
-      approval.approvedBy === principal.subjectId ||
-      approval.organizationId !== principal.organizationId ||
-      approval.subjectId !== subjectId || approval.role !== role ||
-      !Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= now) {
-    fail(403, "Independent human approval required");
-  }
-
   const id = newId();
+  const { approval, consumeStatement } = await findApprovedRoleGrantToken({
+    db, token: approvalToken, principal, subjectId, role, expiresAt, grantId: id, now,
+  });
   const statements = [
+    consumeStatement,
     db.prepare(`
       INSERT INTO office_role_grants
         (id, subject_id, organization_id, role, scope, granted_by, granted_at, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?
+      FROM office_role_approval_requests
+      WHERE id = ? AND organization_id = ? AND status = 'consumed'
+        AND consumed_at = ? AND consumed_grant_id = ?
+        AND subject_id = ? AND role = ?
+        AND scope = ? AND grant_expires_at IS ?
     `).bind(id, subjectId, principal.organizationId, role, ASSIGNABLE_SCOPES[role],
-      principal.subjectId, now, expiresAt),
-    auditInsert(db, {
-      id: newId(), principal, action: "access:grant", objectId: id, requestId, now,
-      detailsRedacted: `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.approvedBy};approval_id=${approval.approvalId}`,
+      principal.subjectId, now, expiresAt, approval.id, principal.organizationId,
+      now, id, subjectId, role, ASSIGNABLE_SCOPES[role], expiresAt),
+    auditGrantInsert(db, {
+      id: newId(), principal, grantId: id, role, requestId, now, approval,
     }),
   ];
   const results = await db.batch(statements);
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
-      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1) {
+      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1 ||
+      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1) {
     fail(409, "Role grant conflict");
   }
   return { id, subject_id: subjectId, organization_id: principal.organizationId,
     role, scope: ASSIGNABLE_SCOPES[role], granted_by: principal.subjectId,
     granted_at: now, expires_at: expiresAt };
+}
+
+function auditGrantInsert(db, { id, principal, grantId, role, requestId, now, approval }) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type,
+       object_id, outcome, request_id, occurred_at, details_redacted)
+    SELECT ?, ?, ?, 'access_admin', 'access:grant', 'role_grant',
+      id, 'success', ?, ?, ?
+    FROM office_role_grants
+    WHERE id = ? AND organization_id = ? AND subject_id = ?
+      AND role = ? AND granted_by = ? AND granted_at = ?
+  `).bind(id, principal.organizationId, principal.subjectId, requestId, now,
+    `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.reviewer_id};approval_id=${approval.id}`,
+    grantId, principal.organizationId, approval.subject_id, role, principal.subjectId, now);
 }
 
 function auditRevocationInsert(db, { id, principal, grantId, target, requestId, now }) {

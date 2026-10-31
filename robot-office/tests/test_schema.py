@@ -4,7 +4,11 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MIGRATIONS = [ROOT / "migrations" / "0001_robot_office_schema.sql", ROOT / "migrations" / "0002_handoff_summaries.sql"]
+MIGRATIONS = [
+    ROOT / "migrations" / "0001_robot_office_schema.sql",
+    ROOT / "migrations" / "0002_handoff_summaries.sql",
+    ROOT / "migrations" / "0003_role_approval_requests.sql",
+]
 
 
 class RobotOfficeSchemaTests(unittest.TestCase):
@@ -65,6 +69,70 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                SET decision='approved', reviewer_id='reviewer', decided_at=102
                WHERE id='a1'"""
         )
+
+    def test_role_approval_request_requires_independent_subject_and_matching_scope(self):
+        self.db.execute(
+            """INSERT INTO office_role_approval_requests
+               (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                idempotency_key,created_at,expires_at)
+               VALUES('ra1','org-test','admin-1','robot-1','legal_agent',
+                'workspace:legal','req-1','idem-role-1',100,200)"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_role_approval_requests
+                   (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                    idempotency_key,created_at,expires_at)
+                   VALUES('ra2','org-test','admin-1','robot-2','legal_agent',
+                    'workspace:treasury','req-2','idem-role-2',100,200)"""
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_role_approval_requests
+                   (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                    idempotency_key,created_at,expires_at)
+                   VALUES('ra3','org-test','admin-1','admin-1','treasury_agent',
+                    'workspace:treasury','req-3','idem-role-3',100,200)"""
+            )
+
+    def test_approval_state_requires_hash_and_independent_reviewer(self):
+        self.db.execute(
+            """INSERT INTO office_role_approval_requests
+               (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                idempotency_key,created_at,expires_at)
+               VALUES('ra-approved','org-test','admin-1','robot-1','treasury_agent',
+                'workspace:treasury','req-approved','idem-approved',100,200)"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_requests
+                   SET status='approved', reviewer_id='reviewer', decided_at=110
+                   WHERE id='ra-approved'"""
+            )
+        self.db.execute(
+            """UPDATE office_role_approval_requests
+               SET status='approved', reviewer_id='reviewer', decided_at=110,
+                   decision_event_id='decision-1', token_hash='hash-1', token_expires_at=120
+               WHERE id='ra-approved'"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_requests
+                   SET reviewer_id='admin-1'
+                   WHERE id='ra-approved'"""
+            )
+
+        self.db.execute(
+            """UPDATE office_role_approval_requests
+               SET status='consumed', consumed_at=115, consumed_grant_id='grant-1'
+               WHERE id='ra-approved'"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_requests
+                   SET consumed_grant_id='grant-2'
+                   WHERE id='ra-approved'"""
+            )
 
     def test_document_metadata_rejects_oversize_file(self):
         with self.assertRaises(sqlite3.IntegrityError):

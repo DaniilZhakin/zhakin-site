@@ -1,0 +1,204 @@
+/**
+ * Human-in-the-loop approval workflow for Robot Office role grants.
+ * Server-only: not exposed through an HTTP route or production Worker.
+ */
+import { authorizeOfficeAccess } from "./access-policy.mjs";
+
+const ROLE_SCOPE = Object.freeze({
+  treasury_agent: "workspace:treasury",
+  human_treasury: "workspace:treasury",
+  legal_agent: "workspace:legal",
+  human_legal: "workspace:legal",
+  command_agent: "organization:handoff-summaries",
+});
+const ASSIGNABLE = new Set(Object.keys(ROLE_SCOPE));
+const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
+const text = (v, max = 200) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
+const id = () => crypto.randomUUID();
+const bytesToBase64Url = (bytes) => {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+};
+async function sha256(value) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+function assertPrincipal(principal) {
+  if (!principal || principal.authenticated !== true || !text(principal.subjectId) || !text(principal.organizationId)) {
+    fail(401, "Authentication required");
+  }
+}
+async function activeGrants(db, principal, now) {
+  const rows = await db.prepare(`
+    SELECT id, subject_id, organization_id, role, scope, granted_at, expires_at, revoked_at
+    FROM office_role_grants
+    WHERE subject_id = ? AND organization_id = ? AND granted_at <= ?
+      AND (expires_at IS NULL OR expires_at > ?) AND revoked_at IS NULL
+  `).bind(principal.subjectId, principal.organizationId, now, now).all();
+  return (rows.results ?? []).map((r) => ({
+    id:r.id, subjectId:r.subject_id, organizationId:r.organization_id, role:r.role,
+    scope:r.scope, grantedAt:r.granted_at, expiresAt:r.expires_at, revokedAt:r.revoked_at,
+  }));
+}
+function authorize(principal, grants, action, resource, now) {
+  if (!grants.some((grant) => authorizeOfficeAccess({principal, grants:[grant], action, resource, now}).allowed)) {
+    fail(403, "Forbidden");
+  }
+}
+function audit(db, {principal, action, objectId, requestId, now, details}) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type, object_id,
+       outcome, request_id, occurred_at, details_redacted)
+    VALUES (?, ?, ?, ?, ?, 'role_approval', ?, 'success', ?, ?, ?)
+  `).bind(id(), principal.organizationId, principal.subjectId,
+    action === "role:request" ? "access_admin" : "human_reviewer",
+    action, objectId, requestId, now, details);
+}
+
+function auditDecision(db, {principal, approvalRequestId, requestId, decision, now, role, eventId}) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type, object_id,
+       outcome, request_id, occurred_at, details_redacted)
+    SELECT ?, ?, ?, 'human_reviewer', 'role:decision', 'role_approval',
+      id, 'success', ?, ?, ?
+    FROM office_role_approval_requests
+    WHERE id = ? AND organization_id = ? AND status = ?
+      AND reviewer_id = ? AND decided_at = ? AND decision_event_id = ?
+  `).bind(eventId, principal.organizationId, principal.subjectId, requestId, now,
+    `decision=${decision};role=${role}`, approvalRequestId,
+    principal.organizationId, decision, principal.subjectId, now, eventId);
+}
+
+/** Access administrator creates a bounded request; it does not grant a role. */
+export async function createRoleGrantApprovalRequest({
+  db, principal, subjectId, role, requestId, idempotencyKey, grantExpiresAt = null,
+  now = Date.now(), ttlMs = 24 * 60 * 60 * 1000,
+}) {
+  assertPrincipal(principal);
+  if (!text(subjectId) || subjectId === principal.subjectId || !ASSIGNABLE.has(role) ||
+      (grantExpiresAt !== null && (!Number.isSafeInteger(grantExpiresAt) || grantExpiresAt <= now)) ||
+      !text(requestId) || !text(idempotencyKey) || !Number.isSafeInteger(ttlMs) ||
+      ttlMs < 60_000 || ttlMs > 7 * 24 * 60 * 60 * 1000) fail(400, "Invalid approval request");
+  const grants = await activeGrants(db, principal, now);
+  authorize(principal, grants, "access:grant",
+    {organizationId:principal.organizationId, kind:"role_grant"}, now);
+  const requestIdDb = id();
+  const expiresAt = now + ttlMs;
+  const statements = [
+    db.prepare(`
+      INSERT INTO office_role_approval_requests
+        (id, organization_id, requested_by, subject_id, role, scope, status,
+         request_id, idempotency_key, created_at, expires_at, grant_expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)
+    `).bind(requestIdDb, principal.organizationId, principal.subjectId,
+      subjectId, role, ROLE_SCOPE[role], requestId, idempotencyKey, now, expiresAt, grantExpiresAt),
+    audit(db, {principal, action:"role:request", objectId:requestIdDb,
+      requestId, now, details:`role=${role};scope=${ROLE_SCOPE[role]};subject=${subjectId}`}),
+  ];
+  await db.batch(statements);
+  return {id:requestIdDb, organization_id:principal.organizationId, subject_id:subjectId,
+    role, scope:ROLE_SCOPE[role], grant_expires_at:grantExpiresAt,
+    status:"pending", created_at:now, expires_at:expiresAt};
+}
+
+/**
+ * A human with the matching workspace role decides the request.
+ * Approval returns an opaque one-time token; only its SHA-256 hash is persisted.
+ */
+export async function decideRoleGrantApproval({
+  db, principal, approvalRequestId, decision, reason = "",
+  now = Date.now(), tokenTtlMs = 10 * 60 * 1000,
+}) {
+  assertPrincipal(principal);
+  if (!text(approvalRequestId) || !["approved","rejected"].includes(decision) ||
+      typeof reason !== "string" || reason.length > 1000 ||
+      !Number.isSafeInteger(tokenTtlMs) || tokenTtlMs < 30_000 || tokenTtlMs > 30 * 60 * 1000) {
+    fail(400, "Invalid approval decision");
+  }
+  const found = await db.prepare(`
+    SELECT id, organization_id, requested_by, subject_id, role, scope, status, expires_at, grant_expires_at
+    FROM office_role_approval_requests
+    WHERE id = ? AND organization_id = ? LIMIT 1
+  `).bind(approvalRequestId, principal.organizationId).all();
+  const request = found.results?.[0];
+  if (!request || request.status !== "pending") fail(404, "Pending approval not found");
+  if (request.expires_at <= now) fail(409, "Approval request expired");
+  if (request.requested_by === principal.subjectId || request.subject_id === principal.subjectId) {
+    fail(403, "Independent reviewer required");
+  }
+  const grants = await activeGrants(db, principal, now);
+  const reviewerWorkspaces = request.scope === "workspace:treasury" ? ["treasury"]
+    : request.scope === "workspace:legal" ? ["legal"] : ["treasury", "legal"];
+  let reviewerAuthorized = false;
+  for (const workspace of reviewerWorkspaces) {
+    try {
+      authorize(principal, grants, "approvals:decide", {
+        organizationId:principal.organizationId, workspace, kind:"role_approval",
+        requestedBy:request.requested_by, status:"pending",
+      }, now);
+      reviewerAuthorized = true;
+      break;
+    } catch (error) {
+      if (error?.status !== 403) throw error;
+    }
+  }
+  if (!reviewerAuthorized) fail(403, "Matching independent human reviewer required");
+
+  const decisionEventId = id();
+  const token = decision === "approved"
+    ? bytesToBase64Url(crypto.getRandomValues(new Uint8Array(32))) : null;
+  const tokenHash = token ? await sha256(token) : null;
+  const tokenExpiresAt = token ? now + tokenTtlMs : null;
+  const nextStatus = decision;
+  const statements = [
+    db.prepare(`
+      UPDATE office_role_approval_requests
+      SET status = ?, reviewer_id = ?, decided_at = ?, decision_event_id = ?, decision_reason = ?,
+          token_hash = ?, token_expires_at = ?
+      WHERE id = ? AND organization_id = ? AND status = 'pending' AND expires_at > ?
+    `).bind(nextStatus, principal.subjectId, now, decisionEventId, reason.trim(), tokenHash,
+      tokenExpiresAt, approvalRequestId, principal.organizationId, now),
+    auditDecision(db, {principal, approvalRequestId, requestId:approvalRequestId,
+      decision, now, role:request.role, eventId:decisionEventId}),
+  ];
+  const results = await db.batch(statements);
+  if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
+      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1) {
+    fail(409, "Approval decision conflict");
+  }
+  return {id:approvalRequestId, status:nextStatus, decided_at:now,
+    token: token ?? undefined, token_expires_at:tokenExpiresAt ?? undefined};
+}
+
+/** Hash-only lookup; called by grantOfficeRole and consumed in the same D1 batch as the grant. */
+export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, expiresAt = null, grantId, now = Date.now()}) {
+  assertPrincipal(principal);
+  if (!text(token, 200) || !text(subjectId) || !ASSIGNABLE.has(role) || !text(grantId)) fail(400, "Invalid approval token");
+  const tokenHash = await sha256(token);
+  const found = await db.prepare(`
+    SELECT id, organization_id, requested_by, subject_id, role, scope, reviewer_id,
+           status, expires_at, grant_expires_at, token_expires_at, consumed_at, consumed_grant_id
+    FROM office_role_approval_requests
+    WHERE token_hash = ? AND organization_id = ? AND subject_id = ? AND role = ?
+    LIMIT 1
+  `).bind(tokenHash, principal.organizationId, subjectId, role).all();
+  const approval = found.results?.[0];
+  if (!approval || approval.status !== "approved" || approval.consumed_at !== null ||
+      approval.expires_at <= now || approval.token_expires_at <= now ||
+      approval.requested_by !== principal.subjectId || approval.reviewer_id === principal.subjectId ||
+      approval.grant_expires_at !== expiresAt ||
+      approval.scope !== ROLE_SCOPE[role]) {
+    fail(403, "Valid unconsumed human approval required");
+  }
+  return {
+    approval,
+    consumeStatement: db.prepare(`
+      UPDATE office_role_approval_requests SET status = 'consumed', consumed_at = ?, consumed_grant_id = ?
+      WHERE id = ? AND organization_id = ? AND status = 'approved'
+        AND token_hash = ? AND token_expires_at > ? AND expires_at > ? AND consumed_at IS NULL
+    `).bind(now, grantId, approval.id, principal.organizationId, tokenHash, now, now),
+  };
+}

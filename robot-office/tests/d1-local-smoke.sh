@@ -42,6 +42,21 @@ run_d1 --command "INSERT INTO office_organizations(id,name,created_at) VALUES('o
 run_d1 --command "INSERT INTO office_role_grants(id,subject_id,organization_id,role,scope,granted_by,granted_at) VALUES('grant-d1','robot-d1','org-d1-test','treasury_agent','workspace','admin-d1',100);" >/dev/null
 run_d1 --command "INSERT INTO office_tasks(id,organization_id,workspace,owner_role,title,created_by,created_at) VALUES('task-d1','org-d1-test','treasury','treasury_agent','D1 concurrency probe','robot-d1',100);" >/dev/null
 
+echo "Checking human role-approval request constraints and one-time state lifecycle..."
+run_d1 --command "INSERT INTO office_role_approval_requests(id,organization_id,requested_by,subject_id,role,scope,status,request_id,idempotency_key,created_at,expires_at) VALUES('role-approval-d1','org-d1-test','admin-d1','robot-d1','treasury_agent','workspace:treasury','pending','req-approval-d1','idem-approval-d1',100,200);" >/dev/null
+expect_failure "role approval cannot cross role/workspace scope" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_role_approval_requests(id,organization_id,requested_by,subject_id,role,scope,request_id,idempotency_key,created_at,expires_at) VALUES('role-approval-bad','org-d1-test','admin-d1','robot-d1','legal_agent','workspace:treasury','req-bad','idem-bad',100,200)\""
+expect_failure "role approval cannot be self-requested" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"INSERT INTO office_role_approval_requests(id,organization_id,requested_by,subject_id,role,scope,request_id,idempotency_key,created_at,expires_at) VALUES('role-approval-self','org-d1-test','admin-d1','admin-d1','treasury_agent','workspace:treasury','req-self','idem-self',100,200)\""
+result="$(run_d1 --command "SELECT COUNT(*) AS pending_approval_rows FROM office_role_approval_requests WHERE id='role-approval-d1' AND status='pending' AND token_hash IS NULL;" --json)"
+if ! grep -Eq '"pending_approval_rows"[[:space:]]*:[[:space:]]*1' <<<"$result"; then
+  echo "FAIL: pending approval request has unexpected initial state"
+  printf '%s\\n' "$result"
+  exit 1
+fi
+run_d1 --command "UPDATE office_role_approval_requests SET status='approved', reviewer_id='human-d1', decided_at=110, decision_event_id='decision-d1', token_hash='hash-d1', token_expires_at=150 WHERE id='role-approval-d1' AND status='pending';" >/dev/null
+run_d1 --command "UPDATE office_role_approval_requests SET status='consumed', consumed_at=120, consumed_grant_id='grant-role-d1' WHERE id='role-approval-d1' AND status='approved';" >/dev/null
+expect_failure "consumed approval cannot be replayed or rebound to another grant" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"UPDATE office_role_approval_requests SET consumed_grant_id='grant-role-replay' WHERE id='role-approval-d1'\""
+echo "PASS: approval request scope, independence, and initial state constraints"
+
 echo "Checking task compare-and-swap and stale-version rejection..."
 run_d1 --command "UPDATE office_tasks SET status='handed_off',version=version+1 WHERE id='task-d1' AND organization_id='org-d1-test' AND workspace='treasury' AND version=1 AND status IN ('open','in_progress','blocked');" >/dev/null
 run_d1 --command "INSERT INTO office_handoff_summaries(id,organization_id,task_id,workspace,task_version,summary,created_by,created_at,idempotency_key) SELECT 'handoff-stale','org-d1-test',id,'treasury',2,'stale replay','robot-d1',101,'idem-stale' FROM office_tasks WHERE id='task-d1' AND version=1;" >/dev/null
