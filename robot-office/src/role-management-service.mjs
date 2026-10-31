@@ -90,12 +90,16 @@ export async function grantOfficeRole({
     db.prepare(`
       INSERT INTO office_role_grants
         (id, subject_id, organization_id, role, scope, granted_by, granted_at, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?
+      FROM office_role_approval_requests
+      WHERE id = ? AND organization_id = ? AND status = 'consumed'
+        AND consumed_at = ? AND subject_id = ? AND role = ?
+        AND scope = ? AND grant_expires_at IS ?
     `).bind(id, subjectId, principal.organizationId, role, ASSIGNABLE_SCOPES[role],
-      principal.subjectId, now, expiresAt),
-    auditInsert(db, {
-      id: newId(), principal, action: "access:grant", objectId: id, requestId, now,
-      detailsRedacted: `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.reviewer_id};approval_id=${approval.id}`,
+      principal.subjectId, now, expiresAt, approval.id, principal.organizationId,
+      now, subjectId, role, ASSIGNABLE_SCOPES[role], expiresAt),
+    auditGrantInsert(db, {
+      id: newId(), principal, grantId: id, role, requestId, now, approval,
     }),
   ];
   const results = await db.batch(statements);
@@ -107,6 +111,21 @@ export async function grantOfficeRole({
   return { id, subject_id: subjectId, organization_id: principal.organizationId,
     role, scope: ASSIGNABLE_SCOPES[role], granted_by: principal.subjectId,
     granted_at: now, expires_at: expiresAt };
+}
+
+function auditGrantInsert(db, { id, principal, grantId, role, requestId, now, approval }) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type,
+       object_id, outcome, request_id, occurred_at, details_redacted)
+    SELECT ?, ?, ?, 'access_admin', 'access:grant', 'role_grant',
+      id, 'success', ?, ?, ?
+    FROM office_role_grants
+    WHERE id = ? AND organization_id = ? AND subject_id = ?
+      AND role = ? AND granted_by = ? AND granted_at = ?
+  `).bind(id, principal.organizationId, principal.subjectId, requestId, now,
+    `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.reviewer_id};approval_id=${approval.id}`,
+    grantId, principal.organizationId, approval.subject_id, role, principal.subjectId, now);
 }
 
 function auditRevocationInsert(db, { id, principal, grantId, target, requestId, now }) {
