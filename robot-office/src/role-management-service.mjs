@@ -101,11 +101,16 @@ export async function grantOfficeRole({
     auditGrantInsert(db, {
       id: newId(), principal, grantId: id, role, requestId, now, approval,
     }),
+    db.prepare(`
+      DELETE FROM office_role_approval_credentials
+      WHERE approval_request_id = ? AND organization_id = ?
+    `).bind(approval.id, principal.organizationId),
   ];
   const results = await db.batch(statements);
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
       Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1 ||
-      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1) {
+      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1 ||
+      Number(results?.[3]?.meta?.changes ?? results?.[3]?.changes ?? 0) !== 1) {
     fail(409, "Role grant conflict");
   }
   return { id, subject_id: subjectId, organization_id: principal.organizationId,

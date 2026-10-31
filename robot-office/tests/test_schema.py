@@ -8,6 +8,7 @@ MIGRATIONS = [
     ROOT / "migrations" / "0001_robot_office_schema.sql",
     ROOT / "migrations" / "0002_handoff_summaries.sql",
     ROOT / "migrations" / "0003_role_approval_requests.sql",
+    ROOT / "migrations" / "0004_role_approval_credentials.sql",
 ]
 
 
@@ -132,6 +133,49 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                 """UPDATE office_role_approval_requests
                    SET consumed_grant_id='grant-2'
                    WHERE id='ra-approved'"""
+            )
+
+    def test_approval_credential_envelope_is_encrypted_and_bound(self):
+        self.db.execute(
+            """INSERT INTO office_role_approval_requests
+               (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                idempotency_key,created_at,expires_at)
+               VALUES('ra-envelope','org-test','admin-1','robot-1','legal_agent',
+                'workspace:legal','req-envelope','idem-envelope',100,300)"""
+        )
+        self.db.execute(
+            """UPDATE office_role_approval_requests
+               SET status='approved', reviewer_id='reviewer', decided_at=110,
+                   decision_event_id='decision-envelope', token_hash='hash-envelope',
+                   token_expires_at=250
+               WHERE id='ra-envelope'"""
+        )
+        self.db.execute(
+            """INSERT INTO office_role_approval_credentials
+               (approval_request_id,organization_id,iv,ciphertext,key_version,created_at)
+               VALUES('ra-envelope','org-test','AAAAAAAAAAAAAAAA','CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC','v1',110)"""
+        )
+        columns = {row[1] for row in self.db.execute(
+            "PRAGMA table_info(office_role_approval_credentials)"
+        )}
+        self.assertNotIn("token", columns)
+        self.assertIn("ciphertext", columns)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_credentials
+                   SET retrieval_key_hash='k', retrieved_at=120, recovery_until=120
+                   WHERE approval_request_id='ra-envelope'"""
+            )
+        self.db.execute(
+            """UPDATE office_role_approval_credentials
+               SET retrieval_key_hash='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', retrieved_at=120, recovery_until=240
+               WHERE approval_request_id='ra-envelope'"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_credentials
+                   SET retrieval_key_hash='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+                   WHERE approval_request_id='ra-envelope'"""
             )
 
     def test_document_metadata_rejects_oversize_file(self):
