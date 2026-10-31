@@ -144,12 +144,25 @@ export function createD1WalletAuthRepository(db) {
       return row ?? null;
     },
 
-    async getParticipantById(participantId) {
+    async getParticipantById(participantId, now = Date.now()) {
       requiredString(participantId, "participantId", 128);
+      requiredTime(now, "now");
       const row = await db.prepare(
         "SELECT id, status FROM wallet_participants WHERE id = ? LIMIT 1",
       ).bind(participantId).first();
-      return row ? { ...row, roles: [] } : null;
+      if (!row) return null;
+
+      // Effective privileges are loaded exclusively from the server-side role
+      // registry. Revoked and expired grants never enter the authenticated principal.
+      const roleRows = await db.prepare(
+        "SELECT role FROM wallet_participant_roles " +
+        "WHERE participant_id = ? AND granted_at <= ? " +
+        "AND (expires_at IS NULL OR expires_at > ?) AND revoked_at IS NULL",
+      ).bind(participantId, now, now).all();
+      const roles = [...new Set((roleRows.results ?? [])
+        .map((item) => item.role)
+        .filter((role) => role === "admin" || role === "coordinator"))];
+      return { ...row, roles };
     },
 
     async revokeSession({ tokenHash, revokedAt }) {
