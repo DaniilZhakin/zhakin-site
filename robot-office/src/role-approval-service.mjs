@@ -57,7 +57,7 @@ function audit(db, {principal, action, objectId, requestId, now, details}) {
     action, objectId, requestId, now, details);
 }
 
-function auditDecision(db, {principal, approvalRequestId, requestId, decision, now, role}) {
+function auditDecision(db, {principal, approvalRequestId, requestId, decision, now, role, eventId}) {
   return db.prepare(`
     INSERT INTO office_audit_events
       (id, organization_id, actor_id, actor_role, action, object_type, object_id,
@@ -66,10 +66,10 @@ function auditDecision(db, {principal, approvalRequestId, requestId, decision, n
       id, 'success', ?, ?, ?
     FROM office_role_approval_requests
     WHERE id = ? AND organization_id = ? AND status = ?
-      AND reviewer_id = ? AND decided_at = ?
-  `).bind(id(), principal.organizationId, principal.subjectId, requestId, now,
+      AND reviewer_id = ? AND decided_at = ? AND decision_event_id = ?
+  `).bind(eventId, principal.organizationId, principal.subjectId, requestId, now,
     `decision=${decision};role=${role}`, approvalRequestId,
-    principal.organizationId, decision, principal.subjectId, now);
+    principal.organizationId, decision, principal.subjectId, now, eventId);
 }
 
 /** Access administrator creates a bounded request; it does not grant a role. */
@@ -147,6 +147,7 @@ export async function decideRoleGrantApproval({
   }
   if (!reviewerAuthorized) fail(403, "Matching independent human reviewer required");
 
+  const decisionEventId = id();
   const token = decision === "approved"
     ? bytesToBase64Url(crypto.getRandomValues(new Uint8Array(32))) : null;
   const tokenHash = token ? await sha256(token) : null;
@@ -155,13 +156,13 @@ export async function decideRoleGrantApproval({
   const statements = [
     db.prepare(`
       UPDATE office_role_approval_requests
-      SET status = ?, reviewer_id = ?, decided_at = ?, decision_reason = ?,
+      SET status = ?, reviewer_id = ?, decided_at = ?, decision_event_id = ?, decision_reason = ?,
           token_hash = ?, token_expires_at = ?
       WHERE id = ? AND organization_id = ? AND status = 'pending' AND expires_at > ?
-    `).bind(nextStatus, principal.subjectId, now, reason.trim(), tokenHash,
+    `).bind(nextStatus, principal.subjectId, now, decisionEventId, reason.trim(), tokenHash,
       tokenExpiresAt, approvalRequestId, principal.organizationId, now),
     auditDecision(db, {principal, approvalRequestId, requestId:approvalRequestId,
-      decision, now, role:request.role}),
+      decision, now, role:request.role, eventId:decisionEventId}),
   ];
   const results = await db.batch(statements);
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
@@ -173,13 +174,13 @@ export async function decideRoleGrantApproval({
 }
 
 /** Hash-only lookup; called by grantOfficeRole and consumed in the same D1 batch as the grant. */
-export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, expiresAt = null, now = Date.now()}) {
+export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, expiresAt = null, grantId, now = Date.now()}) {
   assertPrincipal(principal);
-  if (!text(token, 200) || !text(subjectId) || !ASSIGNABLE.has(role)) fail(400, "Invalid approval token");
+  if (!text(token, 200) || !text(subjectId) || !ASSIGNABLE.has(role) || !text(grantId)) fail(400, "Invalid approval token");
   const tokenHash = await sha256(token);
   const found = await db.prepare(`
     SELECT id, organization_id, requested_by, subject_id, role, scope, reviewer_id,
-           status, expires_at, grant_expires_at, token_expires_at, consumed_at
+           status, expires_at, grant_expires_at, token_expires_at, consumed_at, consumed_grant_id
     FROM office_role_approval_requests
     WHERE token_hash = ? AND organization_id = ? AND subject_id = ? AND role = ?
     LIMIT 1
@@ -195,9 +196,9 @@ export async function findApprovedRoleGrantToken({db, token, principal, subjectI
   return {
     approval,
     consumeStatement: db.prepare(`
-      UPDATE office_role_approval_requests SET status = 'consumed', consumed_at = ?
+      UPDATE office_role_approval_requests SET status = 'consumed', consumed_at = ?, consumed_grant_id = ?
       WHERE id = ? AND organization_id = ? AND status = 'approved'
         AND token_hash = ? AND token_expires_at > ? AND expires_at > ? AND consumed_at IS NULL
-    `).bind(now, approval.id, principal.organizationId, tokenHash, now, now),
+    `).bind(now, grantId, approval.id, principal.organizationId, tokenHash, now, now),
   };
 }
