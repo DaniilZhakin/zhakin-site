@@ -4,6 +4,7 @@ import {
   createRoleGrantApprovalRequest,
   decideRoleGrantApproval,
   findApprovedRoleGrantToken,
+  retrieveRoleGrantApprovalCredential,
 } from "../src/role-approval-service.mjs";
 
 const NOW = 1_800_000_000_000;
@@ -17,22 +18,38 @@ const reviewerGrant = {id:"g-human",subject_id:"human-legal-1",organization_id:"
 const pending = {id:"req-db-1",organization_id:"org-a",requested_by:"admin-1",
   subject_id:"robot-legal-1",role:"legal_agent",scope:"workspace:legal",
   status:"pending",expires_at:NOW+86_400_000,grant_expires_at:null};
-function fakeDb({grants=[adminGrant],request=pending,tokenRow=null,changes=[1,1,1]}={}) {
+function fakeDb({grants=[adminGrant],request=pending,tokenRow=null,changes=[1,1,1],credential=null}={}) {
   const calls=[];
+  const state={credential};
   return {
-    calls,
+    calls,state,
     prepare(sql) {
       return {sql,values:[],bind(...values){this.values=values;return this;},
         async all() {
           calls.push({type:"all",sql,values:this.values});
+          if(sql.includes("JOIN office_role_approval_credentials")) return {results:request && state.credential ? [{...request,...state.credential}] : []};
           if(sql.includes("FROM office_role_approval_requests") && sql.includes("WHERE id = ?")) return {results:request?[request]:[]};
           if(sql.includes("FROM office_role_approval_requests") && sql.includes("token_hash = ?")) return {results:tokenRow?[tokenRow]:[]};
           if(sql.includes("FROM office_role_grants")) return {results:grants};
           return {results:[]};
-        }};
+        },
+        async run() {
+          calls.push({type:"run",sql,values:this.values});
+          if(sql.includes("UPDATE office_role_approval_credentials")) {
+            if(!state.credential || state.credential.retrieval_key_hash !== null) return {meta:{changes:0}};
+            state.credential={...state.credential,retrieval_key_hash:this.values[0],retrieved_at:this.values[1],recovery_until:this.values[2]};
+            return {meta:{changes:1}};
+          }
+          return {meta:{changes:0}};
+        }
+      };
     },
     async batch(statements) {
       calls.push({type:"batch",statements});
+      if(statements.some(s=>s.sql.includes("INSERT INTO office_role_approval_credentials"))) {
+        const s=statements.find(s=>s.sql.includes("INSERT INTO office_role_approval_credentials"));
+        state.credential={iv:s.values[2],ciphertext:s.values[3],key_version:s.values[4],retrieval_key_hash:null,retrieved_at:null,recovery_until:null};
+      }
       return statements.map((_,i)=>({meta:{changes:changes[i]??0}}));
     }
   };
@@ -81,6 +98,30 @@ test("matching human reviewer approves once without returning the bearer credent
   assert.match(batch[2].sql,/decision_event_id = \\\\?/);
 });
 
+test("encrypted credential is recoverable only by requester with same idempotency key",async()=>{
+  const request={...pending};
+  const db=fakeDb({grants:[reviewerGrant],request});
+  const decision=await decideRoleGrantApproval({db,principal:reviewer,
+    approvalRequestId:"req-db-1",decision:"approved",now:NOW,
+    credentialEncryptionKey:ENCRYPTION_KEY});
+  request.status="approved";
+  request.reviewer_id=reviewer.subjectId;
+  request.token_expires_at=decision.token_expires_at;
+  const retrievalKey="B".repeat(43);
+  const first=await retrieveRoleGrantApprovalCredential({db,principal:admin,
+    approvalRequestId:"req-db-1",retrievalIdempotencyKey:retrievalKey,
+    credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+1});
+  assert.match(first.token,/^[A-Za-z0-9_-]{43}$/);
+  assert.equal(first.recovery_until,NOW+120_001);
+  const retry=await retrieveRoleGrantApprovalCredential({db,principal:admin,
+    approvalRequestId:"req-db-1",retrievalIdempotencyKey:retrievalKey,
+    credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+2});
+  assert.equal(retry.token,first.token);
+  await assert.rejects(()=>retrieveRoleGrantApprovalCredential({db,principal:admin,
+    approvalRequestId:"req-db-1",retrievalIdempotencyKey:"C".repeat(43),
+    credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+2}),{status:409});
+  assert.equal(db.calls.filter(x=>x.type==="run").length,1);
+});
 test("approval fails closed when encryption key is absent",async()=>{
   const db=fakeDb({grants:[reviewerGrant]});
   await assert.rejects(()=>decideRoleGrantApproval({db,principal:reviewer,
