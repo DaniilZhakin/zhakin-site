@@ -4,7 +4,7 @@ import { createD1WalletAuthRepository } from "./d1-auth-repository.js";
 
 const HASH = "a".repeat(64);
 
-function fakeD1({ batchChanges = [1, 1], insertChanges = 1, firstRows = [] } = {}) {
+function fakeD1({ batchChanges = [1, 1], insertChanges = 1, firstRows = [], allRows = [] } = {}) {
   const calls = [];
   let firstIndex = 0;
   const db = {
@@ -17,6 +17,7 @@ function fakeD1({ batchChanges = [1, 1], insertChanges = 1, firstRows = [] } = {
           call.values = values;
           return {
             first: async () => firstRows[firstIndex++] ?? null,
+            all: async () => ({ results: allRows }),
             run: async () => ({ meta: { changes: insertChanges } }),
           };
         },
@@ -111,4 +112,36 @@ test("repository rejects malformed HMACs and invalid limits before SQL execution
     challengeId: "c".repeat(32), codeHash: HASH, now: 1, maxAttempts: 6,
   }), /maxAttempts/);
   assert.equal(db.calls.length, 0);
+});
+
+test("participant roles are loaded only from active, unexpired server-side grants", async () => {
+  const db = fakeD1({
+    firstRows: [{ id: "participant-1", status: "active" }],
+    allRows: [
+      { role: "admin" },
+      { role: "coordinator" },
+      { role: "admin" },
+      { role: "unexpected-browser-role" },
+    ],
+  });
+  const repo = createD1WalletAuthRepository(db);
+  assert.deepEqual(await repo.getParticipantById("participant-1", 1_800_000_000_000), {
+    id: "participant-1",
+    status: "active",
+    roles: ["admin", "coordinator"],
+  });
+  assert.match(db.calls[1].sql, /wallet_participant_roles/);
+  assert.match(db.calls[1].sql, /granted_at <= \?/);
+  assert.match(db.calls[1].sql, /expires_at IS NULL OR expires_at > \?/);
+  assert.match(db.calls[1].sql, /revoked_at IS NULL/);
+  assert.deepEqual(db.calls[1].values, [
+    "participant-1", 1_800_000_000_000, 1_800_000_000_000,
+  ]);
+});
+
+test("missing participant never triggers role lookup", async () => {
+  const db = fakeD1({ firstRows: [null] });
+  const repo = createD1WalletAuthRepository(db);
+  assert.equal(await repo.getParticipantById("missing", 1_800_000_000_000), null);
+  assert.equal(db.calls.length, 1);
 });
