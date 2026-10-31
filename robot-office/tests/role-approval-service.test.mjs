@@ -5,6 +5,7 @@ import {
   decideRoleGrantApproval,
   findApprovedRoleGrantToken,
   retrieveRoleGrantApprovalCredential,
+  revokeRoleGrantApproval,
 } from "../src/role-approval-service.mjs";
 
 const NOW = 1_800_000_000_000;
@@ -188,8 +189,41 @@ test("approval lookup binds token to requester, target, role, expiry and scope",
     subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,grantId:"grant-new",now:NOW});
   assert.equal(result.approval.id,"req-db-1");
   assert.match(result.consumeStatement.sql,/status = 'consumed'/);
+  assert.match(result.consumeStatement.sql,/office_role_approval_revocations/);
   assert.ok(db.calls.some(call => call.sql?.includes("EXISTS (") && call.sql?.includes("office_role_approval_credentials")));
   assert.equal(result.consumeStatement.values.includes("opaque-token"),false);
+});
+
+test("requester can revoke an approved credential and atomically delete its envelope",async()=>{
+  const approved={...pending,status:"approved",reviewer_id:reviewer.subjectId,
+    decided_at:NOW,decision_event_id:"decision-1",token_hash:"hash-1",
+    token_expires_at:NOW+600_000};
+  const db=fakeDb({request:approved,changes:[1,1,1]});
+  const result=await revokeRoleGrantApproval({db,principal:admin,
+    approvalRequestId:"req-db-1",requestId:"revoke-request-1",
+    reason:"Credential delivery was not completed",now:NOW+121_000});
+  assert.deepEqual(result,{id:"req-db-1",status:"revoked",revoked_at:NOW+121_000});
+  const batch=db.calls.find(call=>call.type==="batch").statements;
+  assert.match(batch[0].sql,/INSERT INTO office_role_approval_revocations/);
+  assert.match(batch[0].sql,/requested_by = \?/);
+  assert.match(batch[1].sql,/DELETE FROM office_role_approval_credentials/);
+  assert.match(batch[2].sql,/role:credential_revoke/);
+  assert.equal(batch.some(statement=>statement.values.includes("hash-1")),false);
+});
+
+test("only the original requester may revoke and revocation fails closed on conflict",async()=>{
+  const approved={...pending,status:"approved",reviewer_id:reviewer.subjectId,
+    decided_at:NOW,decision_event_id:"decision-1",token_hash:"hash-1",
+    token_expires_at:NOW+600_000};
+  const otherAdmin={...admin,subjectId:"other-admin"};
+  const db=fakeDb({grants:[{...adminGrant,subject_id:"other-admin"}],request:approved});
+  await assert.rejects(()=>revokeRoleGrantApproval({db,principal:otherAdmin,
+    approvalRequestId:"req-db-1",requestId:"revoke-request-2",now:NOW}),{status:409});
+  assert.equal(db.calls.some(call=>call.type==="batch"),false);
+
+  const conflictDb=fakeDb({request:approved,changes:[0,0,0]});
+  await assert.rejects(()=>revokeRoleGrantApproval({db:conflictDb,principal:admin,
+    approvalRequestId:"req-db-1",requestId:"revoke-request-3",now:NOW}),{status:409});
 });
 
 test("approval lookup rejects expired, consumed, mismatched and absent tokens",async()=>{
