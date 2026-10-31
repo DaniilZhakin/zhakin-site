@@ -180,7 +180,7 @@ export function createEmailOtpAuth({ repository, deliverEmail, secret, now = () 
       const session = await repository.findActiveSession({ tokenHash, now: now() });
       if (!session || typeof session.participantId !== "string") return null;
 
-      const participant = await repository.getParticipantById(session.participantId);
+      const participant = await repository.getParticipantById(session.participantId, now());
       if (!participant || participant.status !== "active" || typeof participant.id !== "string") {
         return null;
       }
