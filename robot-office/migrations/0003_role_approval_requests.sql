@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS office_role_approval_requests (
   ),
   grant_expires_at INTEGER,
   status TEXT NOT NULL DEFAULT 'pending'
-    CHECK (status IN ('pending', 'approved', 'rejected', 'consumed', 'expired', 'cancelled')),
+    CHECK (status IN ('pending', 'approved', 'rejected', 'consumed')),
   request_id TEXT NOT NULL,
   idempotency_key TEXT NOT NULL UNIQUE,
   created_at INTEGER NOT NULL,
@@ -35,8 +35,7 @@ CREATE TABLE IF NOT EXISTS office_role_approval_requests (
     (status = 'pending' AND reviewer_id IS NULL AND decided_at IS NULL AND decision_event_id IS NULL AND token_hash IS NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
     (status = 'approved' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NOT NULL AND token_expires_at IS NOT NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
     (status = 'rejected' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
-    (status = 'consumed' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NOT NULL AND consumed_at IS NOT NULL AND consumed_grant_id IS NOT NULL) OR
-    (status IN ('expired', 'cancelled') AND consumed_at IS NULL)
+    (status = 'consumed' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NOT NULL AND consumed_at IS NOT NULL AND consumed_grant_id IS NOT NULL) 
   ),
   CHECK (reviewer_id IS NULL OR reviewer_id <> requested_by),
   CHECK (subject_id <> requested_by)
