@@ -286,6 +286,10 @@ export async function findApprovedRoleGrantToken({db, token, principal, subjectI
            status, expires_at, grant_expires_at, token_expires_at, consumed_at, consumed_grant_id
     FROM office_role_approval_requests
     WHERE token_hash = ? AND organization_id = ? AND subject_id = ? AND role = ?
+      AND EXISTS (
+        SELECT 1 FROM office_role_approval_credentials c
+        WHERE c.approval_request_id = office_role_approval_requests.id
+      )
     LIMIT 1
   `).bind(tokenHash, principal.organizationId, subjectId, role).all();
   const approval = found.results?.[0];
