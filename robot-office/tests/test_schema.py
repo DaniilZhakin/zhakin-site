@@ -153,7 +153,7 @@ class RobotOfficeSchemaTests(unittest.TestCase):
         self.db.execute(
             """INSERT INTO office_role_approval_credentials
                (approval_request_id,organization_id,iv,ciphertext,key_version,created_at)
-               VALUES('ra-envelope','org-test','AAAAAAAAAAAAAAAA','ciphertext-base64url','v1',110)"""
+               VALUES('ra-envelope','org-test','AAAAAAAAAAAAAAAA','CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC','v1',110)"""
         )
         columns = {row[1] for row in self.db.execute(
             "PRAGMA table_info(office_role_approval_credentials)"
@@ -168,13 +168,13 @@ class RobotOfficeSchemaTests(unittest.TestCase):
             )
         self.db.execute(
             """UPDATE office_role_approval_credentials
-               SET retrieval_key_hash='key-hash', retrieved_at=120, recovery_until=240
+               SET retrieval_key_hash='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', retrieved_at=120, recovery_until=240
                WHERE approval_request_id='ra-envelope'"""
         )
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute(
                 """UPDATE office_role_approval_credentials
-                   SET retrieval_key_hash='other-key'
+                   SET retrieval_key_hash='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                    WHERE approval_request_id='ra-envelope'"""
             )
 
