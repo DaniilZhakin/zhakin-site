@@ -81,7 +81,7 @@ export async function grantOfficeRole({
   assertAccessAdmin(principal, grants, "access:grant", now);
 
   const { approval, consumeStatement } = await findApprovedRoleGrantToken({
-    db, token: approvalToken, principal, subjectId, role, now,
+    db, token: approvalToken, principal, subjectId, role, expiresAt, now,
   });
 
   const id = newId();
