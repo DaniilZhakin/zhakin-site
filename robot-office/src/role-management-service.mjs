@@ -115,6 +115,21 @@ export async function grantOfficeRole({
     granted_at: now, expires_at: expiresAt };
 }
 
+function auditRevocationInsert(db, { id, principal, grantId, target, requestId, now }) {
+  return db.prepare(`
+    INSERT INTO office_audit_events
+      (id, organization_id, actor_id, actor_role, action, object_type,
+       object_id, outcome, request_id, occurred_at, details_redacted)
+    SELECT ?, ?, ?, 'access_admin', 'access:revoke', 'role_grant',
+      id, 'success', ?, ?, ?
+    FROM office_role_grants
+    WHERE id = ? AND organization_id = ? AND revoked_at = ?
+      AND subject_id = ? AND role = ?
+  `).bind(id, principal.organizationId, principal.subjectId, requestId, now,
+    `role=${target.role};subject=${target.subject_id}`,
+    grantId, principal.organizationId, now, target.subject_id, target.role);
+}
+
 /** Revokes an operational role and appends an immutable audit event atomically. */
 export async function revokeOfficeRole({
   db, principal, grantId, requestId, now = Date.now(),
@@ -141,9 +156,8 @@ export async function revokeOfficeRole({
       WHERE id = ? AND organization_id = ? AND revoked_at IS NULL
         AND role IN ('treasury_agent', 'human_treasury', 'legal_agent', 'human_legal', 'command_agent')
     `).bind(now, grantId, principal.organizationId),
-    auditInsert(db, {
-      id: newId(), principal, action: "access:revoke", objectId: grantId, requestId, now,
-      detailsRedacted: `role=${target.role};subject=${target.subject_id}`,
+    auditRevocationInsert(db, {
+      id: newId(), principal, grantId, target, requestId, now,
     }),
   ];
   const results = await db.batch(statements);
