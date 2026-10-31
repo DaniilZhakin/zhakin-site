@@ -80,11 +80,10 @@ export async function grantOfficeRole({
   const grants = await loadActiveGrants(db, principal, now);
   assertAccessAdmin(principal, grants, "access:grant", now);
 
-  const { approval, consumeStatement } = await findApprovedRoleGrantToken({
-    db, token: approvalToken, principal, subjectId, role, expiresAt, now,
-  });
-
   const id = newId();
+  const { approval, consumeStatement } = await findApprovedRoleGrantToken({
+    db, token: approvalToken, principal, subjectId, role, expiresAt, grantId: id, now,
+  });
   const statements = [
     consumeStatement,
     db.prepare(`
@@ -93,11 +92,12 @@ export async function grantOfficeRole({
       SELECT ?, ?, ?, ?, ?, ?, ?, ?
       FROM office_role_approval_requests
       WHERE id = ? AND organization_id = ? AND status = 'consumed'
-        AND consumed_at = ? AND subject_id = ? AND role = ?
+        AND consumed_at = ? AND consumed_grant_id = ?
+        AND subject_id = ? AND role = ?
         AND scope = ? AND grant_expires_at IS ?
     `).bind(id, subjectId, principal.organizationId, role, ASSIGNABLE_SCOPES[role],
       principal.subjectId, now, expiresAt, approval.id, principal.organizationId,
-      now, subjectId, role, ASSIGNABLE_SCOPES[role], expiresAt),
+      now, id, subjectId, role, ASSIGNABLE_SCOPES[role], expiresAt),
     auditGrantInsert(db, {
       id: newId(), principal, grantId: id, role, requestId, now, approval,
     }),
