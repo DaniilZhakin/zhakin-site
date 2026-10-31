@@ -121,6 +121,15 @@ test("encrypted credential is recoverable only by requester with same idempotenc
     credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+1});
   assert.match(first.token,/^[A-Za-z0-9_-]{43}$/);
   assert.equal(first.recovery_until,NOW+120_001);
+  await assert.rejects(()=>retrieveRoleGrantApprovalCredential({db,principal:admin,
+    approvalRequestId:"req-db-1",retrievalIdempotencyKey:retrievalKey,
+    credentialEncryptionKey:"C".repeat(43),now:NOW+2}),{status:500});
+  const originalExpiry=request.expires_at;
+  request.expires_at=originalExpiry+1;
+  await assert.rejects(()=>retrieveRoleGrantApprovalCredential({db,principal:admin,
+    approvalRequestId:"req-db-1",retrievalIdempotencyKey:retrievalKey,
+    credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+2}),{status:500});
+  request.expires_at=originalExpiry;
   const retry=await retrieveRoleGrantApprovalCredential({db,principal:admin,
     approvalRequestId:"req-db-1",retrievalIdempotencyKey:retrievalKey,
     credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+2});
