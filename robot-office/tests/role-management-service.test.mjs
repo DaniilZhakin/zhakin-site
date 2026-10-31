@@ -9,7 +9,12 @@ const adminGrant = {
   role: "access_admin", scope: "organization", granted_at: NOW - 1000,
   expires_at: null, revoked_at: null,
 };
-function fakeDb({ grants = [adminGrant], target = null, batchChanges = [1, 1] } = {}) {
+function fakeDb({ grants = [adminGrant], target = null, approval = {
+  id: "approval-1", organization_id: "org-a", requested_by: "admin-1",
+  subject_id: "robot-legal", role: "legal_agent", scope: "workspace:legal",
+  reviewer_id: "independent-human", status: "approved",
+  expires_at: NOW + 60_000, token_expires_at: NOW + 60_000, consumed_at: null,
+}, batchChanges = [1, 1, 1] } = {}) {
   const calls = [];
   return {
     calls,
@@ -17,6 +22,7 @@ function fakeDb({ grants = [adminGrant], target = null, batchChanges = [1, 1] } 
       return { sql, values: [], bind(...values) { this.values = values; return this; },
         async all() {
           calls.push({ type: "all", sql, values: this.values });
+          if (sql.includes("FROM office_role_approval_requests")) return { results: approval ? [approval] : [] };
           if (sql.includes("FROM office_role_grants") && sql.includes("WHERE id = ?")) return { results: target ? [target] : [] };
           if (sql.includes("FROM office_role_grants") && sql.includes("subject_id")) return { results: grants };
           return { results: [] };
@@ -28,67 +34,50 @@ function fakeDb({ grants = [adminGrant], target = null, batchChanges = [1, 1] } 
     },
   };
 }
-const approved = async (_token, context) => ({
-  approved: true, approvalId: "approval-1", approvedBy: "independent-human",
-  organizationId: context.organizationId, subjectId: context.subjectId,
-  role: context.role, expiresAt: NOW + 60_000,
-});
-
 test("grant requires access_admin and independently verified approval", async () => {
   const db = fakeDb();
   const result = await grantOfficeRole({
     db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
-    requestId: "req-grant", approvalToken: "opaque-token", approvalVerifier: approved, now: NOW,
+    requestId: "req-grant", approvalToken: "opaque-token", now: NOW,
   });
   assert.equal(result.scope, "workspace:legal");
   assert.equal(db.calls.filter((call) => call.type === "batch").length, 1);
   const batch = db.calls.find((call) => call.type === "batch").statements;
-  assert.match(batch[0].sql, /INSERT INTO office_role_grants/);
-  assert.match(batch[1].sql, /INSERT INTO office_audit_events/);
+  assert.match(batch[0].sql, /UPDATE office_role_approval_requests SET status = 'consumed'/);
+  assert.match(batch[1].sql, /INSERT INTO office_role_grants/);
+  assert.match(batch[2].sql, /INSERT INTO office_audit_events/);
 });
 
-test("grant rejects self-assignment, elevated roles, and missing approval verifier", async () => {
+test("grant rejects self-assignment, elevated roles, and missing approval token", async () => {
   const db = fakeDb();
   await assert.rejects(() => grantOfficeRole({
     db, principal: admin, subjectId: admin.subjectId, role: "legal_agent",
-    requestId: "r1", approvalToken: "token", approvalVerifier: approved, now: NOW,
+    requestId: "r1", approvalToken: "token", now: NOW,
   }), { status: 403 });
   await assert.rejects(() => grantOfficeRole({
     db, principal: admin, subjectId: "other", role: "access_admin",
-    requestId: "r2", approvalToken: "token", approvalVerifier: approved, now: NOW,
+    requestId: "r2", approvalToken: "token", now: NOW,
   }), { status: 400 });
   await assert.rejects(() => grantOfficeRole({
     db, principal: admin, subjectId: "other", role: "legal_agent",
-    requestId: "r3", approvalToken: "token", now: NOW,
+    requestId: "r3", now: NOW,
   }), { status: 400 });
   assert.equal(db.calls.some((call) => call.type === "batch"), false);
 });
 
-test("grant rejects approval for a different subject, role, organization, or grantor", async () => {
-  const db = fakeDb();
-  const badVerifier = async () => ({
-    approved: true, approvalId: "approval-2", approvedBy: admin.subjectId,
-    organizationId: "org-a", subjectId: "someone-else", role: "treasury_agent",
-    expiresAt: NOW + 60_000,
-  });
-  await assert.rejects(() => grantOfficeRole({
-    db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
-    requestId: "req-bad", approvalToken: "token", approvalVerifier: badVerifier, now: NOW,
-  }), { status: 403 });
-  assert.equal(db.calls.some((call) => call.type === "batch"), false);
-});
-
-test("grant rejects expired or unbounded human approval attestations", async () => {
-  for (const expiresAt of [undefined, NOW]) {
-    const db = fakeDb();
-    const verifier = async (_token, context) => ({
-      approved: true, approvalId: "approval-expired", approvedBy: "independent-human",
-      organizationId: context.organizationId, subjectId: context.subjectId,
-      role: context.role, expiresAt,
-    });
+test("grant rejects approval for a different subject, role, or requester", async () => {
+  for (const approval of [
+    { id:"a1", organization_id:"org-a", requested_by:"admin-1", subject_id:"other", role:"legal_agent",
+      scope:"workspace:legal", reviewer_id:"human-1", status:"approved", expires_at:NOW+60000,
+      token_expires_at:NOW+60000, consumed_at:null },
+    { id:"a2", organization_id:"org-a", requested_by:"someone-else", subject_id:"robot-legal", role:"legal_agent",
+      scope:"workspace:legal", reviewer_id:"human-1", status:"approved", expires_at:NOW+60000,
+      token_expires_at:NOW+60000, consumed_at:null },
+  ]) {
+    const db = fakeDb({ approval });
     await assert.rejects(() => grantOfficeRole({
       db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
-      requestId: "req-expired", approvalToken: "token", approvalVerifier: verifier, now: NOW,
+      requestId: "req-bad", approvalToken: "token", now: NOW,
     }), { status: 403 });
     assert.equal(db.calls.some((call) => call.type === "batch"), false);
   }
@@ -98,7 +87,7 @@ test("grant fails closed when actor lacks access_admin", async () => {
   const db = fakeDb({ grants: [] });
   await assert.rejects(() => grantOfficeRole({
     db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
-    requestId: "req-no-admin", approvalToken: "token", approvalVerifier: approved, now: NOW,
+    requestId: "req-no-admin", approvalToken: "token", now: NOW,
   }), { status: 403 });
   assert.equal(db.calls.some((call) => call.type === "batch"), false);
 });
