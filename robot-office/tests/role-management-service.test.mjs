@@ -17,8 +17,8 @@ function fakeDb({ grants = [adminGrant], target = null, batchChanges = [1, 1] } 
       return { sql, values: [], bind(...values) { this.values = values; return this; },
         async all() {
           calls.push({ type: "all", sql, values: this.values });
+          if (sql.includes("FROM office_role_grants") && sql.includes("WHERE id = ?")) return { results: target ? [target] : [] };
           if (sql.includes("FROM office_role_grants") && sql.includes("subject_id")) return { results: grants };
-          if (sql.includes("FROM office_role_grants") && sql.includes("WHERE id")) return { results: target ? [target] : [] };
           return { results: [] };
         } };
     },
