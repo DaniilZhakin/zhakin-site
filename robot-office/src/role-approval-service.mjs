@@ -368,25 +368,6 @@ export async function revokeRoleGrantApproval({
         )
     `).bind(approvalRequestId, principal.organizationId,
       principal.subjectId, revokedAt, requestId),
-    db.prepare(`
-      INSERT INTO office_audit_events
-        (id, organization_id, actor_id, actor_role, action, object_type,
-         object_id, outcome, request_id, occurred_at, details_redacted)
-      SELECT ?, ?, ?, 'access_admin', 'role:credential_revoke',
-        'role_approval', approval_request_id, 'success', ?, ?, ?
-      FROM office_role_approval_revocations
-      WHERE approval_request_id = ? AND organization_id = ?
-        AND revoked_by = ? AND revoked_at = ? AND request_id = ?
-        AND NOT EXISTS (
-          SELECT 1 FROM office_audit_events
-          WHERE action = 'role:credential_revoke'
-            AND object_type = 'role_approval' AND object_id = ?
-            AND actor_id = ? AND request_id = ?
-        )
-    `).bind(id(), principal.organizationId, principal.subjectId,
-      requestId, revokedAt, "credential=revoked;envelope=deleted",
-      approvalRequestId, principal.organizationId, principal.subjectId,
-      revokedAt, requestId, approvalRequestId, principal.subjectId, requestId),
   ];
   let results;
   try {
@@ -398,8 +379,7 @@ export async function revokeRoleGrantApproval({
     throw error;
   }
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
-      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1 ||
-      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1) {
+      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1) {
     fail(409, "Approval revocation conflict");
   }
   return {id:approvalRequestId, status:"revoked", revoked_at:revokedAt};
