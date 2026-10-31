@@ -93,6 +93,15 @@ test("requester, target, wrong workspace reviewer, and expired request cannot ap
   }
 });
 
+test("concurrent decision conflict does not append a success audit",async()=>{
+  const db=fakeDb({grants:[reviewerGrant],changes:[0,0]});
+  await assert.rejects(()=>decideRoleGrantApproval({db,principal:reviewer,
+    approvalRequestId:"req-db-1",decision:"approved",now:NOW}),{status:409});
+  const batch=db.calls.find(x=>x.type==="batch").statements;
+  assert.match(batch[0].sql,/status = 'pending'/);
+  assert.match(batch[1].sql,/FROM office_role_approval_requests/);
+});
+
 test("approval lookup binds token to requester, target, role, expiry and scope",async()=>{
   const tokenRow={id:"req-db-1",organization_id:"org-a",requested_by:"admin-1",
     subject_id:"robot-legal-1",role:"legal_agent",scope:"workspace:legal",
