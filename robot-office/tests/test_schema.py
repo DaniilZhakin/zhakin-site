@@ -214,6 +214,15 @@ class RobotOfficeSchemaTests(unittest.TestCase):
         self.db.execute(
             "DELETE FROM office_role_approval_credentials WHERE approval_request_id='ra-revoke'"
         )
+        audit = self.db.execute(
+            """SELECT actor_id, actor_role, action, object_id, outcome, request_id
+               FROM office_audit_events
+               WHERE action='role:credential_revoke' AND object_id='ra-revoke'"""
+        ).fetchone()
+        self.assertEqual(audit, (
+            'admin-1', 'access_admin', 'role:credential_revoke',
+            'ra-revoke', 'success', 'req-revoke-action'
+        ))
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute(
                 """UPDATE office_role_approval_revocations SET reason='rewritten'
