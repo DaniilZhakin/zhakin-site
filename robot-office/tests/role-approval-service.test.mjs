@@ -70,14 +70,15 @@ test("matching human reviewer approves once without returning the bearer credent
     approvalRequestId:"req-db-1",decision:"approved",reason:"Reviewed",now:NOW,
     credentialEncryptionKey:ENCRYPTION_KEY});
   assert.equal(result.status,"approved");
-  assert.match(result.token,/^[A-Za-z0-9_-]{43}$/);
+  assert.equal(Object.hasOwn(result,"token"),false);
   assert.equal(result.token_expires_at,NOW+600_000);
   const batch=db.calls.find(x=>x.type==="batch").statements;
   assert.match(batch[0].sql,/status = 'pending'/);
-  assert.match(batch[0].sql,/token_hash = \?/);
-  assert.equal(batch[0].values.includes(result.token),false);
-  assert.match(batch[1].sql,/INSERT INTO office_audit_events/);
-  assert.match(batch[1].sql,/decision_event_id = \\?/);
+  assert.match(batch[0].sql,/token_hash = \\?/);
+  assert.match(batch[1].sql,/INSERT INTO office_role_approval_credentials/);
+  assert.equal(batch[1].values.includes(result.token),false);
+  assert.match(batch[2].sql,/INSERT INTO office_audit_events/);
+  assert.match(batch[2].sql,/decision_event_id = \\\\?/);
 });
 
 test("requester, target, wrong workspace reviewer, and expired request cannot approve",async()=>{
