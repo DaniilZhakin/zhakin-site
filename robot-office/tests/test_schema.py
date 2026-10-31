@@ -9,6 +9,7 @@ MIGRATIONS = [
     ROOT / "migrations" / "0002_handoff_summaries.sql",
     ROOT / "migrations" / "0003_role_approval_requests.sql",
     ROOT / "migrations" / "0004_role_approval_credentials.sql",
+    ROOT / "migrations" / "0005_role_approval_revocations.sql",
 ]
 
 
@@ -176,6 +177,66 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                 """UPDATE office_role_approval_credentials
                    SET retrieval_key_hash='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                    WHERE approval_request_id='ra-envelope'"""
+            )
+
+    def test_approval_revocations_are_immutable_and_unique(self):
+        self.db.execute(
+            """INSERT INTO office_role_approval_requests
+               (id,organization_id,requested_by,subject_id,role,scope,request_id,
+                idempotency_key,created_at,expires_at)
+               VALUES('ra-revoke','org-test','admin-1','robot-1','legal_agent',
+                'workspace:legal','req-revoke','idem-revoke',100,300)"""
+        )
+        self.db.execute(
+            """UPDATE office_role_approval_requests
+               SET status='approved', reviewer_id='reviewer', decided_at=110,
+                   decision_event_id='decision-revoke', token_hash='hash-revoke',
+                   token_expires_at=250
+               WHERE id='ra-revoke'"""
+        )
+        self.db.execute(
+            """INSERT INTO office_role_approval_credentials
+               (approval_request_id,organization_id,iv,ciphertext,key_version,created_at)
+               VALUES('ra-revoke','org-test','AAAAAAAAAAAAAAAA',
+                'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC','v1',110)"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_role_approval_revocations
+                   (approval_request_id,organization_id,revoked_by,revoked_at,request_id)
+                   VALUES('ra-revoke','org-test','different-admin',119,'invalid-actor')"""
+            )
+        self.db.execute(
+            """INSERT INTO office_role_approval_revocations
+               (approval_request_id,organization_id,revoked_by,revoked_at,request_id,reason)
+               VALUES('ra-revoke','org-test','admin-1',120,'req-revoke-action','lost response')"""
+        )
+        self.db.execute(
+            "DELETE FROM office_role_approval_credentials WHERE approval_request_id='ra-revoke'"
+        )
+        audit = self.db.execute(
+            """SELECT actor_id, actor_role, action, object_id, outcome, request_id
+               FROM office_audit_events
+               WHERE action='role:credential_revoke' AND object_id='ra-revoke'"""
+        ).fetchone()
+        self.assertEqual(audit, (
+            'admin-1', 'access_admin', 'role:credential_revoke',
+            'ra-revoke', 'success', 'req-revoke-action'
+        ))
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_revocations SET reason='rewritten'
+                   WHERE approval_request_id='ra-revoke'"""
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                "DELETE FROM office_role_approval_revocations WHERE approval_request_id='ra-revoke'"
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_role_approval_revocations
+                   (approval_request_id,organization_id,revoked_by,revoked_at,request_id)
+                   VALUES('ra-revoke','org-test','admin-1',121,'duplicate')"""
             )
 
     def test_document_metadata_rejects_oversize_file(self):
