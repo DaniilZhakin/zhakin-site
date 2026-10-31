@@ -156,7 +156,7 @@ export function createD1WalletAuthRepository(db) {
       // registry. Revoked and expired grants never enter the authenticated principal.
       const roleRows = await db.prepare(
         "SELECT role FROM wallet_participant_roles " +
-        "WHERE participant_id = ? AND granted_at <= ? " +
+        "WHERE participant_id = ? AND scope = 'wallet' AND granted_at <= ? " +
         "AND (expires_at IS NULL OR expires_at > ?) AND revoked_at IS NULL",
       ).bind(participantId, now, now).all();
       const roles = [...new Set((roleRows.results ?? [])
