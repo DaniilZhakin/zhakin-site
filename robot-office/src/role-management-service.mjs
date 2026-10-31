@@ -50,13 +50,13 @@ function assertAccessAdmin(principal, grants, action, now) {
   if (!allowed) fail(403, "Forbidden");
 }
 
-function auditInsert(db, { id, principal, action, objectId, requestId, now }) {
+function auditInsert(db, { id, principal, action, objectId, requestId, now, detailsRedacted = "" }) {
   return db.prepare(`
     INSERT INTO office_audit_events
       (id, organization_id, actor_id, actor_role, action, object_type,
        object_id, outcome, request_id, occurred_at, details_redacted)
-    VALUES (?, ?, ?, 'access_admin', ?, 'role_grant', ?, 'success', ?, ?, '')
-  `).bind(id, principal.organizationId, principal.subjectId, action, objectId, requestId, now);
+    VALUES (?, ?, ?, 'access_admin', ?, 'role_grant', ?, 'success', ?, ?, ?)
+  `).bind(id, principal.organizationId, principal.subjectId, action, objectId, requestId, now, detailsRedacted);
 }
 
 /**
@@ -88,7 +88,7 @@ export async function grantOfficeRole({
       approval.approvedBy === principal.subjectId ||
       approval.organizationId !== principal.organizationId ||
       approval.subjectId !== subjectId || approval.role !== role ||
-      approval.expiresAt <= now) {
+      !Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= now) {
     fail(403, "Independent human approval required");
   }
 
@@ -102,6 +102,7 @@ export async function grantOfficeRole({
       principal.subjectId, now, expiresAt),
     auditInsert(db, {
       id: newId(), principal, action: "access:grant", objectId: id, requestId, now,
+      detailsRedacted: `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.approvedBy};approval_id=${approval.approvalId}`,
     }),
   ];
   const results = await db.batch(statements);
@@ -142,6 +143,7 @@ export async function revokeOfficeRole({
     `).bind(now, grantId, principal.organizationId),
     auditInsert(db, {
       id: newId(), principal, action: "access:revoke", objectId: grantId, requestId, now,
+      detailsRedacted: `role=${target.role};subject=${target.subject_id}`,
     }),
   ];
   const results = await db.batch(statements);
