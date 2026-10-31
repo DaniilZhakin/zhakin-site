@@ -47,6 +47,7 @@ test("only access administrator may create a bounded approval request", async()=
   const batch=db.calls.find(x=>x.type==="batch").statements;
   assert.match(batch[0].sql,/INSERT INTO office_role_approval_requests/);
   assert.match(batch[1].sql,/INSERT INTO office_audit_events/);
+  assert.match(batch[1].sql,/decision_event_id = \\?/);
 });
 
 test("approval request rejects self-target, invalid role, and excessive request lifetime",async()=>{
@@ -119,7 +120,7 @@ test("approval lookup rejects expired, consumed, mismatched and absent tokens",a
   const base={id:"req-db-1",organization_id:"org-a",requested_by:"admin-1",
     subject_id:"robot-legal-1",role:"legal_agent",scope:"workspace:legal",
     reviewer_id:"human-legal-1",status:"approved",expires_at:NOW+86_400_000,
-    grant_expires_at:null,token_expires_at:NOW+600_000,consumed_at:null};
+    grant_expires_at:null,token_expires_at:NOW+600_000,consumed_at:null,consumed_grant_id:null};
   for(const tokenRow of [
     {...base,token_expires_at:NOW},
     {...base,consumed_at:NOW},
@@ -129,7 +130,7 @@ test("approval lookup rejects expired, consumed, mismatched and absent tokens",a
   ]) {
     const db=fakeDb({tokenRow});
     await assert.rejects(()=>findApprovedRoleGrantToken({db,token:"opaque-token",
-      principal:admin,subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,now:NOW}),
+      principal:admin,subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,grantId:"grant-new",now:NOW}),
       {status:403});
   }
 });
