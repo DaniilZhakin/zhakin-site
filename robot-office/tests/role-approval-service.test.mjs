@@ -169,7 +169,7 @@ test("approval lookup binds token to requester, target, role, expiry and scope",
     subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,grantId:"grant-new",now:NOW});
   assert.equal(result.approval.id,"req-db-1");
   assert.match(result.consumeStatement.sql,/status = 'consumed'/);
-  assert.ok(db.calls.some(call => call.sql.includes("EXISTS (") && call.sql.includes("office_role_approval_credentials")));
+  assert.ok(db.calls.some(call => call.sql?.includes("EXISTS (") && call.sql?.includes("office_role_approval_credentials")));
   assert.equal(result.consumeStatement.values.includes("opaque-token"),false);
 });
 
