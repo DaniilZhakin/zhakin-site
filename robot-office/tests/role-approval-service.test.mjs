@@ -100,7 +100,7 @@ test("matching human reviewer approves once without returning the bearer credent
 
 test("encrypted credential is recoverable only by requester with same idempotency key",async()=>{
   const request={...pending};
-  const db=fakeDb({grants:[reviewerGrant],request});
+  const db=fakeDb({grants:[reviewerGrant,adminGrant],request});
   const decision=await decideRoleGrantApproval({db,principal:reviewer,
     approvalRequestId:"req-db-1",decision:"approved",now:NOW,
     credentialEncryptionKey:ENCRYPTION_KEY});
