@@ -150,9 +150,10 @@ test("requester, target, wrong workspace reviewer, and expired request cannot ap
 });
 
 test("concurrent decision conflict does not append a success audit",async()=>{
-  const db=fakeDb({grants:[reviewerGrant],changes:[0,0]});
+  const db=fakeDb({grants:[reviewerGrant],changes:[0,0,0]});
   await assert.rejects(()=>decideRoleGrantApproval({db,principal:reviewer,
-    approvalRequestId:"req-db-1",decision:"approved",now:NOW}),{status:409});
+    approvalRequestId:"req-db-1",decision:"approved",now:NOW,
+    credentialEncryptionKey:ENCRYPTION_KEY}),{status:409});
   const batch=db.calls.find(x=>x.type==="batch").statements;
   assert.match(batch[0].sql,/status = 'pending'/);
   assert.match(batch[1].sql,/FROM office_role_approval_requests/);
