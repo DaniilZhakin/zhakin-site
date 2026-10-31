@@ -47,7 +47,6 @@ test("only access administrator may create a bounded approval request", async()=
   const batch=db.calls.find(x=>x.type==="batch").statements;
   assert.match(batch[0].sql,/INSERT INTO office_role_approval_requests/);
   assert.match(batch[1].sql,/INSERT INTO office_audit_events/);
-  assert.match(batch[1].sql,/decision_event_id = \\?/);
 });
 
 test("approval request rejects self-target, invalid role, and excessive request lifetime",async()=>{
@@ -76,6 +75,7 @@ test("matching human reviewer approves once and returns a one-time opaque token"
   assert.match(batch[0].sql,/token_hash = \?/);
   assert.equal(batch[0].values.includes(result.token),false);
   assert.match(batch[1].sql,/INSERT INTO office_audit_events/);
+  assert.match(batch[1].sql,/decision_event_id = \\?/);
 });
 
 test("requester, target, wrong workspace reviewer, and expired request cannot approve",async()=>{
