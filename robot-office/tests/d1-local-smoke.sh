@@ -52,6 +52,9 @@ if ! grep -Eq '"pending_approval_rows"[[:space:]]*:[[:space:]]*1' <<<"$result"; 
   printf '%s\\n' "$result"
   exit 1
 fi
+run_d1 --command "UPDATE office_role_approval_requests SET status='approved', reviewer_id='human-d1', decided_at=110, decision_event_id='decision-d1', token_hash='hash-d1', token_expires_at=150 WHERE id='role-approval-d1' AND status='pending';" >/dev/null
+run_d1 --command "UPDATE office_role_approval_requests SET status='consumed', consumed_at=120, consumed_grant_id='grant-role-d1' WHERE id='role-approval-d1' AND status='approved';" >/dev/null
+expect_failure "consumed approval cannot be replayed or rebound to another grant" bash -c "cd '$ROOT' && npx --yes wrangler@4 d1 execute DB --local --config '$CONFIG' --command \"UPDATE office_role_approval_requests SET consumed_grant_id='grant-role-replay' WHERE id='role-approval-d1'\""
 echo "PASS: approval request scope, independence, and initial state constraints"
 
 echo "Checking task compare-and-swap and stale-version rejection..."
