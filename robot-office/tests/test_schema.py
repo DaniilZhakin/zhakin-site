@@ -200,6 +200,12 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                VALUES('ra-revoke','org-test','AAAAAAAAAAAAAAAA',
                 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC','v1',110)"""
         )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """INSERT INTO office_role_approval_revocations
+                   (approval_request_id,organization_id,revoked_by,revoked_at,request_id)
+                   VALUES('ra-revoke','org-test','different-admin',119,'invalid-actor')"""
+            )
         self.db.execute(
             """INSERT INTO office_role_approval_revocations
                (approval_request_id,organization_id,revoked_by,revoked_at,request_id,reason)
