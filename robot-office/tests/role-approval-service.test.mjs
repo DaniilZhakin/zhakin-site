@@ -50,6 +50,13 @@ function fakeDb({grants=[adminGrant],request=pending,tokenRow=null,changes=[1,1,
         const s=statements.find(s=>s.sql.includes("INSERT INTO office_role_approval_credentials"));
         state.credential={iv:s.values[2],ciphertext:s.values[3],key_version:s.values[4],retrieval_key_hash:null,retrieved_at:null,recovery_until:null};
       }
+      if(statements.some(s=>s.sql.includes("UPDATE office_role_approval_credentials"))) {
+        const s=statements.find(s=>s.sql.includes("UPDATE office_role_approval_credentials"));
+        if(state.credential && state.credential.retrieval_key_hash === null && (changes[0]??1) === 1) {
+          state.credential={...state.credential,retrieval_key_hash:s.values[0],
+            retrieved_at:s.values[1],recovery_until:s.values[2]};
+        }
+      }
       return statements.map((_,i)=>({meta:{changes:changes[i]??0}}));
     }
   };
@@ -124,7 +131,10 @@ test("encrypted credential is recoverable only by requester with same idempotenc
   await assert.rejects(()=>retrieveRoleGrantApprovalCredential({db,principal:admin,
     approvalRequestId:"req-db-1",retrievalIdempotencyKey:"C".repeat(43),
     credentialEncryptionKey:ENCRYPTION_KEY,now:NOW+2}),{status:409});
-  assert.equal(db.calls.filter(x=>x.type==="run").length,1);
+  const retrievalBatch=db.calls.filter(x=>x.type==="batch")[1].statements;
+  assert.match(retrievalBatch[1].sql,/role:credential_retrieve/);
+  assert.equal(retrievalBatch[1].values[5],"credential=claimed;recovery_window_seconds=120");
+  assert.equal(db.calls.filter(x=>x.type==="batch").length,2);
 });
 test("approval fails closed when encryption key is absent",async()=>{
   const db=fakeDb({grants:[reviewerGrant]});
