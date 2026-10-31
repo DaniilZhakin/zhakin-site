@@ -229,8 +229,9 @@ export async function retrieveRoleGrantApprovalCredential({
   credentialEncryptionKey, now = Date.now(),
 }) {
   assertPrincipal(principal);
-  if (!text(approvalRequestId) || !text(retrievalIdempotencyKey, 200) ||
-      retrievalIdempotencyKey.length < 32 || !text(credentialEncryptionKey, 128)) {
+  if (!text(approvalRequestId) || typeof retrievalIdempotencyKey !== "string" ||
+      retrievalIdempotencyKey.length !== 43 || !/^[A-Za-z0-9_-]{43}$/.test(retrievalIdempotencyKey) ||
+      !text(credentialEncryptionKey, 128)) {
     fail(400, "Invalid credential retrieval");
   }
   const grants = await activeGrants(db, principal, now);
