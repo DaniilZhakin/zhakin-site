@@ -30,7 +30,7 @@ function credentialAad(request) {
   return new TextEncoder().encode(JSON.stringify([
     "robot-office-role-credential-v1", request.organization_id, request.id,
     request.requested_by, request.subject_id, request.role, request.scope,
-    request.expires_at, request.token_expires_at, 1,
+    request.expires_at, request.grant_expires_at, request.token_expires_at, 1,
   ]));
 }
 async function encryptApprovalCredential(token, encodedKey, request) {
