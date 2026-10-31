@@ -107,6 +107,69 @@ test("access administrator can manage grants but cannot read financial content",
   }).allowed, false);
 });
 
+
+
+test("legal role cannot enter treasury workspace and treasury cannot enter legal", () => {
+  for (const [role, ownWorkspace, foreignWorkspace, subject] of [
+    ["treasury_agent", "treasury", "legal", "robot-treasury"],
+    ["legal_agent", "legal", "treasury", "robot-legal"],
+  ]) {
+    const ownGrant = grant(role, subject);
+    assert.equal(authorizeOfficeAccess({
+      principal: principal(subject), grants: [ownGrant], action: "tasks:list",
+      resource: task(ownWorkspace), now: NOW,
+    }).allowed, true);
+    assert.equal(authorizeOfficeAccess({
+      principal: principal(subject), grants: [ownGrant], action: "tasks:list",
+      resource: task(foreignWorkspace), now: NOW,
+    }).allowed, false);
+  }
+});
+
+test("COMMAND AI cannot list source tasks or read source documents", () => {
+  const command = grant("command_agent", "command-1", { scope: "organization:handoff-summaries" });
+  for (const resource of [
+    task("treasury"),
+    task("legal", { kind: "document", classification: "internal" }),
+  ]) {
+    assert.equal(authorizeOfficeAccess({
+      principal: principal("command-1"), grants: [command],
+      action: resource.kind === "document" ? "documents:content:read" : "tasks:list",
+      resource, now: NOW,
+    }).allowed, false);
+  }
+});
+
+test("human reviewers may decide another person's pending request only in their workspace", () => {
+  const pendingTreasury = task("treasury", { requestedBy: "requester-1", status: "pending" });
+  assert.equal(authorizeOfficeAccess({
+    principal: principal("reviewer-1"),
+    grants: [grant("human_treasury", "reviewer-1")],
+    action: "approvals:decide", resource: pendingTreasury, now: NOW,
+  }).allowed, true);
+  assert.equal(authorizeOfficeAccess({
+    principal: principal("reviewer-1"),
+    grants: [grant("human_treasury", "reviewer-1")],
+    action: "approvals:decide",
+    resource: { ...pendingTreasury, workspace: "legal" }, now: NOW,
+  }).allowed, false);
+});
+
+test("access administrator and auditor cannot acquire specialist workspace powers", () => {
+  const admin = grant("access_admin", "admin-1", { scope: "organization" });
+  const auditor = grant("auditor", "auditor-1", { scope: "organization:audit" });
+  for (const [subject, accessGrant] of [["admin-1", admin], ["auditor-1", auditor]]) {
+    assert.equal(authorizeOfficeAccess({
+      principal: principal(subject), grants: [accessGrant], action: "tasks:create",
+      resource: task("treasury"), now: NOW,
+    }).allowed, false);
+    assert.equal(authorizeOfficeAccess({
+      principal: principal(subject), grants: [accessGrant], action: "documents:content:read",
+      resource: task("legal", { kind: "document" }), now: NOW,
+    }).allowed, false);
+  }
+});
+
 test("auditor can read audit records but not tasks", () => {
   const auditor = grant("auditor", "auditor-1", { scope: "organization:audit" });
   assert.equal(authorizeOfficeAccess({
