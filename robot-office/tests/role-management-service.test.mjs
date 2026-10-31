@@ -78,6 +78,22 @@ test("grant rejects approval for a different subject, role, organization, or gra
   assert.equal(db.calls.some((call) => call.type === "batch"), false);
 });
 
+test("grant rejects expired or unbounded human approval attestations", async () => {
+  for (const expiresAt of [undefined, NOW]) {
+    const db = fakeDb();
+    const verifier = async (_token, context) => ({
+      approved: true, approvalId: "approval-expired", approvedBy: "independent-human",
+      organizationId: context.organizationId, subjectId: context.subjectId,
+      role: context.role, expiresAt,
+    });
+    await assert.rejects(() => grantOfficeRole({
+      db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
+      requestId: "req-expired", approvalToken: "token", approvalVerifier: verifier, now: NOW,
+    }), { status: 403 });
+    assert.equal(db.calls.some((call) => call.type === "batch"), false);
+  }
+});
+
 test("grant fails closed when actor lacks access_admin", async () => {
   const db = fakeDb({ grants: [] });
   await assert.rejects(() => grantOfficeRole({
