@@ -181,3 +181,39 @@ test("auditor can read audit records but not tasks", () => {
     resource: task(), now: NOW,
   }).allowed, false);
 });
+
+
+test("all specialist roles deny direct money movement, legal execution, and privilege escalation", () => {
+  const deniedActions = [
+    "payments:execute",
+    "transfers:submit",
+    "banking:authorize",
+    "ledger:post",
+    "wallet:withdraw",
+    "contracts:sign",
+    "legal:submit",
+    "legal:represent",
+    "documents:content:delete",
+    "access:grant",
+    "access:revoke",
+  ];
+  const principalsAndGrants = [
+    ["robot-treasury", grant("treasury_agent", "robot-treasury")],
+    ["human-treasury", grant("human_treasury", "human-treasury")],
+    ["robot-legal", grant("legal_agent", "robot-legal")],
+    ["human-legal", grant("human_legal", "human-legal")],
+    ["admin-1", grant("access_admin", "admin-1", { scope: "organization" })],
+    ["auditor-1", grant("auditor", "auditor-1", { scope: "organization:audit" })],
+    ["command-1", grant("command_agent", "command-1", { scope: "organization:handoff-summaries" })],
+  ];
+  for (const [subjectId, roleGrant] of principalsAndGrants) {
+    for (const action of deniedActions) {
+      const result = authorizeOfficeAccess({
+        principal: principal(subjectId), grants: [roleGrant], action,
+        resource: { organizationId: "org-a", kind: "role_grant", workspace: "treasury" },
+        now: NOW,
+      });
+      assert.equal(result.allowed, false, `${roleGrant.role} must not perform ${action}`);
+    }
+  }
+});
