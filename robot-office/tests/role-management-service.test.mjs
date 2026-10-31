@@ -13,7 +13,8 @@ function fakeDb({ grants = [adminGrant], target = null, approval = {
   id: "approval-1", organization_id: "org-a", requested_by: "admin-1",
   subject_id: "robot-legal", role: "legal_agent", scope: "workspace:legal",
   reviewer_id: "independent-human", status: "approved",
-  expires_at: NOW + 60_000, token_expires_at: NOW + 60_000, consumed_at: null,
+  expires_at: NOW + 60_000, grant_expires_at: null,
+  token_expires_at: NOW + 60_000, consumed_at: null,
 }, batchChanges = [1, 1, 1] } = {}) {
   const calls = [];
   return {
