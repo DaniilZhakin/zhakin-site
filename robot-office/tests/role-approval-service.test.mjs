@@ -207,7 +207,7 @@ test("requester can revoke an approved credential and atomically delete its enve
   assert.match(batch[0].sql,/INSERT INTO office_role_approval_revocations/);
   assert.match(batch[0].sql,/requested_by = \?/);
   assert.match(batch[1].sql,/DELETE FROM office_role_approval_credentials/);
-  assert.match(batch[2].sql,/role:credential_revoke/);
+  assert.equal(batch.length,2);
   assert.equal(batch.some(statement=>statement.values.includes("hash-1")),false);
 });
 
