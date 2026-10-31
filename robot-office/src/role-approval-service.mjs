@@ -113,13 +113,22 @@ export async function decideRoleGrantApproval({
     fail(403, "Independent reviewer required");
   }
   const grants = await activeGrants(db, principal, now);
-  const workspace = request.scope === "workspace:treasury" ? "treasury"
-    : request.scope === "workspace:legal" ? "legal" : "command";
-  const reviewerResource = {
-    organizationId:principal.organizationId, workspace, kind:"role_approval",
-    requestedBy:request.requested_by, status:"pending",
-  };
-  authorize(principal, grants, "approvals:decide", reviewerResource, now);
+  const reviewerWorkspaces = request.scope === "workspace:treasury" ? ["treasury"]
+    : request.scope === "workspace:legal" ? ["legal"] : ["treasury", "legal"];
+  let reviewerAuthorized = false;
+  for (const workspace of reviewerWorkspaces) {
+    try {
+      authorize(principal, grants, "approvals:decide", {
+        organizationId:principal.organizationId, workspace, kind:"role_approval",
+        requestedBy:request.requested_by, status:"pending",
+      }, now);
+      reviewerAuthorized = true;
+      break;
+    } catch (error) {
+      if (error?.status !== 403) throw error;
+    }
+  }
+  if (!reviewerAuthorized) fail(403, "Matching independent human reviewer required");
 
   const token = decision === "approved"
     ? bytesToBase64Url(crypto.getRandomValues(new Uint8Array(32))) : null;
