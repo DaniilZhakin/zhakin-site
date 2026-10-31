@@ -131,6 +131,7 @@ test("participant roles are loaded only from active, unexpired server-side grant
     roles: ["admin", "coordinator"],
   });
   assert.match(db.calls[1].sql, /wallet_participant_roles/);
+  assert.match(db.calls[1].sql, /scope = 'wallet'/);
   assert.match(db.calls[1].sql, /granted_at <= \?/);
   assert.match(db.calls[1].sql, /expires_at IS NULL OR expires_at > \?/);
   assert.match(db.calls[1].sql, /revoked_at IS NULL/);
