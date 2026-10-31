@@ -156,7 +156,7 @@ test("concurrent decision conflict does not append a success audit",async()=>{
     credentialEncryptionKey:ENCRYPTION_KEY}),{status:409});
   const batch=db.calls.find(x=>x.type==="batch").statements;
   assert.match(batch[0].sql,/status = 'pending'/);
-  assert.match(batch[1].sql,/FROM office_role_approval_requests/);
+  assert.match(batch[2].sql,/FROM office_role_approval_requests/);
 });
 
 test("approval lookup binds token to requester, target, role, expiry and scope",async()=>{
