@@ -7,6 +7,7 @@ import {
 } from "../src/role-approval-service.mjs";
 
 const NOW = 1_800_000_000_000;
+const ENCRYPTION_KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 const admin = {authenticated:true,subjectId:"admin-1",organizationId:"org-a"};
 const reviewer = {authenticated:true,subjectId:"human-legal-1",organizationId:"org-a"};
 const adminGrant = {id:"g-admin",subject_id:"admin-1",organization_id:"org-a",
@@ -16,7 +17,7 @@ const reviewerGrant = {id:"g-human",subject_id:"human-legal-1",organization_id:"
 const pending = {id:"req-db-1",organization_id:"org-a",requested_by:"admin-1",
   subject_id:"robot-legal-1",role:"legal_agent",scope:"workspace:legal",
   status:"pending",expires_at:NOW+86_400_000,grant_expires_at:null};
-function fakeDb({grants=[adminGrant],request=pending,tokenRow=null,changes=[1,1]}={}) {
+function fakeDb({grants=[adminGrant],request=pending,tokenRow=null,changes=[1,1,1]}={}) {
   const calls=[];
   return {
     calls,
@@ -63,10 +64,11 @@ test("approval request rejects self-target, invalid role, and excessive request 
   }
 });
 
-test("matching human reviewer approves once and returns a one-time opaque token",async()=>{
+test("matching human reviewer approves once without returning the bearer credential",async()=>{
   const db=fakeDb({grants:[reviewerGrant]});
   const result=await decideRoleGrantApproval({db,principal:reviewer,
-    approvalRequestId:"req-db-1",decision:"approved",reason:"Reviewed",now:NOW});
+    approvalRequestId:"req-db-1",decision:"approved",reason:"Reviewed",now:NOW,
+    credentialEncryptionKey:ENCRYPTION_KEY});
   assert.equal(result.status,"approved");
   assert.match(result.token,/^[A-Za-z0-9_-]{43}$/);
   assert.equal(result.token_expires_at,NOW+600_000);
