@@ -59,11 +59,12 @@ function audit(db, {principal, action, objectId, requestId, now, details}) {
 
 /** Access administrator creates a bounded request; it does not grant a role. */
 export async function createRoleGrantApprovalRequest({
-  db, principal, subjectId, role, requestId, idempotencyKey,
+  db, principal, subjectId, role, requestId, idempotencyKey, grantExpiresAt = null,
   now = Date.now(), ttlMs = 24 * 60 * 60 * 1000,
 }) {
   assertPrincipal(principal);
   if (!text(subjectId) || subjectId === principal.subjectId || !ASSIGNABLE.has(role) ||
+      (grantExpiresAt !== null && (!Number.isSafeInteger(grantExpiresAt) || grantExpiresAt <= now)) ||
       !text(requestId) || !text(idempotencyKey) || !Number.isSafeInteger(ttlMs) ||
       ttlMs < 60_000 || ttlMs > 7 * 24 * 60 * 60 * 1000) fail(400, "Invalid approval request");
   const grants = await activeGrants(db, principal, now);
@@ -75,16 +76,17 @@ export async function createRoleGrantApprovalRequest({
     db.prepare(`
       INSERT INTO office_role_approval_requests
         (id, organization_id, requested_by, subject_id, role, scope, status,
-         request_id, idempotency_key, created_at, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)
+         request_id, idempotency_key, created_at, expires_at, grant_expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)
     `).bind(requestIdDb, principal.organizationId, principal.subjectId,
-      subjectId, role, ROLE_SCOPE[role], requestId, idempotencyKey, now, expiresAt),
+      subjectId, role, ROLE_SCOPE[role], requestId, idempotencyKey, now, expiresAt, grantExpiresAt),
     audit(db, {principal, action:"role:request", objectId:requestIdDb,
       requestId, now, details:`role=${role};scope=${ROLE_SCOPE[role]};subject=${subjectId}`}),
   ];
   await db.batch(statements);
   return {id:requestIdDb, organization_id:principal.organizationId, subject_id:subjectId,
-    role, scope:ROLE_SCOPE[role], status:"pending", created_at:now, expires_at:expiresAt};
+    role, scope:ROLE_SCOPE[role], grant_expires_at:grantExpiresAt,
+    status:"pending", created_at:now, expires_at:expiresAt};
 }
 
 /**
@@ -102,7 +104,7 @@ export async function decideRoleGrantApproval({
     fail(400, "Invalid approval decision");
   }
   const found = await db.prepare(`
-    SELECT id, organization_id, requested_by, subject_id, role, scope, status, expires_at
+    SELECT id, organization_id, requested_by, subject_id, role, scope, status, expires_at, grant_expires_at
     FROM office_role_approval_requests
     WHERE id = ? AND organization_id = ? LIMIT 1
   `).bind(approvalRequestId, principal.organizationId).all();
@@ -156,13 +158,13 @@ export async function decideRoleGrantApproval({
 }
 
 /** Hash-only lookup; called by grantOfficeRole and consumed in the same D1 batch as the grant. */
-export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, now = Date.now()}) {
+export async function findApprovedRoleGrantToken({db, token, principal, subjectId, role, expiresAt = null, now = Date.now()}) {
   assertPrincipal(principal);
   if (!text(token, 200) || !text(subjectId) || !ASSIGNABLE.has(role)) fail(400, "Invalid approval token");
   const tokenHash = await sha256(token);
   const found = await db.prepare(`
     SELECT id, organization_id, requested_by, subject_id, role, scope, reviewer_id,
-           status, expires_at, token_expires_at, consumed_at
+           status, expires_at, grant_expires_at, token_expires_at, consumed_at
     FROM office_role_approval_requests
     WHERE token_hash = ? AND organization_id = ? AND subject_id = ? AND role = ?
     LIMIT 1
@@ -170,7 +172,9 @@ export async function findApprovedRoleGrantToken({db, token, principal, subjectI
   const approval = found.results?.[0];
   if (!approval || approval.status !== "approved" || approval.consumed_at !== null ||
       approval.expires_at <= now || approval.token_expires_at <= now ||
-      approval.requested_by !== principal.subjectId || approval.reviewer_id === principal.subjectId) {
+      approval.requested_by !== principal.subjectId || approval.reviewer_id === principal.subjectId ||
+      approval.grant_expires_at !== expiresAt ||
+      approval.scope !== ROLE_SCOPE[role]) {
     fail(403, "Valid unconsumed human approval required");
   }
   return {
