@@ -12,6 +12,7 @@ on:
       - fix/robot-office-handoff-conflicts-2026-10-31
       - feat/robot-office-role-management-2026-10-31
       - security/robot-office-token-delivery-review-2026-10-31
+      - feat/robot-office-approval-revocation-2026-10-31
       - test/robot-office-d1-local-emulator-2026-10-31
   pull_request:
     branches:
