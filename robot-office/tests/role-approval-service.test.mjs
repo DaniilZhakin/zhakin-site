@@ -106,10 +106,10 @@ test("approval lookup binds token to requester, target, role, expiry and scope",
   const tokenRow={id:"req-db-1",organization_id:"org-a",requested_by:"admin-1",
     subject_id:"robot-legal-1",role:"legal_agent",scope:"workspace:legal",
     reviewer_id:"human-legal-1",status:"approved",expires_at:NOW+86_400_000,
-    grant_expires_at:null,token_expires_at:NOW+600_000,consumed_at:null};
+    grant_expires_at:null,token_expires_at:NOW+600_000,consumed_at:null,consumed_grant_id:null};
   const db=fakeDb({tokenRow});
   const result=await findApprovedRoleGrantToken({db,token:"opaque-token",principal:admin,
-    subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,now:NOW});
+    subjectId:"robot-legal-1",role:"legal_agent",expiresAt:null,grantId:"grant-new",now:NOW});
   assert.equal(result.approval.id,"req-db-1");
   assert.match(result.consumeStatement.sql,/status = 'consumed'/);
   assert.equal(result.consumeStatement.values.includes("opaque-token"),false);
