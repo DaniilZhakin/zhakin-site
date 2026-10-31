@@ -81,6 +81,13 @@ test("matching human reviewer approves once without returning the bearer credent
   assert.match(batch[2].sql,/decision_event_id = \\\\?/);
 });
 
+test("approval fails closed when encryption key is absent",async()=>{
+  const db=fakeDb({grants:[reviewerGrant]});
+  await assert.rejects(()=>decideRoleGrantApproval({db,principal:reviewer,
+    approvalRequestId:"req-db-1",decision:"approved",now:NOW}),{status:500});
+  assert.equal(db.calls.some(x=>x.type==="batch"),false);
+});
+
 test("requester, target, wrong workspace reviewer, and expired request cannot approve",async()=>{
   const cases=[
     {principal:admin,grants:[adminGrant],request:pending},
