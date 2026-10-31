@@ -49,6 +49,18 @@ test("grant requires access_admin and independently verified approval", async ()
   assert.match(batch[2].sql, /INSERT INTO office_audit_events/);
 });
 
+test("grant cannot create a role or success audit when approval consumption loses a race", async () => {
+  const db = fakeDb({ batchChanges: [0, 0, 0] });
+  await assert.rejects(() => grantOfficeRole({
+    db, principal: admin, subjectId: "robot-legal", role: "legal_agent",
+    requestId: "req-race", approvalToken: "opaque-token", now: NOW,
+  }), { status: 409 });
+  const batch = db.calls.find((call) => call.type === "batch").statements;
+  assert.match(batch[0].sql, /status = 'consumed'/);
+  assert.match(batch[1].sql, /FROM office_role_approval_requests/);
+  assert.match(batch[2].sql, /FROM office_role_grants/);
+});
+
 test("grant rejects self-assignment, elevated roles, and missing approval token", async () => {
   const db = fakeDb();
   await assert.rejects(() => grantOfficeRole({
