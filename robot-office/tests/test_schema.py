@@ -122,6 +122,18 @@ class RobotOfficeSchemaTests(unittest.TestCase):
                    WHERE id='ra-approved'"""
             )
 
+        self.db.execute(
+            """UPDATE office_role_approval_requests
+               SET status='consumed', consumed_at=115, consumed_grant_id='grant-1'
+               WHERE id='ra-approved'"""
+        )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute(
+                """UPDATE office_role_approval_requests
+                   SET consumed_grant_id='grant-2'
+                   WHERE id='ra-approved'"""
+            )
+
     def test_document_metadata_rejects_oversize_file(self):
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute(
