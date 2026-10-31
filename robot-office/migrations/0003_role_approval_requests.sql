@@ -23,17 +23,19 @@ CREATE TABLE IF NOT EXISTS office_role_approval_requests (
   expires_at INTEGER NOT NULL,
   reviewer_id TEXT,
   decided_at INTEGER,
+  decision_event_id TEXT UNIQUE,
   decision_reason TEXT NOT NULL DEFAULT '' CHECK (length(decision_reason) <= 1000),
   token_hash TEXT UNIQUE,
   token_expires_at INTEGER,
   consumed_at INTEGER,
+  consumed_grant_id TEXT UNIQUE,
   CHECK (expires_at > created_at),
   CHECK (grant_expires_at IS NULL OR grant_expires_at > created_at),
   CHECK (
-    (status = 'pending' AND reviewer_id IS NULL AND decided_at IS NULL AND token_hash IS NULL AND consumed_at IS NULL) OR
-    (status = 'approved' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND token_hash IS NOT NULL AND token_expires_at IS NOT NULL AND consumed_at IS NULL) OR
-    (status = 'rejected' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND token_hash IS NULL AND consumed_at IS NULL) OR
-    (status = 'consumed' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND token_hash IS NOT NULL AND consumed_at IS NOT NULL) OR
+    (status = 'pending' AND reviewer_id IS NULL AND decided_at IS NULL AND decision_event_id IS NULL AND token_hash IS NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
+    (status = 'approved' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NOT NULL AND token_expires_at IS NOT NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
+    (status = 'rejected' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NULL AND consumed_at IS NULL AND consumed_grant_id IS NULL) OR
+    (status = 'consumed' AND reviewer_id IS NOT NULL AND decided_at IS NOT NULL AND decision_event_id IS NOT NULL AND token_hash IS NOT NULL AND consumed_at IS NOT NULL AND consumed_grant_id IS NOT NULL) OR
     (status IN ('expired', 'cancelled') AND consumed_at IS NULL)
   ),
   CHECK (reviewer_id IS NULL OR reviewer_id <> requested_by),
