@@ -6,6 +6,7 @@
  * workflow. Never accept a client-supplied { approved: true } object.
  */
 import { authorizeOfficeAccess } from "./access-policy.mjs";
+import { findApprovedRoleGrantToken } from "./role-approval-service.mjs";
 
 const ASSIGNABLE_SCOPES = Object.freeze({
   treasury_agent: "workspace:treasury",
@@ -66,13 +67,12 @@ function auditInsert(db, { id, principal, action, objectId, requestId, now, deta
  */
 export async function grantOfficeRole({
   db, principal, subjectId, role, expiresAt = null, requestId, approvalToken,
-  approvalVerifier, now = Date.now(),
+  now = Date.now(),
 }) {
   assertPrincipal(principal);
   if (!isText(subjectId) || !ASSIGNABLE_ROLES.has(role) ||
       (expiresAt !== null && (!Number.isSafeInteger(expiresAt) || expiresAt <= now)) ||
-      !isText(requestId) || !isText(approvalToken, 2000) ||
-      typeof approvalVerifier !== "function") {
+      !isText(requestId) || !isText(approvalToken, 200)) {
     fail(400, "Invalid role grant input");
   }
   if (subjectId === principal.subjectId) fail(403, "Self-assignment is forbidden");
@@ -80,20 +80,13 @@ export async function grantOfficeRole({
   const grants = await loadActiveGrants(db, principal, now);
   assertAccessAdmin(principal, grants, "access:grant", now);
 
-  const approval = await approvalVerifier(approvalToken, {
-    organizationId: principal.organizationId, subjectId, role, expiresAt, requestId,
+  const { approval, consumeStatement } = await findApprovedRoleGrantToken({
+    db, token: approvalToken, principal, subjectId, role, now,
   });
-  if (!approval || approval.approved !== true ||
-      !isText(approval.approvalId) || !isText(approval.approvedBy) ||
-      approval.approvedBy === principal.subjectId ||
-      approval.organizationId !== principal.organizationId ||
-      approval.subjectId !== subjectId || approval.role !== role ||
-      !Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= now) {
-    fail(403, "Independent human approval required");
-  }
 
   const id = newId();
   const statements = [
+    consumeStatement,
     db.prepare(`
       INSERT INTO office_role_grants
         (id, subject_id, organization_id, role, scope, granted_by, granted_at, expires_at)
@@ -102,12 +95,13 @@ export async function grantOfficeRole({
       principal.subjectId, now, expiresAt),
     auditInsert(db, {
       id: newId(), principal, action: "access:grant", objectId: id, requestId, now,
-      detailsRedacted: `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.approvedBy};approval_id=${approval.approvalId}`,
+      detailsRedacted: `role=${role};scope=${ASSIGNABLE_SCOPES[role]};approved_by=${approval.reviewer_id};approval_id=${approval.id}`,
     }),
   ];
   const results = await db.batch(statements);
   if (Number(results?.[0]?.meta?.changes ?? results?.[0]?.changes ?? 0) !== 1 ||
-      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1) {
+      Number(results?.[1]?.meta?.changes ?? results?.[1]?.changes ?? 0) !== 1 ||
+      Number(results?.[2]?.meta?.changes ?? results?.[2]?.changes ?? 0) !== 1) {
     fail(409, "Role grant conflict");
   }
   return { id, subject_id: subjectId, organization_id: principal.organizationId,
