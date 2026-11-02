@@ -125,7 +125,7 @@ jobs:
                 for (const phrase of ['не подключён', 'нет данных', 'ожидание проверки', 'не совершает обмены']) {
                   if (!chartText.includes(phrase)) throw new Error(spec.name + ': chart metadata missing safe empty-state phrase: ' + phrase);
                 }
-                if (await chartSection.locator('.wallet-v08-plot path[d]').count() !== 0) {
+                if (await chartSection.locator('.wallet-v08-plot svg:not(.wallet-v08-gridlines) path[d], .wallet-v08-plot polyline').count() !== 0) {
                   throw new Error(spec.name + ': chart must not draw a fabricated price series');
                 }
                 if (!(await chartSection.locator('.wallet-v08-plot').getAttribute('aria-label') || '').includes('пока пуст')) {
