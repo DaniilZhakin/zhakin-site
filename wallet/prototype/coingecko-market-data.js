@@ -24,7 +24,7 @@ function observationTime(asset) {
   return Number.isFinite(date.getTime()) ? date.toISOString() : null;
 }
 
-function buildRawQuotes(payload) {
+function buildRawQuotes(payload, nowMs) {
   const btcUsd = positiveFinite(payload?.bitcoin?.usd);
   const tonUsd = positiveFinite(payload?.toncoin?.usd);
   const usdtUsd = positiveFinite(payload?.tether?.usd);
@@ -38,13 +38,13 @@ function buildRawQuotes(payload) {
 
   // Cross-rates are calculated from USD reference prices. Use the oldest
   // constituent timestamp so a derived quote cannot appear fresher than its inputs.
-  const btcTonTimestamp = new Date(Math.min(Date.parse(btcAt), Date.parse(usdtAt))).toISOString();
+  const btcUsdtTimestamp = new Date(Math.min(Date.parse(btcAt), Date.parse(usdtAt))).toISOString();
   const tonUsdtTimestamp = new Date(Math.min(Date.parse(tonAt), Date.parse(usdtAt))).toISOString();
 
   return {
     ok: true,
     quotes: [
-      { symbol: "BTC/USDT", price: btcUsd / usdtUsd, source: COINGECKO_SOURCE, timestamp: btcTonTimestamp },
+      { symbol: "BTC/USDT", price: btcUsd / usdtUsd, source: COINGECKO_SOURCE, timestamp: btcUsdtTimestamp },
       { symbol: "TON/USDT", price: tonUsd / usdtUsd, source: COINGECKO_SOURCE, timestamp: tonUsdtTimestamp },
       { symbol: "USDT/USD", price: usdtUsd, source: COINGECKO_SOURCE, timestamp: usdtAt }
     ]
@@ -97,7 +97,7 @@ export async function fetchCoinGeckoQuotes({
     try { payload = JSON.parse(body); }
     catch { return { ok: false, quotes: [], error: "invalid_json" }; }
 
-    const mapped = buildRawQuotes(payload);
+    const mapped = buildRawQuotes(payload, nowMs);
     if (!mapped.ok) return { ok: false, quotes: [], error: mapped.error };
 
     const validated = mapped.quotes.map((quote) => validateMarketQuote(quote, {
