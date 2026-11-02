@@ -123,3 +123,30 @@ Any later exchange/trading integration requires a separate security review, expl
 `wallet/prototype/market-data.js` provides pure validation helpers only. It performs no network calls, persistence, credential handling or trading. Tests cover allowlisting, source trust, positive finite prices, timestamps, stale quotes, spread consistency, payload immutability and fail-closed collection handling.
 
 The V08 chart remains intentionally empty and disabled until a provider is selected, configured, tested and approved.
+
+## 10. V10 provider selection and adapter
+
+**Selected prototype provider: CoinGecko Public API (keyless endpoint).**
+
+Rationale:
+- One request returns USD reference prices for Bitcoin, Toncoin and Tether, allowing the prototype to populate all three approved display pairs consistently.
+- BTC/USDT and TON/USDT are derived as the corresponding USD reference price divided by the Tether/USD reference price. The timestamp for each derived pair is the oldest timestamp of its two inputs.
+- USDT/USD uses Tether's USD reference price directly.
+- The public keyless endpoint does not require an API key. Its documented public-plan rate limit is variable (5–15 requests/minute), so the adapter makes one bounded request for all three assets and does not retry automatically.
+- CoinGecko's Demo plan is free but requires attribution; its current published plan table lists 10,000 call credits/month and a 100 calls/minute rate limit. The keyless public endpoint and Demo plan are distinct access modes. Any production/commercial deployment must re-check the current terms, attribution and redistribution licence before launch.
+
+Official references:
+- API pricing and keyless public API: https://www.coingecko.com/en/api/pricing
+- Simple price endpoint: https://docs.coingecko.com/reference/simple-price
+- Public API rate limit: https://support.coingecko.com/articles/5125303456-what-is-the-rate-limit-for-coingecko-api-public-plan
+
+V10 implementation:
+- `coingecko-market-data.js` uses only the fixed HTTPS endpoint `api.coingecko.com/api/v3/simple/price` and fixed asset IDs; no caller-controlled URL or symbol routing.
+- One GET request asks for `bitcoin,toncoin,tether`, USD prices and `last_updated_at`.
+- The adapter validates HTTP status, JSON content type, declared and actual response size (16 KiB cap), JSON shape, positive finite prices and provider timestamps.
+- Request timeout is 5 seconds; redirects are rejected; automatic retries are intentionally absent to respect the variable public-plan rate limit.
+- Every normalized quote is passed through the V09 source allowlist and freshness validator. If any requested quote is missing, stale, malformed or future-dated, the adapter returns no quotes (fail closed).
+- No API key, credential, database, browser-side provider call, cache, wallet connection, order, transfer or ledger mutation is introduced.
+- Provider data is reference data, not an executable exchange rate or guaranteed fill price. Cross-rates may differ from a direct exchange order book.
+
+**Current status:** adapter and mocked tests are implemented in the isolated V10 branch. No live provider call is made by CI. A live endpoint smoke test and production terms review remain separate approval gates.
