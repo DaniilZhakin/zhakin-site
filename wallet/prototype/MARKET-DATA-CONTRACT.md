@@ -123,3 +123,47 @@ Any later exchange/trading integration requires a separate security review, expl
 `wallet/prototype/market-data.js` provides pure validation helpers only. It performs no network calls, persistence, credential handling or trading. Tests cover allowlisting, source trust, positive finite prices, timestamps, stale quotes, spread consistency, payload immutability and fail-closed collection handling.
 
 The V08 chart remains intentionally empty and disabled until a provider is selected, configured, tested and approved.
+
+## 10. V10 provider selection and adapter
+
+**Selected prototype provider: CoinGecko Public API (keyless endpoint).**
+
+Rationale:
+- One request returns USD reference prices for Bitcoin, Toncoin and Tether, allowing the prototype to populate all three approved display pairs consistently.
+- BTC/USDT and TON/USDT are derived as the corresponding USD reference price divided by the Tether/USD reference price. The timestamp for each derived pair is the oldest timestamp of its two inputs.
+- USDT/USD uses Tether's USD reference price directly.
+- The keyless Public API requires no API key and currently has a variable rate limit of 5–15 calls/minute. The adapter therefore makes one bounded request for all three assets and does not retry automatically.
+- CoinGecko's free Demo plan is a separate access mode: the pricing page currently lists 10,000 call credits/month and 100 calls/minute, but the support licensing guidance explicitly says Demo and free keyless API access do not grant commercial-use rights. Attribution alone does not convert free access into a commercial licence.
+- Paid self-serve plans include standard commercial rights for public display with prominent CoinGecko attribution, but do not include data redistribution, resale, API sublicensing or white-label rights. If Wallet lets users retrieve/reuse a reusable feed or republishes the data beyond ordinary display, obtain written confirmation or a custom licence before enabling that functionality.
+- Production gate: keep live market-data display disabled until the intended public/commercial use is classified and the appropriate plan/licence is confirmed. Do not assume a free tier is cleared for commercial use.
+
+Official references:
+- API pricing and keyless public API: https://www.coingecko.com/en/api/pricing
+- Simple price endpoint: https://docs.coingecko.com/reference/simple-price
+- Public API rate limit: https://support.coingecko.com/articles/5125303456-what-is-the-rate-limit-for-coingecko-api-public-plan
+
+V10 implementation:
+- `coingecko-market-data.js` uses only the fixed HTTPS endpoint `api.coingecko.com/api/v3/simple/price` and fixed asset IDs; no caller-controlled URL or symbol routing.
+- One GET request asks for `bitcoin,toncoin,tether`, USD prices and `last_updated_at`.
+- The adapter validates HTTP status, JSON content type, declared and actual response size (16 KiB cap), JSON shape, positive finite prices and provider timestamps.
+- Request timeout is 5 seconds; redirects are rejected; automatic retries are intentionally absent to respect the variable public-plan rate limit.
+- Every normalized quote is passed through the V09 source allowlist and freshness validator. If any requested quote is missing, stale, malformed or future-dated, the adapter returns no quotes (fail closed).
+- No API key, credential, database, browser-side provider call, cache, wallet connection, order, transfer or ledger mutation is introduced.
+- Provider data is reference data, not an executable exchange rate or guaranteed fill price. Cross-rates may differ from a direct exchange order book.
+
+**Current status:** adapter and mocked tests are implemented in the isolated V10 branch. No live provider call is made by CI. A live endpoint smoke test and production terms review remain separate approval gates.
+
+
+## 11. Licensing gate clarification (reviewed 2026-11-02)
+
+The distinction between rate limits and usage rights is mandatory:
+- Public keyless API: 5–15 calls/minute, variable by global usage conditions; this is a technical limit, not a commercial licence.
+- Free Demo plan: 10,000 call credits/month and 100 calls/minute as currently listed on the pricing page. CoinGecko's licensing FAQ states Demo and free keyless API access do **not** include commercial rights.
+- Paid self-serve plans include standard commercial rights for products displaying data with prominent attribution ("Data provided by CoinGecko" and link, subject to the current brand guide and terms).
+- Standard commercial rights do not include redistribution, syndication, resale, API sublicensing or white-label display. Custom rights require a separate agreement; do not expose a reusable public data feed without confirming the licence scope.
+- The Wallet is a public-facing product. Therefore, before enabling a live public feed, confirm whether its use is non-commercial display, standard commercial display, or redistribution; then obtain the matching plan and any custom permissions required. Until then the V10 adapter remains isolated and is tested only with mocked responses.
+
+Official licensing/rate-limit references:
+- Pricing and plan comparison: https://www.coingecko.com/en/api/pricing
+- Public API rate limit (last updated 2026-10-02): https://support.coingecko.com/articles/5125303456-what-is-the-rate-limit-for-coingecko-api-public-plan
+- Commercial vs custom licensing (last updated 2026-10-19): https://support.coingecko.com/articles/1043089972-what-are-the-differences-between-commercial-and-custom-licenses
