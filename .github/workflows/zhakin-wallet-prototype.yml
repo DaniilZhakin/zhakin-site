@@ -78,6 +78,9 @@ jobs:
                     horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
                     assetCards: cards.map(card => ({
                       text: card.innerText.trim(),
+                      textContent: card.textContent.trim(),
+                      html: card.innerHTML.slice(0, 500),
+                      children: [...card.children].map(child => ({ tag: child.tagName, text: child.textContent.trim(), opacity: getComputedStyle(child).opacity, visibility: getComputedStyle(child).visibility, display: getComputedStyle(child).display })),
                       opacity: getComputedStyle(card).opacity,
                       visibility: getComputedStyle(card).visibility,
                       display: getComputedStyle(card).display
@@ -86,7 +89,7 @@ jobs:
                 });
                 console.log(JSON.stringify({ viewport: spec.name, ...diagnostics }));
                 if (diagnostics.horizontalOverflow) throw new Error(spec.name + ': horizontal overflow detected');
-                if (diagnostics.assetCards.length !== 2 || diagnostics.assetCards.some(card => !card.text || card.visibility === 'hidden' || card.display === 'none' || Number(card.opacity) === 0)) {
+                if (diagnostics.assetCards.length !== 2 || diagnostics.assetCards.some(card => !card.textContent || card.visibility === 'hidden' || card.display === 'none' || Number(card.opacity) === 0)) {
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
