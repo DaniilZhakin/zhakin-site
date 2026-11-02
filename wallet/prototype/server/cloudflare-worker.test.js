@@ -11,7 +11,7 @@ class MemoryStorage {
 }
 class Stub {
   constructor() { this.storage = new MemoryStorage(); this.object = new MarketStateDurableObject({ storage: this.storage }); }
-  fetch(request) { return this.object.fetch(request); }
+  fetch(input, init) { return this.object.fetch(input instanceof Request ? input : new Request(input, init)); }
 }
 function envFor(stub, flags = {}) {
   return {
