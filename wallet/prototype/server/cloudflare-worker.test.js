@@ -19,7 +19,7 @@ function envFor(stub, flags = {}) {
     ...flags
   };
 }
-const req = (origin = "https://жакин.рф", path = "/api/v1/market/quotes", method = "GET") =>
+const req = (origin = "https://xn--80alhhq.xn--p1ai", path = "/api/v1/market/quotes", method = "GET") =>
   new Request("https://wallet.test" + path, { method, headers: origin ? { Origin: origin } : {} });
 const quotes = () => [
   { symbol: "BTC/USDT", price: 65000, source: "coingecko-public", timestamp: new Date().toISOString() },
@@ -31,8 +31,8 @@ test("Cloudflare entrypoint rejects untrusted origins and unsupported routes", a
   const stub = new Stub();
   const worker = createMarketWorker({ fetchQuotes: async () => ({ ok: true, quotes: quotes() }) });
   assert.equal((await worker.fetch(req("https://evil.example"), envFor(stub))).status, 403);
-  assert.equal((await worker.fetch(req("https://жакин.рф", "/other"), envFor(stub))).status, 404);
-  assert.equal((await worker.fetch(req("https://жакин.рф", "/api/v1/market/quotes", "POST"), envFor(stub))).status, 405);
+  assert.equal((await worker.fetch(req("https://xn--80alhhq.xn--p1ai", "/other"), envFor(stub))).status, 404);
+  assert.equal((await worker.fetch(req("https://xn--80alhhq.xn--p1ai", "/api/v1/market/quotes", "POST"), envFor(stub))).status, 405);
 });
 
 test("Cloudflare entrypoint requires a Durable Object binding", async () => {
@@ -58,7 +58,7 @@ test("Cloudflare adapter persists shared cache and returns sanitized quotes", as
   const env = envFor(stub, { MARKET_DATA_ENABLED: "true", MARKET_DATA_LICENSE_APPROVED: "true" });
   const first = await worker.fetch(req(), env);
   assert.equal(first.status, 200);
-  assert.equal(first.headers.get("access-control-allow-origin"), "https://жакин.рф");
+  assert.equal(first.headers.get("access-control-allow-origin"), "https://xn--80alhhq.xn--p1ai");
   assert.equal((await first.json()).cached, false);
   const second = await worker.fetch(req(), env);
   assert.equal(second.status, 200);
