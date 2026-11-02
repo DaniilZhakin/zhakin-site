@@ -111,6 +111,26 @@ jobs:
                 if (!(await marketSection.innerText()).toLocaleLowerCase('ru').includes('не выполняет обмен')) {
                   throw new Error(spec.name + ': market watch must clearly state that it cannot execute trades');
                 }
+                const chartSection = page.locator('section[data-market-chart]');
+                if (await chartSection.count() !== 1) throw new Error(spec.name + ': V08 market chart section is missing');
+                if (await chartSection.locator('.wallet-v08-instruments button').count() !== 3 ||
+                    await chartSection.locator('.wallet-v08-intervals button').count() !== 4) {
+                  throw new Error(spec.name + ': expected three instruments and four chart intervals');
+                }
+                const chartControls = chartSection.locator('button.wallet-v08-control');
+                for (let i = 0; i < await chartControls.count(); i++) {
+                  if (!(await chartControls.nth(i).isDisabled())) throw new Error(spec.name + ': chart controls must remain disabled without a verified feed');
+                }
+                const chartText = (await chartSection.innerText()).toLocaleLowerCase('ru');
+                for (const phrase of ['не подключён', 'нет данных', 'ожидание проверки', 'не совершает обмены']) {
+                  if (!chartText.includes(phrase)) throw new Error(spec.name + ': chart metadata missing safe empty-state phrase: ' + phrase);
+                }
+                if (await chartSection.locator('.wallet-v08-plot svg:not(.wallet-v08-gridlines) path[d], .wallet-v08-plot polyline').count() !== 0) {
+                  throw new Error(spec.name + ': chart must not draw a fabricated price series');
+                }
+                if (!(await chartSection.locator('.wallet-v08-plot').getAttribute('aria-label') || '').includes('пока пуст')) {
+                  throw new Error(spec.name + ': chart empty-state accessibility label is missing');
+                }
                 const connectionSection = page.locator('section[aria-labelledby="wallet-connection-title"]');
                 if (await connectionSection.count() !== 1) throw new Error(spec.name + ': wallet connection readiness section is missing');
                 if (await connectionSection.locator('.wallet-connect-card').count() !== 2) throw new Error(spec.name + ': expected separate ZP and BFU connection cards');
@@ -150,6 +170,10 @@ jobs:
                 await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: marketTop, headerHeight: stickyHeaderHeight });
                 await page.waitForTimeout(150);
                 await page.screenshot({ path: 'wallet-screenshots/wallet-market-' + spec.name + '.png', fullPage: false });
+                const chartTop = await chartSection.evaluate(element => window.scrollY + element.getBoundingClientRect().top);
+                await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: chartTop, headerHeight: stickyHeaderHeight });
+                await page.waitForTimeout(150);
+                await page.screenshot({ path: 'wallet-screenshots/wallet-chart-' + spec.name + '.png', fullPage: false });
                 const connectionTop = await page.locator('section[aria-labelledby="wallet-connection-title"]').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
                 await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: connectionTop, headerHeight: stickyHeaderHeight });
                 await page.waitForTimeout(150);
@@ -169,7 +193,7 @@ jobs:
       - name: Upload visual preview screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: zhakin-wallet-v07-visual-previews
+          name: zhakin-wallet-v08-chart-visual-previews
           path: wallet-screenshots/*.png
           if-no-files-found: error
           retention-days: 14
