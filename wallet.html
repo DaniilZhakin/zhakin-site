@@ -328,6 +328,64 @@
     }
 
 
+
+    /* Responsive containment: keep nested Wallet grids/flex rows inside narrow viewports. */
+    .wallet-page,
+    .wallet-page .market-board {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .wallet-intro > *,
+    .wallet-grid > *,
+    .wallet-demo-head > *,
+    .wallet-demo-grid > *,
+    .wallet-demo-task > *,
+    .wallet-demo-footer > *,
+    .wallet-dashboard-head > *,
+    .wallet-overview-grid > *,
+    .wallet-collection-heading > *,
+    .wallet-collection-grid > *,
+    .wallet-planned > *,
+    .wallet-section-heading > *,
+    .wallet-roadmap > * {
+      min-width: 0;
+    }
+    .wallet-page h1,
+    .wallet-page h2,
+    .wallet-page h3,
+    .wallet-page p,
+    .wallet-page strong,
+    .wallet-page small,
+    .wallet-page a,
+    .wallet-page span {
+      overflow-wrap: anywhere;
+    }
+    .wallet-page img,
+    .wallet-page svg,
+    .wallet-page video,
+    .wallet-page iframe {
+      max-width: 100%;
+    }
+    .wallet-page .market-board > div {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 600px) {
+      .wallet-page {
+        width: 100%;
+        padding-inline: 15px;
+      }
+      .wallet-page .wallet-demo-task {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+      .wallet-page .wallet-demo-task > div {
+        min-width: 0;
+      }
+      .wallet-page .wallet-demo-task .wallet-demo-button {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
