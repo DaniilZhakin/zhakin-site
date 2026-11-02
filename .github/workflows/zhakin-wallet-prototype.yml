@@ -96,6 +96,7 @@ jobs:
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
+                await page.locator('.wallet-v04').screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png' });
                 await page.close();
               }
             } finally {
