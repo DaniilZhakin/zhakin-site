@@ -95,12 +95,36 @@ jobs:
                 if (diagnostics.assetCards.length !== 2 || diagnostics.assetCards.some(card => !card.text || card.visibility === 'hidden' || card.display === 'none' || Number(card.opacity) === 0)) {
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
+                // Verify the ZP/BFU register tabs in the real browser, including keyboard navigation.
+                const ledgerTabs = page.locator('[data-ledger-tab]');
+                if (await ledgerTabs.count() !== 3) throw new Error(spec.name + ': expected three ledger tabs');
+                await page.locator('[data-ledger-tab="zp"]').click();
+                if (await page.locator('#wallet-ledger-title').innerText() !== 'Операций ZP пока нет') {
+                  throw new Error(spec.name + ': ZP tab did not show its own empty state');
+                }
+                if (await page.locator('#wallet-ledger-zp-tab').getAttribute('aria-selected') !== 'true') {
+                  throw new Error(spec.name + ': ZP tab aria-selected state is incorrect');
+                }
+                await page.locator('[data-ledger-tab="bfu"]').click();
+                if (await page.locator('#wallet-ledger-title').innerText() !== 'Операций BFU пока нет') {
+                  throw new Error(spec.name + ': BFU tab did not show its own empty state');
+                }
+                await page.locator('[data-ledger-tab="bfu"]').focus();
+                await page.keyboard.press('ArrowLeft');
+                if (await page.locator('#wallet-ledger-zp-tab').getAttribute('aria-selected') !== 'true') {
+                  throw new Error(spec.name + ': keyboard ArrowLeft navigation failed');
+                }
+                await page.locator('[data-ledger-tab="all"]').click();
                 await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
                 const assetTop = await page.locator('.wallet-v04').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
                 const stickyHeaderHeight = await page.evaluate(() => document.querySelector('.site-header')?.getBoundingClientRect().height || 0);
                 await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight)), { top: assetTop, headerHeight: stickyHeaderHeight });
                 await page.waitForTimeout(150);
                 await page.screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png', fullPage: false });
+                const ledgerTop = await page.locator('section[aria-labelledby="history-title"]').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
+                await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: ledgerTop, headerHeight: stickyHeaderHeight });
+                await page.waitForTimeout(150);
+                await page.screenshot({ path: 'wallet-screenshots/wallet-ledger-' + spec.name + '.png', fullPage: false });
                 await page.close();
               }
             } finally {
@@ -112,7 +136,7 @@ jobs:
       - name: Upload visual preview screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: zhakin-wallet-v04-visual-previews
+          name: zhakin-wallet-v05-visual-previews
           path: wallet-screenshots/*.png
           if-no-files-found: error
           retention-days: 14

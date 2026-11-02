@@ -363,6 +363,17 @@
       .wallet-chart-head{flex-direction:column;gap:7px}
       .wallet-chart{min-height:95px}
     }
+
+    .wallet-ledger-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 17px}
+    .wallet-ledger-tab{appearance:none;min-height:40px;padding:9px 15px;border:1px solid rgba(216,189,120,.24);border-radius:3px;background:rgba(255,255,255,.018);color:#b9c6bc;font:inherit;font-size:.76rem;font-weight:650;cursor:pointer}
+    .wallet-ledger-tab[aria-selected="true"]{border-color:rgba(216,189,120,.65);background:rgba(216,189,120,.09);color:#f0dfae}
+    .wallet-ledger-tab:focus-visible{outline:2px solid #f0dfae;outline-offset:3px}
+    .wallet-ledger-state{display:flex;align-items:flex-start;gap:15px;padding:16px 17px;border:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.12)}
+    .wallet-ledger-state-icon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(216,189,120,.26);border-radius:50%;color:#f0dfae}
+    .wallet-ledger-state strong{display:block;margin:1px 0 5px;color:#f0eee6;font-size:.9rem}
+    .wallet-ledger-state p{margin:0;color:#a7b4aa;font-size:.82rem;line-height:1.7}
+    .wallet-ledger-state small{display:block;margin-top:8px;color:#d9c58f;font-size:.68rem;letter-spacing:.045em}
+    @media(max-width:600px){.wallet-ledger-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.wallet-ledger-tab{padding:8px 5px;font-size:.7rem}.wallet-ledger-state{gap:11px;padding:13px}}
   </style>
 </head>
 <body>
@@ -486,7 +497,15 @@
     </section>
     <section class="wallet-section" aria-labelledby="history-title">
       <div class="wallet-section-heading"><h2 id="history-title">История операций</h2><p>ПРОЗРАЧНОСТЬ&nbsp; / &nbsp;ПРОВЕРЯЕМОСТЬ&nbsp; / &nbsp;КОНТРОЛЬ</p></div>
-      <div class="wallet-empty"><span class="wallet-empty-icon" aria-hidden="true">↗</span><div><strong>История пока не подключена</strong><p>Здесь будут отображаться только подтверждённые операции после запуска защищённой серверной части.</p></div></div>
+      <div class="wallet-ledger-tabs" role="tablist" aria-label="Выбор реестра операций">
+        <button class="wallet-ledger-tab" type="button" role="tab" id="wallet-ledger-all-tab" aria-selected="true" aria-controls="wallet-ledger-panel" data-ledger-tab="all">Все</button>
+        <button class="wallet-ledger-tab" type="button" role="tab" id="wallet-ledger-zp-tab" aria-selected="false" aria-controls="wallet-ledger-panel" data-ledger-tab="zp" tabindex="-1">ZP</button>
+        <button class="wallet-ledger-tab" type="button" role="tab" id="wallet-ledger-bfu-tab" aria-selected="false" aria-controls="wallet-ledger-panel" data-ledger-tab="bfu" tabindex="-1">BFU</button>
+      </div>
+      <div class="wallet-ledger-state" id="wallet-ledger-panel" role="tabpanel" aria-labelledby="wallet-ledger-all-tab" aria-live="polite">
+        <span class="wallet-ledger-state-icon" aria-hidden="true">↗</span>
+        <div><strong id="wallet-ledger-title">Реестр пока пуст</strong><p id="wallet-ledger-copy">Подтверждённых операций пока нет. История появится только после запуска защищённого серверного учёта.</p><small id="wallet-ledger-status">РЕАЛЬНЫЕ ОПЕРАЦИИ ОТКЛЮЧЕНЫ</small></div>
+      </div>
     </section>
     <section class="wallet-section" aria-labelledby="roadmap-title">
       <div class="wallet-section-heading"><h2 id="roadmap-title">Архитектура запуска</h2><p>ПОЭТАПНО · С ПРОВЕРКОЙ КАЖДОГО УРОВНЯ</p></div>
@@ -502,6 +521,44 @@
   <dialog class="wallet-dialog" id="wallet-info-dialog" aria-labelledby="wallet-info-title"><h2 id="wallet-info-title">Функция пока не подключена</h2><p id="wallet-info-copy">Этот элемент показывает будущую возможность ZHAKIN Wallet. Реальные операции недоступны.</p><div class="wallet-dialog-actions"><button class="wallet-demo-button" type="button" id="wallet-info-close">Понятно</button></div></dialog>
   <script>
     (() => {
+      const ledgerTabs = [...document.querySelectorAll("[data-ledger-tab]")];
+      const ledgerPanel = document.getElementById("wallet-ledger-panel");
+      const ledgerTitle = document.getElementById("wallet-ledger-title");
+      const ledgerCopy = document.getElementById("wallet-ledger-copy");
+      const ledgerStatus = document.getElementById("wallet-ledger-status");
+      const ledgerContent = {
+        all: { title: "Общий реестр пока пуст", copy: "Подтверждённых операций ZP или BFU пока нет. Записи будут добавляться только после проверки сервером.", status: "ZP И BFU УЧИТЫВАЮТСЯ РАЗДЕЛЬНО" },
+        zp: { title: "Операций ZP пока нет", copy: "Реестр внутренних баллов ZHAKIN Points ещё не подключён. Начисления и переводы не выполняются.", status: "ЛИЧНЫЙ СЧЁТ ZP НЕ АКТИВИРОВАН" },
+        bfu: { title: "Операций BFU пока нет", copy: "Отдельный реестр COIN УСЕРДИЕ (BFU) на этой странице не подключён. Данные ZP сюда не переносятся.", status: "BFU — ОТДЕЛЬНЫЙ ПРОЕКТ" }
+      };
+      const selectLedger = (tab, moveFocus = false) => {
+        const key = tab.dataset.ledgerTab;
+        const state = ledgerContent[key];
+        if (!state || !ledgerPanel) return;
+        ledgerTabs.forEach(item => {
+          const selected = item === tab;
+          item.setAttribute("aria-selected", String(selected));
+          item.tabIndex = selected ? 0 : -1;
+        });
+        ledgerPanel.setAttribute("aria-labelledby", tab.id);
+        ledgerTitle.textContent = state.title;
+        ledgerCopy.textContent = state.copy;
+        ledgerStatus.textContent = state.status;
+        if (moveFocus) tab.focus();
+      };
+      ledgerTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => selectLedger(tab));
+        tab.addEventListener("keydown", event => {
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+          let next = index;
+          if (event.key === "ArrowRight") next = (index + 1) % ledgerTabs.length;
+          if (event.key === "ArrowLeft") next = (index - 1 + ledgerTabs.length) % ledgerTabs.length;
+          if (event.key === "Home") next = 0;
+          if (event.key === "End") next = ledgerTabs.length - 1;
+          selectLedger(ledgerTabs[next], true);
+        });
+      });
       const balance = document.getElementById("wallet-demo-balance");
       const history = document.getElementById("wallet-demo-history");
       const message = document.getElementById("wallet-demo-message");
