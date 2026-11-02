@@ -35,6 +35,11 @@ function buildRawQuotes(payload, nowMs) {
   if ([btcUsd, tonUsd, usdtUsd].some((value) => value === null) || !btcAt || !tonAt || !usdtAt) {
     return { ok: false, error: "invalid_provider_payload" };
   }
+  // Validate each constituent timestamp before deriving a cross-rate. Taking the
+  // oldest timestamp must never conceal a future-dated provider component.
+  if ([btcAt, tonAt, usdtAt].some((timestamp) => Date.parse(timestamp) > nowMs + 30_000)) {
+    return { ok: false, error: "quote_validation_failed" };
+  }
 
   // Cross-rates are calculated from USD reference prices. Use the oldest
   // constituent timestamp so a derived quote cannot appear fresher than its inputs.
