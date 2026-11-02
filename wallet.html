@@ -364,6 +364,19 @@
       .wallet-chart{min-height:95px}
     }
 
+    .wallet-connect-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .wallet-connect-card{padding:20px;border:1px solid rgba(216,189,120,.2);background:linear-gradient(145deg,rgba(24,43,32,.62),rgba(8,14,11,.72))}
+    .wallet-connect-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+    .wallet-connect-name{color:#f0eee6;font-size:.98rem;font-weight:650}
+    .wallet-connect-state{display:inline-flex;align-items:center;gap:7px;color:#d9c58f;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-connect-state:before{content:"";width:6px;height:6px;border-radius:50%;background:#d8bd78}
+    .wallet-connect-card p{margin:0;color:#a7b4aa;font-size:.8rem;line-height:1.7}
+    .wallet-connect-action{margin-top:15px;min-height:38px;padding:8px 12px;border:1px solid rgba(216,189,120,.22);background:rgba(255,255,255,.025);color:#9eada2;font:inherit;font-size:.72rem;cursor:not-allowed}
+    .wallet-connect-action:disabled{opacity:.78}
+    .wallet-prereq{margin-top:14px;padding:16px 18px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.12)}
+    .wallet-prereq strong{display:block;margin-bottom:8px;color:#e8dfc4;font-size:.78rem}
+    .wallet-prereq p{margin:0;color:#98a79c;font-size:.75rem;line-height:1.75}
+    @media(max-width:600px){.wallet-connect-grid{grid-template-columns:1fr}.wallet-connect-card{padding:16px}}
     .wallet-ledger-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 17px}
     .wallet-ledger-tab{appearance:none;min-height:40px;padding:9px 15px;border:1px solid rgba(216,189,120,.24);border-radius:3px;background:rgba(255,255,255,.018);color:#b9c6bc;font:inherit;font-size:.76rem;font-weight:650;cursor:pointer}
     .wallet-ledger-tab[aria-selected="true"]{border-color:rgba(216,189,120,.65);background:rgba(216,189,120,.09);color:#f0dfae}
@@ -494,6 +507,22 @@
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✧</span><span class="wallet-pocket-status">Концепция</span></div><h3>«Помоги себе сам»</h3><p>Будущий сценарий целевого использования бонусов с понятными правилами и подтверждением действий.</p><span class="wallet-pocket-note">Правила требуют проработки</span></article>
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">⇄</span><span class="wallet-pocket-status">Не активен</span></div><h3>Подарки и переводы</h3><p>Возможность подарить или передать ZP будет рассматриваться после настройки авторизации, защиты от злоупотреблений и журнала операций.</p><span class="wallet-pocket-note">Операции отключены</span></article>
       </div>
+    </section>
+    <section class="wallet-section" aria-labelledby="wallet-connection-title">
+      <div class="wallet-section-heading"><h2 id="wallet-connection-title">Подключение кошельков</h2><p>РАЗДЕЛЬНЫЕ СИСТЕМЫ · ПОЭТАПНЫЙ ДОПУСК</p></div>
+      <div class="wallet-connect-grid">
+        <article class="wallet-connect-card" aria-labelledby="wallet-connect-zp-title">
+          <div class="wallet-connect-top"><strong class="wallet-connect-name" id="wallet-connect-zp-title">ZHAKIN Points · ZP</strong><span class="wallet-connect-state">Не подключён</span></div>
+          <p>Внутренний счёт платформы. Для него потребуется защищённая авторизация ZHAKIN ID и серверный реестр. Внешний TON-кошелёк для учёта ZP не используется.</p>
+          <button class="wallet-connect-action" type="button" disabled aria-disabled="true">Подключение будет открыто после проверки</button>
+        </article>
+        <article class="wallet-connect-card" aria-labelledby="wallet-connect-bfu-title">
+          <div class="wallet-connect-top"><strong class="wallet-connect-name" id="wallet-connect-bfu-title">COIN УСЕРДИЕ · BFU</strong><span class="wallet-connect-state">Не подключён</span></div>
+          <p>Отдельный актив проекта фонда. Возможную интеграцию TON-кошелька проверим отдельно: сеть, контракт Jetton и параметры актива пока не подтверждены этой страницей.</p>
+          <button class="wallet-connect-action" type="button" disabled aria-disabled="true">Внешнее подключение пока недоступно</button>
+        </article>
+      </div>
+      <div class="wallet-prereq"><strong>Что должно быть готово до подключения</strong><p>Почтовый провайдер и проверка одноразовых кодов · Worker-маршруты авторизации · D1 и миграции · серверные роли администратора и координатора · SQL-проверка на отдельной тестовой базе. До завершения этих этапов подключение и операции остаются выключенными.</p></div>
     </section>
     <section class="wallet-section" aria-labelledby="history-title">
       <div class="wallet-section-heading"><h2 id="history-title">История операций</h2><p>ПРОЗРАЧНОСТЬ&nbsp; / &nbsp;ПРОВЕРЯЕМОСТЬ&nbsp; / &nbsp;КОНТРОЛЬ</p></div>
