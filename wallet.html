@@ -364,6 +364,16 @@
       .wallet-chart{min-height:95px}
     }
 
+    .wallet-market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .wallet-market-card{padding:17px 18px;border:1px solid rgba(216,189,120,.18);background:linear-gradient(145deg,rgba(19,35,27,.56),rgba(8,14,11,.7))}
+    .wallet-market-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+    .wallet-market-symbol{color:#f0eee6;font-size:.9rem;font-weight:700;letter-spacing:.04em}
+    .wallet-market-status{color:#d8bd78;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-market-value{color:#e5e0d2;font-size:1.3rem;font-weight:650;letter-spacing:.02em}
+    .wallet-market-unit{margin-left:5px;color:#9eada2;font-size:.7rem;font-weight:500}
+    .wallet-market-note{margin-top:8px;color:#8f9e93;font-size:.7rem;line-height:1.6}
+    .wallet-market-foot{margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);color:#87978c;font-size:.68rem;line-height:1.6}
+    @media(max-width:650px){.wallet-market-grid{grid-template-columns:1fr}.wallet-market-card{padding:15px 16px}}
     .wallet-connect-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .wallet-connect-card{padding:20px;border:1px solid rgba(216,189,120,.2);background:linear-gradient(145deg,rgba(24,43,32,.62),rgba(8,14,11,.72))}
     .wallet-connect-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
@@ -523,6 +533,30 @@
         </article>
       </div>
       <div class="wallet-prereq"><strong>Что должно быть готово до подключения</strong><p>Почтовый провайдер и проверка одноразовых кодов · Worker-маршруты авторизации · D1 и миграции · серверные роли администратора и координатора · SQL-проверка на отдельной тестовой базе. До завершения этих этапов подключение и операции остаются выключенными.</p></div>
+    </section>
+    <section class="wallet-section" aria-labelledby="wallet-market-title">
+      <div class="wallet-section-heading"><h2 id="wallet-market-title">Рыночные ориентиры</h2><p>ИНФОРМАЦИОННЫЙ МОНИТОРИНГ · БЕЗ ТОРГОВЫХ ОПЕРАЦИЙ</p></div>
+      <div class="wallet-market-grid" aria-label="Рыночные инструменты, данные пока не подключены">
+        <article class="wallet-market-card" data-market-symbol="BTC">
+          <div class="wallet-market-head"><strong class="wallet-market-symbol">BTC / USDT</strong><span class="wallet-market-status">Источник не подключён</span></div>
+          <div class="wallet-market-value">—<span class="wallet-market-unit">USDT</span></div>
+          <p class="wallet-market-note">Bitcoin · справочная котировка</p>
+          <div class="wallet-market-foot">Нет подтверждённой цены и времени обновления. Значение появится после подключения и проверки поставщика данных.</div>
+        </article>
+        <article class="wallet-market-card" data-market-symbol="TON">
+          <div class="wallet-market-head"><strong class="wallet-market-symbol">TON / USDT</strong><span class="wallet-market-status">Источник не подключён</span></div>
+          <div class="wallet-market-value">—<span class="wallet-market-unit">USDT</span></div>
+          <p class="wallet-market-note">Toncoin · справочная котировка</p>
+          <div class="wallet-market-foot">Нет подтверждённой цены и времени обновления. Значение появится после подключения и проверки поставщика данных.</div>
+        </article>
+        <article class="wallet-market-card" data-market-symbol="USDT">
+          <div class="wallet-market-head"><strong class="wallet-market-symbol">USDT / USD</strong><span class="wallet-market-status">Источник не подключён</span></div>
+          <div class="wallet-market-value">—<span class="wallet-market-unit">USD</span></div>
+          <p class="wallet-market-note">Tether · справочный ориентир</p>
+          <div class="wallet-market-foot">Нет подтверждённой цены и времени обновления. Значение появится после подключения и проверки поставщика данных.</div>
+        </article>
+      </div>
+      <div class="wallet-prereq"><strong>Статус рыночных данных</strong><p>Биржи и API пока не подключены. Котировки, графики и время последнего обновления не подменяются демонстрационными числами. Этот блок не размещает ордера и не выполняет обмен.</p></div>
     </section>
     <section class="wallet-section" aria-labelledby="history-title">
       <div class="wallet-section-heading"><h2 id="history-title">История операций</h2><p>ПРОЗРАЧНОСТЬ&nbsp; / &nbsp;ПРОВЕРЯЕМОСТЬ&nbsp; / &nbsp;КОНТРОЛЬ</p></div>
