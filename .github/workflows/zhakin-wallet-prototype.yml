@@ -96,7 +96,11 @@ jobs:
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
-                await page.locator('.wallet-v04').screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png' });
+                const assetTop = await page.locator('.wallet-v04').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
+                const stickyHeaderHeight = await page.evaluate(() => document.querySelector('.site-header')?.getBoundingClientRect().height || 0);
+                await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight)), { top: assetTop, headerHeight: stickyHeaderHeight });
+                await page.waitForTimeout(150);
+                await page.screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png', fullPage: false });
                 await page.close();
               }
             } finally {
