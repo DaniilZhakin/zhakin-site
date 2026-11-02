@@ -34,3 +34,28 @@ jobs:
 
       - name: Run complete prototype test suite
         run: npm --prefix wallet/prototype test
+
+      - name: Install Chromium for visual previews
+        run: npx --yes playwright@1.56.1 install --with-deps chromium
+
+      - name: Capture desktop and iPhone-width previews
+        shell: bash
+        run: |
+          mkdir -p wallet-screenshots
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/zhakin-wallet-preview.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/wallet.html >/dev/null; then break; fi
+            sleep 1
+          done
+          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "1440,1000" --full-page http://127.0.0.1:8000/wallet.html wallet-screenshots/wallet-desktop.png
+          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "390,844" --full-page http://127.0.0.1:8000/wallet.html wallet-screenshots/wallet-iphone-width.png
+
+      - name: Upload visual preview screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-wallet-v04-visual-previews
+          path: wallet-screenshots/*.png
+          if-no-files-found: error
+          retention-days: 14
