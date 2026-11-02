@@ -9,12 +9,12 @@ on:
       - feat/robot-office-worker-adapter-2026-10-31
       - feat/robot-office-handoff-2026-10-31
       - fix/robot-office-handoff-conflicts-2026-10-31
-      - fix/robot-office-handoff-conflicts-2026-10-31
       - feat/robot-office-role-management-2026-10-31
       - security/robot-office-token-delivery-review-2026-10-31
       - feat/robot-office-approval-revocation-2026-10-31
       - feat/robot-office-role-boundaries-2026-10-31
       - feat/robot-office-task-object-scope-2026-10-31
+      - feat/robot-office-interface-content-2026-10-31
       - test/robot-office-d1-local-emulator-2026-10-31
   pull_request:
     branches:
@@ -31,6 +31,8 @@ on:
       - feat/robot-office-worker-adapter-2026-10-31
       - feat/robot-office-handoff-2026-10-31
       - feat/robot-office-role-boundaries-2026-10-31
+      - feat/robot-office-task-object-scope-2026-10-31
+      - feat/robot-office-interface-content-2026-10-31
 
 permissions:
   contents: read
@@ -53,6 +55,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Validate Robot Office interface assets
+        run: node --check assets/js/robot-office.js
       - name: Run authorization policy tests
         run: node --test robot-office/tests/*.test.mjs
 

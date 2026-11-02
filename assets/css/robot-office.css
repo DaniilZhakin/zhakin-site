@@ -1,0 +1,33 @@
+/* Robot Office interface extensions — isolated from global site styles. */
+.office-tools{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:14px;align-items:center;margin:0 0 18px;padding:15px;border:1px solid rgba(216,189,120,.18);background:rgba(0,0,0,.12)}
+.office-search{width:100%;min-height:44px;padding:10px 13px;border:1px solid rgba(216,189,120,.3);border-radius:0;background:#091611;color:#f3f0e7;font:inherit;font-size:.82rem}
+.office-search::placeholder{color:#819087}
+.office-search:focus-visible,.office-filter:focus-visible{outline:2px solid #e5cf91;outline-offset:3px}
+.office-filter-list{display:flex;flex-wrap:wrap;gap:7px}
+.office-filter{min-height:38px;padding:8px 11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.025);color:#b8c5bc;font:inherit;font-size:.7rem;cursor:pointer}
+.office-filter[aria-pressed="true"]{border-color:rgba(216,189,120,.55);background:rgba(216,189,120,.09);color:#f0dfae}
+.office-results{grid-column:1/-1;color:#91a096;font-size:.68rem}
+.robot-card[hidden]{display:none!important}
+.office-workflow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;counter-reset:workflow}
+.office-workflow-step{position:relative;min-height:132px;padding:16px 13px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.02);counter-increment:workflow}
+.office-workflow-step:before{content:"0" counter(workflow);display:block;margin-bottom:15px;color:#d8bd78;font-size:.68rem;letter-spacing:.12em}
+.office-workflow-step strong{display:block;margin-bottom:6px;color:#f0dfae;font-size:.78rem}
+.office-workflow-step p{margin:0;color:#aebbb2;font-size:.72rem;line-height:1.6}
+.office-content-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.office-content-card{padding:18px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012))}
+.office-content-card .content-code{display:block;margin-bottom:10px;color:#d8bd78;font-size:.63rem;letter-spacing:.13em}
+.office-content-card h3{margin:0 0 8px;color:#f3f0e7;font-size:.92rem}
+.office-content-card p{margin:0;color:#aebbb2;font-size:.76rem;line-height:1.7}
+.office-content-card ul{margin:12px 0 0;padding-left:17px;color:#b8c5bc;font-size:.72rem;line-height:1.8}
+.office-data-contract{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:15px}
+.office-data-field{padding:11px;border:1px solid rgba(216,189,120,.16);background:rgba(216,189,120,.035)}
+.office-data-field strong{display:block;color:#e5cf91;font-size:.69rem}
+.office-data-field span{display:block;margin-top:4px;color:#9eaca2;font-size:.67rem;line-height:1.5}
+.office-empty{grid-column:1/-1;padding:24px;border:1px dashed rgba(216,189,120,.28);color:#aebbb2;text-align:center;font-size:.8rem}
+.office-status-key{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:14px;color:#91a096;font-size:.66rem}
+.office-status-key span{display:inline-flex;align-items:center;gap:6px}
+.office-status-key i{width:6px;height:6px;border-radius:50%;background:#8e9c90}
+.office-status-key i.gold{background:#d8bd78}
+@media(max-width:900px){.office-workflow{grid-template-columns:repeat(3,minmax(0,1fr))}.office-content-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.office-data-contract{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.office-tools{grid-template-columns:1fr;padding:12px}.office-filter-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.office-filter{width:100%}.office-workflow{grid-template-columns:1fr 1fr}.office-workflow-step{min-height:118px}.office-content-grid{grid-template-columns:1fr}.office-data-contract{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.office-filter{transition:none}}
