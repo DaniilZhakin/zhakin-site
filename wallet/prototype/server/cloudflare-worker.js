@@ -50,7 +50,7 @@ function createStateAdapters(env) {
     rateLimiter: {
       async consume() {
         const response = await stub.fetch("https://market-state.local/limit/consume", { method: "POST" });
-        if (!response.ok) throw new Error("market_limiter_unavailable");
+        if (!response.ok && response.status !== 429) throw new Error("market_limiter_unavailable");
         const payload = await response.json();
         return { allowed: payload.allowed === true };
       }
