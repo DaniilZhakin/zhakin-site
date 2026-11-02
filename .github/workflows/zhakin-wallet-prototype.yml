@@ -102,11 +102,13 @@ jobs:
                 }
                 for (const symbol of ['BTC', 'TON', 'USDT']) {
                   const card = marketSection.locator('[data-market-symbol="' + symbol + '"]');
-                  if (await card.count() !== 1 || !(await card.innerText()).includes('Источник не подключён') || !(await card.innerText()).includes('—')) {
+                  const statusText = (await card.locator('.wallet-market-status').textContent() || '').trim().toLocaleLowerCase('ru');
+                  const quoteText = (await card.locator('.wallet-market-value').textContent() || '').trim();
+                  if (await card.count() !== 1 || !statusText.includes('источник не подключён') || !quoteText.startsWith('—')) {
                     throw new Error(spec.name + ': ' + symbol + ' must remain an explicit unavailable quote, not a fabricated price');
                   }
                 }
-                if (!(await marketSection.innerText()).includes('не выполняет обмен')) {
+                if (!(await marketSection.innerText()).toLocaleLowerCase('ru').includes('не выполняет обмен')) {
                   throw new Error(spec.name + ': market watch must clearly state that it cannot execute trades');
                 }
                 const connectionSection = page.locator('section[aria-labelledby="wallet-connection-title"]');
