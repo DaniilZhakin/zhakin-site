@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+  "name": "zhakin-wallet-market-readonly",
+  "main": "cloudflare-worker.js",
+  "compatibility_date": "2026-11-02",
+  // This config is a template only. Do not deploy until licensing and security gates are approved.
+  "vars": {
+    "MARKET_DATA_ENABLED": "false",
+    "MARKET_DATA_LICENSE_APPROVED": "false"
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "MARKET_STATE", "class_name": "MarketStateDurableObject" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["MarketStateDurableObject"] }
+  ]
+}
