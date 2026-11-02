@@ -96,6 +96,16 @@ jobs:
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 // Verify the ZP/BFU register tabs in the real browser, including keyboard navigation.
+                const connectionSection = page.locator('section[aria-labelledby="wallet-connection-title"]');
+                if (await connectionSection.count() !== 1) throw new Error(spec.name + ': wallet connection readiness section is missing');
+                if (await connectionSection.locator('.wallet-connect-card').count() !== 2) throw new Error(spec.name + ': expected separate ZP and BFU connection cards');
+                const connectButtons = connectionSection.locator('button.wallet-connect-action');
+                if (await connectButtons.count() !== 2 || !(await connectButtons.nth(0).isDisabled()) || !(await connectButtons.nth(1).isDisabled())) {
+                  throw new Error(spec.name + ': wallet connection must remain disabled before security prerequisites are complete');
+                }
+                if (!(await connectionSection.innerText()).includes('D1') || !(await connectionSection.innerText()).includes('Worker')) {
+                  throw new Error(spec.name + ': security prerequisites are not clearly displayed');
+                }
                 const ledgerTabs = page.locator('[data-ledger-tab]');
                 if (await ledgerTabs.count() !== 3) throw new Error(spec.name + ': expected three ledger tabs');
                 await page.locator('[data-ledger-tab="zp"]').click();
