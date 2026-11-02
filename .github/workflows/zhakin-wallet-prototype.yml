@@ -35,10 +35,12 @@ jobs:
       - name: Run complete prototype test suite
         run: npm --prefix wallet/prototype test
 
-      - name: Install Chromium for visual previews
-        run: npx --yes playwright@1.56.1 install --with-deps chromium
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --prefix /tmp/zhakin-playwright --no-save playwright@1.56.1
+          /tmp/zhakin-playwright/node_modules/.bin/playwright install --with-deps chromium
 
-      - name: Capture desktop and iPhone-width previews
+      - name: Capture and verify desktop and iPhone-width previews
         shell: bash
         run: |
           mkdir -p wallet-screenshots
@@ -49,8 +51,52 @@ jobs:
             if curl --fail --silent http://127.0.0.1:8000/wallet.html >/dev/null; then break; fi
             sleep 1
           done
-          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "1440,1000" --full-page http://127.0.0.1:8000/wallet.html wallet-screenshots/wallet-desktop.png
-          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "390,844" --full-page http://127.0.0.1:8000/wallet.html wallet-screenshots/wallet-iphone-width.png
+          NODE_PATH=/tmp/zhakin-playwright/node_modules node <<'NODE'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              for (const spec of [
+                { name: 'desktop', width: 1440, height: 1000 },
+                { name: 'iphone-width', width: 390, height: 844 }
+              ]) {
+                const page = await browser.newPage({ viewport: { width: spec.width, height: spec.height }, deviceScaleFactor: 1 });
+                await page.goto('http://127.0.0.1:8000/wallet.html', { waitUntil: 'domcontentloaded' });
+                await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}' });
+                const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+                for (let y = 0; y < pageHeight; y += Math.max(300, Math.floor(spec.height * 0.7))) {
+                  await page.evaluate(y => window.scrollTo(0, y), y);
+                  await page.waitForTimeout(120);
+                }
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(350);
+                const diagnostics = await page.evaluate(() => {
+                  const cards = [...document.querySelectorAll('.wallet-asset-card')];
+                  return {
+                    viewportWidth: window.innerWidth,
+                    documentWidth: document.documentElement.scrollWidth,
+                    horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+                    assetCards: cards.map(card => ({
+                      text: card.innerText.trim(),
+                      opacity: getComputedStyle(card).opacity,
+                      visibility: getComputedStyle(card).visibility,
+                      display: getComputedStyle(card).display
+                    }))
+                  };
+                });
+                console.log(JSON.stringify({ viewport: spec.name, ...diagnostics }));
+                if (diagnostics.horizontalOverflow) throw new Error(spec.name + ': horizontal overflow detected');
+                if (diagnostics.assetCards.length !== 2 || diagnostics.assetCards.some(card => !card.text || card.visibility === 'hidden' || card.display === 'none' || Number(card.opacity) === 0)) {
+                  throw new Error(spec.name + ': asset cards are missing or visually hidden');
+                }
+                await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
+                await page.close();
+              }
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => { console.error(error); process.exit(1); });
+          NODE
 
       - name: Upload visual preview screenshots
         uses: actions/upload-artifact@v4
