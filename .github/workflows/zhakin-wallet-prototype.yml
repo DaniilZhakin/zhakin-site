@@ -96,6 +96,19 @@ jobs:
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 // Verify the ZP/BFU register tabs in the real browser, including keyboard navigation.
+                const marketSection = page.locator('section[aria-labelledby="wallet-market-title"]');
+                if (await marketSection.count() !== 1 || await marketSection.locator('.wallet-market-card').count() !== 3) {
+                  throw new Error(spec.name + ': market watch must show three separate reference instruments');
+                }
+                for (const symbol of ['BTC', 'TON', 'USDT']) {
+                  const card = marketSection.locator('[data-market-symbol="' + symbol + '"]');
+                  if (await card.count() !== 1 || !(await card.innerText()).includes('Источник не подключён') || !(await card.innerText()).includes('—')) {
+                    throw new Error(spec.name + ': ' + symbol + ' must remain an explicit unavailable quote, not a fabricated price');
+                  }
+                }
+                if (!(await marketSection.innerText()).includes('не выполняет обмен')) {
+                  throw new Error(spec.name + ': market watch must clearly state that it cannot execute trades');
+                }
                 const connectionSection = page.locator('section[aria-labelledby="wallet-connection-title"]');
                 if (await connectionSection.count() !== 1) throw new Error(spec.name + ': wallet connection readiness section is missing');
                 if (await connectionSection.locator('.wallet-connect-card').count() !== 2) throw new Error(spec.name + ': expected separate ZP and BFU connection cards');
@@ -150,7 +163,7 @@ jobs:
       - name: Upload visual preview screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: zhakin-wallet-v06-visual-previews
+          name: zhakin-wallet-v07-visual-previews
           path: wallet-screenshots/*.png
           if-no-files-found: error
           retention-days: 14
