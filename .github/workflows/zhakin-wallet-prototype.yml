@@ -96,6 +96,21 @@ jobs:
                   throw new Error(spec.name + ': asset cards are missing or visually hidden');
                 }
                 // Verify the ZP/BFU register tabs in the real browser, including keyboard navigation.
+                const marketSection = page.locator('section[aria-labelledby="wallet-market-title"]');
+                if (await marketSection.count() !== 1 || await marketSection.locator('.wallet-market-card').count() !== 3) {
+                  throw new Error(spec.name + ': market watch must show three separate reference instruments');
+                }
+                for (const symbol of ['BTC', 'TON', 'USDT']) {
+                  const card = marketSection.locator('[data-market-symbol="' + symbol + '"]');
+                  const statusText = (await card.locator('.wallet-market-status').textContent() || '').trim().toLocaleLowerCase('ru');
+                  const quoteText = (await card.locator('.wallet-market-value').textContent() || '').trim();
+                  if (await card.count() !== 1 || !statusText.includes('источник не подключён') || !quoteText.startsWith('—')) {
+                    throw new Error(spec.name + ': ' + symbol + ' must remain an explicit unavailable quote, not a fabricated price');
+                  }
+                }
+                if (!(await marketSection.innerText()).toLocaleLowerCase('ru').includes('не выполняет обмен')) {
+                  throw new Error(spec.name + ': market watch must clearly state that it cannot execute trades');
+                }
                 const connectionSection = page.locator('section[aria-labelledby="wallet-connection-title"]');
                 if (await connectionSection.count() !== 1) throw new Error(spec.name + ': wallet connection readiness section is missing');
                 if (await connectionSection.locator('.wallet-connect-card').count() !== 2) throw new Error(spec.name + ': expected separate ZP and BFU connection cards');
@@ -131,6 +146,10 @@ jobs:
                 await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight)), { top: assetTop, headerHeight: stickyHeaderHeight });
                 await page.waitForTimeout(150);
                 await page.screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png', fullPage: false });
+                const marketTop = await page.locator('section[aria-labelledby="wallet-market-title"]').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
+                await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: marketTop, headerHeight: stickyHeaderHeight });
+                await page.waitForTimeout(150);
+                await page.screenshot({ path: 'wallet-screenshots/wallet-market-' + spec.name + '.png', fullPage: false });
                 const connectionTop = await page.locator('section[aria-labelledby="wallet-connection-title"]').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
                 await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight - 18)), { top: connectionTop, headerHeight: stickyHeaderHeight });
                 await page.waitForTimeout(150);
@@ -150,7 +169,7 @@ jobs:
       - name: Upload visual preview screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: zhakin-wallet-v06-visual-previews
+          name: zhakin-wallet-v07-visual-previews
           path: wallet-screenshots/*.png
           if-no-files-found: error
           retention-days: 14
