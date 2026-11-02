@@ -59,7 +59,6 @@ function createStateAdapters(env) {
 }
 
 export function createMarketWorker({ fetchQuotes } = {}) {
-  const handleMarketRequest = createMarketDataHandler({ fetchQuotes });
   return {
     async fetch(request, env) {
       const origin = request.headers.get("Origin") || "";
@@ -77,10 +76,8 @@ export function createMarketWorker({ fetchQuotes } = {}) {
       } catch {
         return errorResponse(503, "market_state_unavailable", origin);
       }
-      const response = await handleMarketRequest(request, {
-        ...env,
-        ...adapters
-      });
+      const handleMarketRequest = createMarketDataHandler({ fetchQuotes, ...adapters });
+      const response = await handleMarketRequest(request, env);
       const headers = new Headers(response.headers);
       headers.set("vary", "Origin");
       if (origin) headers.set("access-control-allow-origin", origin);
