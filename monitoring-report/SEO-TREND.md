@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-02T23:31:05Z`
+Snapshot: `2026-11-03T06:49:01Z`
 History points: **30**
-Status: **WARNING**
-Health score: **99.0/100 (HEALTHY)**
-Trend: **STABLE** (-1.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,16 +17,15 @@ Trend: **STABLE** (-1.0)
 - `canonical_ok_pages`: **40**
 - `jsonld_pages`: **40**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **407.6**
-- `max_response_time_ms`: **5279**
-- `health_score`: **99.0**
+- `avg_response_time_ms`: **220.3**
+- `max_response_time_ms`: **549**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/ai-parliament.html`
-- response_time_ms: 69 -> 5279
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/ai-parliament.html
+No regression detected.
