@@ -10,10 +10,15 @@ schema_path = Path(__file__).with_name("0001_wallet_schema.sql")
 connection = sqlite3.connect(":memory:")
 connection.execute("PRAGMA foreign_keys = ON")
 connection.executescript(schema_path.read_text(encoding="utf-8"))
+role_schema_path = schema_path.with_name("0002_wallet_role_assignments.sql")
+connection.executescript(role_schema_path.read_text(encoding="utf-8"))
 
-connection.execute(
+connection.executemany(
     "INSERT INTO wallet_participants (id, status, created_at, updated_at) VALUES (?, 'active', ?, ?)",
-    ("participant-1", "2026-11-04T15:00:00Z", "2026-11-04T15:00:00Z"),
+    [
+        ("participant-1", "2026-11-04T15:00:00Z", "2026-11-04T15:00:00Z"),
+        ("admin-1", "2026-11-04T15:00:00Z", "2026-11-04T15:00:00Z"),
+    ],
 )
 connection.execute(
     """INSERT INTO wallet_activities
@@ -33,6 +38,19 @@ connection.execute(
        (id, actor_id, action, target_type, target_id, reason, outcome, created_at)
        VALUES (?, ?, ?, ?, ?, ?, 'success', ?)""",
     ("audit-1", "admin-1", "ledger.accrual", "wallet_ledger_entry", "ledger-1", "Synthetic test", "2026-11-04T15:02:00Z"),
+)
+
+connection.execute(
+    """INSERT INTO wallet_role_assignments
+       (id, participant_id, role, scope_type, scope_id, assigned_by, assignment_reason, created_at)
+       VALUES (?, ?, 'admin', 'global', '', ?, ?, ?)""",
+    ("role-admin-1", "participant-1", "admin-1", "Synthetic role grant", "2026-11-04T15:03:00Z"),
+)
+connection.execute(
+    """INSERT INTO wallet_role_assignments
+       (id, participant_id, role, scope_type, scope_id, assigned_by, assignment_reason, created_at)
+       VALUES (?, ?, 'coordinator', 'project', ?, ?, ?, ?)""",
+    ("role-coord-1", "participant-1", "PROJECT-A", "admin-1", "Synthetic project role", "2026-11-04T15:04:00Z"),
 )
 
 balance = connection.execute(
@@ -70,5 +88,27 @@ must_reject(
     "fractional points",
 )
 
+must_reject(
+    """INSERT INTO wallet_role_assignments
+       (id, participant_id, role, scope_type, scope_id, assigned_by, assignment_reason, created_at)
+       VALUES ('role-duplicate', 'participant-1', 'admin', 'global', '', 'admin-1', 'duplicate grant', '2026-11-04T15:05:00Z')""",
+    (),
+    "duplicate active role assignment",
+)
+must_reject(
+    """INSERT INTO wallet_role_assignments
+       (id, participant_id, role, scope_type, scope_id, assigned_by, assignment_reason, created_at)
+       VALUES ('role-admin-project', 'participant-1', 'admin', 'project', 'PROJECT-A', 'admin-1', 'invalid scope', '2026-11-04T15:05:00Z')""",
+    (),
+    "project-scoped admin assignment",
+)
+must_reject(
+    """INSERT INTO wallet_role_assignments
+       (id, participant_id, role, scope_type, scope_id, assigned_by, assignment_reason, status, revoked_at, revoked_by, revocation_reason, created_at)
+       VALUES ('role-bad-revoke', 'participant-1', 'coordinator', 'global', '', 'admin-1', 'test', 'revoked', '2026-11-04T15:06:00Z', NULL, NULL, '2026-11-04T15:05:00Z')""",
+    (),
+    "revocation without actor and reason",
+)
+
 connection.close()
-print("SQLite schema smoke checks passed; no D1 database was contacted.")
+print("SQLite schema and role-registry smoke checks passed; no D1 database was contacted.")
