@@ -32,6 +32,24 @@ export function createD1WalletRepository(db) {
   requireDb(db);
 
   return {
+    async listActiveRoles(participantId) {
+      if (typeof participantId !== "string" || !participantId) {
+        throw new TypeError("participantId is required");
+      }
+      const result = await db.prepare(`
+        SELECT role, scope_type, scope_id
+        FROM wallet_role_assignments
+        WHERE participant_id = ? AND status = 'active'
+        ORDER BY role, scope_type, scope_id
+      `).bind(participantId).all();
+      const rows = Array.isArray(result?.results) ? result.results : [];
+      return rows.map((row) => ({
+        role: row.role,
+        scope_type: row.scope_type,
+        scope_id: row.scope_id,
+      }));
+    },
+
     async getBalance(participantId) {
       if (typeof participantId !== "string" || !participantId) {
         throw new TypeError("participantId is required");
