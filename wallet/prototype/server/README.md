@@ -16,7 +16,7 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 ## Before any deployment
 
 1. Select and configure a supported identity provider; validate issuer, audience, expiry, signature, revocation/session rules, and role assignment server-side.
-2. Implement a persistent repository with transactional ledger writes, durable idempotency, and atomic audit events.
+2. The isolated D1 repository adapter is implemented in `d1-repository.js`; before any pilot, wire it only through a verified Worker binding and validate transactional ledger writes, durable idempotency, and atomic audit events against a separate test D1 database.
 3. Add schema migrations, least-privilege database access, input limits, rate limits, CORS/CSRF policy appropriate to the chosen auth method, privacy/retention rules, and monitoring.
 4. Test authorization boundaries, replay/idempotency, concurrency, rollback, backup and recovery.
 5. Review legal terms and participant/admin operating procedures.
@@ -27,5 +27,13 @@ Run the current domain and handler tests from `wallet/prototype` with Node.js 20
 ```sh
 npm test
 ```
+
+## Isolated D1 adapter status
+
+- `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, and a batched ledger/audit write helper.
+- The HTTP handler remains fail-closed; no Worker route imports or invokes the D1 adapter.
+- The repository tests use a synthetic D1-compatible test double. They do not prove that a real D1 database or migration is working.
+- Migration `../migrations/0001_wallet_schema.sql` exists but has not been applied to any database in this work.
+- The adapter validates actor/target consistency between ledger and audit records and enforces positive accrual / negative reversal deltas.
 
 This scaffold does not connect to the main site, the ЖАК assistant, analytics infrastructure, AppDeploy backups, or COIN УСЕРДИЕ / BFU. Do not treat it as an operational wallet.
