@@ -85,3 +85,81 @@ test("unsupported HTTP methods are rejected", async () => {
   const response = await handle(request("/health", { method: "DELETE" }));
   assert.equal(response.status, 405);
 });
+
+test("authentication adapter failures return a generic 401 without leaking internals", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => { throw new Error("private provider diagnostic"); },
+  });
+  const response = await handle(request("/api/v1/me"));
+  assert.equal(response.status, 401);
+  const payload = await body(response);
+  assert.equal(payload.error, "unauthenticated");
+  assert.equal(JSON.stringify(payload).includes("private provider diagnostic"), false);
+});
+
+test("authenticated account responses are marked no-store", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+  });
+  const response = await handle(request("/api/v1/me"));
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+test("repository exceptions fail closed without exposing database errors", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      getBalance: async () => { throw new Error("sensitive SQL diagnostic"); },
+    },
+  });
+  const response = await handle(request("/api/v1/me/balance"));
+  assert.equal(response.status, 503);
+  const payload = await body(response);
+  assert.equal(payload.error, "ledger_unavailable");
+  assert.equal(JSON.stringify(payload).includes("sensitive SQL diagnostic"), false);
+});
+
+test("ledger endpoint returns unavailable rather than fabricating history", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: { listLedger: async () => { throw new Error("database offline"); } },
+  });
+  const response = await handle(request("/api/v1/me/ledger"));
+  assert.equal(response.status, 503);
+  assert.equal((await body(response)).error, "ledger_unavailable");
+});
+
+test("all unimplemented write requests stay disabled", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "admin-1", roles: ["admin"] }),
+    repository: {},
+  });
+  const response = await handle(request("/api/v1/activities", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ description: "synthetic test activity", points: 100 }),
+  }));
+  assert.equal(response.status, 501);
+  assert.equal((await body(response)).error, "not_implemented");
+});
+
+test("ledger page contract preserves the next cursor from a persistent repository", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "verified-participant");
+        assert.equal(options.limit, 50);
+        assert.equal(options.cursor, "cursor-2");
+        return { entries: [{ id: "entry-1", points: 5 }], next_cursor: "cursor-3" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger?cursor=cursor-2"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "cursor-3",
+  });
+});
