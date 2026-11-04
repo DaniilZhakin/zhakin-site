@@ -32,7 +32,7 @@ npm test
 
 - `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, and a batched ledger/audit write helper.
 - The HTTP handler remains fail-closed; no Worker route imports or invokes the D1 adapter.
-- The repository tests use a synthetic D1-compatible test double. They do not prove that a real D1 database or migration is working.
+- The repository tests use a synthetic D1-compatible test double. The workflow also runs a local SQLite schema smoke test for constraints and basic ledger invariants; neither test proves that a real Cloudflare D1 database is working.
 - Migration `../migrations/0001_wallet_schema.sql` exists but has not been applied to any database in this work.
 - The adapter validates actor/target consistency between ledger and audit records and enforces positive accrual / negative reversal deltas.
 
