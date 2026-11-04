@@ -30,7 +30,8 @@ npm test
 
 ## Isolated D1 adapter status
 
-- `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, and a batched ledger/audit write helper.
+- `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, active-role lookup, and a batched ledger/audit write helper.
+- Migration `0002_wallet_role_assignments.sql` defines global admin and global/project-scoped coordinator grants with revocation metadata, uniqueness for active grants, and assignment/revocation actors.
 - The HTTP handler remains fail-closed; no Worker route imports or invokes the D1 adapter.
 - The repository tests use a synthetic D1-compatible test double. The workflow also runs a local SQLite schema smoke test for constraints and basic ledger invariants; neither test proves that a real Cloudflare D1 database is working.
 - Migration `../migrations/0001_wallet_schema.sql` exists but has not been applied to any database in this work.
