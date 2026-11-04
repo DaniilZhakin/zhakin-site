@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-04T14:53:32Z",
+  "timestamp": "2026-11-04T17:16:52Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,38 @@
     "canonical_ok_pages": 40,
     "jsonld_pages": 40,
     "noindex_pages": 0,
-    "avg_response_time_ms": 268.4,
-    "max_response_time_ms": 883,
-    "health_score": 100.0,
+    "avg_response_time_ms": 626.4,
+    "max_response_time_ms": 10613,
+    "health_score": 94.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 94.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-11-04T14:38:32Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -6.0,
+  "baseline_timestamp": "2026-11-04T14:53:32Z",
+  "warnings": [
+    "average response time increased from 268.4ms to 626.4ms",
+    "page-level change: /publications/digital-sovereignty-satellite-networks.html",
+    "page-level change: /publications/emergency-readiness.html",
+    "page-level change: /publications/understanding-state-and-law.html"
+  ],
+  "page_changes": {
+    "/publications/digital-sovereignty-satellite-networks.html": [
+      "response_time_ms: 136 -> 1365"
+    ],
+    "/publications/emergency-readiness.html": [
+      "response_time_ms: 121 -> 1081"
+    ],
+    "/publications/understanding-state-and-law.html": [
+      "response_time_ms: 138 -> 10613"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/digital-sovereignty-satellite-networks.html",
+    "/publications/emergency-readiness.html",
+    "/publications/understanding-state-and-law.html"
+  ],
+  "status": "warning"
 }

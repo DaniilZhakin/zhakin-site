@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-04T14:53:32Z`
+Snapshot: `2026-11-04T17:16:52Z`
 History points: **30**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Status: **WARNING**
+Health score: **94.0/100 (HEALTHY)**
+Trend: **DECLINING** (-6.0)
 
 ## Current signals
 
@@ -17,15 +17,23 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **40**
 - `jsonld_pages`: **40**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **268.4**
-- `max_response_time_ms`: **883**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **626.4**
+- `max_response_time_ms`: **10613**
+- `health_score`: **94.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/publications/digital-sovereignty-satellite-networks.html`
+- response_time_ms: 136 -> 1365
+### `/publications/emergency-readiness.html`
+- response_time_ms: 121 -> 1081
+### `/publications/understanding-state-and-law.html`
+- response_time_ms: 138 -> 10613
 
 ## Anomaly detection
 
-No regression detected.
+- average response time increased from 268.4ms to 626.4ms
+- page-level change: /publications/digital-sovereignty-satellite-networks.html
+- page-level change: /publications/emergency-readiness.html
+- page-level change: /publications/understanding-state-and-law.html
