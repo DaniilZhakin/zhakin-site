@@ -130,3 +130,20 @@ test("ledger write enforces accrual and reversal sign conventions", async () => 
   }, audit), /sign does not match/);
   assert.equal(db.batches.length, 0);
 });
+
+test("active role lookup is scoped to the verified participant", async () => {
+  const rows = [
+    { role: "admin", scope_type: "global", scope_id: "" },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-A" },
+  ];
+  const db = fakeDb({ rows });
+  const repo = createD1WalletRepository(db);
+  assert.deepEqual(await repo.listActiveRoles("participant-verified"), rows);
+  assert.match(db.prepared[0].sql, /WHERE participant_id = \? AND status = 'active'/);
+  assert.deepEqual(db.prepared[0].params, ["participant-verified"]);
+});
+
+test("active role lookup rejects a missing participant identity", async () => {
+  const repo = createD1WalletRepository(fakeDb());
+  await assert.rejects(() => repo.listActiveRoles(""), /participantId is required/);
+});
