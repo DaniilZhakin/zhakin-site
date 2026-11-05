@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-05T13:30:45Z`
+Snapshot: `2026-11-05T14:43:32Z`
 History points: **30**
-Status: **WARNING**
-Health score: **99.0/100 (HEALTHY)**
-Trend: **STABLE** (-1.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,16 +17,15 @@ Trend: **STABLE** (-1.0)
 - `canonical_ok_pages`: **40**
 - `jsonld_pages`: **40**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **263.3**
-- `max_response_time_ms`: **2118**
-- `health_score`: **99.0**
+- `avg_response_time_ms`: **215.3**
+- `max_response_time_ms`: **584**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/food-infrastructure.html`
-- response_time_ms: 38 -> 2118
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/food-infrastructure.html
+No regression detected.
