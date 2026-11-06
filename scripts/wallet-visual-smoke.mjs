@@ -16,15 +16,35 @@ async function inspect(name, viewport, mobile = false) {
   await page.locator("h1").first().waitFor({ state: "visible", timeout: 15000 });
   const title = (await page.locator("h1").first().innerText()).trim();
   if (!/ZHAKIN Wallet/i.test(title)) failures.push(`${name}: unexpected page heading: ${title}`);
+
   const layout = await page.evaluate(() => ({
     viewportWidth: window.innerWidth,
     documentWidth: document.documentElement.scrollWidth,
     pageHeight: document.documentElement.scrollHeight,
     walletVisible: Boolean(document.querySelector(".wallet-page")),
-    mainVisible: Boolean(document.querySelector("main"))
+    mainVisible: Boolean(document.querySelector("main")),
+    sectionCount: document.querySelectorAll(".wallet-page section").length
   }));
   if (!layout.walletVisible || !layout.mainVisible) failures.push(`${name}: wallet/main container missing`);
   if (layout.documentWidth > layout.viewportWidth + 1) failures.push(`${name}: horizontal overflow ${layout.documentWidth}px > ${layout.viewportWidth}px`);
+
+  // Activate below-the-fold content before a full-page capture. The site uses
+  // content-visibility:auto, so a direct fullPage screenshot can otherwise
+  // capture intrinsic-size placeholders instead of the rendered sections.
+  await page.evaluate(async () => {
+    const step = Math.max(240, Math.floor(window.innerHeight * 0.7));
+    const pageHeight = document.documentElement.scrollHeight;
+    for (let y = 0; y < pageHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise(resolve => setTimeout(resolve, 120));
+    }
+    window.scrollTo(0, pageHeight);
+    await new Promise(resolve => setTimeout(resolve, 250));
+    await document.fonts.ready;
+    await Promise.all([...document.images].map(image => image.decode().catch(() => undefined)));
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(250);
   await page.screenshot({ path: `${output}/wallet-${name}.png`, fullPage: true, animations: "disabled" });
   console.log(JSON.stringify({ name, url: page.url(), heading: title, ...layout }));
   await context.close();
