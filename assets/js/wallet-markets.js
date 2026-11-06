@@ -51,7 +51,11 @@
   const dateFmt = (value) => new Intl.DateTimeFormat("ru-RU", {
     dateStyle: "medium", timeStyle: "short"
   }).format(value);
-  const safeNumber = (value) => Number.isFinite(Number(value)) ? Number(value) : null;
+  const safeNumber = (value) => {
+    if (value === null || value === undefined || (typeof value === "string" && value.trim() === "")) return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  };
   const text = (tag, value, className) => {
     const el = document.createElement(tag);
     el.textContent = value;
