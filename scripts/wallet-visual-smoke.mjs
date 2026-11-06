@@ -9,7 +9,7 @@ const failures = [];
 const sections = [
   ["overview", ".wallet-dashboard", "Обзор кошелька"],
   ["card", ".wallet-card", "ZHAKIN POINTS"],
-  ["planned", ".wallet-planned", "План развития"],
+  ["planned", ".wallet-planned", "ПЛАН РАЗВИТИЯ"],
   ["collection", ".wallet-collection", "Кошельки и возможности"],
   ["history", ".wallet-section[aria-labelledby='history-title']", "История операций"],
   ["roadmap", ".wallet-section[aria-labelledby='roadmap-title']", "Архитектура запуска"]
@@ -35,9 +35,6 @@ async function inspect(name, viewport, mobile = false) {
   if (!layout.walletVisible || !layout.mainVisible) failures.push(`${name}: wallet/main container missing`);
   if (layout.documentWidth > layout.viewportWidth + 1) failures.push(`${name}: horizontal overflow ${layout.documentWidth}px > ${layout.viewportWidth}px`);
 
-  // Capture each lazy-rendered region only after scrolling it into the viewport.
-  // Full-page captures can preserve content-visibility intrinsic placeholders,
-  // making real content look blank even when the page has rendered correctly.
   await page.screenshot({ path: `${output}/wallet-${name}-top.png`, animations: "disabled" });
   for (const [key, selector, expectedText] of sections) {
     const locator = page.locator(selector).first();
