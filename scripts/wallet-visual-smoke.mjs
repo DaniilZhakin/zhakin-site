@@ -6,6 +6,14 @@ const output = "artifacts/wallet";
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+const sections = [
+  ["overview", ".wallet-dashboard", "Обзор кошелька"],
+  ["card", ".wallet-card", "ZHAKIN POINTS"],
+  ["planned", ".wallet-planned", "План развития"],
+  ["collection", ".wallet-collection", "Кошельки и возможности"],
+  ["history", ".wallet-section[aria-labelledby='history-title']", "История операций"],
+  ["roadmap", ".wallet-section[aria-labelledby='roadmap-title']", "Архитектура запуска"]
+];
 
 async function inspect(name, viewport, mobile = false) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: mobile ? 2 : 1, isMobile: mobile, hasTouch: mobile, reducedMotion: "reduce" });
@@ -22,30 +30,35 @@ async function inspect(name, viewport, mobile = false) {
     documentWidth: document.documentElement.scrollWidth,
     pageHeight: document.documentElement.scrollHeight,
     walletVisible: Boolean(document.querySelector(".wallet-page")),
-    mainVisible: Boolean(document.querySelector("main")),
-    sectionCount: document.querySelectorAll(".wallet-page section").length
+    mainVisible: Boolean(document.querySelector("main"))
   }));
   if (!layout.walletVisible || !layout.mainVisible) failures.push(`${name}: wallet/main container missing`);
   if (layout.documentWidth > layout.viewportWidth + 1) failures.push(`${name}: horizontal overflow ${layout.documentWidth}px > ${layout.viewportWidth}px`);
 
-  // Activate below-the-fold content before a full-page capture. The site uses
-  // content-visibility:auto, so a direct fullPage screenshot can otherwise
-  // capture intrinsic-size placeholders instead of the rendered sections.
-  await page.evaluate(async () => {
-    const step = Math.max(240, Math.floor(window.innerHeight * 0.7));
-    const pageHeight = document.documentElement.scrollHeight;
-    for (let y = 0; y < pageHeight; y += step) {
-      window.scrollTo(0, y);
-      await new Promise(resolve => setTimeout(resolve, 120));
+  // Capture each lazy-rendered region only after scrolling it into the viewport.
+  // Full-page captures can preserve content-visibility intrinsic placeholders,
+  // making real content look blank even when the page has rendered correctly.
+  await page.screenshot({ path: `${output}/wallet-${name}-top.png`, animations: "disabled" });
+  for (const [key, selector, expectedText] of sections) {
+    const locator = page.locator(selector).first();
+    if (await locator.count() !== 1) {
+      failures.push(`${name}: missing section ${key}`);
+      continue;
     }
-    window.scrollTo(0, pageHeight);
-    await new Promise(resolve => setTimeout(resolve, 250));
-    await document.fonts.ready;
-    await Promise.all([...document.images].map(image => image.decode().catch(() => undefined)));
-    window.scrollTo(0, 0);
-  });
-  await page.waitForTimeout(250);
-  await page.screenshot({ path: `${output}/wallet-${name}.png`, fullPage: true, animations: "disabled" });
+    await locator.scrollIntoViewIfNeeded();
+    await locator.waitFor({ state: "visible", timeout: 10000 });
+    await page.waitForTimeout(180);
+    const details = await locator.evaluate(element => ({
+      text: (element.innerText || "").replace(/\\s+/g, " ").trim(),
+      width: Math.round(element.getBoundingClientRect().width),
+      height: Math.round(element.getBoundingClientRect().height)
+    }));
+    if (!details.text.includes(expectedText)) failures.push(`${name}: ${key} content missing expected text "${expectedText}"`);
+    if (details.width < 1 || details.height < 1) failures.push(`${name}: ${key} has empty geometry`);
+    await locator.screenshot({ path: `${output}/wallet-${name}-${key}.png`, animations: "disabled" });
+    console.log(JSON.stringify({ name, section: key, ...details }));
+  }
+
   console.log(JSON.stringify({ name, url: page.url(), heading: title, ...layout }));
   await context.close();
 }
