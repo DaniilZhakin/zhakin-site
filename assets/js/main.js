@@ -39,6 +39,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Keyboard users can close the expanded navigation and return to its trigger.
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !navigation?.classList.contains('active')) return;
+    setMenuState(false);
+    menuButton?.focus();
+  });
+
+  // Reset the mobile/tablet disclosure state when returning to the desktop layout.
+  const desktopNavigation = window.matchMedia('(min-width: 1001px)');
+  const resetNavigationOnDesktop = event => {
+    if (event.matches) setMenuState(false);
+  };
+  if (desktopNavigation.addEventListener) {
+    desktopNavigation.addEventListener('change', resetNavigationOnDesktop);
+  } else {
+    desktopNavigation.addListener(resetNavigationOnDesktop);
+  }
+
   links.forEach(link => {
     link.addEventListener('click', event => {
       const url = new URL(link.href, window.location.href);
