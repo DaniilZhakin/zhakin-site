@@ -23,3 +23,15 @@ test("mobile navigation keeps its closed and opened states", () => {
   assert.match(css, /\.main-navigation\s*\{[^}]*display:\s*none/);
   assert.match(css, /\.main-navigation\.active\s*\{\s*display:\s*flex/);
 });
+
+const mainJs = await readFile(new URL("../assets/js/main.js", import.meta.url), "utf8");
+
+test("Escape closes the navigation and restores focus to its trigger", () => {
+  assert.match(mainJs, /event\.key !== 'Escape'/);
+  assert.match(mainJs, /setMenuState\(false\);\s*menuButton\?\.focus\(\)/);
+});
+
+test("desktop breakpoint resets the mobile navigation disclosure state", () => {
+  assert.match(mainJs, /matchMedia\('\(min-width: 1001px\)'\)/);
+  assert.match(mainJs, /if \(event\.matches\) setMenuState\(false\)/);
+});
