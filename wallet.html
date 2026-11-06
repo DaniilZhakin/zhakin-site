@@ -332,6 +332,9 @@
     .market-table-scroll:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:3px}
     .market-table-scroll table{min-width:520px}
     @media(max-width:600px){.market-table-scroll{margin-inline:-2px}.market-table-scroll table{min-width:500px}.market-board h3{margin-top:1.2rem}}
+    .wallet-collection-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(max-width:850px){.wallet-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:600px){.wallet-collection-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -415,6 +418,7 @@
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">◈</span><span class="wallet-pocket-status">Планируется</span></div><h3>ZHAKIN Points</h3><p>Основной бонусный кошелёк для будущих начислений внутренних баллов за подтверждённую активность.</p><span class="wallet-pocket-note">Баланс не подключён</span></article>
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✧</span><span class="wallet-pocket-status">Концепция</span></div><h3>«Помоги себе сам»</h3><p>Будущий сценарий целевого использования бонусов с понятными правилами и подтверждением действий.</p><span class="wallet-pocket-note">Правила требуют проработки</span></article>
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">⇄</span><span class="wallet-pocket-status">Не активен</span></div><h3>Подарки и переводы</h3><p>Возможность подарить или передать ZP будет рассматриваться после настройки авторизации, защиты от злоупотреблений и журнала операций.</p><span class="wallet-pocket-note">Операции отключены</span></article>
+        <article class="wallet-pocket" aria-label="Отдельный кошелёк COIN УСЕРДИЕ BFU"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✦</span><span class="wallet-pocket-status">Отдельный контур</span></div><h3>COIN УСЕРДИЕ · BFU</h3><p>Отдельный цифровой актив проекта фонда. Не является частью ZHAKIN Points: учёт, инфраструктура и правила обращения должны проверяться независимо.</p><span class="wallet-pocket-note">Баланс и операции не подключены</span></article>
       </div>
     </section>
     <section class="wallet-section" aria-labelledby="history-title">
