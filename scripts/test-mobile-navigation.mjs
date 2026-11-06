@@ -37,12 +37,12 @@ test("desktop breakpoint resets the mobile navigation disclosure state", () => {
 });
 
 test("tablet navigation is independently scrollable within the dynamic viewport", () => {
-  const tablet = css.match(/@media\\s*\\(min-width:\\s*701px\\)\\s*and\\s*\\(max-width:\\s*1000px\\)\\s*\\{[\\s\\S]*?\\.main-navigation\\s*\\{([^}]*)\\}/);
+  const tablet = css.match(/@media\s*\(min-width:\s*701px\)\s*and\s*\(max-width:\s*1000px\)\s*\{[\s\S]*?\.main-navigation\s*\{([^}]*)\}/);
   assert.ok(tablet, "tablet navigation rule must exist for 701-1000px");
-  assert.match(tablet[1], /max-height:\\s*calc\\(100dvh\\s*-\\s*130px\\)/);
-  assert.match(tablet[1], /overflow-y:\\s*auto/);
-  assert.match(tablet[1], /overscroll-behavior:\\s*contain/);
-  assert.match(tablet[1], /-webkit-overflow-scrolling:\\s*touch/);
+  assert.match(tablet[1], /max-height:\s*calc\(100dvh\s*-\s*130px\)/);
+  assert.match(tablet[1], /overflow-y:\s*auto/);
+  assert.match(tablet[1], /overscroll-behavior:\s*contain/);
+  assert.match(tablet[1], /-webkit-overflow-scrolling:\s*touch/);
 });
 
 test("navigation button is wired to the navigation landmark", () => {
@@ -51,7 +51,7 @@ test("navigation button is wired to the navigation landmark", () => {
 });
 
 test("mobile menu is positioned below the sticky header", () => {
-  const mobile = css.match(/@media\\s*\\(max-width:\\s*700px\\)\\s*\\{[\\s\\S]*?\\.main-navigation\\s*\\{([^}]*)\\}/);
+  const mobile = css.match(/@media\s*\(max-width:\s*700px\)\s*\{[\s\S]*?\.main-navigation\s*\{([^}]*)\}/);
   assert.ok(mobile, "mobile navigation rule must exist");
-  assert.match(mobile[1], /top:\\s*calc\\(100%\\s*\\+\\s*8px\\)/);
+  assert.match(mobile[1], /top:\s*calc\(100%\s*\+\s*8px\)/);
 });
