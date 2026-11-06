@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "assets/css/style.css"
+      - "assets/js/main.js"
       - "scripts/test-mobile-navigation-css.mjs"
       - ".github/workflows/mobile-navigation-check.yml"
   workflow_dispatch:
