@@ -117,3 +117,42 @@ test("wallet visual polish preserves responsive accessible controls", async () =
   assert.ok(page.includes("@media(max-width:600px)"));
   assert.ok(page.includes("prefers-reduced-motion:reduce"));
 });
+
+test("digital asset overview keeps ZP and BFU in separate, read-only cards", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /<section class="wallet-assets" aria-labelledby="wallet-assets-title">/);
+  assert.match(page, /id="wallet-zp-title">ZHAKIN Points/);
+  assert.match(page, /id="wallet-bfu-title">COIN УСЕРДИЕ/);
+  assert.match(page, /aria-label="Баланс ZP недоступен">— ZP/);
+  assert.match(page, /aria-label="Баланс BFU недоступен">— BFU/);
+  assert.match(page, /ZP и BFU не объединяются в общий баланс/);
+  assert.match(page, /не конвертируются друг в друга/);
+  assert.match(page, /не используют общий журнал операций/);
+});
+
+test("digital asset cards never fabricate chart history or event records", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /aria-label="График динамики ZHAKIN Points пока недоступен"/);
+  assert.match(page, /aria-label="График динамики BFU пока недоступен"/);
+  assert.match(page, /Исторические данные ещё не подключены/);
+  assert.match(page, /Нет подтверждённого исторического ряда/);
+  assert.match(page, /Журнал пока не подключён\. Записей нет\./);
+  assert.match(page, /class="wallet-asset-meta"><span>Операции<\/span><strong>Отключены<\/strong>/);
+});
+
+test("digital asset event log is keyboard-accessible and horizontally scrollable", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /tabindex="0" role="region" aria-label="Таблица журнала событий"/);
+  assert.match(page, /<th scope="col">Дата и время<\/th>/);
+  assert.match(page, /<th scope="col">Система<\/th>/);
+  assert.match(page, /<th scope="col">Событие<\/th>/);
+  assert.match(page, /<th scope="col">Статус<\/th>/);
+  assert.match(page, /\.wallet-event-table-wrap\{overflow-x:auto/);
+  assert.match(page, /\.wallet-event-table\{width:100%;min-width:520px/);
+});
+
+test("digital asset cards collapse to one column on narrow screens", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /\.wallet-assets-grid\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(page, /@media\(max-width:720px\)\{\.wallet-assets-grid\{grid-template-columns:1fr\}/);
+});
