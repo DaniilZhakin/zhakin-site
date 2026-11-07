@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-07T02:48:42Z",
+  "timestamp": "2026-11-07T10:11:11Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,27 +11,19 @@
     "canonical_ok_pages": 40,
     "jsonld_pages": 40,
     "noindex_pages": 0,
-    "avg_response_time_ms": 303.3,
-    "max_response_time_ms": 1281,
-    "health_score": 99.0,
+    "avg_response_time_ms": 75.3,
+    "max_response_time_ms": 553,
+    "health_score": 100.0,
     "health_grade": "healthy"
   },
-  "health_score": 99.0,
+  "health_score": 100.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": -1.0,
-  "baseline_timestamp": "2026-11-06T17:30:24Z",
-  "warnings": [
-    "page-level change: /publications.html"
-  ],
-  "page_changes": {
-    "/publications.html": [
-      "response_time_ms: 468 -> 1281"
-    ]
-  },
+  "trend_delta": 0.0,
+  "baseline_timestamp": "2026-11-07T02:48:42Z",
+  "warnings": [],
+  "page_changes": {},
   "critical_pages": [],
-  "warning_pages": [
-    "/publications.html"
-  ],
-  "status": "warning"
+  "warning_pages": [],
+  "status": "ok"
 }
