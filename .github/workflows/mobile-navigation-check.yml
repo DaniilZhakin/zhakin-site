@@ -1,0 +1,27 @@
+name: Mobile navigation checks
+
+on:
+  pull_request:
+    paths:
+      - "assets/css/style.css"
+      - "assets/js/main.js"
+      - "scripts/test-mobile-navigation.mjs"
+      - ".github/workflows/mobile-navigation-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-navigation:
+    name: Mobile navigation regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run navigation tests
+        run: node --test scripts/test-mobile-navigation.mjs
