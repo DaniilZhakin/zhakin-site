@@ -328,7 +328,14 @@
     }
 
 
-  </style>
+      .market-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(216,189,120,.55) rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:4px}
+    .market-table-scroll:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:3px}
+    .market-table-scroll table{min-width:520px}
+    @media(max-width:600px){.market-table-scroll{margin-inline:-2px}.market-table-scroll table{min-width:500px}.market-board h3{margin-top:1.2rem}}
+    .wallet-collection-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(max-width:850px){.wallet-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:600px){.wallet-collection-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
   <a class="wallet-skip-link" href="#wallet-main">Перейти к содержанию</a>
@@ -372,10 +379,10 @@
       <p data-market-status role="status" aria-live="polite">Загрузка публичных данных…</p>
       <label>Валюта отображения <select data-market-currency aria-label="Валюта отображения"><option>USD</option><option>EUR</option><option>RUB</option></select></label>
       <h3>Криптоактивы · 24 часа</h3>
-      <div style="overflow-x:auto"><table><thead><tr><th>Актив</th><th>Цена</th><th>24 ч.</th><th>Источник</th></tr></thead><tbody data-market-crypto><tr><td colspan="4">Загрузка…</td></tr></tbody></table></div>
+      <div class="market-table-scroll" role="region" aria-label="Котировки криптоактивов, таблицу можно прокручивать по горизонтали" tabindex="0"><table><thead><tr><th scope="col">Актив</th><th scope="col">Цена</th><th scope="col">24 ч.</th><th scope="col">Источник</th></tr></thead><tbody data-market-crypto><tr><td colspan="4">Загрузка…</td></tr></tbody></table></div>
       <h3>Официальные валютные курсы</h3>
       <p>Банк России указывает рубли за единицу валюты; ЕЦБ — количество единиц валюты за 1 EUR.</p>
-      <div style="overflow-x:auto"><table><thead><tr><th>Валюта</th><th>Значение</th><th>Источник</th></tr></thead><tbody data-market-fx><tr><td colspan="3">Загрузка…</td></tr></tbody></table></div>
+      <div class="market-table-scroll" role="region" aria-label="Официальные валютные курсы, таблицу можно прокручивать по горизонтали" tabindex="0"><table><thead><tr><th scope="col">Валюта</th><th scope="col">Значение</th><th scope="col">Источник</th></tr></thead><tbody data-market-fx><tr><td colspan="3">Загрузка…</td></tr></tbody></table></div>
       <p data-market-updated>Время успешного обновления пока отсутствует.</p>
     </section>
     <section class="wallet-dashboard" aria-labelledby="wallet-overview-title">
@@ -411,6 +418,7 @@
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">◈</span><span class="wallet-pocket-status">Планируется</span></div><h3>ZHAKIN Points</h3><p>Основной бонусный кошелёк для будущих начислений внутренних баллов за подтверждённую активность.</p><span class="wallet-pocket-note">Баланс не подключён</span></article>
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✧</span><span class="wallet-pocket-status">Концепция</span></div><h3>«Помоги себе сам»</h3><p>Будущий сценарий целевого использования бонусов с понятными правилами и подтверждением действий.</p><span class="wallet-pocket-note">Правила требуют проработки</span></article>
         <article class="wallet-pocket"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">⇄</span><span class="wallet-pocket-status">Не активен</span></div><h3>Подарки и переводы</h3><p>Возможность подарить или передать ZP будет рассматриваться после настройки авторизации, защиты от злоупотреблений и журнала операций.</p><span class="wallet-pocket-note">Операции отключены</span></article>
+        <article class="wallet-pocket" aria-label="Отдельный кошелёк COIN УСЕРДИЕ BFU"><div class="wallet-pocket-top"><span class="wallet-pocket-icon" aria-hidden="true">✦</span><span class="wallet-pocket-status">Отдельный контур</span></div><h3>COIN УСЕРДИЕ · BFU</h3><p>Отдельный цифровой актив проекта фонда. Не является частью ZHAKIN Points: учёт, инфраструктура и правила обращения должны проверяться независимо.</p><span class="wallet-pocket-note">Баланс и операции не подключены</span></article>
       </div>
     </section>
     <section class="wallet-section" aria-labelledby="history-title">
