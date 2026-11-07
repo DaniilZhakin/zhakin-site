@@ -85,3 +85,33 @@ test("unsupported HTTP methods are rejected", async () => {
   const response = await handle(request("/health", { method: "DELETE" }));
   assert.equal(response.status, 405);
 });
+
+test("ledger endpoint preserves pagination cursor from a persistent repository", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "verified-participant");
+        assert.equal(options.limit, 50);
+        assert.equal(options.cursor, "cursor-2");
+        return { entries: [{ id: "entry-1", points: 5 }], next_cursor: "cursor-3" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger?cursor=cursor-2"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "cursor-3",
+  });
+});
+
+test("invalid pagination response fails closed", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: { listLedger: async () => ({ entries: [], next_cursor: 42 }) },
+  });
+  const response = await handle(request("/api/v1/me/ledger"));
+  assert.equal(response.status, 503);
+  assert.equal((await body(response)).error, "ledger_unavailable");
+});
