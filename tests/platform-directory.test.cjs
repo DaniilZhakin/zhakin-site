@@ -36,7 +36,7 @@ test('catalog filtering updates the visible cards and live result count', () => 
   assert.match(js, /addEventListener\('input'/);
   assert.match(js, /data-filter/);
   assert.match(js, /aria-pressed/);
-  assert.match(js, /aria-live/);
+  assert.match(page, /aria-live/);
   assert.match(js, /card\.hidden = !show/);
 });
 
