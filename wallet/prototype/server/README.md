@@ -13,10 +13,19 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 - All unimplemented routes and mutations are disabled; no points can be accrued or reversed through this scaffold.
 - Missing adapters fail closed. There is no mock identity, demo balance, or client-provided participant identity fallback.
 
+## Isolated D1 adapter status
+
+- `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, active-role lookup, and a batched ledger/audit write helper.
+- Migration `0002_wallet_role_assignments.sql` defines global admin and global/project-scoped coordinator grants with revocation metadata, uniqueness for active grants, and assignment/revocation actors.
+- Role scope is stored and returned by the repository, but scope-aware object-level authorization is not yet enforced by the HTTP handler. Coordinator access must remain disabled for unassigned projects until that policy is implemented.
+- The HTTP handler remains fail-closed; no Worker route imports or invokes the D1 adapter.
+- Repository tests use a synthetic D1-compatible test double. The workflow also runs a local SQLite schema smoke test; neither proves that a real Cloudflare D1 database is working.
+- Migration files have not been applied to any database.
+
 ## Before any deployment
 
 1. Select and configure a supported identity provider; validate issuer, audience, expiry, signature, revocation/session rules, and role assignment server-side.
-2. Implement a persistent repository with transactional ledger writes, durable idempotency, and atomic audit events.
+2. The isolated D1 repository adapter is implemented in `d1-repository.js`; before any pilot, wire it only through a verified Worker binding and validate transactional ledger writes, durable idempotency, and atomic audit events against a separate test D1 database.
 3. Add schema migrations, least-privilege database access, input limits, rate limits, CORS/CSRF policy appropriate to the chosen auth method, privacy/retention rules, and monitoring.
 4. Test authorization boundaries, replay/idempotency, concurrency, rollback, backup and recovery.
 5. Review legal terms and participant/admin operating procedures.
