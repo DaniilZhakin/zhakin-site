@@ -98,7 +98,10 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       }
     }
 
-    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin", "coordinator"])) {
+    // Coordinator permissions are intentionally denied until the handler
+    // enforces project-level scope against the target object on every route.
+    // Global admin is also scaffold-only: no admin operation is implemented.
+    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin"])) {
       return json(403, { error: "forbidden" });
     }
 
