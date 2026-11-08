@@ -1,0 +1,31 @@
+name: Mobile navigation regression
+
+on:
+  pull_request:
+    paths:
+      - "assets/css/style.css"
+      - "assets/js/main.js"
+      - "tests/mobile-navigation-regression.test.cjs"
+      - ".github/workflows/mobile-navigation-regression.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "assets/css/style.css"
+      - "assets/js/main.js"
+      - "tests/mobile-navigation-regression.test.cjs"
+      - ".github/workflows/mobile-navigation-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify mobile navigation scroll and accessibility contracts
+        run: node --test tests/mobile-navigation-regression.test.cjs
