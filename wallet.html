@@ -144,11 +144,13 @@
     .wallet-demo-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.08)}
     .wallet-demo-footer p{margin:0;color:#9eada2;font-size:.72rem;line-height:1.6}
     .wallet-demo-message{min-height:1.5em;margin:12px 0 0;color:#f0dfae;font-size:.78rem;line-height:1.6}
-    .wallet-dialog{max-width:min(440px,calc(100% - 32px));padding:25px;border:1px solid rgba(216,189,120,.45);border-radius:5px;background:#101916;color:#f5f2e9;box-shadow:0 25px 90px rgba(0,0,0,.65)}
-    .wallet-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+    .wallet-dialog{width:min(440px,calc(100% - 32px));max-width:440px;max-height:calc(100vh - 32px);overflow-y:auto;margin:auto;padding:25px;border:1px solid rgba(216,189,120,.45);border-radius:18px;background:#101916;color:#f5f2e9;box-shadow:0 18px 54px rgba(0,0,0,.38)}
+    .wallet-dialog::backdrop{background:rgba(0,0,0,.48);backdrop-filter:blur(1px)}
     .wallet-dialog h2{margin:0 0 10px;font-size:1.25rem;font-weight:600}
-    .wallet-dialog p{margin:0 0 18px;color:#b8c7bc;font-size:.87rem;line-height:1.75}
+    .wallet-dialog p{margin:0 0 18px;color:#b8c7bc;font-size:.95rem;line-height:1.7}
     .wallet-dialog-actions{display:flex;justify-content:flex-end}
+    .wallet-dialog-actions .wallet-demo-button{min-width:112px;min-height:48px}
+    @media(max-width:600px){.wallet-dialog{width:calc(100% - 28px);max-width:440px;max-height:calc(100dvh - 28px);padding:20px 18px;border-radius:16px}.wallet-dialog h2{font-size:1.18rem;line-height:1.35}.wallet-dialog p{font-size:.94rem;line-height:1.65}.wallet-dialog-actions .wallet-demo-button{min-height:48px;padding:11px 18px}}
     @media(max-width:700px){.wallet-demo{padding:17px 14px}.wallet-demo-head{flex-direction:column;gap:9px}.wallet-demo-grid{grid-template-columns:1fr}.wallet-demo-panel{padding:15px}.wallet-demo-task{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}.wallet-demo-task>div{min-width:0}.wallet-demo-task .wallet-demo-button{grid-column:2;justify-self:end;min-width:112px}.wallet-demo-footer{align-items:flex-start;flex-direction:column}}
 
     .wallet-skip-link{position:absolute;z-index:20;top:8px;left:8px;transform:translateY(-160%);padding:11px 15px;background:var(--zw-gold-light);color:#101610;font-weight:700;border-radius:2px}
@@ -504,9 +506,15 @@
         message.textContent = "Демо-сессия сброшена. Это не повлияло на реальные данные.";
         renderProgress();
       });
+      const walletOperationMessages = {
+        "Пополнить": "Пополнение счёта пока не подключено. В этой версии нельзя внести средства или изменить баланс. Никаких операций не выполнено.",
+        "Подарить": "Передача баллов в подарок пока не подключена. Баллы не списываются и не отправляются другим участникам.",
+        "Передать": "Перевод баллов между участниками пока не подключён. Получатель и баланс не изменяются."
+      };
       document.querySelectorAll("[data-wallet-info]").forEach(button => {
         button.addEventListener("click", () => {
-          dialogCopy.textContent = button.dataset.walletInfo + " — функция пока не подключена. В этой версии нельзя пополнить счёт, подарить или передать баллы. Никаких операций не выполнено.";
+          const operation = button.dataset.walletInfo.trim();
+          dialogCopy.textContent = walletOperationMessages[operation] || operation + " — функция пока не подключена. Никаких операций не выполнено.";
           if (typeof dialog.showModal === "function") dialog.showModal();
           else message.textContent = dialogCopy.textContent;
         });
