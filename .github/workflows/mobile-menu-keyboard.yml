@@ -1,0 +1,30 @@
+name: Mobile navigation keyboard regression
+
+on:
+  pull_request:
+    paths:
+      - "assets/js/main.js"
+      - "tests/mobile-menu-keyboard.test.cjs"
+      - ".github/workflows/mobile-menu-keyboard.yml"
+  push:
+    branches:
+      - main
+      - "fix/mobile-menu-keyboard-accessibility-20261108"
+    paths:
+      - "assets/js/main.js"
+      - "tests/mobile-menu-keyboard.test.cjs"
+      - ".github/workflows/mobile-menu-keyboard.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-menu-keyboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify Escape dismissal and focus restoration
+        run: node --test tests/mobile-menu-keyboard.test.cjs
