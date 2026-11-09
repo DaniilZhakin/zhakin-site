@@ -30,3 +30,12 @@ test('account links only to existing public site sections', () => {
     assert.ok(html.includes(route), `missing route: ${route}`);
   }
 });
+
+
+test('account mobile navigation has an accessible toggle and explicit open-state styling', () => {
+  assert.match(html, /class="menu-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="site-navigation"/);
+  assert.match(html, /<nav id="site-navigation" class="main-navigation"/);
+  assert.match(html, /\.main-navigation\.active\{display:flex!important;visibility:visible;\}/);
+  assert.match(html, /\.menu-toggle\{display:block;position:relative/);
+  assert.match(html, /main\.js\?v=20261110-account-menu-fix-1/);
+});
