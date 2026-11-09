@@ -3,7 +3,8 @@ name: Unified account interface safeguards
 on:
   pull_request:
     paths:
-      - "account.html"\n      - "favicon.svg"
+      - "account.html"
+      - "favicon.svg"
       - "tests/account-interface.test.cjs"
       - ".github/workflows/account-interface.yml"
 
