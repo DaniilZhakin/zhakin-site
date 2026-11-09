@@ -5,14 +5,17 @@ on:
     paths:
       - "assets/js/main.js"
       - "tests/mobile-menu-keyboard.test.cjs"
+      - "tests/mobile-menu-keyboard-runtime.test.cjs"
       - ".github/workflows/mobile-menu-keyboard.yml"
   push:
     branches:
       - main
       - "fix/mobile-menu-keyboard-accessibility-20261108"
+      - "test/mobile-menu-keyboard-runtime-20261109"
     paths:
       - "assets/js/main.js"
       - "tests/mobile-menu-keyboard.test.cjs"
+      - "tests/mobile-menu-keyboard-runtime.test.cjs"
       - ".github/workflows/mobile-menu-keyboard.yml"
 
 permissions:
@@ -27,4 +30,4 @@ jobs:
         with:
           node-version: 20
       - name: Verify Escape dismissal and focus restoration
-        run: node --test tests/mobile-menu-keyboard.test.cjs
+        run: node --test tests/mobile-menu-keyboard.test.cjs tests/mobile-menu-keyboard-runtime.test.cjs
