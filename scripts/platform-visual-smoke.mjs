@@ -45,7 +45,7 @@ async function inspect(name, viewport, mobile = false) {
     await button.click();
     if (await button.getAttribute("aria-expanded") !== "true") failures.push(`${name}: menu did not set aria-expanded=true`);
     if (!(await menu.evaluate(el => el.classList.contains("active")))) failures.push(`${name}: menu did not open`);
-    const menuMetrics = await menu.evaluate(el => ({
+    menuMetrics = await menu.evaluate(el => ({
       top: Math.round(el.getBoundingClientRect().top),
       bottom: Math.round(el.getBoundingClientRect().bottom),
       height: Math.round(el.getBoundingClientRect().height),
