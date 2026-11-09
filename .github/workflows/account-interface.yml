@@ -5,6 +5,8 @@ on:
     paths:
       - "account.html"
       - "favicon.svg"
+      - "favicon-48.png"
+      - "index.html"
       - "tests/account-interface.test.cjs"
       - ".github/workflows/account-interface.yml"
 
