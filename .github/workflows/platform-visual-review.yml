@@ -1,0 +1,62 @@
+name: Platform directory visual review
+
+on:
+  push:
+    branches:
+      - feat/platform-directory-current-main-20261109
+    paths:
+      - "platform.html"
+      - "assets/css/platform.css"
+      - "assets/js/platform-directory.js"
+      - "assets/js/main.js"
+      - "scripts/platform-visual-smoke.mjs"
+      - ".github/workflows/platform-visual-review.yml"
+  pull_request:
+    paths:
+      - "platform.html"
+      - "assets/css/platform.css"
+      - "assets/js/platform-directory.js"
+      - "assets/js/main.js"
+      - "scripts/platform-visual-smoke.mjs"
+      - ".github/workflows/platform-visual-review.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture-platform:
+    name: Inspect desktop and iPhone-sized platform views
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Playwright
+        run: npm install --no-save playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start local static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/zhakin-platform-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/platform.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/zhakin-platform-http.log
+          exit 1
+      - name: Capture and test platform directory
+        run: node scripts/platform-visual-smoke.mjs
+        env:
+          PLATFORM_URL: http://127.0.0.1:4173/platform.html
+      - name: Upload browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-platform-visual-review
+          path: artifacts/platform/
+          if-no-files-found: warn
+          retention-days: 14
