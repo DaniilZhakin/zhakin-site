@@ -39,6 +39,7 @@ async function inspect(name, viewport, mobile = false) {
   if (layout.documentWidth > layout.viewportWidth + 1) failures.push(`${name}: horizontal overflow ${layout.documentWidth}px > ${layout.viewportWidth}px`);
   await page.screenshot({ path: `${output}/platform-${name}-top.png`, fullPage: false, animations: "disabled" });
 
+  let menuMetrics = null;
   if (mobile) {
     const menu = page.locator("#site-navigation");
     const button = page.locator(".menu-toggle");
