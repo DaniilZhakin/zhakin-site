@@ -50,3 +50,12 @@ test('shared favicon keeps the ZHAKIN TEAM identity and remains vector-scalable'
   assert.match(icon, /stroke="#20a875"/);
   assert.match(icon, /<path d="M32 2\.8/);
 });
+
+
+test('homepage exposes the search-compatible PNG and SVG favicons', () => {
+  const homepage = fs.readFileSync('index.html', 'utf8');
+  const png = fs.readFileSync('favicon-48.png');
+  assert.match(homepage, /rel="icon" type="image\/png" sizes="48x48" href="\/favicon-48\.png"/);
+  assert.match(homepage, /rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"/);
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+});
