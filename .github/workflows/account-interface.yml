@@ -1,0 +1,25 @@
+name: Unified account interface safeguards
+
+on:
+  pull_request:
+    paths:
+      - "account.html"
+      - "favicon.svg"
+      - "favicon-48.png"
+      - "index.html"
+      - "tests/account-interface.test.cjs"
+      - ".github/workflows/account-interface.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  account-interface:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify account interface safeguards
+        run: node --test tests/account-interface.test.cjs
