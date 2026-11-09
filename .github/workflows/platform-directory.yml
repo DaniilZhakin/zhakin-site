@@ -9,6 +9,7 @@ on:
       - 'projects.html'
       - 'tests/platform-directory.test.cjs'
       - 'tests/platform-directory-runtime.test.cjs'
+      - 'tests/platform-directory-runtime.test.cjs'
       - '.github/workflows/platform-directory.yml'
   push:
     branches:
@@ -21,6 +22,7 @@ on:
       - 'index.html'
       - 'projects.html'
       - 'tests/platform-directory.test.cjs'
+      - 'tests/platform-directory-runtime.test.cjs'
       - '.github/workflows/platform-directory.yml'
 permissions:
   contents: read
