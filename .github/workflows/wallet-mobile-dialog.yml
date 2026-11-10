@@ -1,0 +1,22 @@
+name: Wallet mobile dialog regression
+
+on:
+  pull_request:
+    paths:
+      - "wallet.html"
+      - "tests/wallet-mobile-dialog.test.cjs"
+      - ".github/workflows/wallet-mobile-dialog.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  wallet-mobile-dialog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify responsive dialog and disabled operation messaging
+        run: node --test tests/wallet-mobile-dialog.test.cjs
