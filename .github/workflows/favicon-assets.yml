@@ -1,0 +1,24 @@
+name: Favicon asset regression
+
+on:
+  pull_request:
+    paths:
+      - "favicon.svg"
+      - "favicon-48.png"
+      - "index.html"
+      - "tests/favicon-assets.test.cjs"
+      - ".github/workflows/favicon-assets.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  favicon-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify favicon vector and raster assets
+        run: node --test tests/favicon-assets.test.cjs
