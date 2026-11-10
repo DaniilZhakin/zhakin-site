@@ -1,0 +1,26 @@
+name: Mobile navigation current-main regression
+
+on:
+  pull_request:
+    paths:
+      - "assets/css/style.css"
+      - "assets/js/main.js"
+      - "tests/mobile-navigation-current-main.test.cjs"
+      - "tests/mobile-menu-keyboard-runtime.test.cjs"
+      - ".github/workflows/mobile-navigation-current-main.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify mobile layout and accessibility contracts
+        run: node --test tests/mobile-navigation-current-main.test.cjs
+      - name: Exercise keyboard behavior at runtime
+        run: node --test tests/mobile-menu-keyboard-runtime.test.cjs
