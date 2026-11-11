@@ -41,14 +41,11 @@ test('account mobile navigation has an accessible toggle and explicit open-state
 });
 
 
-test('shared favicon keeps the ZHAKIN TEAM identity and remains vector-scalable', () => {
+test('shared favicon references the approved full emblem artwork', () => {
   const icon = fs.readFileSync('favicon.svg', 'utf8');
-  assert.match(icon, /<svg[^>]+viewBox="0 0 64 64"/);
-  assert.match(icon, /aria-label="ZHAKIN TEAM"/);
-  assert.match(icon, /<ellipse[^>]+fill="#087c55"/);
-  assert.match(icon, /<g fill="#080d0b" stroke="#d8b765"/);
-  assert.match(icon, /stroke="#20a875"/);
-  assert.match(icon, /<path d="M32 2\.8/);
+  assert.match(icon, /<svg[^>]+viewBox="0 0 48 48"/);
+  assert.match(icon, /aria-label="Эмблема Жакин/);
+  assert.match(icon, /<image href="\/favicon-48\.png"/);
 });
 
 
