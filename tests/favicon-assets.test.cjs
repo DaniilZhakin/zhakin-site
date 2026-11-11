@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const svg = fs.readFileSync(path.join(root, "favicon.svg"), "utf8");
-const png = fs.readFileSync(path.join(root, "favicon-48.png"));
+const png = fs.readFileSync(path.join(root, "favicon-120.png"));
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 test("favicon uses the approved full emblem artwork", () => {
@@ -16,6 +16,6 @@ test("favicon uses the approved full emblem artwork", () => {
 
 test("search-compatible PNG favicon is a valid 48 by 48 PNG", () => {
   assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
-  assert.equal(png.readUInt32BE(16), 48);
-  assert.equal(png.readUInt32BE(20), 48);
+  assert.equal(png.readUInt32BE(16), 120);
+  assert.equal(png.readUInt32BE(20), 120);
 });
