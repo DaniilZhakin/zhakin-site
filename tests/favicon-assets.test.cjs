@@ -14,7 +14,7 @@ test("favicon uses the approved full emblem artwork", () => {
   assert.match(index, /href="\/favicon-48\.png"/);
 });
 
-test("search-compatible PNG favicon is a valid 48 by 48 PNG", () => {
+test("search-compatible PNG favicon is a valid 120 by 120 PNG", () => {
   assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
   assert.equal(png.readUInt32BE(16), 120);
   assert.equal(png.readUInt32BE(20), 120);
