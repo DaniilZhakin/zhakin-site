@@ -43,11 +43,21 @@ test('account mobile navigation has an accessible toggle and explicit open-state
 
 test('shared favicon references the approved full emblem artwork', () => {
   const icon = fs.readFileSync('favicon.svg', 'utf8');
-  assert.match(icon, /<svg[^>]+viewBox="0 0 48 48"/);
-  assert.match(icon, /aria-label="Эмблема Жакин/);
-  assert.match(icon, /<image href="\/favicon-48\.png"/);
+  assert.match(icon, /<svg[^>]+viewBox="0 0 120 120"/);
+  assert.match(icon, /aria-label="Оригинальная эмблема Жакин/);
+  assert.match(icon, /<image href="\\/favicon-120\\.png"/);
 });
 
+
+test('homepage exposes the search-compatible 120px PNG and SVG favicons', () => {
+  const homepage = fs.readFileSync('index.html', 'utf8');
+  const png = fs.readFileSync('favicon-120.png');
+  assert.match(homepage, /rel="icon" type="image\\/png" sizes="120x120" href="\\/favicon-120\\.png"/);
+  assert.match(homepage, /rel="icon" href="\\/favicon\\.svg" type="image\\/svg\\+xml"/);
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.equal(png.readUInt32BE(16), 120);
+  assert.equal(png.readUInt32BE(20), 120);
+});
 
 test('homepage exposes the search-compatible PNG and SVG favicons', () => {
   const homepage = fs.readFileSync('index.html', 'utf8');
