@@ -9,7 +9,7 @@ const png = fs.readFileSync(path.join(root, "favicon-120.png"));
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 test("favicon uses the approved full emblem artwork", () => {
-  assert.match(svg, /aria-label="Эмблема Жакин/);
+  assert.match(svg, /aria-label="Оригинальная эмблема Жакин/);
   assert.match(svg, /href="\/favicon-120\.png"/);
   assert.match(index, /href="\/favicon-120\.png"/);
 });
