@@ -41,21 +41,21 @@ test('account mobile navigation has an accessible toggle and explicit open-state
 });
 
 
-test('shared favicon keeps the ZHAKIN TEAM identity and remains vector-scalable', () => {
+test('shared favicon references the approved full emblem artwork', () => {
   const icon = fs.readFileSync('favicon.svg', 'utf8');
-  assert.match(icon, /<svg[^>]+viewBox="0 0 64 64"/);
-  assert.match(icon, /aria-label="ZHAKIN TEAM"/);
-  assert.match(icon, /<ellipse[^>]+fill="#087c55"/);
-  assert.match(icon, /<g fill="#080d0b" stroke="#d8b765"/);
-  assert.match(icon, /stroke="#20a875"/);
-  assert.match(icon, /<path d="M32 2\.8/);
+  assert.match(icon, /<svg[^>]+viewBox="0 0 120 120"/);
+  assert.match(icon, /aria-label="Оригинальная эмблема Жакин/);
+  assert.ok(icon.includes('href="/favicon-120.png"'));
 });
 
 
-test('homepage exposes the search-compatible PNG and SVG favicons', () => {
+test('homepage exposes the search-compatible 120px PNG and SVG favicons', () => {
   const homepage = fs.readFileSync('index.html', 'utf8');
-  const png = fs.readFileSync('favicon-48.png');
-  assert.match(homepage, /rel="icon" type="image\/png" sizes="48x48" href="\/favicon-48\.png"/);
-  assert.match(homepage, /rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"/);
+  const png = fs.readFileSync('favicon-120.png');
+  assert.ok(homepage.includes('rel="icon" type="image/png" sizes="120x120" href="/favicon-120.png"'));
+  assert.ok(homepage.includes('rel="icon" href="/favicon.svg" type="image/svg+xml"'));
   assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.equal(png.readUInt32BE(16), 120);
+  assert.equal(png.readUInt32BE(20), 120);
 });
+
