@@ -10,8 +10,8 @@ const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 test("favicon uses the approved full emblem artwork", () => {
   assert.match(svg, /aria-label="Эмблема Жакин/);
-  assert.match(svg, /href="\/favicon-48\.png"/);
-  assert.match(index, /href="\/favicon-48\.png"/);
+  assert.match(svg, /href="\/favicon-120\.png"/);
+  assert.match(index, /href="\/favicon-120\.png"/);
 });
 
 test("search-compatible PNG favicon is a valid 120 by 120 PNG", () => {
