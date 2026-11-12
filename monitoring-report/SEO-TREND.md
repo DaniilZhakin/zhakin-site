@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-12T11:12:10Z`
+Snapshot: `2026-11-12T15:21:23Z`
 History points: **30**
-Status: **WARNING**
-Health score: **98.0/100 (HEALTHY)**
-Trend: **DECLINING** (-2.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,19 +17,15 @@ Trend: **DECLINING** (-2.0)
 - `canonical_ok_pages`: **40**
 - `jsonld_pages`: **40**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **320.8**
-- `max_response_time_ms`: **2312**
-- `health_score`: **98.0**
+- `avg_response_time_ms`: **150**
+- `max_response_time_ms`: **501**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/capital-requires-proof.html`
-- response_time_ms: 190 -> 1062
-### `/publications/directions.html`
-- response_time_ms: 121 -> 2312
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/capital-requires-proof.html
-- page-level change: /publications/directions.html
+No regression detected.
