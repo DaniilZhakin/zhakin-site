@@ -16,7 +16,7 @@
 
 ## Required repository contract
 
-The email OTP migration 0002_wallet_email_otp.sql depends on 0001_wallet_schema.sql from PR #57. It adds a normalized participant email field and a unique lookup index. Migration 0003_wallet_role_registry.sql adds a server-side registry for `admin` and `coordinator` grants. The authentication adapter loads only active, unexpired, non-revoked grants into the principal; browser claims are never used. Role assignment/revocation endpoints are intentionally not implemented and must require a separate authorized human workflow. Treat email as personal data: restrict access, define retention/deletion, and complete the privacy review before storing real addresses.
+The email OTP migration `0003_wallet_email_otp.sql` depends on `0001_wallet_schema.sql` and the unified role-assignment registry in `0002_wallet_role_assignments.sql`. It adds a normalized participant email field, a unique lookup index, OTP challenges, hashed sessions and keyed rate-limit counters. Authentication loads roles only from active server-side `wallet_role_assignments`; global and project-scoped grants use the same registry as the ledger adapter. Browser claims are never used. Role assignment/revocation endpoints are intentionally not implemented and must require a separate authorized human workflow. Treat email as personal data: restrict access, define retention/deletion, and complete the privacy review before storing real addresses.
 
 The D1 adapter must implement these methods with correct atomic semantics:
 
@@ -29,7 +29,7 @@ The D1 adapter must implement these methods with correct atomic semantics:
 - `getParticipantById(participantId)`
 - `revokeSession({ tokenHash, revokedAt })`
 
-The `wallet_auth_rate_limits` table is only a schema starting point. The repository enforces email/source counters through D1 batch operations, but retention/purge rules still need to be designed and tested. The role registry is read-only in this scaffold; no API route can grant or revoke roles.
+The `wallet_auth_rate_limits` table is only a schema starting point. The repository enforces email/source counters through D1 batch operations, but retention/purge rules still need to be designed and tested. The unified role registry is read-only in this scaffold; no API route can grant or revoke roles. Coordinator requests remain denied by admin routes until object-level project authorization is implemented.
 
 ## Required before integration
 
