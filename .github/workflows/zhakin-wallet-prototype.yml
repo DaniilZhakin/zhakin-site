@@ -34,3 +34,6 @@ jobs:
 
       - name: Run complete prototype test suite
         run: npm --prefix wallet/prototype test
+
+      - name: Validate migration constraints with local SQLite
+        run: python3 wallet/prototype/migrations/schema_smoke.py
