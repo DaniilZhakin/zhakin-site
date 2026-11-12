@@ -82,18 +82,25 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
-        const entries = await repository.listLedger(principal.id, {
+        const result = await repository.listLedger(principal.id, {
           limit: 50,
           cursor: url.searchParams.get("cursor"),
         });
+        const entries = Array.isArray(result) ? result : result?.entries;
         if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
+        const nextCursor = Array.isArray(result) ? null : (result.next_cursor ?? null);
+        if (nextCursor !== null && typeof nextCursor !== "string") {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, { entries, next_cursor: nextCursor });
       } catch {
         return json(503, { error: "ledger_unavailable" });
       }
     }
 
-    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin", "coordinator"])) {
+    // Coordinator permissions stay denied until every admin route enforces
+    // project-level scope against the target object. Admin routes are scaffolds.
+    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin"])) {
       return json(403, { error: "forbidden" });
     }
 
