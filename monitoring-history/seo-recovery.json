@@ -1,14 +1,5 @@
 [
   {
-    "timestamp": "2026-10-12T13:34:02Z",
-    "source_incident_snapshot": "2026-10-12T13:34:02Z",
-    "state": "stable",
-    "active_incident_count": 0,
-    "recovery_plan_count": 0,
-    "resolved_incident_count": 0,
-    "plans": []
-  },
-  {
     "timestamp": "2026-10-14T10:38:47Z",
     "source_incident_snapshot": "2026-10-14T10:38:47Z",
     "state": "stable",
@@ -268,5 +259,25 @@
     "recovery_plan_count": 0,
     "resolved_incident_count": 0,
     "plans": []
+  },
+  {
+    "timestamp": "2026-11-12T11:12:10Z",
+    "source_incident_snapshot": "2026-11-12T11:12:10Z",
+    "state": "recovery_required",
+    "active_incident_count": 1,
+    "recovery_plan_count": 1,
+    "resolved_incident_count": 0,
+    "plans": [
+      {
+        "dedupe_key": "page:/publications/capital-requires-proof.html",
+        "priority": "P2",
+        "severity": "warning",
+        "scope": "page",
+        "path": "/publications/capital-requires-proof.html",
+        "action": "Recover performance for `/publications/capital-requires-proof.html`: inspect server timing, page dependencies and recent deployment changes; confirm latency returns toward baseline before closing the incident.",
+        "verification": "Run SEO monitoring, robots/sitemap audit and page-level canonical/indexability checks after remediation.",
+        "status": "new"
+      }
+    ]
   }
 ]
