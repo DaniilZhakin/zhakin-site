@@ -31,6 +31,9 @@ test("Wallet layout contains narrow-screen content and scrolls market tables int
   assert.match(html, /class="market-table-scroll" role="region" aria-label="Котировки криптоактивов[^"]*" tabindex="0"/);
   assert.match(html, /class="market-table-scroll" role="region" aria-label="Официальные валютные курсы[^"]*" tabindex="0"/);
   assert.match(html, /\.market-table-scroll:focus-visible/);
+  assert.match(html, /\.wallet-collection-grid\{grid-template-columns:repeat\(4,minmax\(0,1fr\)\)\}/);
+  assert.match(html, /@media\(max-width:850px\)\{\.wallet-collection-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\}/);
+  assert.match(html, /@media\(max-width:600px\)\{\.wallet-collection-grid\{grid-template-columns:1fr\}\}/);
   assert.match(html, /\.market-table-scroll table\s*\{\s*min-width:\s*520px/);
   assert.match(html, /<th scope="col">Актив<\/th>/);
   assert.match(html, /<th scope="col">Валюта<\/th>/);
