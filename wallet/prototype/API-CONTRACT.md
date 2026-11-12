@@ -91,7 +91,7 @@ Purpose: list activities awaiting review.
 
 Purpose: approve or reject a submitted activity.
 
-- Requires a verified global admin or coordinator grant plus object-level permission for the activity's canonical project. A project coordinator must match the exact project scope; a coordinator grant never authorizes administrative ledger adjustments.
+- Requires a verified global admin or coordinator grant plus object-level permission for the activity's canonical project. A project coordinator must match the exact project scope; coordinator access never authorizes administrative ledger adjustments.
 - Input: `{ "decision": "approve" | "reject", "reason": "..." }`.
 - Reject stale/repeated reviews unless the workflow explicitly supports them.
 - Approval and points-ledger creation must occur atomically in one database transaction/batch, after validating the activity's current status and the server-side points policy.
@@ -151,14 +151,14 @@ Example error body: `{ "error": { "code": "AUTHENTICATION_REQUIRED", "message": 
 
 ## Route-guard implementation note
 
-The isolated handler scaffold now distinguishes two authorization boundaries:
+The isolated handler scaffold distinguishes two authorization boundaries:
 
 - `/api/v1/admin/*` requires `hasWalletGlobalAdminAccess(principal)`.
-- `/api/v1/projects/{lookupId}/*` first resolves the project using the trusted
-  `projectRepository.getProjectById` adapter, then checks the returned
-  canonical project ID with `hasWalletProjectAccess(principal, project.id)`.
+- `/api/v1/projects/{lookupId}/*` resolves the project through the trusted
+  `projectRepository.getProjectById` adapter and checks the returned canonical
+  project ID with `hasWalletProjectAccess(principal, project.id)`.
 
-A missing project resolver returns a fail-closed service error. Missing or
-unauthorized projects are concealed with `404`. These guards do not implement
-review, project management, balance mutation, or any other business operation;
-unimplemented routes still return `501`. The scaffold is not deployed.
+A missing resolver fails closed. Missing or unauthorized projects are
+concealed with `404`. These guards do not implement review, project
+management, balance mutation, or any other business operation; unimplemented
+routes still return `501`. The scaffold is not deployed.
