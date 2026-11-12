@@ -14,9 +14,11 @@ CREATE TABLE IF NOT EXISTS wallet_role_assignments (
   assigned_by TEXT NOT NULL REFERENCES wallet_participants(id),
   assignment_reason TEXT NOT NULL CHECK (length(trim(assignment_reason)) > 0),
   created_at TEXT NOT NULL,
+  expires_at INTEGER,
   revoked_at TEXT,
   revoked_by TEXT REFERENCES wallet_participants(id),
   revocation_reason TEXT,
+  CHECK (expires_at IS NULL OR expires_at > 0),
   CHECK (
     (scope_type = 'global' AND scope_id = '') OR
     (scope_type = 'project' AND length(trim(scope_id)) > 0)

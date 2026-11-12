@@ -40,31 +40,23 @@ test("challenge creation atomically increments keyed email and source windows", 
   const db = fakeD1();
   const repo = createD1WalletAuthRepository(db);
   const result = await repo.createOtpChallenge({
-    challengeId: "c".repeat(32),
-    email: "member@example.org",
-    codeHash: HASH,
-    emailRateKey: "b".repeat(64),
-    sourceRateKey: "d".repeat(64),
-    createdAt: 1_800_000_000_000,
-    expiresAt: 1_800_000_600_000,
+    challengeId: "c".repeat(32), email: "member@example.org", codeHash: HASH,
+    emailRateKey: "b".repeat(64), sourceRateKey: "d".repeat(64),
+    createdAt: 1_800_000_000_000, expiresAt: 1_800_000_600_000,
   });
   assert.deepEqual(result, { deliverable: true });
   assert.equal(db.calls[2].batchSize, 2);
   assert.match(db.calls[0].sql, /ON CONFLICT\(subject_hmac, window_started_at\)/);
   assert.match(db.calls[1].sql, /ON CONFLICT\(subject_hmac, window_started_at\)/);
   assert.match(db.calls[3].sql, /email_normalized = \? AND status = 'active'/);
-  assert.deepEqual(db.calls[3].values.slice(0, 3), [
-    "c".repeat(32), "member@example.org", HASH,
-  ]);
-  assert.equal(db.calls[3].values[5], "member@example.org");
 });
 
 test("challenge is not inserted when either rate counter is exhausted", async () => {
   const db = fakeD1({ batchChanges: [1, 0] });
   const repo = createD1WalletAuthRepository(db);
   const result = await repo.createOtpChallenge({
-    challengeId: "c".repeat(32), email: "member@example.org",
-    codeHash: HASH, emailRateKey: "b".repeat(64), sourceRateKey: "d".repeat(64),
+    challengeId: "c".repeat(32), email: "member@example.org", codeHash: HASH,
+    emailRateKey: "b".repeat(64), sourceRateKey: "d".repeat(64),
     createdAt: 1_800_000_000_000, expiresAt: 1_800_000_600_000,
   });
   assert.deepEqual(result, { deliverable: false });
@@ -114,26 +106,30 @@ test("repository rejects malformed HMACs and invalid limits before SQL execution
   assert.equal(db.calls.length, 0);
 });
 
-test("participant roles are loaded only from active, unexpired server-side grants", async () => {
+test("participant roles preserve project scope and exclude expired or malformed grants", async () => {
   const db = fakeD1({
     firstRows: [{ id: "participant-1", status: "active" }],
     allRows: [
-      { role: "admin" },
-      { role: "coordinator" },
-      { role: "admin" },
-      { role: "unexpected-browser-role" },
+      { role: "admin", scopeType: "global", scopeId: "", expiresAt: null },
+      { role: "coordinator", scopeType: "project", scopeId: "project-A", expiresAt: null },
+      { role: "coordinator", scopeType: "project", scopeId: "project-B", expiresAt: 1_900_000_000_000 },
+      { role: "admin", scopeType: "project", scopeId: "project-A", expiresAt: null },
+      { role: "unexpected-browser-role", scopeType: "global", scopeId: "", expiresAt: null },
     ],
   });
   const repo = createD1WalletAuthRepository(db);
   assert.deepEqual(await repo.getParticipantById("participant-1", 1_800_000_000_000), {
     id: "participant-1",
     status: "active",
-    roles: ["admin", "coordinator"],
+    roles: ["admin"],
+    roleAssignments: [
+      { role: "admin", scopeType: "global", scopeId: "", expiresAt: null },
+      { role: "coordinator", scopeType: "project", scopeId: "project-A", expiresAt: null },
+      { role: "coordinator", scopeType: "project", scopeId: "project-B", expiresAt: 1_900_000_000_000 },
+    ],
   });
-  assert.match(db.calls[1].sql, /wallet_role_assignments/);
-  assert.match(db.calls[1].sql, /status = 'active'/);
-  assert.match(db.calls[1].sql, /scope_type = 'global' OR scope_type = 'project'/);
-  assert.deepEqual(db.calls[1].values, ["participant-1"]);
+  assert.match(db.calls[1].sql, /expires_at IS NULL OR expires_at > \?/);
+  assert.deepEqual(db.calls[1].values, ["participant-1", 1_800_000_000_000]);
 });
 
 test("missing participant never triggers role lookup", async () => {

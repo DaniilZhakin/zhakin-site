@@ -152,17 +152,28 @@ export function createD1WalletAuthRepository(db) {
       ).bind(participantId).first();
       if (!row) return null;
 
-      // Effective privileges are loaded exclusively from the server-side role
-      // registry. Revoked and expired grants never enter the authenticated principal.
+      // Keep project scope in the principal: a coordinator grant for project A
+      // must never be flattened into an unscoped coordinator permission.
       const roleRows = await db.prepare(
-        "SELECT role FROM wallet_role_assignments " +
-        "WHERE participant_id = ? AND status = 'active' " +
-        "AND (scope_type = 'global' OR scope_type = 'project')",
-      ).bind(participantId).all();
-      const roles = [...new Set((roleRows.results ?? [])
-        .map((item) => item.role)
-        .filter((role) => role === "admin" || role === "coordinator"))];
-      return { ...row, roles };
+        "SELECT role, scope_type AS scopeType, scope_id AS scopeId, expires_at AS expiresAt " +
+        "FROM wallet_role_assignments WHERE participant_id = ? AND status = 'active' " +
+        "AND (expires_at IS NULL OR expires_at > ?)",
+      ).bind(participantId, now).all();
+      const roleAssignments = (roleRows.results ?? [])
+        .filter((item) => (item.role === "admin" && item.scopeType === "global") ||
+          (item.role === "coordinator" &&
+            ((item.scopeType === "global" && item.scopeId === "") ||
+             (item.scopeType === "project" && typeof item.scopeId === "string" && item.scopeId.length > 0))))
+        .map((item) => ({
+          role: item.role,
+          scopeType: item.scopeType,
+          scopeId: item.scopeId,
+          expiresAt: item.expiresAt ?? null,
+        }));
+      const roles = [...new Set(roleAssignments
+        .filter((item) => item.scopeType === "global")
+        .map((item) => item.role))];
+      return { ...row, roles, roleAssignments };
     },
 
     async revokeSession({ tokenHash, revokedAt }) {
