@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && navigation?.classList.contains('active')) {
+      event.preventDefault();
       setMenuState(false);
       menuButton?.focus();
     }
