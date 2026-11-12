@@ -1,8 +1,22 @@
 {
-  "timestamp": "2026-11-11T12:58:41Z",
+  "timestamp": "2026-11-12T11:12:10Z",
   "history_points": 30,
-  "persistent_anomaly_count": 0,
+  "persistent_anomaly_count": 1,
   "transient_signal_count": 0,
-  "anomalies": [],
+  "anomalies": [
+    {
+      "id": "/publications/capital-requires-proof.html:latency",
+      "severity": "warning",
+      "scope": "page",
+      "path": "/publications/capital-requires-proof.html",
+      "metric": "response_time_ms",
+      "values": [
+        115,
+        190,
+        1062
+      ],
+      "message": "Page response time has increased across three consecutive snapshots."
+    }
+  ],
   "transient_signals": []
 }

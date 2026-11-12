@@ -1,13 +1,5 @@
 [
   {
-    "timestamp": "2026-10-12T13:34:02Z",
-    "history_points": 30,
-    "persistent_anomaly_count": 0,
-    "transient_signal_count": 0,
-    "anomalies": [],
-    "transient_signals": []
-  },
-  {
     "timestamp": "2026-10-14T10:38:47Z",
     "history_points": 30,
     "persistent_anomaly_count": 0,
@@ -237,6 +229,28 @@
     "persistent_anomaly_count": 0,
     "transient_signal_count": 0,
     "anomalies": [],
+    "transient_signals": []
+  },
+  {
+    "timestamp": "2026-11-12T11:12:10Z",
+    "history_points": 30,
+    "persistent_anomaly_count": 1,
+    "transient_signal_count": 0,
+    "anomalies": [
+      {
+        "id": "/publications/capital-requires-proof.html:latency",
+        "severity": "warning",
+        "scope": "page",
+        "path": "/publications/capital-requires-proof.html",
+        "metric": "response_time_ms",
+        "values": [
+          115,
+          190,
+          1062
+        ],
+        "message": "Page response time has increased across three consecutive snapshots."
+      }
+    ],
     "transient_signals": []
   }
 ]
