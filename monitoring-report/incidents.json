@@ -1,9 +1,25 @@
 {
-  "timestamp": "2026-11-11T12:58:41Z",
+  "timestamp": "2026-11-12T11:12:10Z",
   "source_history_points": 30,
-  "incident_count": 0,
-  "new_incident_count": 0,
+  "incident_count": 1,
+  "new_incident_count": 1,
   "resolved_incident_count": 0,
-  "incidents": [],
+  "incidents": [
+    {
+      "id": "page:/publications/capital-requires-proof.html",
+      "priority": "P2",
+      "severity": "warning",
+      "scope": "page",
+      "path": "/publications/capital-requires-proof.html",
+      "metrics": [
+        "response_time_ms"
+      ],
+      "signal_count": 1,
+      "score": 78,
+      "dedupe_key": "page:/publications/capital-requires-proof.html",
+      "recommended_action": "Inspect server timing, page dependencies and recent deployment changes; confirm whether latency persists.",
+      "new": true
+    }
+  ],
   "resolved_dedupe_keys": []
 }
