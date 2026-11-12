@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: 20
       - name: Validate mobile navigation behavior contracts
-        run: node tests/mobile-navigation-viewport.test.cjs
+        run: node --test tests/mobile-navigation-viewport.test.cjs tests/mobile-menu-keyboard-runtime.test.cjs
