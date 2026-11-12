@@ -106,7 +106,7 @@ export function createWalletHandler({
 
     // Global admin only. Coordinator grants, including global coordinators,
     // cannot enter the administrative namespace.
-    if (path.startsWith("/api/v1/admin/") &&
+    if ((path === "/api/v1/admin" || path.startsWith("/api/v1/admin/")) &&
         !hasWalletGlobalAdminAccess(principal)) {
       return json(403, { error: "forbidden" });
     }
@@ -119,9 +119,19 @@ export function createWalletHandler({
         return unavailable();
       }
 
+      let lookupId;
+      try {
+        lookupId = decodeURIComponent(projectRoute[1]);
+      } catch {
+        return json(400, { error: "invalid_project_id" });
+      }
+      if (!lookupId || lookupId.length > 128 || lookupId.trim() !== lookupId) {
+        return json(400, { error: "invalid_project_id" });
+      }
+
       let project;
       try {
-        project = await projectRepository.getProjectById(decodeURIComponent(projectRoute[1]));
+        project = await projectRepository.getProjectById(lookupId);
       } catch {
         return json(503, { error: "project_lookup_unavailable" });
       }
