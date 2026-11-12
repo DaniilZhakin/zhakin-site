@@ -84,14 +84,14 @@ Purpose: list the current participant's own submitted activities and review stat
 Purpose: list activities awaiting review.
 
 - Requires verified coordinator/admin role from the server-side identity provider.
-- Apply least-privilege scope: coordinators see only assigned projects/records; admins receive broader access only where necessary.
+- Apply least-privilege scope using server-loaded role assignments: global admins may access the administrative namespace; global coordinators and project coordinators are not administrators. Coordinators see only records whose canonical project ID is assigned to them. Resolve the activity and its canonical project ID from trusted persistence before authorizing; never trust a project ID or role from the request body.
 - Log access to sensitive queues.
 
 ### `POST /api/v1/admin/activities/{activityId}/review`
 
 Purpose: approve or reject a submitted activity.
 
-- Requires a verified coordinator/admin role and object-level permission for that activity.
+- Requires a verified global admin or coordinator grant plus object-level permission for the activity's canonical project. A project coordinator must match the exact project scope; coordinator access never authorizes administrative ledger adjustments.
 - Input: `{ "decision": "approve" | "reject", "reason": "..." }`.
 - Reject stale/repeated reviews unless the workflow explicitly supports them.
 - Approval and points-ledger creation must occur atomically in one database transaction/batch, after validating the activity's current status and the server-side points policy.
@@ -104,7 +104,7 @@ Purpose: approve or reject a submitted activity.
 
 Purpose: controlled correction by authorized staff.
 
-- Requires a verified admin role; coordinator access is not implied.
+- Requires an active server-loaded global `admin` grant. Global or project coordinator grants are explicitly insufficient.
 - Requires a non-zero integer points delta, reason and idempotency key.
 - Never edit or delete a posted ledger row to correct history. Write a separate adjustment/reversal entry linked to the original operation where applicable.
 - Require stronger audit detail and consider dual approval before enabling this endpoint in production.
@@ -142,8 +142,23 @@ Example error body: `{ "error": { "code": "AUTHENTICATION_REQUIRED", "message": 
 | Pure ledger validation helpers | Prototype implemented |
 | Unit tests and CI workflow | Implemented; check current GitHub Actions result |
 | SQL schema draft | Written, not applied to a database |
-| API handlers | Not implemented |
+| API handler scaffold and fail-closed route guards | Implemented in isolation; project/admin business operations still return 501 |
 | Identity provider / sessions | Not configured |
 | Persistent database | Not connected |
 | Admin review workflow | Not implemented |
 | Production deployment | Not authorized or performed |
+
+
+## Route-guard implementation note
+
+The isolated handler scaffold distinguishes two authorization boundaries:
+
+- `/api/v1/admin/*` requires `hasWalletGlobalAdminAccess(principal)`.
+- `/api/v1/projects/{lookupId}/*` resolves the project through the trusted
+  `projectRepository.getProjectById` adapter and checks the returned canonical
+  project ID with `hasWalletProjectAccess(principal, project.id)`.
+
+A missing resolver fails closed. Missing or unauthorized projects are
+concealed with `404`. These guards do not implement review, project
+management, balance mutation, or any other business operation; unimplemented
+routes still return `501`. The scaffold is not deployed.

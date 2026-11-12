@@ -3,6 +3,10 @@
  * Not deployed. No provider or database is configured by this module.
  * All trust decisions and persistence must be supplied by server-side adapters.
  */
+import {
+  hasWalletGlobalAdminAccess,
+  hasWalletProjectAccess,
+} from "./wallet-project-authorization.js";
 
 const json = (status, payload) => new Response(JSON.stringify(payload), {
   status,
@@ -18,21 +22,23 @@ const unavailable = () => json(503, {
   message: "Wallet service is not configured.",
 });
 
-function hasRole(principal, roles) {
-  return Array.isArray(principal?.roles) && roles.some((role) => principal.roles.includes(role));
-}
-
 /**
  * Dependencies:
  * - authenticate(request, env): returns a server-verified principal or null.
  * - repository.getBalance(participantId)
  * - repository.listLedger(participantId, { limit, cursor })
+ * - projectRepository.getProjectById(routeLookupId): resolves a project
+ *   record on the server; the returned record's id is the canonical scope ID.
  *
  * No request body, header, query parameter, or browser-supplied ID is accepted
- * as proof of identity. Authentication must validate a real session/token in
- * a trusted provider adapter before this handler can be used.
+ * as proof of identity or permission. Project IDs in URLs are lookup keys only;
+ * authorization uses the canonical ID returned by the trusted repository.
  */
-export function createWalletHandler({ authenticate, repository } = {}) {
+export function createWalletHandler({
+  authenticate,
+  repository,
+  projectRepository,
+} = {}) {
   return async function handleWalletRequest(request, env = {}) {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -98,10 +104,44 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       }
     }
 
-    // Coordinator permissions stay denied until every admin route enforces
-    // project-level scope against the target object. Admin routes are scaffolds.
-    if (path.startsWith("/api/v1/admin/") && !hasRole(principal, ["admin"])) {
+    // Global admin only. Coordinator grants, including global coordinators,
+    // cannot enter the administrative namespace.
+    if ((path === "/api/v1/admin" || path.startsWith("/api/v1/admin/")) &&
+        !hasWalletGlobalAdminAccess(principal)) {
       return json(403, { error: "forbidden" });
+    }
+
+    // Project routes are gated by a server-resolved canonical project ID.
+    // The guard does not enable any project operation; those remain 501 below.
+    const projectRoute = path.match(/^\/api\/v1\/projects\/([^/]+)(?:\/.*)?$/);
+    if (projectRoute) {
+      if (!projectRepository || typeof projectRepository.getProjectById !== "function") {
+        return unavailable();
+      }
+
+      let lookupId;
+      try {
+        lookupId = decodeURIComponent(projectRoute[1]);
+      } catch {
+        return json(400, { error: "invalid_project_id" });
+      }
+      if (!lookupId || lookupId.length > 128 || lookupId.trim() !== lookupId) {
+        return json(400, { error: "invalid_project_id" });
+      }
+
+      let project;
+      try {
+        project = await projectRepository.getProjectById(lookupId);
+      } catch {
+        return json(503, { error: "project_lookup_unavailable" });
+      }
+      if (!project || typeof project.id !== "string" || project.id.length === 0) {
+        return json(404, { error: "not_found" });
+      }
+      if (!hasWalletProjectAccess(principal, project.id)) {
+        // Conceal resource existence from principals without project scope.
+        return json(404, { error: "not_found" });
+      }
     }
 
     // Mutations intentionally remain disabled until transactional repository,

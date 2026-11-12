@@ -9,7 +9,9 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 - `GET /health`: reports `ready: false`; it does not claim that the service is operational.
 - `GET /api/v1/me`: requires an injected server-side authentication adapter.
 - `GET /api/v1/me/balance` and `GET /api/v1/me/ledger`: require both verified identity and an injected repository.
-- `/api/v1/admin/*`: coordinator access is explicitly denied until project-level authorization is implemented; the admin role passes the role gate, but no admin operation is implemented.
+- `/api/v1/admin/*`: requires a server-loaded, active global `admin` grant. Coordinator grants and browser-provided roles are not sufficient.
+- `/api/v1/projects/{lookupId}/*`: requires a trusted project resolver and an active global admin, global coordinator, or coordinator grant for the exact canonical project ID returned by that resolver. Missing resolver fails closed; unauthorized or missing projects are concealed as `404`.
+- Project and admin guards do not enable business operations; unimplemented routes and mutations still return `501`.
 - All unimplemented routes and mutations are disabled; no points can be accrued or reversed through this scaffold.
 - Missing adapters fail closed. There is no mock identity, demo balance, or client-provided participant identity fallback.
 
@@ -23,11 +25,19 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 - Repository tests use a synthetic D1-compatible test double. The workflow also runs a local SQLite schema smoke test; neither proves that a real Cloudflare D1 database is working.
 - Migration files have not been applied to any database.
 
+## Authorization integration contract
+
+1. `authenticate` must return a principal assembled from server-side verified identity and repository-loaded role assignments.
+2. `projectRepository.getProjectById(routeLookupId)` must resolve the project from trusted persistence and return its canonical `id`.
+3. Project access is checked against that canonical ID using `hasWalletProjectAccess`; a project coordinator cannot access another project.
+4. Administrative routes use `hasWalletGlobalAdminAccess`; coordinator roles never authorize administrative operations.
+5. Every eventual operation still needs participant ownership checks, resource-level authorization, input validation, rate limits, transactional persistence and audit logging.
+
 ## Before any deployment
 
 1. Select and configure a supported identity provider; validate issuer, audience, expiry, signature, revocation/session rules, and role assignment server-side.
 2. The isolated D1 repository adapter is implemented in `d1-repository.js`; before any pilot, wire it only through a verified Worker binding and validate transactional ledger writes, durable idempotency, and atomic audit events against a separate test D1 database.
-3. Implement object-level project authorization for coordinators, including ownership/scope checks for every target object; add explicit denial tests for cross-project access.
+3. Complete object-level authorization for each project resource, including participant ownership checks and explicit denial tests for cross-project and cross-participant access.
 4. Add schema migrations, least-privilege database access, input limits, rate limits, CORS/CSRF policy appropriate to the chosen auth method, privacy/retention rules, and monitoring.
 5. Test authorization boundaries, replay/idempotency, concurrency, rollback, backup and recovery.
 6. Review legal terms and participant/admin operating procedures.
