@@ -66,22 +66,56 @@ test("non-safe or malformed repository balances are rejected", async () => {
   assert.equal((await body(response)).error, "ledger_unavailable");
 });
 
-test("admin routes require server-verified coordinator or admin role", async () => {
-  const participant = createWalletHandler({
-    authenticate: async () => ({ id: "p-1", roles: ["participant"] }),
-  });
-  const denied = await participant(request("/api/v1/admin/activities"));
-  assert.equal(denied.status, 403);
-
+test("coordinator is denied admin routes until project-scope authorization exists", async () => {
   const coordinator = createWalletHandler({
     authenticate: async () => ({ id: "c-1", roles: ["coordinator"] }),
   });
-  const notImplemented = await coordinator(request("/api/v1/admin/activities"));
+  const denied = await coordinator(request("/api/v1/admin/activities"));
+  assert.equal(denied.status, 403);
+  assert.equal((await body(denied)).error, "forbidden");
+});
+
+test("admin role passes the role gate but admin operations remain unimplemented", async () => {
+  const admin = createWalletHandler({
+    authenticate: async () => ({ id: "a-1", roles: ["admin"] }),
+  });
+  const notImplemented = await admin(request("/api/v1/admin/activities"));
   assert.equal(notImplemented.status, 501);
+  assert.equal((await body(notImplemented)).error, "not_implemented");
 });
 
 test("unsupported HTTP methods are rejected", async () => {
   const handle = createWalletHandler();
   const response = await handle(request("/health", { method: "DELETE" }));
   assert.equal(response.status, 405);
+});
+
+test("ledger endpoint preserves pagination cursor from a persistent repository", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: {
+      listLedger: async (participantId, options) => {
+        assert.equal(participantId, "verified-participant");
+        assert.equal(options.limit, 50);
+        assert.equal(options.cursor, "cursor-2");
+        return { entries: [{ id: "entry-1", points: 5 }], next_cursor: "cursor-3" };
+      },
+    },
+  });
+  const response = await handle(request("/api/v1/me/ledger?cursor=cursor-2"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), {
+    entries: [{ id: "entry-1", points: 5 }],
+    next_cursor: "cursor-3",
+  });
+});
+
+test("invalid pagination response fails closed", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
+    repository: { listLedger: async () => ({ entries: [], next_cursor: 42 }) },
+  });
+  const response = await handle(request("/api/v1/me/ledger"));
+  assert.equal(response.status, 503);
+  assert.equal((await body(response)).error, "ledger_unavailable");
 });
