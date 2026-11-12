@@ -154,7 +154,7 @@ export function createD1WalletAuthRepository(db) {
       if (!row) return null;
 
       // Effective privileges are loaded exclusively from the server-side role
-      // registry. Project object authorization remains a separate route-level gate.
+      // registry. Revoked grants are excluded; automatic grant expiry is not yet modelled. Project object authorization remains a separate route-level gate.
       const roleRows = await db.prepare(
         "SELECT role FROM wallet_role_assignments " +
         "WHERE participant_id = ? AND status = 'active' " +
