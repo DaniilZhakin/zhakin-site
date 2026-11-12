@@ -12,6 +12,8 @@ connection.execute("PRAGMA foreign_keys = ON")
 connection.executescript(schema_path.read_text(encoding="utf-8"))
 role_schema_path = schema_path.with_name("0002_wallet_role_assignments.sql")
 connection.executescript(role_schema_path.read_text(encoding="utf-8"))
+otp_schema_path = schema_path.with_name("0003_wallet_email_otp.sql")
+connection.executescript(otp_schema_path.read_text(encoding="utf-8"))
 
 connection.executemany(
     "INSERT INTO wallet_participants (id, status, created_at, updated_at) VALUES (?, 'active', ?, ?)",
@@ -20,6 +22,23 @@ connection.executemany(
         ("admin-1", "2026-11-04T15:00:00Z", "2026-11-04T15:00:00Z"),
     ],
 )
+connection.execute(
+    "UPDATE wallet_participants SET email_normalized = ? WHERE id = ?",
+    ("participant@example.org", "participant-1"),
+)
+connection.execute(
+    """INSERT INTO wallet_auth_sessions
+       (token_hmac, participant_id, created_at, expires_at)
+       VALUES (?, ?, ?, ?)""",
+    ("a" * 64, "participant-1", 100, 200),
+)
+connection.execute(
+    """INSERT INTO wallet_otp_challenges
+       (id, email_normalized, code_hmac, attempts, created_at, expires_at)
+       VALUES (?, ?, ?, 0, ?, ?)""",
+    ("challenge-1", "participant@example.org", "b" * 64, 100, 200),
+)
+
 connection.execute(
     """INSERT INTO wallet_activities
        (id, participant_id, project_code, description, status, submitted_at)
@@ -111,4 +130,4 @@ must_reject(
 )
 
 connection.close()
-print("SQLite schema and role-registry smoke checks passed; no D1 database was contacted.")
+print("SQLite schema, role registry, OTP and session smoke checks passed; no D1 database was contacted.")
