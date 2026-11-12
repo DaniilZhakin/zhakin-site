@@ -1,10 +1,10 @@
 # SEO 3.5 — Automated Recovery Verification
 
 Site: https://xn--80alhhq.xn--p1ai
-Verification: **stable**
-Recovery state: **stable**
+Verification: **verified**
+Recovery state: **recovery_required**
 
-**Verdict:** Stable: production SEO surface is healthy.
+**Verdict:** Recovery verified: production SEO surface is healthy.
 
 - PASS — robots.txt
 - PASS — sitemap.xml
