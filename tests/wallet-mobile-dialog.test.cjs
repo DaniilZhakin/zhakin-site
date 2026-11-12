@@ -24,3 +24,10 @@ test("Top-up, gifts and transfers remain disabled with operation-specific explan
   assert.match(html, /Никаких операций не выполнено/);
   assert.match(html, /Получатель и баланс не изменяются/);
 });
+
+test("Wallet layout contains narrow-screen content and scrolls market tables internally", () => {
+  assert.match(html, /\.wallet-page,\s*\.wallet-page \.market-board\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%/s);
+  assert.match(html, /\.wallet-page h1,[\s\S]*?overflow-wrap:\s*anywhere/);
+  assert.match(html, /\.wallet-page \.market-board > div\s*\{[^}]*overflow-x:\s*auto/);
+  assert.match(html, /@media \(max-width:\s*600px\)\s*\{[\s\S]*?\.wallet-page\s*\{[^}]*width:\s*100%/);
+});
