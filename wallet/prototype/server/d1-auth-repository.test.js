@@ -54,7 +54,7 @@ test("challenge creation updates both keyed rate windows in one conditional SQL 
   assert.match(db.calls[0].sql, /ON CONFLICT\(subject_hmac, window_started_at\)/);
   assert.match(db.calls[0].sql, /RETURNING subject_hmac/);
   assert.deepEqual(db.calls[0].values, [
-    1_799_999_700_000, "b".repeat(64), "d".repeat(64), 1_799_999_700_000,
+    1_800_000_000_000, "b".repeat(64), "d".repeat(64), 1_800_000_000_000,
     "b".repeat(64), 3, "d".repeat(64), 10,
   ]);
   assert.match(db.calls[1].sql, /email_normalized = \? AND status = 'active'/);
