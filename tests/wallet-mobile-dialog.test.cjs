@@ -28,6 +28,12 @@ test("Top-up, gifts and transfers remain disabled with operation-specific explan
 test("Wallet layout contains narrow-screen content and scrolls market tables internally", () => {
   assert.match(html, /\.wallet-page,\s*\.wallet-page \.market-board\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%/s);
   assert.match(html, /\.wallet-page h1,[\s\S]*?overflow-wrap:\s*anywhere/);
+  assert.match(html, /class="market-table-scroll" role="region" aria-label="Котировки криптоактивов[^"]*" tabindex="0"/);
+  assert.match(html, /class="market-table-scroll" role="region" aria-label="Официальные валютные курсы[^"]*" tabindex="0"/);
+  assert.match(html, /\.market-table-scroll:focus-visible/);
+  assert.match(html, /\.market-table-scroll table\s*\{\s*min-width:\s*520px/);
+  assert.match(html, /<th scope="col">Актив<\/th>/);
+  assert.match(html, /<th scope="col">Валюта<\/th>/);
   assert.match(html, /\.wallet-page \.market-board > div\s*\{[^}]*overflow-x:\s*auto/);
   assert.match(html, /@media \(max-width:\s*600px\)\s*\{[\s\S]*?\.wallet-page\s*\{[^}]*width:\s*100%/);
 });
