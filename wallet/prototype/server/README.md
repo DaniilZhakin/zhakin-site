@@ -21,7 +21,7 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 
 - `d1-repository.js` contains participant-scoped balance reads, bounded ledger pagination, active-role lookup, and a batched ledger/audit write helper.
 - Migration `0002_wallet_role_assignments.sql` defines global admin and global/project-scoped coordinator grants with revocation metadata and uniqueness for active grants.
-- Role scope is stored and returned by the repository. The HTTP handler denies coordinator access to admin routes until project-scope authorization is enforced against each target object.
+- Role assignments are returned in the authorization helper's expected camelCase shape, including `expiresAt`; the D1 query excludes expired grants using the stored millisecond expiry timestamp. The HTTP handler denies coordinator access to admin routes until project-scope authorization is enforced against each target object.
 - The HTTP handler remains fail-closed; no Worker route imports or invokes the D1 adapter.
 - Repository tests use a synthetic D1-compatible test double. The workflow also runs a local SQLite schema smoke test; neither proves that a real Cloudflare D1 database is working.
 - Migration files have not been applied to any database.
