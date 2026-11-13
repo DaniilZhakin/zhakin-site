@@ -15,11 +15,15 @@ function fakeDb({ first = null, rows = [], batchResult = [] } = {}) {
         bind(...params) { this.params = params; return this; },
         async first() { return first; },
         async all() {
+          let matchingRows = rows;
+          if (sql.includes("status = 'active'")) {
+            matchingRows = matchingRows.filter((row) => row.status === "active");
+          }
           if (sql.includes("expires_at IS NULL OR expires_at > ?")) {
             const now = this.params[1];
-            return { results: rows.filter((row) => row.expires_at == null || row.expires_at > now) };
+            matchingRows = matchingRows.filter((row) => row.expires_at == null || row.expires_at > now);
           }
-          return { results: rows };
+          return { results: matchingRows };
         },
       };
       prepared.push(statement);
@@ -140,9 +144,10 @@ test("ledger write enforces accrual and reversal sign conventions", async () => 
 test("active role lookup returns authorization-helper fields and excludes expired grants", async () => {
   const now = Date.now();
   const rows = [
-    { role: "admin", scope_type: "global", scope_id: "", expires_at: null },
-    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-A", expires_at: now + 60_000 },
-    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-OLD", expires_at: now - 60_000 },
+    { role: "admin", scope_type: "global", scope_id: "", status: "active", expires_at: null },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-A", status: "active", expires_at: now + 60_000 },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-OLD", status: "active", expires_at: now - 60_000 },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-REVOKED", status: "revoked", expires_at: null },
   ];
   const db = fakeDb({ rows });
   const repo = createD1WalletRepository(db);
@@ -152,6 +157,7 @@ test("active role lookup returns authorization-helper fields and excludes expire
     { role: "coordinator", scopeType: "project", scopeId: "PROJECT-A", expiresAt: rows[1].expires_at },
   ]);
   assert.ok(db.prepared[0].sql.includes("WHERE participant_id = ? AND status = 'active'"));
+  assert.equal(assignments.some((grant) => grant.scopeId === "PROJECT-REVOKED"), false);
   assert.ok(db.prepared[0].sql.includes("expires_at IS NULL OR expires_at > ?"));
   assert.equal(db.prepared[0].params[0], "participant-verified");
   assert.ok(Number.isSafeInteger(db.prepared[0].params[1]));
