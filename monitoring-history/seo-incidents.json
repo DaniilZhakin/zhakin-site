@@ -249,7 +249,7 @@
     "timestamp": "2026-11-12T11:12:10Z",
     "source_history_points": 30,
     "incident_count": 1,
-    "new_incident_count": 1,
+    "new_incident_count": 0,
     "resolved_incident_count": 0,
     "incidents": [
       {
@@ -265,7 +265,7 @@
         "score": 78,
         "dedupe_key": "page:/publications/capital-requires-proof.html",
         "recommended_action": "Inspect server timing, page dependencies and recent deployment changes; confirm whether latency persists.",
-        "new": true
+        "new": false
       }
     ],
     "resolved_dedupe_keys": []
