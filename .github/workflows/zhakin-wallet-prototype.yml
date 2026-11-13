@@ -22,7 +22,7 @@ permissions:
 jobs:
   wallet-prototype-tests:
     name: Wallet prototype tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -34,3 +34,85 @@ jobs:
 
       - name: Run complete prototype test suite
         run: npm --prefix wallet/prototype test
+
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --prefix /tmp/zhakin-playwright --no-save playwright@1.56.1
+          /tmp/zhakin-playwright/node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Capture and verify desktop and iPhone-width previews
+        shell: bash
+        run: |
+          mkdir -p wallet-screenshots
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/zhakin-wallet-preview.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/wallet.html >/dev/null; then break; fi
+            sleep 1
+          done
+          NODE_PATH=/tmp/zhakin-playwright/node_modules node <<'NODE'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              for (const spec of [
+                { name: 'desktop', width: 1440, height: 1000 },
+                { name: 'iphone-width', width: 390, height: 844 }
+              ]) {
+                const page = await browser.newPage({ viewport: { width: spec.width, height: spec.height }, deviceScaleFactor: 1 });
+                await page.goto('http://127.0.0.1:8000/wallet.html', { waitUntil: 'domcontentloaded' });
+                await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;content-visibility:visible!important}' });
+                const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+                for (let y = 0; y < pageHeight; y += Math.max(300, Math.floor(spec.height * 0.7))) {
+                  await page.evaluate(y => window.scrollTo(0, y), y);
+                  await page.waitForTimeout(120);
+                }
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(350);
+                const diagnostics = await page.evaluate(() => {
+                  const cards = [...document.querySelectorAll('.wallet-asset-card')];
+                  return {
+                    viewportWidth: window.innerWidth,
+                    documentWidth: document.documentElement.scrollWidth,
+                    horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+                    assetCards: cards.map(card => ({
+                      text: card.innerText.trim(),
+                      textContent: card.textContent.trim(),
+                      contentVisibility: getComputedStyle(card).contentVisibility,
+                      color: getComputedStyle(card.querySelector('strong')).color,
+                      textFill: getComputedStyle(card.querySelector('strong')).webkitTextFillColor,
+                      html: card.innerHTML.slice(0, 500),
+                      children: [...card.children].map(child => ({ tag: child.tagName, text: child.textContent.trim(), opacity: getComputedStyle(child).opacity, visibility: getComputedStyle(child).visibility, display: getComputedStyle(child).display })),
+                      opacity: getComputedStyle(card).opacity,
+                      visibility: getComputedStyle(card).visibility,
+                      display: getComputedStyle(card).display
+                    }))
+                  };
+                });
+                console.log(JSON.stringify({ viewport: spec.name, ...diagnostics }));
+                if (diagnostics.horizontalOverflow) throw new Error(spec.name + ': horizontal overflow detected');
+                if (diagnostics.assetCards.length !== 2 || diagnostics.assetCards.some(card => !card.text || card.visibility === 'hidden' || card.display === 'none' || Number(card.opacity) === 0)) {
+                  throw new Error(spec.name + ': asset cards are missing or visually hidden');
+                }
+                await page.screenshot({ path: 'wallet-screenshots/wallet-' + spec.name + '.png', fullPage: true });
+                const assetTop = await page.locator('.wallet-v04').evaluate(element => window.scrollY + element.getBoundingClientRect().top);
+                const stickyHeaderHeight = await page.evaluate(() => document.querySelector('.site-header')?.getBoundingClientRect().height || 0);
+                await page.evaluate(({ top, headerHeight }) => window.scrollTo(0, Math.max(0, top - headerHeight)), { top: assetTop, headerHeight: stickyHeaderHeight });
+                await page.waitForTimeout(150);
+                await page.screenshot({ path: 'wallet-screenshots/wallet-assets-' + spec.name + '.png', fullPage: false });
+                await page.close();
+              }
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => { console.error(error); process.exit(1); });
+          NODE
+
+      - name: Upload visual preview screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-wallet-v04-visual-previews
+          path: wallet-screenshots/*.png
+          if-no-files-found: error
+          retention-days: 14
