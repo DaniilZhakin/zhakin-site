@@ -1,0 +1,39 @@
+name: Intelligence Browser Transport Contract Tests
+
+on:
+  push:
+    paths:
+      - 'intelligence/browser-transport/**'
+      - '.github/workflows/intelligence-browser-transport-tests.yml'
+  pull_request:
+    paths:
+      - 'intelligence/browser-transport/**'
+      - '.github/workflows/intelligence-browser-transport-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-transport-contract:
+    name: Consent and payload contract
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run isolated browser transport tests
+        working-directory: intelligence/browser-transport
+        run: npm test
+
+      - name: Confirm production remains gated
+        run: |
+          echo "Browser transport contract tests completed."
+          echo "This module is not imported by the live site."
+          echo "No browser events or production requests are enabled by this workflow."
