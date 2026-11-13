@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-13T13:27:12Z",
+  "timestamp": "2026-11-13T14:39:49Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 40,
     "jsonld_pages": 40,
     "noindex_pages": 0,
-    "avg_response_time_ms": 276.3,
-    "max_response_time_ms": 733,
-    "health_score": 100.0,
+    "avg_response_time_ms": 309.9,
+    "max_response_time_ms": 1428,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-11-13T07:59:10Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-11-13T13:27:12Z",
+  "warnings": [
+    "page-level change: /publications/price-discovery.html"
+  ],
+  "page_changes": {
+    "/publications/price-discovery.html": [
+      "response_time_ms: 393 -> 1428"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/price-discovery.html"
+  ],
+  "status": "warning"
 }
