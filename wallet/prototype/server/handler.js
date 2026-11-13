@@ -65,10 +65,9 @@ export function createWalletHandler({
     }
 
     if (request.method === "GET" && path === "/api/v1/me") {
-      return json(200, {
-        id: principal.id,
-        roles: Array.isArray(principal.roles) ? principal.roles : [],
-      });
+      // Keep the participant-facing identity response minimal. Internal role
+      // assignments remain server-side and are never exposed as UI authority.
+      return json(200, { id: principal.id });
     }
 
     if (request.method === "GET" && (

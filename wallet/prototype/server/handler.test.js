@@ -38,6 +38,19 @@ test("an unauthenticated request cannot read identity or balance", async () => {
   }
 });
 
+test("participant identity response excludes internal role assignments", async () => {
+  const handle = createWalletHandler({
+    authenticate: async () => ({
+      id: "verified-participant",
+      roles: ["admin", "coordinator"],
+      roleAssignments: [grant("admin", "global", "")],
+    }),
+  });
+  const response = await handle(request("/api/v1/me"));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await body(response), { id: "verified-participant" });
+});
+
 test("participant identity comes from the server-verified principal, not query input", async () => {
   const seen = [];
   const handle = createWalletHandler({
