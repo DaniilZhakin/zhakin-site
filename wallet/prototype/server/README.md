@@ -7,6 +7,8 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 ## Current behavior
 
 - `GET /health`: reports `ready: false`; it does not claim that the service is operational.
+- Unknown paths return `404 not_found` before authentication; nonexistent endpoints are not reported as generic `501` operations.
+- Unsupported HTTP methods return `405 method_not_allowed`.
 - `GET /api/v1/me`: requires an injected server-side authentication adapter and returns only the verified participant ID. Internal roles and role assignments remain server-side.
 - `GET /api/v1/me/balance` and `GET /api/v1/me/ledger`: require both verified identity and an injected repository.
 - `/api/v1/admin/*`: requires a server-loaded, active global `admin` grant. Coordinator grants and browser-provided roles are not sufficient.

@@ -51,6 +51,24 @@ export function createWalletHandler({
       return json(405, { error: "method_not_allowed" });
     }
 
+    const isMeRoute = path === "/api/v1/me";
+    const isBalanceRoute = path === "/api/v1/me/balance";
+    const isLedgerRoute = path === "/api/v1/me/ledger";
+    const isAdminRoute = path === "/api/v1/admin" || path.startsWith("/api/v1/admin/");
+    const projectRoute = path.match(/^\/api\/v1\/projects\/([^/]+)(?:\/.*)?$/);
+    const isProjectRoute = Boolean(projectRoute);
+
+    // Reject unknown paths before authentication. This keeps routing behavior
+    // deterministic and avoids presenting a generic 501 for nonexistent APIs.
+    if (!isMeRoute && !isBalanceRoute && !isLedgerRoute && !isAdminRoute && !isProjectRoute) {
+      return json(404, { error: "not_found" });
+    }
+
+    // Self-service endpoints are read-only in this scaffold.
+    if ((isMeRoute || isBalanceRoute || isLedgerRoute) && request.method !== "GET") {
+      return json(405, { error: "method_not_allowed" });
+    }
+
     // Fail closed when no trusted authentication adapter is wired.
     if (typeof authenticate !== "function") return unavailable();
 
@@ -64,20 +82,18 @@ export function createWalletHandler({
       return json(401, { error: "unauthenticated" });
     }
 
-    if (request.method === "GET" && path === "/api/v1/me") {
+    if (isMeRoute) {
       // Keep the participant-facing identity response minimal. Internal role
       // assignments remain server-side and are never exposed as UI authority.
       return json(200, { id: principal.id });
     }
 
-    if (request.method === "GET" && (
-      path === "/api/v1/me/balance" || path === "/api/v1/me/ledger"
-    )) {
+    if (isBalanceRoute || isLedgerRoute) {
       // No public or in-memory fallback is permitted for account data.
       if (!repository) return unavailable();
 
       try {
-        if (path === "/api/v1/me/balance") {
+        if (isBalanceRoute) {
           if (typeof repository.getBalance !== "function") return unavailable();
           const balance = await repository.getBalance(principal.id);
           if (!Number.isSafeInteger(balance)) {
@@ -105,14 +121,12 @@ export function createWalletHandler({
 
     // Global admin only. Coordinator grants, including global coordinators,
     // cannot enter the administrative namespace.
-    if ((path === "/api/v1/admin" || path.startsWith("/api/v1/admin/")) &&
-        !hasWalletGlobalAdminAccess(principal)) {
+    if (isAdminRoute && !hasWalletGlobalAdminAccess(principal)) {
       return json(403, { error: "forbidden" });
     }
 
     // Project routes are gated by a server-resolved canonical project ID.
     // The guard does not enable any project operation; those remain 501 below.
-    const projectRoute = path.match(/^\/api\/v1\/projects\/([^/]+)(?:\/.*)?$/);
     if (projectRoute) {
       if (!projectRepository || typeof projectRepository.getProjectById !== "function") {
         return unavailable();
@@ -124,7 +138,8 @@ export function createWalletHandler({
       } catch {
         return json(400, { error: "invalid_project_id" });
       }
-      if (!lookupId || lookupId.length > 128 || lookupId.trim() !== lookupId) {
+      if (!lookupId || lookupId.length > 128 || lookupId.trim() !== lookupId ||
+          /[\/\\\u0000-\u001f\u007f]/.test(lookupId)) {
         return json(400, { error: "invalid_project_id" });
       }
 
