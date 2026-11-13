@@ -37,16 +37,18 @@ export function createD1WalletRepository(db) {
         throw new TypeError("participantId is required");
       }
       const result = await db.prepare(`
-        SELECT role, scope_type, scope_id
+        SELECT role, scope_type, scope_id, expires_at
         FROM wallet_role_assignments
         WHERE participant_id = ? AND status = 'active'
+          AND (expires_at IS NULL OR expires_at > ?)
         ORDER BY role, scope_type, scope_id
-      `).bind(participantId).all();
+      `).bind(participantId, Date.now()).all();
       const rows = Array.isArray(result?.results) ? result.results : [];
       return rows.map((row) => ({
         role: row.role,
-        scope_type: row.scope_type,
-        scope_id: row.scope_id,
+        scopeType: row.scope_type,
+        scopeId: row.scope_id,
+        expiresAt: row.expires_at ?? null,
       }));
     },
 
