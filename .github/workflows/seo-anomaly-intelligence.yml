@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Analyze persistent anomalies
         shell: bash
@@ -42,5 +44,24 @@ jobs:
             echo 'No anomaly-history or report changes to commit.'
           else
             git commit -m 'chore: update persistent SEO anomaly report'
-            git push
+            # Other scheduled monitoring workflows can advance main after checkout.
+            # Rebase onto the latest main and retry using a normal, non-forced push.
+            for attempt in 1 2 3; do
+              git fetch origin main
+              if ! git rebase FETCH_HEAD; then
+                git rebase --abort || true
+                echo 'Unable to rebase anomaly report onto latest main; stopping safely.' >&2
+                exit 1
+              fi
+              if git push origin HEAD:refs/heads/main; then
+                echo "SEO anomaly report pushed successfully (attempt ${attempt})."
+                exit 0
+              fi
+              if [ "$attempt" -lt 3 ]; then
+                echo "main advanced during push; retrying after fetch/rebase (${attempt}/3)."
+                sleep "$attempt"
+              fi
+            done
+            echo 'Unable to publish SEO anomaly report after 3 fetch/rebase attempts.' >&2
+            exit 1
           fi
