@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-11-13T07:58:56Z",
+  "timestamp": "2026-11-13T14:39:30Z",
   "orchestrator": "SEO Intelligence 3.6.1",
   "state": "RECOVERED",
-  "action": "NONE",
-  "reason": "Recovery loop protection: fingerprint 7b4b4db9bbba426d already reached terminal state RECOVERED; automatic recovery will not repeat.",
+  "action": "RECOVERED",
+  "reason": "Safe repair regenerated deterministic recovery artifacts and production verification passed.",
   "incident_snapshot": "2026-11-12T11:12:10Z",
-  "verification_timestamp": "2026-11-12T15:36:00Z",
+  "verification_timestamp": "2026-11-13T14:39:30Z",
   "verification_state": "verified",
-  "fingerprint": "7b4b4db9bbba426d",
+  "fingerprint": "dd95a7d9fdddb3da",
   "dry_run": false,
   "state_machine_guard": "ENABLED",
   "recovery_loop_protection": {
     "enabled": true,
     "history_file": "monitoring-history/seo-recovery-history.json",
-    "previous_terminal_state": "RECOVERED"
+    "previous_terminal_state": null
   },
   "safe_repair_policy": {
     "allowed": [
@@ -27,6 +27,19 @@
       "change robots/sitemap production content automatically"
     ]
   },
-  "commands": [],
+  "commands": [
+    {
+      "script": "intelligence/seo-recovery-intelligence.py",
+      "returncode": 0,
+      "stdout": "{\"timestamp\": \"2026-11-12T11:12:10Z\", \"source_incident_snapshot\": \"2026-11-12T11:12:10Z\", \"state\": \"recovery_required\", \"active_incident_count\": 1, \"recovery_plan_count\": 1, \"resolved_incident_count\": 0, \"plans\": [{\"dedupe_key\": \"page:/publications/capital-requires-proof.html\", \"priority\": \"P2\", \"severity\": \"warning\", \"scope\": \"page\", \"path\": \"/publications/capital-requires-proof.html\", \"action\": \"Recover performance for `/publications/capital-requires-proof.html`: inspect server timing, page dependencies and recent deployment changes; confirm latency returns toward baseline before closing the incident.\", \"verification\": \"Run SEO monitoring, robots/sitemap audit and page-level canonical/indexability checks after remediation.\", \"status\": \"new\"}]}",
+      "stderr": ""
+    },
+    {
+      "script": "intelligence/seo-recovery-verification.py",
+      "returncode": 0,
+      "stdout": "{\"timestamp\": \"2026-11-13T14:39:30Z\", \"site\": \"https://xn--80alhhq.xn--p1ai\", \"recovery_state\": \"recovery_required\", \"verification_state\": \"verified\", \"verdict\": \"Recovery verified: production SEO surface is healthy.\", \"checks\": [{\"name\": \"robots.txt\", \"ok\": true, \"response_time_ms\": 446, \"error\": \"\"}, {\"name\": \"sitemap.xml\", \"ok\": true, \"response_time_ms\": 364, \"url_count\": 55, \"error\": \"\"}, {\"name\": \"sitemap coverage\", \"ok\": true, \"missing\": []}, {\"name\": \"page SEO signals\", \"ok\": true, \"failed_pages\": []}], \"failed_check_count\": 0}",
+      "stderr": ""
+    }
+  ],
   "escalation_required": false
 }
