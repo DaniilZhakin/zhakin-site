@@ -14,7 +14,13 @@ function fakeDb({ first = null, rows = [], batchResult = [] } = {}) {
         params: [],
         bind(...params) { this.params = params; return this; },
         async first() { return first; },
-        async all() { return { results: rows }; },
+        async all() {
+          if (sql.includes("expires_at IS NULL OR expires_at > ?")) {
+            const now = this.params[1];
+            return { results: rows.filter((row) => row.expires_at == null || row.expires_at > now) };
+          }
+          return { results: rows };
+        },
       };
       prepared.push(statement);
       return statement;
@@ -131,16 +137,24 @@ test("ledger write enforces accrual and reversal sign conventions", async () => 
   assert.equal(db.batches.length, 0);
 });
 
-test("active role lookup is scoped to the verified participant", async () => {
+test("active role lookup returns authorization-helper fields and excludes expired grants", async () => {
+  const now = Date.now();
   const rows = [
-    { role: "admin", scope_type: "global", scope_id: "" },
-    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-A" },
+    { role: "admin", scope_type: "global", scope_id: "", expires_at: null },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-A", expires_at: now + 60_000 },
+    { role: "coordinator", scope_type: "project", scope_id: "PROJECT-OLD", expires_at: now - 60_000 },
   ];
   const db = fakeDb({ rows });
   const repo = createD1WalletRepository(db);
-  assert.deepEqual(await repo.listActiveRoles("participant-verified"), rows);
-  assert.match(db.prepared[0].sql, /WHERE participant_id = \? AND status = 'active'/);
-  assert.deepEqual(db.prepared[0].params, ["participant-verified"]);
+  const assignments = await repo.listActiveRoles("participant-verified");
+  assert.deepEqual(assignments, [
+    { role: "admin", scopeType: "global", scopeId: "", expiresAt: null },
+    { role: "coordinator", scopeType: "project", scopeId: "PROJECT-A", expiresAt: rows[1].expires_at },
+  ]);
+  assert.match(db.prepared[0].sql, /WHERE participant_id = \\? AND status = 'active'/);
+  assert.match(db.prepared[0].sql, /expires_at IS NULL OR expires_at > \\?/);
+  assert.equal(db.prepared[0].params[0], "participant-verified");
+  assert.ok(Number.isSafeInteger(db.prepared[0].params[1]));
 });
 
 test("active role lookup rejects a missing participant identity", async () => {
