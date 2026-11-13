@@ -160,6 +160,30 @@ test("admin routes require a global admin grant, not coordinator or browser role
   assert.equal(notImplemented.status, 501);
 });
 
+test("expired admin and project coordinator grants are denied at the route boundary", async () => {
+  const expiredAdmin = createWalletHandler({
+    authenticate: async () => ({
+      id: "a-expired",
+      roleAssignments: [grant("admin", "global", "", Date.now() - 1)],
+    }),
+  });
+  const adminResponse = await expiredAdmin(request("/api/v1/admin/activities"));
+  assert.equal(adminResponse.status, 403);
+
+  const expiredCoordinator = createWalletHandler({
+    authenticate: async () => ({
+      id: "c-expired",
+      roleAssignments: [grant("coordinator", "project", "project-A", Date.now() - 1)],
+    }),
+    projectRepository: {
+      getProjectById: async () => ({ id: "project-A" }),
+    },
+  });
+  const projectResponse = await expiredCoordinator(request("/api/v1/projects/project-A/activities"));
+  assert.equal(projectResponse.status, 404);
+  assert.deepEqual(await body(projectResponse), { error: "not_found" });
+});
+
 test("project coordinator can pass only the matching server-resolved project scope", async () => {
   const lookups = [];
   const handle = createWalletHandler({
