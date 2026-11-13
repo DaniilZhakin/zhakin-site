@@ -151,8 +151,8 @@ test("active role lookup returns authorization-helper fields and excludes expire
     { role: "admin", scopeType: "global", scopeId: "", expiresAt: null },
     { role: "coordinator", scopeType: "project", scopeId: "PROJECT-A", expiresAt: rows[1].expires_at },
   ]);
-  assert.match(db.prepared[0].sql, /WHERE participant_id = \\? AND status = 'active'/);
-  assert.match(db.prepared[0].sql, /expires_at IS NULL OR expires_at > \\?/);
+  assert.ok(db.prepared[0].sql.includes("WHERE participant_id = ? AND status = 'active'"));
+  assert.ok(db.prepared[0].sql.includes("expires_at IS NULL OR expires_at > ?"));
   assert.equal(db.prepared[0].params[0], "participant-verified");
   assert.ok(Number.isSafeInteger(db.prepared[0].params[1]));
 });
