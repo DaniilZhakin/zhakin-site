@@ -10,7 +10,7 @@ This module is a deliberately fail-closed HTTP handler for future server-side in
 - Unknown paths return `404 not_found` before authentication; nonexistent endpoints are not reported as generic `501` operations.
 - Unsupported HTTP methods return `405 method_not_allowed`.
 - `GET /api/v1/me`: requires an injected server-side authentication adapter and returns only the verified participant ID. Internal roles and role assignments remain server-side.
-- `GET /api/v1/me/balance` and `GET /api/v1/me/ledger`: require both verified identity and an injected repository.
+- `GET /api/v1/me/balance` and `GET /api/v1/me/ledger`: require both verified identity and an injected repository. Ledger cursors are single-valued, base64url-character-only, and limited to 512 characters before repository access.
 - `/api/v1/admin/*`: requires a server-loaded, active global `admin` grant. Coordinator grants and browser-provided roles are not sufficient.
 - `/api/v1/projects/{lookupId}/*`: requires a trusted project resolver and an active global admin, global coordinator, or coordinator grant for the exact canonical project ID returned by that resolver. Missing resolver fails closed; unauthorized or missing projects are concealed as `404`.
 - Project and admin guards do not enable business operations; unimplemented routes and mutations still return `501`.
