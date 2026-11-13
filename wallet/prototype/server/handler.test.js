@@ -251,6 +251,26 @@ test("ledger endpoint preserves pagination cursor from a persistent repository",
   });
 });
 
+test("ledger cursor rejects duplicate, oversized and non-base64url query values", async () => {
+  let repositoryCalls = 0;
+  const handle = createWalletHandler({
+    authenticate: async () => ({ id: "verified-participant" }),
+    repository: {
+      listLedger: async () => { repositoryCalls += 1; return { entries: [], next_cursor: null }; },
+    },
+  });
+  for (const path of [
+    "/api/v1/me/ledger?cursor=abc&cursor=def",
+    `/api/v1/me/ledger?cursor=${"a".repeat(513)}`,
+    "/api/v1/me/ledger?cursor=%%%not-base64url%%%",
+  ]) {
+    const response = await handle(request(path));
+    assert.equal(response.status, 400, path);
+    assert.deepEqual(await body(response), { error: "invalid_cursor" });
+  }
+  assert.equal(repositoryCalls, 0);
+});
+
 test("invalid pagination response fails closed", async () => {
   const handle = createWalletHandler({
     authenticate: async () => ({ id: "verified-participant", roles: ["participant"] }),
