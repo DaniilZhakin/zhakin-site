@@ -1,11 +1,11 @@
 # SEO 3.6.1 — Self-Healing / Recovery Orchestrator Hardening
 
 State: **RECOVERED**
-Action: **RECOVERED**
+Action: **NONE**
 Fingerprint: `dd95a7d9fdddb3da`
 DRY_RUN: **False**
 
-**Decision:** Safe repair regenerated deterministic recovery artifacts and production verification passed.
+**Decision:** Recovery loop protection: fingerprint dd95a7d9fdddb3da already reached terminal state RECOVERED; automatic recovery will not repeat.
 
 ## Hardening
 
