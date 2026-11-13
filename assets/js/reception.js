@@ -4,7 +4,14 @@
   const output=document.getElementById('reception-output');
   const status=document.getElementById('reception-status');
   const copy=document.getElementById('reception-copy');
+  const messageField=document.getElementById('message');
+  const counter=document.getElementById('message-counter');
   if(!form||!preview||!output||!status)return;
+
+  const updateCounter=()=>{if(messageField&&counter)counter.textContent=`${messageField.value.length.toLocaleString('ru-RU')} / 5 000 символов`;};
+  messageField?.addEventListener('input',updateCounter);
+  form.addEventListener('reset',()=>window.setTimeout(updateCounter,0));
+  updateCounter();
 
   const labels={international:'Международное сотрудничество',investment:'Экономические и инвестиционные проекты',analytics:'Аналитика и экспертное взаимодействие',social:'Социальные и общественные инициативы',other:'Другое'};
   const clean=v=>v.replace(/[ \t]+/g,' ').trim();
