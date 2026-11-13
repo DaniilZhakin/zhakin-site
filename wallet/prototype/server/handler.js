@@ -103,9 +103,16 @@ export function createWalletHandler({
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
+        const cursorValues = url.searchParams.getAll("cursor");
+        if (cursorValues.length > 1) return json(400, { error: "invalid_cursor" });
+        const cursor = cursorValues[0] ?? null;
+        if (cursor !== null && (cursor.length > 512 ||
+            (cursor !== "" && !/^[A-Za-z0-9_-]+$/u.test(cursor)))) {
+          return json(400, { error: "invalid_cursor" });
+        }
         const result = await repository.listLedger(principal.id, {
           limit: 50,
-          cursor: url.searchParams.get("cursor"),
+          cursor,
         });
         const entries = Array.isArray(result) ? result : result?.entries;
         if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
