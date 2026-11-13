@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Analyze production trends
         shell: bash
@@ -269,5 +271,20 @@ jobs:
             echo 'No trend-history or report changes to commit.'
           else
             git commit -m 'chore: update SEO health score and trend report'
-            git push
+            # Other scheduled monitoring workflows can advance main after checkout.
+            # Rebase the report commit onto the latest main and retry without force-pushing.
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git rebase FETCH_HEAD
+              if git push origin HEAD:refs/heads/main; then
+                echo "SEO trend report pushed successfully (attempt ${attempt})."
+                exit 0
+              fi
+              if [ "$attempt" -lt 3 ]; then
+                echo "main advanced during push; retrying after fetch/rebase (${attempt}/3)."
+                sleep "$attempt"
+              fi
+            done
+            echo "Unable to publish SEO trend report after 3 fetch/rebase attempts." >&2
+            exit 1
           fi
