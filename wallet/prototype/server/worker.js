@@ -33,6 +33,28 @@ function corsHeaders(origin) {
   };
 }
 
+function isAllowedOrigin(value) {
+  if (typeof value !== "string" || value.length > 255) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:" && parsed.origin === value &&
+      !parsed.username && !parsed.password && parsed.hostname !== "null";
+  } catch {
+    return false;
+  }
+}
+
+function isSessionCookie(value, { logout = false } = {}) {
+  if (typeof value !== "string" || !value.startsWith("zhakin_wallet_session=")) return false;
+  const attributes = value.split(";").slice(1).map((part) => part.trim().toLowerCase());
+  const required = ["path=/api/v1", "httponly", "secure", "samesite=strict"];
+  if (!required.every((item) => attributes.includes(item))) return false;
+  const cookieValue = value.slice("zhakin_wallet_session=".length).split(";")[0];
+  if (logout) return cookieValue === "" && attributes.includes("max-age=0");
+  return /^[A-Za-z0-9_-]{40,64}$/.test(cookieValue) &&
+    attributes.includes("max-age=43200");
+}
+
 async function readJson(request) {
   const contentType = request.headers.get("content-type") || "";
   if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
@@ -106,7 +128,7 @@ export function createWalletWorker({ createAuth = createDefaultAuth } = {}) {
         return json(200, { service: "zhakin-wallet-api", mode: "scaffold", ready: false });
       }
 
-      const allowedOrigin = typeof env.WALLET_ALLOWED_ORIGIN === "string"
+      const allowedOrigin = isAllowedOrigin(env.WALLET_ALLOWED_ORIGIN)
         ? env.WALLET_ALLOWED_ORIGIN : "";
       const origin = request.headers.get("origin") || "";
 
@@ -189,11 +211,11 @@ export function createWalletWorker({ createAuth = createDefaultAuth } = {}) {
             challengeId: parsed.value.challenge_id,
             code: parsed.value.code,
           });
-          if (!result?.authenticated || typeof result.setCookie !== "string" ||
-              !result.setCookie.startsWith("zhakin_wallet_session=")) {
+          if (!result?.authenticated || !isSessionCookie(result.setCookie) ||
+              typeof result.participant?.id !== "string" || !result.participant.id) {
             return json(401, { error: "invalid_or_expired_code" }, headers);
           }
-          return json(200, { authenticated: true, participant: result.participant }, {
+          return json(200, { authenticated: true, participant: { id: result.participant.id } }, {
             ...headers,
             "set-cookie": result.setCookie,
           });
@@ -203,10 +225,15 @@ export function createWalletWorker({ createAuth = createDefaultAuth } = {}) {
       }
 
       if (path === "/api/v1/auth/logout") {
+        const parsed = await readJson(request);
+        if (parsed.error) {
+          const status = parsed.error === "payload_too_large" ? 413
+            : parsed.error === "unsupported_media_type" ? 415 : 400;
+          return json(status, { error: parsed.error }, headers);
+        }
         try {
           const result = await auth.logout(request);
-          if (typeof result?.setCookie !== "string" ||
-              !result.setCookie.startsWith("zhakin_wallet_session=")) {
+          if (!isSessionCookie(result?.setCookie, { logout: true })) {
             return json(503, { error: "authentication_unavailable" }, headers);
           }
           return json(200, { authenticated: false }, {
