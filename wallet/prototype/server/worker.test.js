@@ -20,8 +20,8 @@ function fakeAuth() {
     },
     async verifyCode(input) {
       calls.push({ action: "verify", input });
-      return { authenticated: true, participant: { id: "participant-1" },
-        setCookie: "zhakin_wallet_session=opaque; Path=/api/v1; HttpOnly; Secure; SameSite=Strict" };
+      return { authenticated: true, participant: { id: "participant-1", email: "private@example.org", roles: ["admin"] },
+        setCookie: "zhakin_wallet_session=abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGH; Path=/api/v1; HttpOnly; Secure; SameSite=Strict; Max-Age=43200" };
     },
     async authenticate(request) {
       calls.push({ action: "authenticate", cookie: request.headers.get("cookie") });
@@ -90,7 +90,9 @@ test("OTP verify sets only the HttpOnly secure session cookie and returns minima
   });
   assert.match(response.headers.get("set-cookie"), /HttpOnly/);
   assert.match(response.headers.get("set-cookie"), /Secure/);
-  assert.equal(JSON.stringify(await response.clone().json()).includes("opaque"), false);
+  const payload = await response.clone().json();
+  assert.deepEqual(payload, { authenticated: true, participant: { id: "participant-1" } });
+  assert.equal(JSON.stringify(payload).includes("private@example.org"), false);
 });
 
 test("invalid OTP never creates a session cookie", async () => {
@@ -199,4 +201,29 @@ test("auth adapter exceptions are sanitized and never leak internal details", as
   }, { "cf-connecting-ip": "198.51.100.8" }), env);
   assert.equal(response.status, 503);
   assert.equal(JSON.stringify(await response.json()).includes("credential"), false);
+});
+
+test("invalid configured origins, including wildcard and non-origin URLs, fail closed", async () => {
+  const worker = createWalletWorker({ createAuth: async () => fakeAuth() });
+  for (const invalidOrigin of ["*", "null", "https://zhakin.test/path", "http://zhakin.test"]) {
+    const response = await worker.fetch(jsonRequest("/api/v1/auth/otp/request", {
+      email: "member@example.org",
+    }), { WALLET_ALLOWED_ORIGIN: invalidOrigin });
+    assert.equal(response.status, 403, invalidOrigin);
+  }
+});
+
+test("verification rejects cookies missing required security attributes", async () => {
+  const auth = fakeAuth();
+  auth.verifyCode = async () => ({
+    authenticated: true,
+    participant: { id: "participant-1" },
+    setCookie: "zhakin_wallet_session=weak; Path=/; SameSite=None",
+  });
+  const worker = createWalletWorker({ createAuth: async () => auth });
+  const response = await worker.fetch(jsonRequest("/api/v1/auth/otp/verify", {
+    challenge_id: "a".repeat(32), code: "123456",
+  }), env);
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get("set-cookie"), null);
 });
