@@ -54,7 +54,7 @@ test("valid OTP is converted to a minimal provider-neutral email", async () => {
 test("rejects wrong path, method, content type and malformed JSON", async () => {
   const { mailer, calls } = setup();
   assert.equal((await mailer.fetch(new Request("https://mailer.internal/other", { method: "POST" }))).status, 404);
-  assert.equal((await mailer.fetch(request(validPayload(), { method: "GET" }))).status, 405);
+  assert.equal((await mailer.fetch(new Request("https://mailer.internal/v1/otp", { method: "GET" }))).status, 405);
   assert.equal((await mailer.fetch(request("{}", { headers: { "content-type": "text/plain" } }))).status, 415);
   assert.equal((await mailer.fetch(request("{"))).status, 400);
   assert.equal(calls.length, 0);
