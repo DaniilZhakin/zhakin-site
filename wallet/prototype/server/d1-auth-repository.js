@@ -3,16 +3,16 @@
  *
  * This adapter is intentionally separate from the read-only ledger adapter.
  * It requires migrations 0001 and 0002 and is not connected to a Worker or
- * any live database. D1 batch() is used for the two rate-counter writes;
- * challenge consumption is a single conditional UPDATE ... RETURNING.
+ * any live database. Both rate counters are gated by one conditional SQL
+ * statement; challenge consumption is a single conditional UPDATE ... RETURNING.
  */
 const RATE_WINDOW_MS = 15 * 60 * 1000;
 const EMAIL_REQUEST_LIMIT = 3;
 const SOURCE_REQUEST_LIMIT = 10;
 
 function requireDb(db) {
-  if (!db || typeof db.prepare !== "function" || typeof db.batch !== "function") {
-    throw new TypeError("Cloudflare D1 binding with prepare() and batch() is required");
+  if (!db || typeof db.prepare !== "function") {
+    throw new TypeError("Cloudflare D1 binding with prepare() is required");
   }
 }
 function requiredString(value, name, max = 512) {
@@ -46,30 +46,32 @@ export function createD1WalletAuthRepository(db) {
       requiredHash(codeHash, "codeHash");
       requiredHash(emailRateKey, "emailRateKey");
       requiredHash(sourceRateKey, "sourceRateKey");
+      if (emailRateKey === sourceRateKey) throw new TypeError("rate-limit subjects must be distinct");
       requiredTime(createdAt, "createdAt");
       requiredTime(expiresAt, "expiresAt");
       if (expiresAt <= createdAt) throw new TypeError("challenge expiry must follow creation");
 
       const windowStartedAt = Math.floor(createdAt / RATE_WINDOW_MS) * RATE_WINDOW_MS;
-      // D1 batch executes both counter upserts atomically. A counter at its
-      // threshold is not incremented; no challenge is created unless both
-      // writes succeeded. Keys are HMACs, never raw email/IP values.
-      const counters = await db.batch([
-        db.prepare(
-          "INSERT INTO wallet_auth_rate_limits " +
-          "(subject_hmac, window_started_at, request_count) VALUES (?, ?, 1) " +
-          "ON CONFLICT(subject_hmac, window_started_at) DO UPDATE SET " +
-          "request_count = request_count + 1 WHERE request_count < ?",
-        ).bind(emailRateKey, windowStartedAt, EMAIL_REQUEST_LIMIT),
-        db.prepare(
-          "INSERT INTO wallet_auth_rate_limits " +
-          "(subject_hmac, window_started_at, request_count) VALUES (?, ?, 1) " +
-          "ON CONFLICT(subject_hmac, window_started_at) DO UPDATE SET " +
-          "request_count = request_count + 1 WHERE request_count < ?",
-        ).bind(sourceRateKey, windowStartedAt, SOURCE_REQUEST_LIMIT),
-      ]);
-      if (!Array.isArray(counters) || counters.length !== 2 ||
-          changed(counters[0]) !== 1 || changed(counters[1]) !== 1) {
+      // One INSERT ... SELECT statement checks BOTH current counters before
+      // changing either. If either threshold is reached, it returns no rows
+      // and neither counter is incremented. HMAC keys avoid storing raw email/IP.
+      const counters = await db.prepare(
+        "INSERT INTO wallet_auth_rate_limits " +
+        "(subject_hmac, window_started_at, request_count) " +
+        "SELECT subjects.subject_hmac, ?, 1 " +
+        "FROM (SELECT ? AS subject_hmac UNION ALL SELECT ?) AS subjects " +
+        "WHERE NOT EXISTS (" +
+        "SELECT 1 FROM wallet_auth_rate_limits existing " +
+        "WHERE existing.window_started_at = ? AND (" +
+        "(existing.subject_hmac = ? AND existing.request_count >= ?) OR " +
+        "(existing.subject_hmac = ? AND existing.request_count >= ?))) " +
+        "ON CONFLICT(subject_hmac, window_started_at) DO UPDATE SET " +
+        "request_count = request_count + 1 RETURNING subject_hmac",
+      ).bind(
+        windowStartedAt, emailRateKey, sourceRateKey, windowStartedAt,
+        emailRateKey, EMAIL_REQUEST_LIMIT, sourceRateKey, SOURCE_REQUEST_LIMIT,
+      ).all();
+      if (!Array.isArray(counters?.results) || counters.results.length !== 2) {
         return { deliverable: false };
       }
 
