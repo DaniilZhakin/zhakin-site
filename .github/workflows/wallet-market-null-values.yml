@@ -1,0 +1,25 @@
+name: Wallet market null-value regression
+
+on:
+  pull_request:
+    paths:
+      - "assets/js/wallet-markets.js"
+      - "tests/wallet-market-null-values.test.cjs"
+      - ".github/workflows/wallet-market-null-values.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  market-null-value-tests:
+    name: Market null-value regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run market null-value regression tests
+        run: node --test tests/wallet-market-null-values.test.cjs
