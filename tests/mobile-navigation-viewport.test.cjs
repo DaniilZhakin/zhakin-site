@@ -1,0 +1,13 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const css = fs.readFileSync('assets/css/style.css', 'utf8');
+const js = fs.readFileSync('assets/js/main.js', 'utf8');
+assert.match(css, /\.main-navigation\s*\{[^}]*top:\s*calc\(100% \+ 8px\)/s, 'menu must be anchored below the header');
+assert.match(css, /max-height:\s*calc\(100dvh - 112px\)/, 'menu must fit the dynamic viewport');
+assert.match(css, /overflow-y:\s*auto/, 'menu must scroll vertically');
+assert.match(css, /overscroll-behavior:\s*contain/, 'menu must contain overscroll');
+assert.match(css, /-webkit-overflow-scrolling:\s*touch/, 'menu must support iOS momentum scrolling');
+assert.match(css, /env\(safe-area-inset-bottom/, 'menu must respect the iPhone safe area');
+assert.match(js, /event\.key === 'Escape'[\s\S]*?setMenuState\(false\)[\s\S]*?menuButton\?\.focus\(\)/, 'Escape must close the menu and restore focus');
+console.log('Mobile navigation viewport and keyboard regression checks passed.');

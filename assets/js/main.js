@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navigation?.classList.contains('active')) {
+      event.preventDefault();
+      setMenuState(false);
+      menuButton?.focus();
+    }
+  });
+
   links.forEach(link => {
     link.addEventListener('click', event => {
       const url = new URL(link.href, window.location.href);
