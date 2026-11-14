@@ -1,13 +1,5 @@
 [
   {
-    "timestamp": "2026-10-15T10:21:55Z",
-    "history_points": 30,
-    "persistent_anomaly_count": 0,
-    "transient_signal_count": 0,
-    "anomalies": [],
-    "transient_signals": []
-  },
-  {
     "timestamp": "2026-10-16T10:09:14Z",
     "history_points": 30,
     "persistent_anomaly_count": 0,
@@ -246,28 +238,22 @@
     "transient_signals": []
   },
   {
-    "timestamp": "2026-11-12T11:12:10Z",
+    "timestamp": "2026-11-14T12:31:35Z",
+    "history_points": 30,
+    "persistent_anomaly_count": 0,
+    "transient_signal_count": 0,
+    "anomalies": [],
+    "transient_signals": []
+  },
+  {
+    "timestamp": "2026-11-14T12:31:35Z",
     "source_history_points": 30,
-    "incident_count": 1,
+    "incident_count": 0,
     "new_incident_count": 0,
-    "resolved_incident_count": 0,
-    "incidents": [
-      {
-        "id": "page:/publications/capital-requires-proof.html",
-        "priority": "P2",
-        "severity": "warning",
-        "scope": "page",
-        "path": "/publications/capital-requires-proof.html",
-        "metrics": [
-          "response_time_ms"
-        ],
-        "signal_count": 1,
-        "score": 78,
-        "dedupe_key": "page:/publications/capital-requires-proof.html",
-        "recommended_action": "Inspect server timing, page dependencies and recent deployment changes; confirm whether latency persists.",
-        "new": false
-      }
-    ],
-    "resolved_dedupe_keys": []
+    "resolved_incident_count": 1,
+    "incidents": [],
+    "resolved_dedupe_keys": [
+      "page:/publications/capital-requires-proof.html"
+    ]
   }
 ]
