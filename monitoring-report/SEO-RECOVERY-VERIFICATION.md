@@ -2,7 +2,7 @@
 
 Site: https://xn--80alhhq.xn--p1ai
 Verification: **verified**
-Recovery state: **recovery_required**
+Recovery state: **verification**
 
 **Verdict:** Recovery verified: production SEO surface is healthy.
 
