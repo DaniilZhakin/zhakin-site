@@ -85,12 +85,12 @@ test("OTP verify sets only the HttpOnly secure session cookie and returns minima
     challenge_id: "a".repeat(32), code: "123456",
   }), env);
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), {
+  const payload = await response.json();
+  assert.deepEqual(payload, {
     authenticated: true, participant: { id: "participant-1" },
   });
   assert.match(response.headers.get("set-cookie"), /HttpOnly/);
   assert.match(response.headers.get("set-cookie"), /Secure/);
-  const payload = await response.clone().json();
   assert.deepEqual(payload, { authenticated: true, participant: { id: "participant-1" } });
   assert.equal(JSON.stringify(payload).includes("private@example.org"), false);
 });
