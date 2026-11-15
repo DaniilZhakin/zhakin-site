@@ -129,58 +129,56 @@ must_reject(
     "revocation without actor and reason",
 )
 
-connection.close()
-
-
-// Additional migration-order, auth-schema and referential-integrity checks.
-// These checks run only against the in-memory SQLite database above.
+# Additional auth-schema and referential-integrity checks.
+# All checks run against the in-memory SQLite database above.
 must_reject(
-    `INSERT INTO wallet_participants (id, status, created_at, updated_at, email_normalized)
-     VALUES ('participant-duplicate-email', 'active', '2026-11-04T15:00:00Z',
-             '2026-11-04T15:00:00Z', 'participant@example.org')`,
+    """INSERT INTO wallet_participants
+       (id, status, created_at, updated_at, email_normalized)
+       VALUES ('participant-duplicate-email', 'active', '2026-11-04T15:00:00Z',
+               '2026-11-04T15:00:00Z', 'participant@example.org')""",
     (),
     "duplicate normalized participant email",
 )
 
 must_reject(
-    `INSERT INTO wallet_otp_challenges
+    """INSERT INTO wallet_otp_challenges
        (id, email_normalized, code_hmac, attempts, created_at, expires_at)
-       VALUES ('challenge-bad-expiry', 'participant@example.org', ?, 0, 200, 200)`,
+       VALUES ('challenge-bad-expiry', 'participant@example.org', ?, 0, 200, 200)""",
     ("c" * 64,),
     "OTP challenge with non-positive lifetime",
 )
 must_reject(
-    `INSERT INTO wallet_otp_challenges
+    """INSERT INTO wallet_otp_challenges
        (id, email_normalized, code_hmac, attempts, created_at, expires_at)
-       VALUES ('challenge-too-many-attempts', 'participant@example.org', ?, 6, 100, 200)`,
+       VALUES ('challenge-too-many-attempts', 'participant@example.org', ?, 6, 100, 200)""",
     ("d" * 64,),
     "OTP challenge above attempt limit",
 )
 must_reject(
-    `INSERT INTO wallet_auth_sessions
+    """INSERT INTO wallet_auth_sessions
        (token_hmac, participant_id, created_at, expires_at)
-       VALUES (?, 'participant-1', 200, 200)`,
+       VALUES (?, 'participant-1', 200, 200)""",
     ("f" * 64,),
     "session with non-positive lifetime",
 )
 must_reject(
-    `INSERT INTO wallet_auth_rate_limits
+    """INSERT INTO wallet_auth_rate_limits
        (subject_hmac, window_started_at, request_count)
-       VALUES (?, 100, -1)`,
+       VALUES (?, 100, -1)""",
     ("1" * 64,),
     "negative authentication rate counter",
 )
 
 connection.execute(
-    `INSERT INTO wallet_auth_rate_limits
+    """INSERT INTO wallet_auth_rate_limits
        (subject_hmac, window_started_at, request_count)
-       VALUES (?, 100, 2)`,
+       VALUES (?, 100, 2)""",
     ("2" * 64,),
 )
 must_reject(
-    `INSERT INTO wallet_auth_rate_limits
+    """INSERT INTO wallet_auth_rate_limits
        (subject_hmac, window_started_at, request_count)
-       VALUES (?, 100, 3)`,
+       VALUES (?, 100, 3)""",
     ("2" * 64,),
     "duplicate rate-limit window key",
 )
@@ -223,4 +221,5 @@ actual_indexes = {
 missing_indexes = required_indexes - actual_indexes
 assert not missing_indexes, f"migration sequence missing indexes: {sorted(missing_indexes)}"
 
+connection.close()
 print("SQLite schema, role registry, OTP/session constraints, indexes and foreign-key smoke checks passed; no D1 database was contacted.")
