@@ -65,7 +65,7 @@ test('office dashboard is present and clearly remains a non-connected prototype'
   assert.match(office, /ZHAKIN TEAM<br>OFFICE/);
   assert.match(office, /Демонстрационный интерфейс • без подключения данных/);
   assert.match(office, /реальные показатели, пользователи, поручения и журналы не загружаются/);
-  assert.doesNotMatch(office, /<form\\b|<input\\b|<textarea\\b/i);
+  assert.doesNotMatch(office, /<form\b|<input\b|<textarea\b/i);
 });
 
 test('office task register and decision governance have explicit empty-state boundaries', () => {
