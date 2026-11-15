@@ -157,14 +157,6 @@ must_reject(
     "OTP challenge above attempt limit",
 )
 must_reject(
-    `INSERT INTO wallet_otp_challenges
-       (id, email_normalized, code_hmac, attempts, created_at, expires_at)
-       VALUES ('challenge-unknown-email', 'missing@example.org', ?, 0, 100, 200)`,
-    ("e" * 64,),
-    "OTP challenge for an unregistered email is not constrained by schema",
-) if False else None
-
-must_reject(
     `INSERT INTO wallet_auth_sessions
        (token_hmac, participant_id, created_at, expires_at)
        VALUES (?, 'participant-1', 200, 200)`,
