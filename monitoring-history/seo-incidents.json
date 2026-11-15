@@ -250,10 +250,8 @@
     "source_history_points": 30,
     "incident_count": 0,
     "new_incident_count": 0,
-    "resolved_incident_count": 1,
+    "resolved_incident_count": 0,
     "incidents": [],
-    "resolved_dedupe_keys": [
-      "page:/publications/capital-requires-proof.html"
-    ]
+    "resolved_dedupe_keys": []
   }
 ]
