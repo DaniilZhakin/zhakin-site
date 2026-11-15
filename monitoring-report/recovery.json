@@ -1,9 +1,9 @@
 {
   "timestamp": "2026-11-14T12:31:35Z",
   "source_incident_snapshot": "2026-11-14T12:31:35Z",
-  "state": "verification",
+  "state": "stable",
   "active_incident_count": 0,
   "recovery_plan_count": 0,
-  "resolved_incident_count": 1,
+  "resolved_incident_count": 0,
   "plans": []
 }
