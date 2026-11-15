@@ -59,3 +59,21 @@ test('homepage exposes the search-compatible 120px PNG and SVG favicons', () => 
   assert.equal(png.readUInt32BE(20), 120);
 });
 
+
+test('office dashboard is present and clearly remains a non-connected prototype', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.match(office, /ZHAKIN TEAM<br>OFFICE/);
+  assert.match(office, /Демонстрационный интерфейс • без подключения данных/);
+  assert.match(office, /реальные показатели, пользователи, поручения и журналы не загружаются/);
+  assert.doesNotMatch(office, /<form\\b|<input\\b|<textarea\\b/i);
+});
+
+test('office task register and decision governance have explicit empty-state boundaries', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.match(office, /Реестр поручений и решений/);
+  assert.match(office, /Реестр пока не подключён/);
+  assert.match(office, /Журнал решений/);
+  assert.match(office, /Маршрут согласования/);
+  assert.match(office, /Контрольный след/);
+  assert.match(office, /только подтверждённые поручения из защищённого источника/);
+});
