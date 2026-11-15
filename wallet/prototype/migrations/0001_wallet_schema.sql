@@ -2,8 +2,8 @@
 -- NOT applied to any database. Synthetic prototype only.
 -- Do not use for production until auth, authorization, transactional workflows,
 -- retention rules, backup/restore and security review are complete.
-
-PRAGMA foreign_keys = ON;
+-- Cloudflare D1 enforces foreign keys by default; do not toggle PRAGMA foreign_keys
+-- inside a D1 migration. The local SQLite smoke harness enables it per connection.
 
 CREATE TABLE IF NOT EXISTS wallet_participants (
   id TEXT PRIMARY KEY,
