@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a16">
+  <title>ZHAKIN TEAM OFFICE — Центр управления</title>
+  <meta name="description" content="Демонстрационный интерфейс центра управления ZHAKIN TEAM: направления, контрольные точки, поручения и управление рисками.">
+  <link rel="canonical" href="https://xn--80alhhq.xn--p1ai/office.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    :root{--of-bg:#071a16;--of-panel:#102820;--of-panel2:#0b211a;--of-gold:#d4af37;--of-text:#f4f1e8;--of-muted:#aebbb2;--of-line:rgba(212,175,55,.23)}
+    body{background:var(--of-bg)}
+    .office-page{max-width:1280px;margin:0 auto;padding:44px 24px 84px}
+    .office-top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--of-line);margin-bottom:28px}
+    .office-kicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--of-gold);font-weight:750}
+    .office-state{padding:8px 12px;border:1px solid var(--of-line);color:#e7d9ad;font-size:.67rem;letter-spacing:.09em;text-transform:uppercase}
+    .office-hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(230px,.6fr);gap:28px;align-items:end;padding:34px;border:1px solid var(--of-line);border-radius:15px;background:radial-gradient(ellipse at 88% 10%,rgba(212,175,55,.12),transparent 34%),linear-gradient(135deg,#102820,#091b15)}
+    .office-hero h1{margin:12px 0 14px;color:var(--of-text);font-size:clamp(2.3rem,5vw,4.2rem);line-height:1.03;letter-spacing:-.045em}
+    .office-hero p{max-width:740px;margin:0;color:#c0cbc2;line-height:1.8}
+    .office-principle{padding:18px;border-left:1px solid rgba(212,175,55,.45);color:var(--of-muted);font-size:.83rem;line-height:1.75}
+    .office-principle strong{display:block;margin-bottom:6px;color:#e7d9ad;font-size:.67rem;letter-spacing:.13em;text-transform:uppercase}
+    .office-notice{margin:18px 0 28px;padding:15px 18px;border:1px solid rgba(212,175,55,.28);background:rgba(212,175,55,.055);color:#d9dfd8;font-size:.82rem;line-height:1.75}
+    .office-section{margin:30px 0}
+    .office-section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:15px}
+    .office-section-head h2{margin:0;color:var(--of-gold);font-size:clamp(1.3rem,3vw,1.8rem)}
+    .office-section-head span{color:#91a197;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+    .office-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+    .office-card{min-width:0;padding:20px;border:1px solid var(--of-line);border-radius:10px;background:linear-gradient(145deg,rgba(16,40,32,.96),rgba(8,24,18,.98))}
+    .office-card .index{color:#c9b36f;font-size:.65rem;letter-spacing:.13em}
+    .office-card h3{margin:12px 0 8px;color:#f3efe4;font-size:1rem}
+    .office-card p{margin:0;color:var(--of-muted);font-size:.8rem;line-height:1.7}
+    .office-tag{display:inline-block;margin-top:14px;padding:5px 8px;border:1px solid rgba(212,175,55,.22);color:#d9c88e;font-size:.61rem;letter-spacing:.06em;text-transform:uppercase}
+    .office-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .office-list{margin:0;padding:0;list-style:none}
+    .office-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:13px 0;border-top:1px solid rgba(255,255,255,.07);color:#c4cec5;font-size:.8rem;line-height:1.6}
+    .office-list li:first-child{border-top:0}
+    .office-list strong{display:block;color:#eee6ce;font-weight:650}
+    .office-list small{display:block;margin-top:3px;color:#87978d;font-size:.7rem}
+    .office-list em{align-self:center;color:#d9c88e;font-size:.65rem;font-style:normal;text-transform:uppercase;white-space:nowrap}
+    .office-guardrails{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+    .office-guardrails article{padding:18px;border-top:1px solid var(--of-gold);background:rgba(16,40,32,.55)}
+    .office-guardrails h3{margin:0 0 7px;color:#eee6ce;font-size:.9rem}
+    .office-guardrails p{margin:0;color:var(--of-muted);font-size:.77rem;line-height:1.7}
+    .office-footer{margin-top:30px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);color:#84958a;font-size:.73rem;line-height:1.8}
+    .office-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .office-actions a{display:inline-flex;align-items:center;min-height:42px;padding:10px 14px;border:1px solid var(--of-line);color:#e7d9ad;text-decoration:none;font-size:.76rem}
+    .office-actions a:hover{border-color:var(--of-gold);background:rgba(212,175,55,.07)}
+    @media(max-width:900px){.office-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:680px){.office-page{padding:26px 16px 60px}.office-top{align-items:flex-start;flex-direction:column}.office-hero{grid-template-columns:1fr;padding:24px;gap:18px}.office-principle{padding:13px 0 0;border-left:0;border-top:1px solid rgba(212,175,55,.35)}.office-grid,.office-columns,.office-guardrails{grid-template-columns:1fr}.office-section-head{align-items:flex-start;flex-direction:column;gap:5px}.office-list li{grid-template-columns:minmax(0,1fr) auto}}
+    @media(max-width:1000px){.site-header{position:sticky;top:0;z-index:100}.header-container{position:relative}.menu-toggle{display:block;position:relative;z-index:102;flex:0 0 auto;min-width:44px;min-height:44px;touch-action:manipulation}.main-navigation{display:none;position:absolute;z-index:101;top:calc(100% + 8px);left:0;right:0;max-height:calc(100dvh - 110px);overflow-y:auto;-webkit-overflow-scrolling:touch}.main-navigation.active{display:flex!important;visibility:visible}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-container">
+    <a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN Digital</span></a>
+    <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+    <nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+      <a href="/">Главная</a><a href="/account.html">Кабинет</a><a href="/office.html" aria-current="page">Офис управления</a><a href="/projects.html">Проекты</a><a href="/wallet.html">Wallet</a><a href="/intelligence.html">ЖАК — ИИ</a><a href="/institutional.html">Институциональный контур</a>
+    </nav>
+  </div>
+</header>
+<main class="office-page">
+  <div class="office-top"><span class="office-kicker">ZHAKIN TEAM • GOVERNANCE & OPERATIONS</span><span class="office-state">Демонстрационный интерфейс • без подключения данных</span></div>
+  <section class="office-hero">
+    <div><span class="office-kicker">ЦЕНТР УПРАВЛЕНИЯ</span><h1>ZHAKIN TEAM<br>OFFICE</h1><p>Единая управленческая панель для контроля направлений, поручений, проектных этапов, рисков и решений. Офис объединяет информацию, но не подменяет полномочия руководителя и ответственных специалистов.</p>
+      <div class="office-actions"><a href="/account.html">Личный кабинет →</a><a href="/projects.html">Реестр проектов →</a><a href="/reception.html">Приёмная →</a></div>
+    </div>
+    <aside class="office-principle"><strong>Принцип управления</strong>Сначала подтверждённые данные и полномочия. Затем рекомендация. Любое критическое действие — только после отдельного подтверждения уполномоченным человеком.</aside>
+  </section>
+  <div class="office-notice" role="note"><strong>Статус:</strong> это интерфейсная основа, а не действующая административная система. Карточки ниже показывают структуру будущего контроля; реальные показатели, пользователи, поручения и журналы не загружаются. Вход, изменение данных и команды роботам не активны.</div>
+
+  <section class="office-section" aria-labelledby="directions-title">
+    <div class="office-section-head"><h2 id="directions-title">Контуры управления</h2><span>Единая карта платформы</span></div>
+    <div class="office-grid">
+      <article class="office-card"><span class="index">01 / DIGITAL PLATFORM</span><h3>Сайт и цифровая среда</h3><p>Интерфейс, публикации, навигация, доступность и качество пользовательского пути.</p><span class="office-tag">Контроль интерфейса</span></article>
+      <article class="office-card"><span class="index">02 / INTELLIGENCE</span><h3>ЖАК и роботы</h3><p>Разделение задач помощников, источников, доступов и границ автоматизации.</p><span class="office-tag">Контроль полномочий</span></article>
+      <article class="office-card"><span class="index">03 / WALLET & SECURITY</span><h3>Wallet и безопасность</h3><p>Авторизация, серверные проверки, роли, аудит и блокировка финансовых функций до готовности.</p><span class="office-tag">Критический контур</span></article>
+      <article class="office-card"><span class="index">04 / USERDIE</span><h3>Социальные проекты</h3><p>Программы, партнёры, обращения, результаты и подтверждённый социальный эффект.</p><span class="office-tag">Проектный контроль</span></article>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="control-title">
+    <div class="office-section-head"><h2 id="control-title">Контрольные направления</h2><span>Текущая повестка разработки</span></div>
+    <div class="office-columns">
+      <article class="office-card">
+        <h3>Ближайшие контрольные точки</h3>
+        <ul class="office-list">
+          <li><span><strong>Главная страница и обзор платформы</strong><small>PR #137 · проверить CI и отображение на мобильных экранах</small></span><em>На проверке</em></li>
+          <li><span><strong>Мобильная навигация</strong><small>PR #136 · требуется проверка реального iPhone Safari</small></span><em>На проверке</em></li>
+          <li><span><strong>Почтовая авторизация Wallet</strong><small>PR #133–135 · выбрать и испытать безопасную схему отдельно от Google OAuth</small></span><em>Не готово</em></li>
+          <li><span><strong>Роли и защита маршрутов</strong><small>Проверить совместимость изменений и единый набор интеграционных тестов</small></span><em>Аудит</em></li>
+        </ul>
+      </article>
+      <article class="office-card">
+        <h3>Обязательные условия запуска</h3>
+        <ul class="office-list">
+          <li><span><strong>Google OAuth</strong><small>Отдельный провайдер идентификации; не заменяется почтовым OTP</small></span><em>Не подключён</em></li>
+          <li><span><strong>Почтовый провайдер</strong><small>Доставка и проверка писем в тестовой среде</small></span><em>Не подтверждён</em></li>
+          <li><span><strong>Cloudflare Worker + D1</strong><small>Рабочие серверные маршруты, миграции и тестовая база</small></span><em>Требует проверки</em></li>
+          <li><span><strong>Роли и журнал аудита</strong><small>Серверная выдача прав, проектные области и журналирование</small></span><em>Требует проверки</em></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="governance-title">
+    <div class="office-section-head"><h2 id="governance-title">Правила управления</h2><span>Непересекаемые границы</span></div>
+    <div class="office-guardrails">
+      <article><h3>Разделение полномочий</h3><p>Робот готовит справку или проект действия. Координатор действует только в своей области. Администраторские права не выдаются автоматически.</p></article>
+      <article><h3>Подтверждение человеком</h3><p>Публикация, изменение прав, отправка внешних сообщений и любые финансовые действия требуют отдельного подтверждения.</p></article>
+      <article><h3>Проверяемый след</h3><p>Каждое существенное действие должно иметь автора, основание, время, результат и запись аудита. При недоступности аудита действие блокируется.</p></article>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="robots-title">
+    <div class="office-section-head"><h2 id="robots-title">Архитектура цифровых помощников</h2><span>Один робот — одна задача</span></div>
+    <div class="office-grid">
+      <article class="office-card"><span class="index">AGENT 01</span><h3>Аналитик</h3><p>Собирает источники, готовит справки и отмечает непроверенные данные.</p></article>
+      <article class="office-card"><span class="index">AGENT 02</span><h3>Координатор проектов</h3><p>Сводит сроки и статусы, не меняя назначенных ответственных без разрешения.</p></article>
+      <article class="office-card"><span class="index">AGENT 03</span><h3>Документальный помощник</h3><p>Классифицирует документы и подготавливает черновики для проверки человеком.</p></article>
+      <article class="office-card"><span class="index">AGENT 04</span><h3>Монитор безопасности</h3><p>Выявляет сигналы риска и передаёт их ответственному, не снимая защитные ограничения.</p></article>
+    </div>
+  </section>
+  <p class="office-footer">ZHAKIN TEAM OFFICE • Интерфейсная версия 0.1. Подключение к реальным источникам, учётным записям, почте, Wallet, биржам и административным операциям не выполняется. Следующий этап — согласование модели данных, ролей, источников статусов и журнала аудита, затем отдельные интеграционные тесты.</p>
+</main>
+<footer class="site-footer"><div class="footer-container"><p>© 2026 Даниил Жакин • ZHAKIN TEAM</p><p><a href="/">Главная</a> • <a href="/privacy.html">Политика конфиденциальности</a> • <a href="/legal.html">Правовая информация</a></p></div></footer>
+<script src="/assets/js/main.js?v=20261115-office-ui-1"></script>
+</body>
+</html>
