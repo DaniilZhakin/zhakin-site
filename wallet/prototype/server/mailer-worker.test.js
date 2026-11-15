@@ -56,6 +56,7 @@ test("rejects wrong path, method, content type and malformed JSON", async () => 
   assert.equal((await mailer.fetch(new Request("https://mailer.internal/other", { method: "POST" }))).status, 404);
   assert.equal((await mailer.fetch(new Request("https://mailer.internal/v1/otp", { method: "GET" }))).status, 405);
   assert.equal((await mailer.fetch(request("{}", { headers: { "content-type": "text/plain" } }))).status, 415);
+  assert.equal((await mailer.fetch(request("{}", { headers: { "content-type": "application/jsonp" } }))).status, 415);
   assert.equal((await mailer.fetch(request("{"))).status, 400);
   assert.equal(calls.length, 0);
 });
@@ -71,6 +72,17 @@ test("rejects malformed, extra, expired and overlong OTP payloads", async () => 
   ];
   for (const value of bad) assert.equal((await mailer.fetch(request(value))).status, 400);
   assert.equal(calls.length, 0);
+});
+
+test("rejects malformed Content-Length and releases the request body lock", async () => {
+  const { mailer } = setup();
+  const invalid = request(validPayload(), { headers: {
+    "content-type": "application/json", "content-length": "-1",
+  } });
+  assert.equal((await mailer.fetch(invalid)).status, 400);
+  const valid = request(validPayload());
+  assert.equal((await mailer.fetch(valid)).status, 202);
+  assert.equal(valid.body.locked, false);
 });
 
 test("rejects request bodies larger than 2 KiB", async () => {
