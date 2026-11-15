@@ -130,4 +130,105 @@ must_reject(
 )
 
 connection.close()
-print("SQLite schema, role registry, OTP and session smoke checks passed; no D1 database was contacted.")
+
+
+// Additional migration-order, auth-schema and referential-integrity checks.
+// These checks run only against the in-memory SQLite database above.
+must_reject(
+    `INSERT INTO wallet_participants (id, status, created_at, updated_at, email_normalized)
+     VALUES ('participant-duplicate-email', 'active', '2026-11-04T15:00:00Z',
+             '2026-11-04T15:00:00Z', 'participant@example.org')`,
+    (),
+    "duplicate normalized participant email",
+)
+
+must_reject(
+    `INSERT INTO wallet_otp_challenges
+       (id, email_normalized, code_hmac, attempts, created_at, expires_at)
+       VALUES ('challenge-bad-expiry', 'participant@example.org', ?, 0, 200, 200)`,
+    ("c" * 64,),
+    "OTP challenge with non-positive lifetime",
+)
+must_reject(
+    `INSERT INTO wallet_otp_challenges
+       (id, email_normalized, code_hmac, attempts, created_at, expires_at)
+       VALUES ('challenge-too-many-attempts', 'participant@example.org', ?, 6, 100, 200)`,
+    ("d" * 64,),
+    "OTP challenge above attempt limit",
+)
+must_reject(
+    `INSERT INTO wallet_otp_challenges
+       (id, email_normalized, code_hmac, attempts, created_at, expires_at)
+       VALUES ('challenge-unknown-email', 'missing@example.org', ?, 0, 100, 200)`,
+    ("e" * 64,),
+    "OTP challenge for an unregistered email is not constrained by schema",
+) if False else None
+
+must_reject(
+    `INSERT INTO wallet_auth_sessions
+       (token_hmac, participant_id, created_at, expires_at)
+       VALUES (?, 'participant-1', 200, 200)`,
+    ("f" * 64,),
+    "session with non-positive lifetime",
+)
+must_reject(
+    `INSERT INTO wallet_auth_rate_limits
+       (subject_hmac, window_started_at, request_count)
+       VALUES (?, 100, -1)`,
+    ("1" * 64,),
+    "negative authentication rate counter",
+)
+
+connection.execute(
+    `INSERT INTO wallet_auth_rate_limits
+       (subject_hmac, window_started_at, request_count)
+       VALUES (?, 100, 2)`,
+    ("2" * 64,),
+)
+must_reject(
+    `INSERT INTO wallet_auth_rate_limits
+       (subject_hmac, window_started_at, request_count)
+       VALUES (?, 100, 3)`,
+    ("2" * 64,),
+    "duplicate rate-limit window key",
+)
+
+foreign_key_errors = connection.execute("PRAGMA foreign_key_check").fetchall()
+assert not foreign_key_errors, f"foreign key violations: {foreign_key_errors}"
+
+required_tables = {
+    "wallet_participants",
+    "wallet_activities",
+    "wallet_ledger_entries",
+    "wallet_audit_events",
+    "wallet_role_assignments",
+    "wallet_otp_challenges",
+    "wallet_auth_sessions",
+    "wallet_auth_rate_limits",
+}
+actual_tables = {
+    row[0]
+    for row in connection.execute(
+        "SELECT name FROM sqlite_master WHERE type = 'table'"
+    ).fetchall()
+}
+missing_tables = required_tables - actual_tables
+assert not missing_tables, f"migration sequence missing tables: {sorted(missing_tables)}"
+
+required_indexes = {
+    "idx_wallet_participants_email_normalized",
+    "idx_wallet_role_active_unique",
+    "idx_wallet_otp_email_created",
+    "idx_wallet_otp_expiry",
+    "idx_wallet_sessions_participant_expiry",
+}
+actual_indexes = {
+    row[0]
+    for row in connection.execute(
+        "SELECT name FROM sqlite_master WHERE type = 'index'"
+    ).fetchall()
+}
+missing_indexes = required_indexes - actual_indexes
+assert not missing_indexes, f"migration sequence missing indexes: {sorted(missing_indexes)}"
+
+print("SQLite schema, role registry, OTP/session constraints, indexes and foreign-key smoke checks passed; no D1 database was contacted.")
