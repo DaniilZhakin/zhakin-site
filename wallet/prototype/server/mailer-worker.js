@@ -19,11 +19,17 @@ function json(status, body) {
 }
 
 async function readBoundedJson(request) {
-  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+  const contentType = request.headers.get("content-type") || "";
+  if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
     return { ok: false, status: 415 };
   }
-  const declared = Number(request.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) return { ok: false, status: 413 };
+  const declaredHeader = request.headers.get("content-length");
+  if (declaredHeader !== null) {
+    if (!/^\d+$/.test(declaredHeader)) return { ok: false, status: 400 };
+    const declared = Number(declaredHeader);
+    if (!Number.isSafeInteger(declared)) return { ok: false, status: 400 };
+    if (declared > MAX_BODY_BYTES) return { ok: false, status: 413 };
+  }
   if (!request.body) return { ok: false, status: 400 };
   const reader = request.body.getReader();
   const chunks = [];
@@ -41,6 +47,8 @@ async function readBoundedJson(request) {
     }
   } catch {
     return { ok: false, status: 400 };
+  } finally {
+    reader.releaseLock();
   }
   const bytes = new Uint8Array(size);
   let offset = 0;

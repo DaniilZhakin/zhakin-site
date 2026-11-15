@@ -56,6 +56,7 @@ test("rejects wrong path, method, content type and malformed JSON", async () => 
   assert.equal((await mailer.fetch(new Request("https://mailer.internal/other", { method: "POST" }))).status, 404);
   assert.equal((await mailer.fetch(new Request("https://mailer.internal/v1/otp", { method: "GET" }))).status, 405);
   assert.equal((await mailer.fetch(request("{}", { headers: { "content-type": "text/plain" } }))).status, 415);
+  assert.equal((await mailer.fetch(request("{}", { headers: { "content-type": "application/jsonp" } }))).status, 415);
   assert.equal((await mailer.fetch(request("{"))).status, 400);
   assert.equal(calls.length, 0);
 });
@@ -71,6 +72,43 @@ test("rejects malformed, extra, expired and overlong OTP payloads", async () => 
   ];
   for (const value of bad) assert.equal((await mailer.fetch(request(value))).status, 400);
   assert.equal(calls.length, 0);
+});
+
+test("validates declared Content-Length and releases the request body lock", async () => {
+  const { mailer } = setup();
+  for (const value of ["-1", "1.5", "9007199254740992"]) {
+    const invalid = request(validPayload(), { headers: {
+      "content-type": "application/json", "content-length": value,
+    } });
+    assert.equal((await mailer.fetch(invalid)).status, 400);
+  }
+  const oversized = request("{}", { headers: {
+    "content-type": "application/json", "content-length": "2049",
+  } });
+  assert.equal((await mailer.fetch(oversized)).status, 413);
+
+  const valid = request(validPayload(), { headers: {
+    "content-type": "application/json; charset=utf-8",
+  } });
+  assert.equal((await mailer.fetch(valid)).status, 202);
+  assert.equal(valid.body.locked, false);
+});
+
+test("releases the request body lock when stream reading fails", async () => {
+  const { mailer } = setup();
+  const body = new ReadableStream({
+    pull(controller) {
+      controller.error(new Error("private stream failure"));
+    },
+  });
+  const failed = new Request("https://mailer.internal/v1/otp", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body,
+    duplex: "half",
+  });
+  assert.equal((await mailer.fetch(failed)).status, 400);
+  assert.equal(failed.body.locked, false);
 });
 
 test("rejects request bodies larger than 2 KiB", async () => {
