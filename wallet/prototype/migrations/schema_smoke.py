@@ -221,5 +221,110 @@ actual_indexes = {
 missing_indexes = required_indexes - actual_indexes
 assert not missing_indexes, f"migration sequence missing indexes: {sorted(missing_indexes)}"
 
+
+
+# Execute the same SQL shapes used by d1-auth-repository.js against SQLite.
+# This verifies query semantics, not Cloudflare D1 runtime or concurrency behavior.
+RATE_WINDOW_MS = 15 * 60 * 1000
+EMAIL_REQUEST_LIMIT = 3
+SOURCE_REQUEST_LIMIT = 10
+rate_sql = (
+    "INSERT INTO wallet_auth_rate_limits "
+    "(subject_hmac, window_started_at, request_count) "
+    "SELECT subjects.subject_hmac, ?, 1 "
+    "FROM (SELECT ? AS subject_hmac UNION ALL SELECT ?) AS subjects "
+    "WHERE NOT EXISTS ("
+    "SELECT 1 FROM wallet_auth_rate_limits existing "
+    "WHERE existing.window_started_at = ? AND ("
+    "(existing.subject_hmac = ? AND existing.request_count >= ?) OR "
+    "(existing.subject_hmac = ? AND existing.request_count >= ?))) "
+    "ON CONFLICT(subject_hmac, window_started_at) DO UPDATE SET "
+    "request_count = request_count + 1 RETURNING subject_hmac"
+)
+
+def attempt_rate_window(email_key, source_key, timestamp):
+    window = (timestamp // RATE_WINDOW_MS) * RATE_WINDOW_MS
+    rows = connection.execute(
+        rate_sql,
+        (window, email_key, source_key, window,
+         email_key, EMAIL_REQUEST_LIMIT, source_key, SOURCE_REQUEST_LIMIT),
+    ).fetchall()
+    return len(rows) == 2
+
+rate_time = 1_800_000_000_000
+email_subject = "e" * 64
+source_subject = "s" * 64
+assert attempt_rate_window(email_subject, source_subject, rate_time)
+assert attempt_rate_window(email_subject, source_subject, rate_time + 1)
+assert attempt_rate_window(email_subject, source_subject, rate_time + 2)
+assert not attempt_rate_window(email_subject, source_subject, rate_time + 3)
+rate_window = (rate_time // RATE_WINDOW_MS) * RATE_WINDOW_MS
+email_count = connection.execute(
+    "SELECT request_count FROM wallet_auth_rate_limits "
+    "WHERE subject_hmac = ? AND window_started_at = ?",
+    (email_subject, rate_window),
+).fetchone()[0]
+source_count = connection.execute(
+    "SELECT request_count FROM wallet_auth_rate_limits "
+    "WHERE subject_hmac = ? AND window_started_at = ?",
+    (source_subject, rate_window),
+).fetchone()[0]
+assert email_count == 3 and source_count == 3, (
+    f"rate-limit threshold changed counters unexpectedly: {email_count}, {source_count}"
+)
+
+# Verify the source-level limit independently while each email subject is new.
+shared_source = "t" * 64
+for index in range(SOURCE_REQUEST_LIMIT):
+    unique_email = format(index + 1, "064x")
+    assert attempt_rate_window(unique_email, shared_source, rate_time)
+assert not attempt_rate_window("f" * 64, shared_source, rate_time)
+source_count = connection.execute(
+    "SELECT request_count FROM wallet_auth_rate_limits "
+    "WHERE subject_hmac = ? AND window_started_at = ?",
+    (shared_source, rate_window),
+).fetchone()[0]
+assert source_count == SOURCE_REQUEST_LIMIT, (
+    f"source rate-limit threshold changed unexpectedly: {source_count}"
+)
+
+consume_sql = (
+    "UPDATE wallet_otp_challenges SET "
+    "attempts = attempts + 1, "
+    "consumed_at = CASE WHEN code_hmac = ? THEN ? ELSE consumed_at END "
+    "WHERE id = ? AND revoked_at IS NULL AND consumed_at IS NULL "
+    "AND expires_at > ? AND attempts < ? "
+    "RETURNING CASE WHEN code_hmac = ? THEN email_normalized ELSE NULL END AS email"
+)
+consumed = connection.execute(
+    consume_sql, ("b" * 64, 150, "challenge-1", 150, 5, "b" * 64)
+).fetchone()
+assert consumed == ("participant@example.org",), f"valid OTP not consumed: {consumed}"
+replayed = connection.execute(
+    consume_sql, ("b" * 64, 151, "challenge-1", 151, 5, "b" * 64)
+).fetchone()
+assert replayed is None, f"replayed OTP was accepted: {replayed}"
+
+connection.execute(
+    "INSERT INTO wallet_otp_challenges "
+    "(id, email_normalized, code_hmac, attempts, created_at, expires_at) "
+    "VALUES ('challenge-wrong-attempts', 'participant@example.org', ?, 0, 100, 300)",
+    ("c" * 64,),
+)
+for attempt in range(5):
+    wrong = connection.execute(
+        consume_sql, ("d" * 64, 160 + attempt, "challenge-wrong-attempts",
+                      160 + attempt, 5, "d" * 64)
+    ).fetchone()
+    assert wrong is None, f"wrong OTP unexpectedly authenticated on attempt {attempt + 1}"
+attempts = connection.execute(
+    "SELECT attempts FROM wallet_otp_challenges WHERE id = 'challenge-wrong-attempts'"
+).fetchone()[0]
+assert attempts == 5, f"failed OTP attempts not counted: {attempts}"
+exhausted = connection.execute(
+    consume_sql, ("c" * 64, 170, "challenge-wrong-attempts", 170, 5, "c" * 64)
+).fetchone()
+assert exhausted is None, f"OTP authenticated after attempt limit: {exhausted}"
+
 connection.close()
-print("SQLite schema, role registry, OTP/session constraints, indexes and foreign-key smoke checks passed; no D1 database was contacted.")
+print("SQLite schema, constraints, rate-limit query semantics, OTP replay/attempt semantics, indexes and foreign-key smoke checks passed; no D1 database was contacted.")
