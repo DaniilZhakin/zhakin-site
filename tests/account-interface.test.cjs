@@ -26,7 +26,7 @@ test('account preserves human approval and scoped access boundaries', () => {
 });
 
 test('account links only to existing public site sections', () => {
-  for (const route of ['/wallet.html', '/intelligence.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html']) {
+  for (const route of ['/wallet.html', '/intelligence.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html', '/office.html']) {
     assert.ok(html.includes(route), `missing route: ${route}`);
   }
 });
