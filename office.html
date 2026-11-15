@@ -39,7 +39,26 @@
     .office-list strong{display:block;color:#eee6ce;font-weight:650}
     .office-list small{display:block;margin-top:3px;color:#87978d;font-size:.7rem}
     .office-list em{align-self:center;color:#d9c88e;font-size:.65rem;font-style:normal;text-transform:uppercase;white-space:nowrap}
-    .office-guardrails{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+
+    .office-register{overflow:hidden;border:1px solid var(--of-line);border-radius:10px;background:rgba(9,29,22,.82)}
+    .office-register-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .office-register-head strong{color:#eee6ce;font-size:.88rem}
+    .office-register-head span{color:#91a197;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase}
+    .office-table-wrap{overflow-x:auto}
+    .office-table{width:100%;border-collapse:collapse;min-width:650px;text-align:left}
+    .office-table th,.office-table td{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.07);font-size:.75rem}
+    .office-table th{color:#c9b36f;font-weight:650;letter-spacing:.06em;text-transform:uppercase}
+    .office-table td{color:#c4cec5}
+    .office-empty{padding:25px 18px!important;text-align:center!important;color:#aebbb2!important;line-height:1.7}
+    .office-empty strong{display:block;margin-bottom:5px;color:#eee6ce}
+    .office-register-note{padding:12px 16px;color:#87978d;font-size:.7rem;line-height:1.65}
+    .office-record-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:13px}
+    .office-record{padding:17px;border:1px solid rgba(212,175,55,.17);background:rgba(16,40,32,.48)}
+    .office-record span{display:block;margin-bottom:8px;color:#c9b36f;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+    .office-record strong{display:block;margin-bottom:6px;color:#eee6ce;font-size:.83rem}
+    .office-record p{margin:0;color:var(--of-muted);font-size:.73rem;line-height:1.65}
+    @media(max-width:680px){.office-record-grid{grid-template-columns:1fr}.office-register-head{align-items:flex-start;flex-direction:column}}
+\n    .office-guardrails{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
     .office-guardrails article{padding:18px;border-top:1px solid var(--of-gold);background:rgba(16,40,32,.55)}
     .office-guardrails h3{margin:0 0 7px;color:#eee6ce;font-size:.9rem}
     .office-guardrails p{margin:0;color:var(--of-muted);font-size:.77rem;line-height:1.7}
@@ -104,6 +123,26 @@
           <li><span><strong>Роли и журнал аудита</strong><small>Серверная выдача прав, проектные области и журналирование</small></span><em>Требует проверки</em></li>
         </ul>
       </article>
+    </div>
+  </section>
+
+
+  <section class="office-section" aria-labelledby="tasks-title">
+    <div class="office-section-head"><h2 id="tasks-title">Реестр поручений и решений</h2><span>Структура будущего учёта</span></div>
+    <div class="office-register" aria-describedby="tasks-register-note">
+      <div class="office-register-head"><strong>Поручения и контроль исполнения</strong><span>Нет подключённого реестра</span></div>
+      <div class="office-table-wrap">
+        <table class="office-table">
+          <thead><tr><th scope="col">Поручение</th><th scope="col">Ответственный</th><th scope="col">Срок</th><th scope="col">Статус</th></tr></thead>
+          <tbody><tr><td class="office-empty" colspan="4"><strong>Реестр пока не подключён</strong>Здесь появятся только подтверждённые поручения из защищённого источника. Демонстрационные записи не создаются.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="office-register-note" id="tasks-register-note">Для каждой записи обязательны: уникальный ID, формулировка результата, инициатор, ответственный, срок, приоритет, основание, статус, дата последнего изменения и ссылка на подтверждающий материал.</div>
+    </div>
+    <div class="office-record-grid">
+      <article class="office-record"><span>01 / Decision log</span><strong>Журнал решений</strong><p>Решение, дата, уполномоченное лицо, основание, область действия и статус исполнения.</p></article>
+      <article class="office-record"><span>02 / Approval flow</span><strong>Маршрут согласования</strong><p>Черновик → проверка данных → согласование ответственного → подтверждение руководителя → запись результата.</p></article>
+      <article class="office-record"><span>03 / Governance trace</span><strong>Контрольный след</strong><p>Кто инициировал действие, какие права применялись, что проверено и чем завершилась операция.</p></article>
     </div>
   </section>
 
