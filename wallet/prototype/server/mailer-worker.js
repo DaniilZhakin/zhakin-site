@@ -20,12 +20,12 @@ function json(status, body) {
 
 async function readBoundedJson(request) {
   const contentType = request.headers.get("content-type") || "";
-  if (!/^application\\/json(?:\\s*;|$)/i.test(contentType)) {
+  if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
     return { ok: false, status: 415 };
   }
   const declaredHeader = request.headers.get("content-length");
   if (declaredHeader !== null) {
-    if (!/^\\d+$/.test(declaredHeader)) return { ok: false, status: 400 };
+    if (!/^\d+$/.test(declaredHeader)) return { ok: false, status: 400 };
     const declared = Number(declaredHeader);
     if (!Number.isSafeInteger(declared)) return { ok: false, status: 400 };
     if (declared > MAX_BODY_BYTES) return { ok: false, status: 413 };
