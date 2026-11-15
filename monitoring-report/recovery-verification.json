@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-11-14T13:47:31Z",
+  "timestamp": "2026-11-15T14:18:39Z",
   "site": "https://xn--80alhhq.xn--p1ai",
-  "recovery_state": "verification",
-  "verification_state": "verified",
-  "verdict": "Recovery verified: production SEO surface is healthy.",
+  "recovery_state": "stable",
+  "verification_state": "stable",
+  "verdict": "Stable: production SEO surface is healthy.",
   "checks": [
     {
       "name": "robots.txt",
       "ok": true,
-      "response_time_ms": 440,
+      "response_time_ms": 391,
       "error": ""
     },
     {
       "name": "sitemap.xml",
       "ok": true,
-      "response_time_ms": 588,
+      "response_time_ms": 456,
       "url_count": 55,
       "error": ""
     },
