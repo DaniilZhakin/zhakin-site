@@ -316,7 +316,7 @@ for attempt in range(5):
         consume_sql, ("d" * 64, 160 + attempt, "challenge-wrong-attempts",
                       160 + attempt, 5, "d" * 64)
     ).fetchone()
-    assert wrong is None, f"wrong OTP unexpectedly authenticated on attempt {attempt + 1}"
+    assert wrong == (None,), f"wrong OTP returned an unexpected identity on attempt {attempt + 1}: {wrong}"
 attempts = connection.execute(
     "SELECT attempts FROM wallet_otp_challenges WHERE id = 'challenge-wrong-attempts'"
 ).fetchone()[0]
