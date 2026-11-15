@@ -9,7 +9,11 @@ import sqlite3
 schema_path = Path(__file__).with_name("0001_wallet_schema.sql")
 connection = sqlite3.connect(":memory:")
 connection.execute("PRAGMA foreign_keys = ON")
-connection.executescript(schema_path.read_text(encoding="utf-8"))
+base_schema = schema_path.read_text(encoding="utf-8")
+assert "PRAGMA foreign_keys" not in base_schema.upper(), (
+    "base migration must rely on D1-enforced foreign keys, not toggle PRAGMA"
+)
+connection.executescript(base_schema)
 role_schema_path = schema_path.with_name("0002_wallet_role_assignments.sql")
 connection.executescript(role_schema_path.read_text(encoding="utf-8"))
 otp_schema_path = schema_path.with_name("0003_wallet_email_otp.sql")
