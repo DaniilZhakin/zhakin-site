@@ -77,3 +77,9 @@ test('office task register and decision governance have explicit empty-state bou
   assert.match(office, /Контрольный след/);
   assert.match(office, /только подтверждённые поручения из защищённого источника/);
 });
+
+
+test('office inline stylesheet has no escaped newline artifacts', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.doesNotMatch(office, /\\\\n\\s*\\.office-/);
+});
