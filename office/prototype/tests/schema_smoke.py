@@ -87,6 +87,16 @@ def main():
                    'role_coordinator', 'user-b', '2026-11-16T00:00:00Z')""",
     )
 
+    # A user cannot grant a role to themselves.
+    expect_integrity_error(
+        db,
+        """INSERT INTO office_user_role_scopes
+           (id, user_id, organization_id, project_id, role_id,
+            granted_by_user_id, valid_from)
+           VALUES ('grant-self', 'user-a', 'org-a', 'project-a',
+                   'role_coordinator', 'user-a', '2026-11-16T00:00:00Z')""",
+    )
+
     # Initiator cannot be their own approver.
     expect_integrity_error(
         db,
@@ -95,6 +105,24 @@ def main():
             action, requested_by_user_id, approver_user_id)
            VALUES ('approval-self', 'org-a', 'decision', 'decision-a', 1,
                    'approve', 'user-a', 'user-a')""",
+    )
+
+    # Approval state must agree with action and have a decision timestamp.
+    expect_integrity_error(
+        db,
+        """INSERT INTO office_approval_requests
+           (id, organization_id, object_type, object_id, object_version,
+            action, requested_by_user_id, approver_user_id, status)
+           VALUES ('approval-undated', 'org-a', 'decision', 'decision-a', 1,
+                   'approve', 'user-a', 'user-b', 'approved')""",
+    )
+    expect_integrity_error(
+        db,
+        """INSERT INTO office_approval_requests
+           (id, organization_id, object_type, object_id, object_version,
+            action, requested_by_user_id, approver_user_id, status, decided_at)
+           VALUES ('approval-mismatch', 'org-a', 'decision', 'decision-a', 1,
+                   'reject', 'user-a', 'user-b', 'approved', '2026-11-16T00:00:00Z')""",
     )
 
     # A completed task must carry a completion timestamp.
@@ -122,7 +150,7 @@ def main():
     print("OFFICE_DB schema smoke test: PASS")
     print(f"Tables verified: {len(required)}")
     print("Constraints verified: identity uniqueness, verified-email uniqueness, "
-          "organization/project isolation, role scope, separation of duties, "
+          "organization/project isolation, role scope, no self-grants, approval-state integrity, separation of duties, "
           "task completion, append-only audit, foreign keys")
 
 
