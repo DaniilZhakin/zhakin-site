@@ -125,6 +125,18 @@ export function createRobotExecutionGateway({ db, verifyCredential, clock = () =
       const row = await resolveAuthorizedTask({
         bearerToken, taskId, capability: CAP_READ,
       });
+      const requestId = createId();
+      const now = clock().toISOString();
+      // Reads are audited too; if audit persistence fails, return no task data.
+      await db.prepare(`
+        INSERT INTO office_robot_audit_events
+          (id, organization_id, project_id, service_principal_id, capability_code,
+           action, object_type, object_id, request_id, idempotency_key, outcome, reason_code, created_at)
+        VALUES (?, ?, ?, ?, ?, 'task.read', 'task', ?, ?, ?, 'success', NULL, ?)
+      `).bind(
+        createId(), row.organization_id, row.project_id, row.service_principal_id,
+        CAP_READ, row.task_id, requestId, requestId, now,
+      ).run();
       // Return only task fields needed for work. Never expose principal,
       // credential, grant, storage or cross-tenant metadata.
       return Object.freeze({
