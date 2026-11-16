@@ -1,0 +1,33 @@
+name: ZHAKIN TEAM OFFICE schema checks
+
+on:
+  pull_request:
+    paths:
+      - "office/prototype/migrations/**"
+      - "office/prototype/tests/**"
+      - ".github/workflows/office-schema.yml"
+  push:
+    branches:
+      - "feat/office-db-schema-20261116"
+    paths:
+      - "office/prototype/migrations/**"
+      - "office/prototype/tests/**"
+      - ".github/workflows/office-schema.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  office-schema:
+    name: Validate isolated OFFICE_DB schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run in-memory SQLite schema checks
+        run: python office/prototype/tests/schema_smoke.py
