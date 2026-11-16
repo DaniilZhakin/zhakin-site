@@ -87,3 +87,14 @@ BEFORE DELETE ON office_robot_task_proposals
 BEGIN
   SELECT RAISE(ABORT, 'robot proposals cannot be deleted');
 END;
+
+CREATE TRIGGER IF NOT EXISTS office_robot_proposal_fields_guard
+BEFORE INSERT ON office_robot_task_proposals
+BEGIN
+  SELECT CASE WHEN EXISTS (
+    SELECT 1 FROM json_each(NEW.proposed_changes_json)
+    WHERE key NOT IN ('title', 'description', 'acceptance_criteria')
+       OR type NOT IN ('text', 'null')
+       OR (type = 'text' AND length(value) > 8000)
+  ) THEN RAISE(ABORT, 'robot proposal contains a forbidden field or value') END;
+END;
