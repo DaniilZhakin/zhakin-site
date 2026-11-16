@@ -12,9 +12,12 @@ CREATE TABLE IF NOT EXISTS office_robot_task_proposals (
   service_principal_id TEXT NOT NULL,
   expected_task_version INTEGER NOT NULL CHECK (expected_task_version >= 1),
   proposed_changes_json TEXT NOT NULL CHECK (
-    json_valid(proposed_changes_json)
-    AND json_type(proposed_changes_json) = 'object'
-    AND length(proposed_changes_json) BETWEEN 2 AND 16384
+    CASE
+      WHEN json_valid(proposed_changes_json)
+      THEN json_type(proposed_changes_json) = 'object'
+        AND length(proposed_changes_json) BETWEEN 2 AND 16384
+      ELSE 0
+    END
   ),
   idempotency_key TEXT NOT NULL CHECK (length(trim(idempotency_key)) BETWEEN 1 AND 180),
   request_id TEXT NOT NULL UNIQUE,
@@ -90,6 +93,7 @@ END;
 
 CREATE TRIGGER IF NOT EXISTS office_robot_proposal_fields_guard
 BEFORE INSERT ON office_robot_task_proposals
+WHEN json_valid(NEW.proposed_changes_json)
 BEGIN
   SELECT CASE WHEN EXISTS (
     SELECT 1 FROM json_each(NEW.proposed_changes_json)
