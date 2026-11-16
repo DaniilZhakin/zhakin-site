@@ -3,7 +3,7 @@
 from pathlib import Path
 import sqlite3
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 MIGRATION = ROOT / "migrations" / "0001_office_core.sql"
 
 
