@@ -91,3 +91,14 @@ test('office dashboard scope excludes separate USERDIE project', () => {
   assert.match(office, /Публикации и коммуникации/);
   assert.match(office, /ZHAKIN TEAM/);
 });
+
+
+test('office governance specification keeps identity, sessions and roles isolated from Wallet', () => {
+  const spec = fs.readFileSync('docs/office-data-model.md', 'utf8');
+  assert.match(spec, /wallet_role_assignments/);
+  assert.match(spec, /не универсальная система управления доступом/);
+  assert.match(spec, /OFFICE_DB/);
+  assert.match(spec, /issuer \\+ subject/);
+  assert.match(spec, /Агент\\/робот не получает пользовательскую роль/);
+  assert.match(spec, /инициатор критического решения не может утвердить собственное решение/i);
+});
