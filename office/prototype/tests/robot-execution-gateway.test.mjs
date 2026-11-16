@@ -71,14 +71,15 @@ test("unknown or out-of-scope robot is denied", async () => {
   );
 });
 
-test("caller cannot choose a human or unknown capability", async () => {
+test("caller-supplied capability cannot override the server allowlist", async () => {
+  const db = makeDb(validRow);
   const gateway = createRobotExecutionGateway({
-    db: makeDb(validRow), verifyCredential: async () => ({ issuer: "issuer", subject: "robot" }),
+    db, verifyCredential: async () => ({ issuer: "issuer", subject: "robot" }),
   });
-  await assert.rejects(
-    gateway.readAssignedTask({ bearerToken: "token", taskId: "task-1", capability: "office.admin" }),
-    (error) => error.code === "capability_not_allowlisted",
-  );
+  await gateway.readAssignedTask({
+    bearerToken: "token", taskId: "task-1", capability: "office.admin",
+  });
+  assert.equal(db.calls[0].args[4], "office.task.read_assigned");
 });
 
 test("proposal is pending human review and never updates office_tasks", async () => {
