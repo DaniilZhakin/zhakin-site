@@ -38,5 +38,6 @@ jobs:
           python office/prototype/tests/schema_smoke.py
           python office/prototype/tests/robot_registry_smoke.py
           python office/prototype/tests/robot_proposals_smoke.py
+          python office/prototype/tests/human_approval_smoke.py
       - name: Run Robot Execution Gateway contract tests
         run: node --test office/prototype/tests/robot-execution-gateway.test.mjs
