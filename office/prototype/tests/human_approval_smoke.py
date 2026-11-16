@@ -148,6 +148,29 @@ class HumanApprovalTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute("DELETE FROM office_robot_proposal_approver_scopes WHERE user_id='human-b'")
 
+    def test_accept_review_requires_proposed_values_to_be_applied(self):
+        self.add_proposal()
+        self.add_approver()
+        # A competing update can advance the version without applying the proposal.
+        self.db.execute("""UPDATE office_tasks
+          SET title='Different title',version=version+1 WHERE id='task-a'""")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.add_review("accepted")
+        self.assertEqual(self.db.execute(
+            "SELECT status FROM office_robot_task_proposals WHERE id='proposal-a'"
+        ).fetchone()[0], "pending")
+
+    def test_approver_grant_revocation_is_one_way_and_metadata_immutable(self):
+        self.add_approver()
+        self.db.execute("""UPDATE office_robot_proposal_approver_scopes
+          SET revoked_at=? WHERE user_id='human-b'""", (NOW,))
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("""UPDATE office_robot_proposal_approver_scopes
+              SET revoked_at=NULL WHERE user_id='human-b'""")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("""UPDATE office_robot_proposal_approver_scopes
+              SET created_at='2026-11-17T00:00:00.000Z' WHERE user_id='human-b'""")
+
     def test_foreign_key_check_clean(self):
         self.assertEqual(self.db.execute("PRAGMA foreign_key_check").fetchall(), [])
 
