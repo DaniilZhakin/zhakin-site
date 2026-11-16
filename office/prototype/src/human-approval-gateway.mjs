@@ -79,10 +79,11 @@ export function createHumanApprovalGateway({ db, verifyCredential, clock = () =>
 
       const requestId = makeId();
       const reviewId = makeId();
+      if (row.project_status !== "active" || row.organization_status !== "active") {
+        throw deny("proposal_scope_inactive", 409);
+      }
       const stale = row.current_task_version !== row.expected_task_version
-        || ["done", "cancelled"].includes(row.task_status)
-        || row.project_status !== "active"
-        || row.organization_status !== "active";
+        || ["done", "cancelled"].includes(row.task_status);
       const outcome = stale ? "stale" : (action === "accept" ? "accepted" : "rejected");
 
       const statements = [];
