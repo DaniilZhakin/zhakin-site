@@ -29,7 +29,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Run in-memory SQLite schema checks
         run: |
           python office/prototype/tests/schema_smoke.py
           python office/prototype/tests/robot_registry_smoke.py
+          python office/prototype/tests/robot_proposals_smoke.py
+      - name: Run Robot Execution Gateway contract tests
+        run: node --test office/prototype/tests/robot-execution-gateway.test.mjs
