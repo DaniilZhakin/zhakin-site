@@ -13,6 +13,7 @@ function makeDb(row = null) {
             sql,
             args,
             async first() { calls.push({ kind: "first", sql, args }); return row; },
+            async run() { calls.push({ kind: "run", sql, args }); return { success: true }; },
           };
         },
       };
