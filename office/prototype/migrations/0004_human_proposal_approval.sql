@@ -35,6 +35,15 @@ BEGIN
   SELECT RAISE(ABORT, 'approver grants cannot be deleted; revoke them instead');
 END;
 
+CREATE TRIGGER IF NOT EXISTS office_robot_approver_scope_revoke_once
+BEFORE UPDATE ON office_robot_proposal_approver_scopes
+WHEN OLD.revoked_at IS NOT NULL
+  OR NEW.revoked_at IS NULL
+  OR NEW.created_at != OLD.created_at
+BEGIN
+  SELECT RAISE(ABORT, 'approver grants may only be revoked once; metadata is immutable');
+END;
+
 CREATE TRIGGER IF NOT EXISTS office_robot_approver_scope_identity_immutable
 BEFORE UPDATE ON office_robot_proposal_approver_scopes
 WHEN NEW.user_id != OLD.user_id
@@ -99,7 +108,13 @@ BEGIN
       AND o.status = 'active'
       AND (
         (NEW.action = 'accepted' AND t.version = p.expected_task_version + 1
-          AND t.status NOT IN ('done', 'cancelled'))
+          AND t.status NOT IN ('done', 'cancelled')
+          AND (json_type(p.proposed_changes_json, '$.title') IS NULL
+            OR t.title IS json_extract(p.proposed_changes_json, '$.title'))
+          AND (json_type(p.proposed_changes_json, '$.description') IS NULL
+            OR t.description IS json_extract(p.proposed_changes_json, '$.description'))
+          AND (json_type(p.proposed_changes_json, '$.acceptance_criteria') IS NULL
+            OR t.acceptance_criteria IS json_extract(p.proposed_changes_json, '$.acceptance_criteria')))
         OR (NEW.action = 'rejected')
         OR (NEW.action = 'stale' AND (
           t.version != p.expected_task_version
