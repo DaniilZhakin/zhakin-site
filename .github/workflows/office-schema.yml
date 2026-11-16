@@ -30,4 +30,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run in-memory SQLite schema checks
-        run: python office/prototype/tests/schema_smoke.py
+        run: |
+          python office/prototype/tests/schema_smoke.py
+          python office/prototype/tests/robot_registry_smoke.py
