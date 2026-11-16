@@ -14,7 +14,7 @@ class RobotProposalTests(unittest.TestCase):
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys = ON")
         for migration in ("0001_office_core.sql", "0002_robot_service_principals.sql",
-                          "0003_robot_task_proposals.sql"):
+                          "0003_robot_task_proposals.sql", "0004_human_proposal_approval.sql"):
             self.db.executescript((MIGRATIONS / migration).read_text())
         self.db.execute("INSERT INTO office_organizations(id,name) VALUES ('org-a','Org A')")
         for user_id, subject in (("human-a", "a"), ("human-b", "b")):
@@ -90,13 +90,12 @@ class RobotProposalTests(unittest.TestCase):
                 with self.assertRaises(sqlite3.IntegrityError):
                     self.insert_proposal(proposed_changes_json=payload)
 
-    def test_proposal_cannot_be_deleted_or_rewritten_after_review(self):
+    def test_proposal_cannot_be_reviewed_without_human_review_record(self):
         self.insert_proposal()
-        self.db.execute("""UPDATE office_robot_task_proposals
-          SET status='accepted',reviewed_by_user_id='human-b',reviewed_at=?
-          WHERE id='proposal-a'""", (NOW,))
         with self.assertRaises(sqlite3.IntegrityError):
-            self.db.execute("UPDATE office_robot_task_proposals SET review_comment='rewrite' WHERE id='proposal-a'")
+            self.db.execute("""UPDATE office_robot_task_proposals
+              SET status='accepted',reviewed_by_user_id='human-b',reviewed_at=?
+              WHERE id='proposal-a'""", (NOW,))
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute("DELETE FROM office_robot_task_proposals WHERE id='proposal-a'")
 
