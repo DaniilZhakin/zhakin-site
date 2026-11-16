@@ -57,8 +57,10 @@ test("read returns minimized assigned task context", async () => {
     acceptanceCriteria: null, status: "in_progress", version: 4,
   });
   assert.equal(Object.hasOwn(result, "service_principal_id"), false);
-  assert.match(db.calls[0].sql, /sp.identity_issuer = ?/);
-  assert.match(db.calls[0].sql, /cs.task_id = ?/);
+  assert.match(db.calls[0].sql, /sp\\.identity_issuer = \\?/);
+  assert.match(db.calls[0].sql, /cs\\.task_id = \\?/);
+  assert.equal(db.calls.filter((call) => call.kind === "run").length, 1);
+  assert.match(db.calls.find((call) => call.kind === "run").sql, /INSERT INTO office_robot_audit_events/);
 });
 
 test("unknown or out-of-scope robot is denied", async () => {
