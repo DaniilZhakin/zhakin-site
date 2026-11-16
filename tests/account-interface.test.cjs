@@ -98,7 +98,7 @@ test('office governance specification keeps identity, sessions and roles isolate
   assert.match(spec, /wallet_role_assignments/);
   assert.match(spec, /не универсальная система управления доступом/);
   assert.match(spec, /OFFICE_DB/);
-  assert.match(spec, /issuer \\+ subject/);
-  assert.match(spec, /Агент\\/робот не получает пользовательскую роль/);
-  assert.match(spec, /инициатор критического решения не может утвердить собственное решение/i);
+  assert.ok(spec.includes('issuer + subject'));
+  assert.ok(spec.includes('Агент/робот не получает пользовательскую роль'));
+  assert.ok(spec.toLowerCase().includes('инициатор критического решения не может утвердить собственное решение'));
 });
