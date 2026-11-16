@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS office_user_role_scopes (
   FOREIGN KEY (project_id, organization_id) REFERENCES office_projects(id, organization_id) ON DELETE RESTRICT,
   FOREIGN KEY (role_id) REFERENCES office_roles(id) ON DELETE RESTRICT,
   FOREIGN KEY (granted_by_user_id) REFERENCES office_users(id) ON DELETE RESTRICT,
+  CHECK (granted_by_user_id != user_id),
   CHECK (valid_until IS NULL OR valid_until > valid_from),
   CHECK (revoked_at IS NULL OR revoked_at >= valid_from)
 );
@@ -159,7 +160,12 @@ CREATE TABLE IF NOT EXISTS office_approval_requests (
   FOREIGN KEY (requested_by_user_id) REFERENCES office_users(id) ON DELETE RESTRICT,
   FOREIGN KEY (approver_user_id) REFERENCES office_users(id) ON DELETE RESTRICT,
   CHECK (requested_by_user_id != approver_user_id),
-  CHECK ((status = 'pending' AND decided_at IS NULL) OR status != 'pending')
+  CHECK (
+    (status = 'pending' AND decided_at IS NULL)
+    OR (status IN ('approved', 'rejected', 'cancelled', 'stale') AND decided_at IS NOT NULL)
+  ),
+  CHECK (status != 'approved' OR action = 'approve'),
+  CHECK (status != 'rejected' OR action = 'reject')
 );
 
 CREATE INDEX IF NOT EXISTS office_approvals_inbox_idx
