@@ -83,3 +83,11 @@ test('office inline stylesheet has no escaped newline artifacts', () => {
   const office = fs.readFileSync('office.html', 'utf8');
   assert.doesNotMatch(office, /\\\\n\\s*\\.office-/);
 });
+
+
+test('office dashboard scope excludes separate USERDIE project', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.doesNotMatch(office, /USERDIE|УСЕРДИЕ|userdiye/i);
+  assert.match(office, /Публикации и коммуникации/);
+  assert.match(office, /ZHAKIN TEAM/);
+});
