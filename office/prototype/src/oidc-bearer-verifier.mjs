@@ -55,6 +55,53 @@ function validHttpsUrl(value) {
   }
 }
 
+async function readBoundedBody(response, maxBytes) {
+  const declaredLength = Number(response.headers?.get?.("content-length"));
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    throw authError("identity_keys_invalid");
+  }
+  if (!response.body || typeof response.body.getReader !== "function") {
+    throw authError("identity_keys_invalid");
+  }
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        throw authError("identity_keys_invalid");
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    throw authError("identity_keys_invalid");
+  }
+}
+
+function hasAtLeast2048BitModulus(encodedModulus) {
+  try {
+    const modulus = decodeBase64Url(encodedModulus);
+    return modulus.length > 256 || (modulus.length === 256 && (modulus[0] & 0x80) !== 0);
+  } catch {
+    return false;
+  }
+}
+
 export function createOidcBearerVerifier({
   issuer,
   audience,
@@ -80,18 +127,22 @@ export function createOidcBearerVerifier({
     if (inflight) return inflight;
     inflight = (async () => {
       let response;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
       try {
         response = await fetchImpl(jwksUrl, {
           method: "GET",
           redirect: "error",
+          signal: controller.signal,
           headers: { accept: "application/json" },
         });
       } catch {
         throw authError("identity_keys_unavailable");
+      } finally {
+        clearTimeout(timeout);
       }
       if (!response?.ok) throw authError("identity_keys_unavailable");
-      const body = await response.text();
-      if (body.length > MAX_JWKS_BYTES) throw authError("identity_keys_invalid");
+      const body = await readBoundedBody(response, MAX_JWKS_BYTES);
       let parsed;
       try { parsed = JSON.parse(body); } catch { throw authError("identity_keys_invalid"); }
       if (!parsed || !Array.isArray(parsed.keys) || parsed.keys.length < 1
@@ -100,7 +151,8 @@ export function createOidcBearerVerifier({
         && key.use === "sig" && key.alg === "RS256"
         && typeof key.kid === "string" && key.kid.length > 0
         && typeof key.n === "string" && typeof key.e === "string"
-        && decodeBase64Url(key.n).length >= 256
+        && hasAtLeast2048BitModulus(key.n)
+        && decodeBase64Url(key.n).length <= 512
         && decodeBase64Url(key.e).length <= 4);
       if (!usable.length) throw authError("identity_keys_invalid");
       cachedKeys = usable;
