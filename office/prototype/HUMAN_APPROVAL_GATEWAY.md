@@ -59,3 +59,17 @@ Important limits:
 - The module is not connected to a Worker route and has no production issuer, audience, JWKS endpoint, or revocation store configured.
 - JWKS cache lifetime is five minutes by default; immediate key-compromise response requires an operational cache invalidation/redeployment strategy.
 - Never accept decoded JWT claims from another component as a substitute for this verifier.
+
+
+## Human Approval HTTP boundary (isolated; not deployed)
+
+`src/human-approval-http-boundary.mjs` adds a browser-facing handler factory without binding it to a Worker route. It requires an injected Human Approval Gateway, an explicit HTTPS origin allowlist, and an injected distributed rate limiter; no in-memory limiter or default origin is provided.
+
+Controls implemented:
+- exact Origin allowlist; rejects missing, opaque, malformed, and foreign origins;
+- constrained CORS preflight (POST only; Authorization and Content-Type only), POST-only route, cross-site Fetch Metadata rejection, and no cookie-based authentication;
+- bearer Authorization required; content type restricted to JSON; request body streamed with a 4 KiB maximum; proposal ID and body fields allowlisted;
+- rate limiter is mandatory and fails closed with 503 when unavailable; denial returns 429. The host must implement it with a shared edge/DO-backed store and trustworthy client bucketing before deployment;
+- generic error mapping, no-store responses, and security response headers. No internal exception details or token claims are returned.
+
+This module is not connected to an existing Worker, D1 binding, identity provider, rate-limit store, or production route. Its tests use injected fakes and establish handler contract behavior only; they do not prove deployed edge configuration, distributed rate-limit correctness, or production security.
