@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "office/prototype/migrations/**"
+      - "office/prototype/src/**"
       - "office/prototype/tests/**"
       - ".github/workflows/office-schema.yml"
   push:
@@ -11,6 +12,7 @@ on:
       - "feat/office-db-schema-20261116"
     paths:
       - "office/prototype/migrations/**"
+      - "office/prototype/src/**"
       - "office/prototype/tests/**"
       - ".github/workflows/office-schema.yml"
 
