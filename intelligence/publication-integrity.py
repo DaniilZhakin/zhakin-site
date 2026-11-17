@@ -73,6 +73,8 @@ direction_groups = {
             "/publications/personal-growth-hidden-meanings.html",
             "/publications/hidden-matrix.html",
             "/publications/system-workability.html",
+            "/publications/economy-growth-living-standards.html",
+            "/publications/future-office-operating-model.html",
         },
     },
     "geoeconomics": {
@@ -84,6 +86,7 @@ direction_groups = {
             "/publications/global-dependence-map.html",
             "/publications/digital-assets-settlement.html",
             "/publications/digital-sovereignty-satellite-networks.html",
+            "/publications/global-trade-routes-finance.html",
         },
     },
 }
@@ -94,8 +97,8 @@ expected_direction_paths = set().union(*(group["paths"] for group in direction_g
 if not index_paths:
     errors.append("publications.html: no publication links found")
 
-if len(index_paths) != 34:
-    errors.append(f"publication count: expected 34, found {len(index_paths)}")
+if len(index_paths) != 37:
+    errors.append(f"publication count: expected 37, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
 extra_classification = [path for path in classified if path not in index_paths]
