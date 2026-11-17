@@ -111,6 +111,55 @@ export default {
       assert(revokedGrant?.revoked_at === NOW && revokedDenied && revokedProposal.status === "pending",
         `revoked reviewer scope was not denied before writes: ${JSON.stringify({ revokedGrant, revokedError, revokedProposal })}`);
 
+      // Revoke after preflight authorization but immediately before D1.batch.
+      // The gateway's in-batch scope recheck must stop the update and roll back.
+      const revokeRace = await seedProposal(db, "revoke-race");
+      const raceDb = {
+        prepare: (...args) => db.prepare(...args),
+        batch: async (statements) => {
+          await db.prepare("UPDATE office_robot_proposal_approver_scopes SET revoked_at=? WHERE id=? AND revoked_at IS NULL").bind(NOW, revokeRace.scopeId).run();
+          return db.batch(statements);
+        },
+      };
+      const raceGateway = createHumanApprovalGateway({
+        db: raceDb,
+        verifyCredential: async () => ({ issuer: HUMAN_ISSUER, subject: HUMAN_SUBJECT }),
+        clock: () => new Date(NOW),
+      });
+      let revokeRaceAborted = false;
+      try {
+        await raceGateway.reviewProposal({ bearerToken: "test-human-token", proposalId: revokeRace.proposalId, action: "accept" });
+      } catch {
+        revokeRaceAborted = true;
+      }
+      const raceTask = await readOne(db, "SELECT title,version FROM office_tasks WHERE id=?", revokeRace.taskId);
+      const raceProposal = await readOne(db, "SELECT status FROM office_robot_task_proposals WHERE id=?", revokeRace.proposalId);
+      const raceReviews = await readOne(db, "SELECT COUNT(*) AS count FROM office_robot_proposal_reviews WHERE proposal_id=?", revokeRace.proposalId);
+      assert(revokeRaceAborted && raceTask.title === "Original title" && raceTask.version === 1
+        && raceProposal.status === "pending" && raceReviews.count === 0,
+        "revocation between preflight and batch was not fail-closed and atomic");
+
+      // Force the final audit insert to fail; all preceding D1 batch statements
+      // must roll back, leaving the task and proposal untouched.
+      const auditFailure = await seedProposal(db, "audit-failure");
+      await db.prepare(`CREATE TRIGGER reject_office_test_audit
+        BEFORE INSERT ON office_audit_events
+        WHEN NEW.object_id = ?
+        BEGIN SELECT RAISE(ABORT, 'injected audit persistence failure'); END`).bind(auditFailure.proposalId).run();
+      let auditFailureAborted = false;
+      try {
+        await gateway.reviewProposal({ bearerToken: "test-human-token", proposalId: auditFailure.proposalId, action: "accept" });
+      } catch {
+        auditFailureAborted = true;
+      }
+      await db.prepare("DROP TRIGGER reject_office_test_audit").run();
+      const auditFailureTask = await readOne(db, "SELECT title,version FROM office_tasks WHERE id=?", auditFailure.taskId);
+      const auditFailureProposal = await readOne(db, "SELECT status FROM office_robot_task_proposals WHERE id=?", auditFailure.proposalId);
+      const auditFailureReviews = await readOne(db, "SELECT COUNT(*) AS count FROM office_robot_proposal_reviews WHERE proposal_id=?", auditFailure.proposalId);
+      assert(auditFailureAborted && auditFailureTask.title === "Original title" && auditFailureTask.version === 1
+        && auditFailureProposal.status === "pending" && auditFailureReviews.count === 0,
+        "audit failure did not roll back task, proposal and review as one D1 batch");
+
       const concurrent = await seedProposal(db, "concurrent");
       const concurrentResults = await Promise.allSettled([
         gateway.reviewProposal({ bearerToken: "test-human-token", proposalId: concurrent.proposalId, action: "accept" }),
@@ -131,6 +180,8 @@ export default {
         rejectionLeavesTaskUnchanged: true,
         staleProposalNotApplied: true,
         revokedApproverDenied: true,
+        revocationRaceFailsClosed: true,
+        auditFailureRollsBackDecision: true,
         concurrentDuplicateApprovalRejected: true,
         auditEvents: audit.count,
       });
