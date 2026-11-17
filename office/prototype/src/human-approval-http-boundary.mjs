@@ -75,6 +75,7 @@ async function readJsonBounded(request, maxBytes) {
 function safeFailure(error) {
   const status = Number.isInteger(error?.status) ? error.status : 500;
   if (status === 400) return json(400, "invalid_request");
+  if (status === 413) return json(413, "request_too_large");
   if (status === 401) return json(401, "authentication_failed");
   if (status === 403) return json(403, "not_authorized");
   if (status === 409) return json(409, "proposal_conflict");
