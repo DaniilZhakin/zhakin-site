@@ -51,6 +51,7 @@ Implemented checks:
 - exact issuer and audience matching; requires subject, expiration, issued-at, and token ID (`jti`); enforces a 15-minute maximum token age, a one-hour maximum lifetime, strict expiration, bounded future clock skew, and `azp` for multi-audience tokens;
 - HTTPS-only configured JWKS endpoint, bounded response/key counts, RSA signing keys only, minimum 2048-bit modulus, key-ID selection, short in-isolate cache, and one forced refresh for an unknown key ID;
 - mandatory revocation lookup; only an explicit `false` result is accepted. Lookup errors and revoked/unknown states fail closed;
+- JWKS responses are read with a 128 KiB streaming cap and a five-second fetch/body deadline; RSA moduli are checked for an actual minimum 2048-bit length (not merely a 256-byte encoding).
 - returns only verified `issuer + subject`, not arbitrary claims.
 
 Important limits:
