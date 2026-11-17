@@ -1,0 +1,19 @@
+name: mobile-navigation-viewport
+on:
+  pull_request:
+    paths:
+      - 'assets/css/style.css'
+      - 'assets/js/main.js'
+      - 'tests/mobile-navigation-viewport.test.cjs'
+      - '.github/workflows/mobile-navigation-viewport.yml'
+  workflow_dispatch:
+jobs:
+  mobile-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate mobile navigation behavior contracts
+        run: node --test tests/mobile-navigation-viewport.test.cjs tests/mobile-menu-keyboard-runtime.test.cjs
