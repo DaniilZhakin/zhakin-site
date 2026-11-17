@@ -48,7 +48,7 @@ jobs:
           cat > wrangler.toml <<'EOF'
           name = "zhakin-office-d1-smoke"
           main = "office/prototype/tests/d1_batch_worker.mjs"
-          compatibility_date = "2026-11-17"
+          compatibility_date = "2026-10-13"
 
           [[d1_databases]]
           binding = "OFFICE_DB"
