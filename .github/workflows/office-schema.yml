@@ -109,4 +109,6 @@ jobs:
           grep -q '"rejectionLeavesTaskUnchanged":true' /tmp/office-approval-response.json
           grep -q '"staleProposalNotApplied":true' /tmp/office-approval-response.json
           grep -q '"revokedApproverDenied":true' /tmp/office-approval-response.json
+          grep -q '"revocationRaceFailsClosed":true' /tmp/office-approval-response.json
+          grep -q '"auditFailureRollsBackDecision":true' /tmp/office-approval-response.json
           grep -q '"concurrentDuplicateApprovalRejected":true' /tmp/office-approval-response.json
