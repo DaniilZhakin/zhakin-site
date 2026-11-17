@@ -112,3 +112,39 @@ jobs:
           grep -q '"revocationRaceFailsClosed":true' /tmp/office-approval-response.json
           grep -q '"auditFailureRollsBackDecision":true' /tmp/office-approval-response.json
           grep -q '"concurrentDuplicateApprovalRejected":true' /tmp/office-approval-response.json
+
+      - name: Verify Durable Object rate limiter in disposable local Worker runtime
+        run: |
+          cat > wrangler-rate-limit.toml <<'EOF'
+          name = "zhakin-office-rate-limit-smoke"
+          main = "office/prototype/tests/durable_object_rate_limit_worker.mjs"
+          compatibility_date = "2026-10-13"
+
+          [[durable_objects.bindings]]
+          name = "OFFICE_RATE_LIMITER"
+          class_name = "OfficeRateLimitDurableObject"
+
+          [[migrations]]
+          tag = "v1"
+          new_sqlite_classes = ["OfficeRateLimitDurableObject"]
+          EOF
+          npx --yes wrangler@4.148.0 dev --config wrangler-rate-limit.toml --ip 127.0.0.1 --port 8789 --show-interactive-dev-session=false > /tmp/office-rate-limit-worker.log 2>&1 &
+          rate_worker_pid=$!
+          trap 'kill "$rate_worker_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --show-error http://127.0.0.1:8789/ -o /tmp/office-rate-limit-response.json -w '%{http_code}' > /tmp/office-rate-limit-status.txt; then
+              if [ -s /tmp/office-rate-limit-response.json ]; then break; fi
+            fi
+            if ! kill -0 "$rate_worker_pid" 2>/dev/null; then
+              cat /tmp/office-rate-limit-worker.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Rate limiter Worker HTTP status: $(cat /tmp/office-rate-limit-status.txt 2>/dev/null || echo unavailable)"
+          cat /tmp/office-rate-limit-worker.log
+          cat /tmp/office-rate-limit-response.json
+          grep -q '"ok":true' /tmp/office-rate-limit-response.json
+          grep -q '"atomicAdmission":true' /tmp/office-rate-limit-response.json
+          grep -q '"allowed":3' /tmp/office-rate-limit-response.json
+          grep -q '"denied":9' /tmp/office-rate-limit-response.json
