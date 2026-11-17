@@ -224,15 +224,39 @@ if len(sitemap_locs) != len(set(sitemap_locs)):
     errors.append("sitemap.xml: duplicate URL entries")
 
 sitemap_loc_set = set(sitemap_locs)
+
+# Deliberate discovery exclusion retained from the site's earlier indexing decision.
+sitemap_excluded_publications = {
+    "/publications/intellectual-economy.html",
+}
+stale_sitemap_exclusions = sorted(sitemap_excluded_publications - expected_paths)
+if stale_sitemap_exclusions:
+    errors.append(
+        "sitemap.xml: exclusion no longer matches an indexed publication: "
+        + ", ".join(stale_sitemap_exclusions)
+    )
+
 missing_sitemap_publications = [
     f"https://xn--80alhhq.xn--p1ai{path}"
     for path in index_paths
-    if f"https://xn--80alhhq.xn--p1ai{path}" not in sitemap_loc_set
+    if path not in sitemap_excluded_publications
+    and f"https://xn--80alhhq.xn--p1ai{path}" not in sitemap_loc_set
 ]
 if missing_sitemap_publications:
     errors.append(
         "sitemap.xml: indexed publications missing from sitemap: "
         + ", ".join(missing_sitemap_publications)
+    )
+
+unexpected_sitemap_exclusions = [
+    f"https://xn--80alhhq.xn--p1ai{path}"
+    for path in sitemap_excluded_publications
+    if f"https://xn--80alhhq.xn--p1ai{path}" in sitemap_loc_set
+]
+if unexpected_sitemap_exclusions:
+    errors.append(
+        "sitemap.xml: intentionally excluded publications unexpectedly included: "
+        + ", ".join(unexpected_sitemap_exclusions)
     )
 
 sitemap_url = "https://xn--80alhhq.xn--p1ai/publications/directions.html"
@@ -255,5 +279,6 @@ print("- filtered entry points: verified")
 print("- filtered query handling: verified")
 print("- publication context blocks: verified")
 print("- related-material links: verified")
-print("- sitemap publication URLs + directions URL: verified")
+print("- sitemap publication URLs: verified (one intentional exclusion)")
+print("- sitemap directions URL: verified")
 print("- canonical + Article JSON-LD: verified")
