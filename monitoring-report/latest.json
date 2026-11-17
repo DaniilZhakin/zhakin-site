@@ -1,29 +1,47 @@
 {
-  "timestamp": "2026-11-17T03:54:36Z",
+  "timestamp": "2026-11-17T11:32:58Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
-    "sitemap_urls": 55,
+    "sitemap_urls": 58,
     "sitemap_unique": true,
-    "required_pages": 40,
+    "required_pages": 43,
     "sitemap_coverage": true,
-    "available_pages": 40,
-    "canonical_ok_pages": 40,
-    "jsonld_pages": 40,
+    "available_pages": 43,
+    "canonical_ok_pages": 43,
+    "jsonld_pages": 43,
     "noindex_pages": 0,
-    "avg_response_time_ms": 172.3,
-    "max_response_time_ms": 363,
-    "health_score": 100.0,
+    "avg_response_time_ms": 196.4,
+    "max_response_time_ms": 675,
+    "health_score": 97.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 97.0,
   "health_grade": "healthy",
-  "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-11-16T20:29:58Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_direction": "declining",
+  "trend_delta": -3.0,
+  "baseline_timestamp": "2026-11-17T03:54:36Z",
+  "warnings": [
+    "page-level change: /publications/economy-growth-living-standards.html",
+    "page-level change: /publications/future-office-operating-model.html",
+    "page-level change: /publications/global-trade-routes-finance.html"
+  ],
+  "page_changes": {
+    "/publications/economy-growth-living-standards.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/future-office-operating-model.html": [
+      "new page in monitored baseline"
+    ],
+    "/publications/global-trade-routes-finance.html": [
+      "new page in monitored baseline"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/economy-growth-living-standards.html",
+    "/publications/future-office-operating-model.html",
+    "/publications/global-trade-routes-finance.html"
+  ],
+  "status": "warning"
 }
