@@ -142,10 +142,11 @@ export default {
       // Force the final audit insert to fail; all preceding D1 batch statements
       // must roll back, leaving the task and proposal untouched.
       const auditFailure = await seedProposal(db, "audit-failure");
+      assert(auditFailure.proposalId === "proposal-audit-failure", "unexpected deterministic audit-failure fixture ID");
       await db.prepare(`CREATE TRIGGER reject_office_test_audit
         BEFORE INSERT ON office_audit_events
-        WHEN NEW.object_id = ?
-        BEGIN SELECT RAISE(ABORT, 'injected audit persistence failure'); END`).bind(auditFailure.proposalId).run();
+        WHEN NEW.object_id = 'proposal-audit-failure'
+        BEGIN SELECT RAISE(ABORT, 'injected audit persistence failure'); END`).run();
       let auditFailureAborted = false;
       try {
         await gateway.reviewProposal({ bearerToken: "test-human-token", proposalId: auditFailure.proposalId, action: "accept" });
