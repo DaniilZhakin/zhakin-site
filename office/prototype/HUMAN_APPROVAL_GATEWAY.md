@@ -41,3 +41,20 @@ For rejection, the task update is omitted; review, proposal transition, and audi
 - Complete concurrency/race, rollback, audit-failure, and negative authorization tests in the actual D1 runtime.
 - Obtain explicit owner approval for the approver policy and named human authority.
 - Keep this PR draft until independent security review. No merge or deployment is authorized.
+
+## Trusted bearer verifier module (new, configurable; not yet wired to a route)
+
+`src/oidc-bearer-verifier.mjs` now provides a strict RS256 verifier factory. It is provider-agnostic and requires deployment-owned configuration for exact issuer, audience, HTTPS JWKS URL, and an authoritative `isRevoked` lookup. It does not select an identity provider or create credentials.
+
+Implemented checks:
+- strict three-part JWT parsing and RS256-only algorithm allowlist; rejects `none`, alternate algorithms, token-controlled key URLs, critical extensions, malformed claims, and oversized tokens;
+- exact issuer and audience matching; requires subject, expiration, issued-at, and token ID (`jti`); enforces a 15-minute maximum token age, a one-hour maximum lifetime, strict expiration, bounded future clock skew, and `azp` for multi-audience tokens;
+- HTTPS-only configured JWKS endpoint, bounded response/key counts, RSA signing keys only, minimum 2048-bit modulus, key-ID selection, short in-isolate cache, and one forced refresh for an unknown key ID;
+- mandatory revocation lookup; only an explicit `false` result is accepted. Lookup errors and revoked/unknown states fail closed;
+- returns only verified `issuer + subject`, not arbitrary claims.
+
+Important limits:
+- This is a verification primitive, not a complete OIDC relying-party integration. Provider-specific token profile, access-token versus ID-token semantics, nonce/authentication-context requirements, key-rotation operations, and revocation-store design still require independent review.
+- The module is not connected to a Worker route and has no production issuer, audience, JWKS endpoint, or revocation store configured.
+- JWKS cache lifetime is five minutes by default; immediate key-compromise response requires an operational cache invalidation/redeployment strategy.
+- Never accept decoded JWT claims from another component as a substitute for this verifier.
