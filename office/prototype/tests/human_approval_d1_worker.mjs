@@ -97,13 +97,17 @@ export default {
       const revoked = await seedProposal(db, "revoked");
       await db.prepare("UPDATE office_robot_proposal_approver_scopes SET revoked_at=? WHERE id=?").bind(NOW, revoked.scopeId).run();
       let revokedDenied = false;
+      let revokedError = null;
       try {
         await gateway.reviewProposal({ bearerToken: "test-human-token", proposalId: revoked.proposalId, action: "accept" });
       } catch (error) {
+        revokedError = { code: error.code || null, message: String(error.message || error) };
         revokedDenied = error.code === "reviewer_not_authorized";
       }
+      const revokedGrant = await readOne(db, "SELECT revoked_at FROM office_robot_proposal_approver_scopes WHERE id=?", revoked.scopeId);
       const revokedProposal = await readOne(db, "SELECT status FROM office_robot_task_proposals WHERE id=?", revoked.proposalId);
-      assert(revokedDenied && revokedProposal.status === "pending", "revoked reviewer scope was not denied before writes");
+      assert(revokedGrant?.revoked_at === NOW && revokedDenied && revokedProposal.status === "pending",
+        `revoked reviewer scope was not denied before writes: ${JSON.stringify({ revokedGrant, revokedError, revokedProposal })}`);
 
       const concurrent = await seedProposal(db, "concurrent");
       const concurrentResults = await Promise.allSettled([
