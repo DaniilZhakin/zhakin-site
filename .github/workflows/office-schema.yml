@@ -23,7 +23,7 @@ jobs:
   office-schema:
     name: Validate isolated OFFICE_DB schema
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -43,3 +43,18 @@ jobs:
           python office/prototype/tests/human_approval_smoke.py
       - name: Run Robot Execution Gateway contract tests
         run: node --test office/prototype/tests/robot-execution-gateway.test.mjs office/prototype/tests/human-approval-gateway.test.mjs
+      - name: Run migrations in disposable local D1 runtime
+        run: |
+          cat > wrangler.toml <<'EOF'
+          name = "zhakin-office-d1-smoke"
+          compatibility_date = "2026-11-17"
+
+          [[d1_databases]]
+          binding = "OFFICE_DB"
+          database_name = "office-db-test"
+          database_id = "00000000-0000-0000-0000-000000000001"
+          EOF
+          for migration in office/prototype/migrations/0001_office_core.sql office/prototype/migrations/0002_robot_service_principals.sql office/prototype/migrations/0003_robot_task_proposals.sql office/prototype/migrations/0004_human_proposal_approval.sql; do
+            npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file="$migration"
+          done
+          npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file=office/prototype/tests/d1_runtime_smoke.sql
