@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-17T11:32:58Z`
+Snapshot: `2026-11-17T11:36:08Z`
 History points: **30**
-Status: **WARNING**
-Health score: **97.0/100 (HEALTHY)**
-Trend: **DECLINING** (-3.0)
+Status: **OK**
+Health score: **100.0/100 (HEALTHY)**
+Trend: **STABLE** (+0.0)
 
 ## Current signals
 
@@ -17,22 +17,15 @@ Trend: **DECLINING** (-3.0)
 - `canonical_ok_pages`: **43**
 - `jsonld_pages`: **43**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **196.4**
-- `max_response_time_ms`: **675**
-- `health_score`: **97.0**
+- `avg_response_time_ms`: **242.4**
+- `max_response_time_ms`: **631**
+- `health_score`: **100.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-### `/publications/economy-growth-living-standards.html`
-- new page in monitored baseline
-### `/publications/future-office-operating-model.html`
-- new page in monitored baseline
-### `/publications/global-trade-routes-finance.html`
-- new page in monitored baseline
+No page-level change detected.
 
 ## Anomaly detection
 
-- page-level change: /publications/economy-growth-living-standards.html
-- page-level change: /publications/future-office-operating-model.html
-- page-level change: /publications/global-trade-routes-finance.html
+No regression detected.
