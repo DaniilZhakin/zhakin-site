@@ -3,6 +3,7 @@
 from pathlib import Path
 import re
 import sys
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "publications.html"
@@ -206,8 +207,36 @@ for path in index_paths:
     if f'class="publication-context-index" href="/publications.html?direction={group_id}"' not in text:
         errors.append(f"publication context filtered entry mismatch: {path}")
 
+# Validate sitemap XML and require every indexed publication to be discoverable.
+try:
+    sitemap_root = ET.fromstring(sitemap_text)
+    sitemap_ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    sitemap_locs = [
+        node.text.strip()
+        for node in sitemap_root.findall(f"{sitemap_ns}url/{sitemap_ns}loc")
+        if node.text and node.text.strip()
+    ]
+except ET.ParseError as exc:
+    sitemap_locs = []
+    errors.append(f"sitemap.xml: invalid XML: {exc}")
+
+if len(sitemap_locs) != len(set(sitemap_locs)):
+    errors.append("sitemap.xml: duplicate URL entries")
+
+sitemap_loc_set = set(sitemap_locs)
+missing_sitemap_publications = [
+    f"https://xn--80alhhq.xn--p1ai{path}"
+    for path in index_paths
+    if f"https://xn--80alhhq.xn--p1ai{path}" not in sitemap_loc_set
+]
+if missing_sitemap_publications:
+    errors.append(
+        "sitemap.xml: indexed publications missing from sitemap: "
+        + ", ".join(missing_sitemap_publications)
+    )
+
 sitemap_url = "https://xn--80alhhq.xn--p1ai/publications/directions.html"
-if sitemap_url not in sitemap_text:
+if sitemap_url not in sitemap_loc_set:
     errors.append("sitemap.xml: analytical directions URL missing")
 
 if errors:
@@ -226,5 +255,5 @@ print("- filtered entry points: verified")
 print("- filtered query handling: verified")
 print("- publication context blocks: verified")
 print("- related-material links: verified")
-print("- sitemap directions URL: verified")
+print("- sitemap publication URLs + directions URL: verified")
 print("- canonical + Article JSON-LD: verified")
