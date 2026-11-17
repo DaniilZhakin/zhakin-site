@@ -49,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     '/publications/global-economy-new-assets.html': 'geoeconomics',
     '/publications/global-dependence-map.html': 'geoeconomics',
     '/publications/digital-assets-settlement.html': 'geoeconomics',
-    '/publications/digital-sovereignty-satellite-networks.html': 'geoeconomics'
+    '/publications/digital-sovereignty-satellite-networks.html': 'geoeconomics',
+    '/publications/global-trade-routes-finance.html': 'geoeconomics',
+    '/publications/economy-growth-living-standards.html': 'strategy',
+    '/publications/future-office-operating-model.html': 'strategy'
   };
 
   const groupLabels = Object.fromEntries(groups.map(group => [group.id, group.label]));
