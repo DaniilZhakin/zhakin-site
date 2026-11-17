@@ -95,7 +95,9 @@ export default {
       assert(staleResult.status === "stale" && staleTask.title === "Original title" && staleTask.version === 2 && staleProposal.status === "stale", "stale proposal was applied or not marked stale");
 
       const revoked = await seedProposal(db, "revoked");
-      await db.prepare("UPDATE office_robot_proposal_approver_scopes SET revoked_at=? WHERE id=?").bind(NOW, revoked.scopeId).run();
+      // Revoke every overlapping grant for this reviewer/resource. Other active
+      // grants for the same project would legitimately preserve the authority.
+      await db.prepare("UPDATE office_robot_proposal_approver_scopes SET revoked_at=? WHERE user_id='human-reviewer' AND organization_id='org-d1' AND project_id='project-d1' AND revoked_at IS NULL").bind(NOW).run();
       let revokedDenied = false;
       let revokedError = null;
       try {
