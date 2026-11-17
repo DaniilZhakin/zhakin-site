@@ -99,7 +99,9 @@ export function createOidcBearerVerifier({
       const usable = parsed.keys.filter((key) => key && key.kty === "RSA"
         && key.use === "sig" && key.alg === "RS256"
         && typeof key.kid === "string" && key.kid.length > 0
-        && typeof key.n === "string" && typeof key.e === "string");
+        && typeof key.n === "string" && typeof key.e === "string"
+        && decodeBase64Url(key.n).length >= 256
+        && decodeBase64Url(key.e).length <= 4);
       if (!usable.length) throw authError("identity_keys_invalid");
       cachedKeys = usable;
       cachedAt = clock();
@@ -127,7 +129,7 @@ export function createOidcBearerVerifier({
       || !Number.isFinite(claims.exp) || !Number.isFinite(claims.iat)) throw authError();
 
     const now = Math.floor(clock() / 1000);
-    if (claims.exp <= now - CLOCK_SKEW_SECONDS
+    if (claims.exp <= now || claims.exp <= claims.iat
       || claims.iat > now + CLOCK_SKEW_SECONDS
       || claims.iat < now - 15 * 60
       || (claims.nbf !== undefined && (!Number.isFinite(claims.nbf) || claims.nbf > now + CLOCK_SKEW_SECONDS))
