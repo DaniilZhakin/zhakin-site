@@ -59,7 +59,7 @@ jobs:
             npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file="$migration"
           done
           npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file=office/prototype/tests/d1_runtime_smoke.sql
-      - name: Verify D1 batch rollback in local Worker runtime
+      - name: Verify D1 batch rollback and Human Approval Gateway in local Worker runtime
         run: |
           npx --yes wrangler@4.148.0 dev --ip 127.0.0.1 --port 8787 --show-interactive-dev-session=false > /tmp/office-d1-worker.log 2>&1 &
           worker_pid=$!
@@ -78,3 +78,35 @@ jobs:
           cat /tmp/office-d1-worker.log
           cat /tmp/office-d1-response.json
           grep -q '"ok":true' /tmp/office-d1-response.json
+          cat > wrangler-approval.toml <<'EOF'
+          name = "zhakin-office-approval-d1-smoke"
+          main = "office/prototype/tests/human_approval_d1_worker.mjs"
+          compatibility_date = "2026-10-13"
+
+          [[d1_databases]]
+          binding = "OFFICE_DB"
+          database_name = "office-db-test"
+          database_id = "00000000-0000-0000-0000-000000000001"
+          EOF
+          npx --yes wrangler@4.148.0 dev --config wrangler-approval.toml --ip 127.0.0.1 --port 8788 --show-interactive-dev-session=false > /tmp/office-approval-worker.log 2>&1 &
+          approval_worker_pid=$!
+          trap 'kill "$worker_pid" "$approval_worker_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --show-error http://127.0.0.1:8788/ -o /tmp/office-approval-response.json -w '%{http_code}' > /tmp/office-approval-status.txt; then
+              if [ -s /tmp/office-approval-response.json ]; then break; fi
+            fi
+            if ! kill -0 "$approval_worker_pid" 2>/dev/null; then
+              cat /tmp/office-approval-worker.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Approval Worker HTTP status: $(cat /tmp/office-approval-status.txt 2>/dev/null || echo unavailable)"
+          cat /tmp/office-approval-worker.log
+          cat /tmp/office-approval-response.json
+          grep -q '"ok":true' /tmp/office-approval-response.json
+          grep -q '"acceptanceAtomicity":true' /tmp/office-approval-response.json
+          grep -q '"rejectionLeavesTaskUnchanged":true' /tmp/office-approval-response.json
+          grep -q '"staleProposalNotApplied":true' /tmp/office-approval-response.json
+          grep -q '"revokedApproverDenied":true' /tmp/office-approval-response.json
+          grep -q '"concurrentDuplicateApprovalRejected":true' /tmp/office-approval-response.json
