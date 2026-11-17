@@ -102,3 +102,26 @@ test("requires explicit HTTPS identity configuration and revocation checker", ()
     issuer: ISSUER, audience: AUDIENCE, jwksUrl: JWKS_URL,
   }));
 });
+
+test("rejects JWKS responses above the streaming byte limit", async () => {
+  const verifier = createOidcBearerVerifier({
+    issuer: ISSUER, audience: AUDIENCE, jwksUrl: JWKS_URL,
+    isRevoked: async () => false,
+    fetchImpl: async () => new Response("x".repeat(128 * 1024 + 1)),
+    clock: () => NOW,
+  });
+  await assert.rejects(verifier(token()), (error) => error.code === "identity_keys_invalid");
+});
+
+test("rejects RSA moduli that are 256 bytes but below 2048 bits", async () => {
+  const weakModulus = Buffer.from(jwk.n, "base64url");
+  weakModulus[0] &= 0x7f;
+  const weakJwk = { ...jwk, n: weakModulus.toString("base64url") };
+  const verifier = createOidcBearerVerifier({
+    issuer: ISSUER, audience: AUDIENCE, jwksUrl: JWKS_URL,
+    isRevoked: async () => false,
+    fetchImpl: async () => new Response(JSON.stringify({ keys: [weakJwk] })),
+    clock: () => NOW,
+  });
+  await assert.rejects(verifier(token()), (error) => error.code === "identity_keys_invalid");
+});
