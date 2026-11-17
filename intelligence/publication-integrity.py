@@ -3,6 +3,7 @@
 from pathlib import Path
 import re
 import sys
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "publications.html"
@@ -73,6 +74,8 @@ direction_groups = {
             "/publications/personal-growth-hidden-meanings.html",
             "/publications/hidden-matrix.html",
             "/publications/system-workability.html",
+            "/publications/economy-growth-living-standards.html",
+            "/publications/future-office-operating-model.html",
         },
     },
     "geoeconomics": {
@@ -84,6 +87,7 @@ direction_groups = {
             "/publications/global-dependence-map.html",
             "/publications/digital-assets-settlement.html",
             "/publications/digital-sovereignty-satellite-networks.html",
+            "/publications/global-trade-routes-finance.html",
         },
     },
 }
@@ -94,8 +98,8 @@ expected_direction_paths = set().union(*(group["paths"] for group in direction_g
 if not index_paths:
     errors.append("publications.html: no publication links found")
 
-if len(index_paths) != 34:
-    errors.append(f"publication count: expected 34, found {len(index_paths)}")
+if len(index_paths) != 37:
+    errors.append(f"publication count: expected 37, found {len(index_paths)}")
 
 missing_classification = [path for path in index_paths if path not in classified]
 extra_classification = [path for path in classified if path not in index_paths]
@@ -203,8 +207,60 @@ for path in index_paths:
     if f'class="publication-context-index" href="/publications.html?direction={group_id}"' not in text:
         errors.append(f"publication context filtered entry mismatch: {path}")
 
+# Validate sitemap XML and require every indexed publication to be discoverable.
+try:
+    sitemap_root = ET.fromstring(sitemap_text)
+    sitemap_ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    sitemap_locs = [
+        node.text.strip()
+        for node in sitemap_root.findall(f"{sitemap_ns}url/{sitemap_ns}loc")
+        if node.text and node.text.strip()
+    ]
+except ET.ParseError as exc:
+    sitemap_locs = []
+    errors.append(f"sitemap.xml: invalid XML: {exc}")
+
+if len(sitemap_locs) != len(set(sitemap_locs)):
+    errors.append("sitemap.xml: duplicate URL entries")
+
+sitemap_loc_set = set(sitemap_locs)
+
+# Deliberate discovery exclusion retained from the site's earlier indexing decision.
+sitemap_excluded_publications = {
+    "/publications/intellectual-economy.html",
+}
+stale_sitemap_exclusions = sorted(sitemap_excluded_publications - expected_paths)
+if stale_sitemap_exclusions:
+    errors.append(
+        "sitemap.xml: exclusion no longer matches an indexed publication: "
+        + ", ".join(stale_sitemap_exclusions)
+    )
+
+missing_sitemap_publications = [
+    f"https://xn--80alhhq.xn--p1ai{path}"
+    for path in index_paths
+    if path not in sitemap_excluded_publications
+    and f"https://xn--80alhhq.xn--p1ai{path}" not in sitemap_loc_set
+]
+if missing_sitemap_publications:
+    errors.append(
+        "sitemap.xml: indexed publications missing from sitemap: "
+        + ", ".join(missing_sitemap_publications)
+    )
+
+unexpected_sitemap_exclusions = [
+    f"https://xn--80alhhq.xn--p1ai{path}"
+    for path in sitemap_excluded_publications
+    if f"https://xn--80alhhq.xn--p1ai{path}" in sitemap_loc_set
+]
+if unexpected_sitemap_exclusions:
+    errors.append(
+        "sitemap.xml: intentionally excluded publications unexpectedly included: "
+        + ", ".join(unexpected_sitemap_exclusions)
+    )
+
 sitemap_url = "https://xn--80alhhq.xn--p1ai/publications/directions.html"
-if sitemap_url not in sitemap_text:
+if sitemap_url not in sitemap_loc_set:
     errors.append("sitemap.xml: analytical directions URL missing")
 
 if errors:
@@ -223,5 +279,6 @@ print("- filtered entry points: verified")
 print("- filtered query handling: verified")
 print("- publication context blocks: verified")
 print("- related-material links: verified")
+print("- sitemap publication URLs: verified (one intentional exclusion)")
 print("- sitemap directions URL: verified")
 print("- canonical + Article JSON-LD: verified")

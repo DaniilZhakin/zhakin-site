@@ -1,0 +1,71 @@
+name: PR Preview Artifact
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "publications/**"
+      - "assets/**"
+      - "publications.html"
+      - "sitemap.xml"
+      - ".github/workflows/pr-preview-artifact.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+
+      - name: Validate preview entry points
+        shell: python
+        run: |
+          from pathlib import Path
+          import sys
+
+          required = [
+              Path("publications.html"),
+              Path("publications/global-trade-routes-finance.html"),
+              Path("publications/economy-growth-living-standards.html"),
+              Path("publications/future-office-operating-model.html"),
+              Path("sitemap.xml"),
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              print("PREVIEW ARTIFACT: FAIL")
+              print("Missing files:", ", ".join(missing))
+              sys.exit(1)
+
+          for path in required:
+              data = path.read_bytes()
+              if not data:
+                  raise SystemExit(f"Empty preview file: {path}")
+              if path.suffix == ".html":
+                  text = data.decode("utf-8")
+                  if "</html>" not in text.lower():
+                      raise SystemExit(f"Incomplete HTML document: {path}")
+
+          print("PREVIEW ARTIFACT: PASS")
+          print(f"Validated {len(required)} required entry points")
+
+      - name: Upload static preview bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-site-pr-${{ github.event.pull_request.number || 'manual' }}-preview
+          path: |
+            *.html
+            publications/
+            assets/
+            sitemap.xml
+            robots.txt
+            CNAME
+          if-no-files-found: error
+          retention-days: 7
