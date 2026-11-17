@@ -137,12 +137,19 @@ export function createOidcBearerVerifier({
           headers: { accept: "application/json" },
         });
       } catch {
+        clearTimeout(timeout);
         throw authError("identity_keys_unavailable");
+      }
+      if (!response?.ok) {
+        clearTimeout(timeout);
+        throw authError("identity_keys_unavailable");
+      }
+      let body;
+      try {
+        body = await readBoundedBody(response, MAX_JWKS_BYTES);
       } finally {
         clearTimeout(timeout);
       }
-      if (!response?.ok) throw authError("identity_keys_unavailable");
-      const body = await readBoundedBody(response, MAX_JWKS_BYTES);
       let parsed;
       try { parsed = JSON.parse(body); } catch { throw authError("identity_keys_invalid"); }
       if (!parsed || !Array.isArray(parsed.keys) || parsed.keys.length < 1
