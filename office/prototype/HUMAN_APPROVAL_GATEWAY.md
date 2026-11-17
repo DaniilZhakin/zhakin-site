@@ -73,3 +73,16 @@ Controls implemented:
 - generic error mapping, no-store responses, and security response headers. No internal exception details or token claims are returned.
 
 This module is not connected to an existing Worker, D1 binding, identity provider, rate-limit store, or production route. Its tests use injected fakes and establish handler contract behavior only; they do not prove deployed edge configuration, distributed rate-limit correctness, or production security.
+
+
+## Distributed rate limiting with Durable Objects (isolated; not deployed)
+
+`src/durable-object-rate-limiter.mjs` provides a Cloudflare Durable Object counter and an adapter compatible with the HTTP boundary's injected `rateLimit` function.
+
+- Fixed-window counters are updated inside a Durable Object storage transaction, so concurrent checks for the same derived key cannot exceed the configured limit.
+- The adapter accepts only the named Human Approval route and a bounded, syntactically constrained Cloudflare client address; missing identity and binding/storage errors fail closed.
+- The client address is SHA-256 hashed before `idFromName`; raw addresses are not written to Durable Object storage. The Durable Object stores only one counter record per derived object.
+- Limit and window settings are bounded (maximum 1,000 requests / 3,600 seconds). The current policy is configurable by the Worker host; production thresholds and trusted proxy assumptions require owner/security review.
+- A local Wrangler smoke Worker tests actual Durable Object SQLite storage behavior and concurrent admission. Contract tests use an in-memory transactional fake and are not a substitute for the local runtime smoke.
+
+The adapter is not yet injected into a production Worker, and no Durable Object binding, namespace, remote deployment, route, or production configuration has been created. Before deployment, verify Cloudflare's trusted `cf-connecting-ip` provenance, select an abuse-resistant policy (including account/principal limits where appropriate), configure binding/migrations in the real Worker, and conduct load and security testing. This implementation is a first distributed edge control, not a complete DDoS or abuse-prevention system.
