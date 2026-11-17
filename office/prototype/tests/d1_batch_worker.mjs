@@ -4,13 +4,10 @@
  */
 export default {
   async fetch(_request, env) {
-    await env.OFFICE_DB.exec(`
-      CREATE TABLE IF NOT EXISTS _office_d1_batch_probe (
-        id TEXT PRIMARY KEY NOT NULL,
-        value TEXT NOT NULL
-      )
-    `);
-    await env.OFFICE_DB.exec("DELETE FROM _office_d1_batch_probe");
+    await env.OFFICE_DB.prepare(
+      "CREATE TABLE IF NOT EXISTS _office_d1_batch_probe (id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)"
+    ).run();
+    await env.OFFICE_DB.prepare("DELETE FROM _office_d1_batch_probe").run();
 
     let batchRejected = false;
     try {
