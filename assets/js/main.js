@@ -31,6 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
       setMenuState(!isOpen);
       recordAudienceEvent('menu_toggle', { state: !isOpen ? 'open' : 'close' });
     });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && navigation.classList.contains('active')) {
+        event.preventDefault();
+        setMenuState(false);
+        menuButton.focus();
+      }
+    });
   }
 
   navigationLinks.forEach(link => {
