@@ -10,5 +10,5 @@ assert.match(css, /overflow-y:\s*auto/, 'menu must scroll vertically');
 assert.match(css, /overscroll-behavior:\s*contain/, 'menu must contain overscroll');
 assert.match(css, /-webkit-overflow-scrolling:\s*touch/, 'menu must support iOS momentum scrolling');
 assert.match(css, /env\(safe-area-inset-bottom/, 'menu must respect the iPhone safe area');
-assert.match(js, /event\.key === 'Escape'[\s\S]*?setMenuState\(false\)[\s\S]*?menuButton\?\.focus\(\)/, 'Escape must close the menu and restore focus');
+assert.match(js, /event\.key === 'Escape'[\s\S]*?setMenuState\(false\)[\s\S]*?menuButton(?:\?\.)?\.focus\(\)/, 'Escape must close the menu and restore focus');
 console.log('Mobile navigation viewport and keyboard regression checks passed.');
