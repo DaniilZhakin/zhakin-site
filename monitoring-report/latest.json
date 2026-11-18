@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-18T04:21:52Z",
+  "timestamp": "2026-11-18T13:59:04Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 43,
     "jsonld_pages": 43,
     "noindex_pages": 0,
-    "avg_response_time_ms": 177.7,
-    "max_response_time_ms": 657,
-    "health_score": 100.0,
+    "avg_response_time_ms": 197.7,
+    "max_response_time_ms": 1280,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-11-17T22:24:55Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-11-18T04:21:52Z",
+  "warnings": [
+    "page-level change: /publications/ai-infrastructure-economy.html"
+  ],
+  "page_changes": {
+    "/publications/ai-infrastructure-economy.html": [
+      "response_time_ms: 657 -> 1280"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/ai-infrastructure-economy.html"
+  ],
+  "status": "warning"
 }
