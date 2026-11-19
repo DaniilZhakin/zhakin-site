@@ -35,6 +35,7 @@ test('calculators reject negative, zero-base and out-of-range inputs', () => {
   assert.throws(() => calc.calculateBusiness({ ebitda: 0, multiple: 4, debt: 0, cash: 0 }));
   assert.throws(() => calc.calculateProperty({ area: -1, pricePerSqm: 100 }));
   assert.throws(() => calc.calculateEquipment({ replacementCost: 1000, depreciation: 101 }), /от 0 до 100/);
+  assert.throws(() => calc.calculateEquipment({ replacementCost: 1000, depreciation: '' }), /заполните поле/);
 });
 
 test('public valuation page exposes three asset tabs and clear legal limitations', () => {
