@@ -2,6 +2,7 @@
   'use strict';
 
   function number(value, label, options = {}) {
+    if (value === '' || value === null || value === undefined) throw new Error(label + ': заполните поле.');
     const n = Number(value);
     if (!Number.isFinite(n) || (options.positive ? n <= 0 : n < 0)) {
       throw new Error(label + (options.positive ? ': укажите значение больше нуля.' : ': укажите неотрицательное число.'));
