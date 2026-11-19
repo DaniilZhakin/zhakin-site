@@ -7,6 +7,9 @@ on:
       - "publications/**"
       - "assets/**"
       - "publications.html"
+      - "centers/**"
+      - "office.html"
+      - "index.html"
       - "sitemap.xml"
       - ".github/workflows/pr-preview-artifact.yml"
   workflow_dispatch:
@@ -44,6 +47,23 @@ jobs:
               print("Missing files:", ", ".join(missing))
               sys.exit(1)
 
+          sitemap = Path("sitemap.xml").read_text(encoding="utf-8")
+          if "/centers/" in sitemap:
+              center_pages = [
+                  Path("centers/index.html"),
+                  Path("centers/analytical/index.html"),
+                  Path("centers/asset-valuation/index.html"),
+              ]
+              missing_centers = [str(path) for path in center_pages if not path.is_file()]
+              if missing_centers:
+                  raise SystemExit(
+                      "PREVIEW ARTIFACT: FAIL — sitemap references centers but files are missing: "
+                      + ", ".join(missing_centers)
+                  )
+              homepage = Path("index.html")
+              if not homepage.is_file() or 'href="/centers/"' not in homepage.read_text(encoding="utf-8"):
+                  raise SystemExit("PREVIEW ARTIFACT: FAIL — center routes exist but homepage entry is missing")
+
           for path in required:
               data = path.read_bytes()
               if not data:
@@ -63,6 +83,7 @@ jobs:
           path: |
             *.html
             publications/
+            centers/
             assets/
             sitemap.xml
             robots.txt
