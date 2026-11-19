@@ -96,14 +96,14 @@ body{background:var(--av-bg)}
 <article class="av-method"><span class="num">03 / INDUSTRIAL ASSETS</span><h3>Оборудование и техника</h3><p>Стоимость замещения, физический, функциональный и экономический износ, остаточная стоимость.</p></article>
 </div>
 <section class="av-calc" aria-labelledby="calculator-title">
-<div class="av-calc-top"><div><span class="av-kicker">INTERACTIVE MODEL · LOCAL CALCULATION</span><h2 id="calculator-title">Калькулятор предварительной оценки</h2><p>Выберите тип актива, внесите исходные показатели и получите ориентировочный результат. Все вычисления выполняются в браузере на этом устройстве.</p></div><span class="av-local">Локальный расчёт</span></div>
+<div class="av-calc-top"><div><span class="av-kicker">INTERACTIVE MODEL · LOCAL CALCULATION</span><h2 id="calculator-title">Калькулятор предварительной оценки</h2><p>Выберите тип актива, внесите исходные показатели и получите ориентировочный результат. Все значения вводятся в выбранной валюте; вычисления выполняются в браузере на этом устройстве.</p></div><span class="av-local">Локальный расчёт</span></div>
 <div class="av-tabs" role="tablist" aria-label="Тип актива">
-<button class="av-tab" type="button" role="tab" id="tab-business" aria-controls="panel-business" aria-selected="true" data-kind="business">Бизнес</button>
-<button class="av-tab" type="button" role="tab" id="tab-property" aria-controls="panel-property" aria-selected="false" data-kind="property">Недвижимость</button>
-<button class="av-tab" type="button" role="tab" id="tab-equipment" aria-controls="panel-equipment" aria-selected="false" data-kind="equipment">Оборудование</button>
+<button class="av-tab" type="button" role="tab" id="tab-business" aria-controls="valuation-input-panel" aria-selected="true" data-kind="business">Бизнес</button>
+<button class="av-tab" type="button" role="tab" id="tab-property" aria-controls="valuation-input-panel" aria-selected="false" data-kind="property">Недвижимость</button>
+<button class="av-tab" type="button" role="tab" id="tab-equipment" aria-controls="valuation-input-panel" aria-selected="false" data-kind="equipment">Оборудование</button>
 </div>
 <div class="av-form-layout">
-<div class="av-form">
+<div class="av-form" id="valuation-input-panel" role="tabpanel" aria-labelledby="tab-business" tabindex="0">
 <form id="valuation-form" novalidate>
 <div class="av-fields">
 <div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option></select></div>
@@ -158,13 +158,25 @@ document.addEventListener('DOMContentLoaded',function(){
  function setKind(next){
   kind=next;
   tabs.forEach(tab=>{const active=tab.dataset.kind===kind;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
+  document.getElementById('valuation-input-panel').setAttribute('aria-labelledby','tab-'+kind);
   fields.forEach(field=>{const show=groups[kind].includes(field.dataset.field);field.hidden=!show;const input=field.querySelector('input');if(input)input.required=show&&(kind!=='property'||['area','pricePerSqm'].includes(field.dataset.field));});
   error.classList.remove('is-visible');error.textContent='';
   document.getElementById('result-value').textContent='—';
   document.getElementById('result-method').textContent='Заполните исходные данные и нажмите «Рассчитать ориентир».';
   document.getElementById('result-details').classList.remove('is-visible');
  }
- tabs.forEach(tab=>tab.addEventListener('click',()=>setKind(tab.dataset.kind)));
+ tabs.forEach((tab,index)=>{
+  tab.addEventListener('click',()=>setKind(tab.dataset.kind));
+  tab.addEventListener('keydown',event=>{
+   let next=index;
+   if(event.key==='ArrowRight')next=(index+1)%tabs.length;
+   else if(event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;
+   else if(event.key==='Home')next=0;
+   else if(event.key==='End')next=tabs.length-1;
+   else return;
+   event.preventDefault();tabs[next].focus();setKind(tabs[next].dataset.kind);
+  });
+ });
  const currency=()=>document.getElementById('currency').value;
  const money=value=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0}).format(value);
  const val=id=>document.getElementById(id).value;
