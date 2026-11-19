@@ -28,7 +28,7 @@ test('equipment calculator applies user-entered depreciation', () => {
   const result = calc.calculateEquipment({ replacementCost: 500000, depreciation: 20 });
   assert.equal(result.value, 400000);
   assert.equal(result.low, 360000);
-  assert.equal(result.high, 440000);
+  assert.ok(Math.abs(result.high - 440000) < 1e-6);
 });
 
 test('calculators reject negative, zero-base and out-of-range inputs', () => {
