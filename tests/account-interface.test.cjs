@@ -26,7 +26,7 @@ test('account preserves human approval and scoped access boundaries', () => {
 });
 
 test('account links only to existing public site sections', () => {
-  for (const route of ['/wallet.html', '/intelligence.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html']) {
+  for (const route of ['/wallet.html', '/intelligence.html', '/projects.html', '/publications.html', '/reception.html', '/institutional.html', '/office.html']) {
     assert.ok(html.includes(route), `missing route: ${route}`);
   }
 });
@@ -59,3 +59,46 @@ test('homepage exposes the search-compatible 120px PNG and SVG favicons', () => 
   assert.equal(png.readUInt32BE(20), 120);
 });
 
+
+test('office dashboard is present and clearly remains a non-connected prototype', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.match(office, /ZHAKIN TEAM<br>OFFICE/);
+  assert.match(office, /Демонстрационный интерфейс • без подключения данных/);
+  assert.match(office, /реальные показатели, пользователи, поручения и журналы не загружаются/);
+  assert.doesNotMatch(office, /<form\b|<input\b|<textarea\b/i);
+});
+
+test('office task register and decision governance have explicit empty-state boundaries', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.match(office, /Реестр поручений и решений/);
+  assert.match(office, /Реестр пока не подключён/);
+  assert.match(office, /Журнал решений/);
+  assert.match(office, /Маршрут согласования/);
+  assert.match(office, /Контрольный след/);
+  assert.match(office, /только подтверждённые поручения из защищённого источника/);
+});
+
+
+test('office inline stylesheet has no escaped newline artifacts', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.doesNotMatch(office, /\\\\n\\s*\\.office-/);
+});
+
+
+test('office dashboard scope excludes separate USERDIE project', () => {
+  const office = fs.readFileSync('office.html', 'utf8');
+  assert.doesNotMatch(office, /USERDIE|УСЕРДИЕ|userdiye/i);
+  assert.match(office, /Публикации и коммуникации/);
+  assert.match(office, /ZHAKIN TEAM/);
+});
+
+
+test('office governance specification keeps identity, sessions and roles isolated from Wallet', () => {
+  const spec = fs.readFileSync('docs/office-data-model.md', 'utf8');
+  assert.match(spec, /wallet_role_assignments/);
+  assert.match(spec, /не универсальная система управления доступом/);
+  assert.match(spec, /OFFICE_DB/);
+  assert.ok(spec.includes('issuer + subject'));
+  assert.ok(spec.includes('Агент/робот не получает пользовательскую роль'));
+  assert.ok(spec.toLowerCase().includes('инициатор критического решения не может утвердить собственное решение'));
+});
