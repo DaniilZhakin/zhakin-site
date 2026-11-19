@@ -21,8 +21,8 @@
       method: 'Доходно-рыночный ориентир (EBITDA × мультипликатор)',
       enterpriseValue,
       equityValue,
-      low: equityValue * 0.9,
-      high: equityValue * 1.1,
+      low: enterpriseValue * 0.9 - debt + cash,
+      high: enterpriseValue * 1.1 - debt + cash,
       assumptions: 'Диапазон ±10% — техническая чувствительность к выбранному мультипликатору, а не рыночный доверительный интервал.'
     };
   }
