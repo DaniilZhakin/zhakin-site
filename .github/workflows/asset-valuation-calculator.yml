@@ -1,0 +1,20 @@
+name: Asset valuation calculator
+on:
+  pull_request:
+    paths:
+      - 'centers/asset-valuation/**'
+      - 'centers/index.html'
+      - 'assets/js/asset-valuation-calculator.js'
+      - 'tests/asset-valuation-calculator.test.cjs'
+      - '.github/workflows/asset-valuation-calculator.yml'
+  workflow_dispatch:
+jobs:
+  valuation-calculator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run valuation calculator tests
+        run: node --test tests/asset-valuation-calculator.test.cjs
