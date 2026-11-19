@@ -33,6 +33,7 @@ test('equipment calculator applies user-entered depreciation', () => {
 
 test('calculators reject negative, zero-base and out-of-range inputs', () => {
   assert.throws(() => calc.calculateBusiness({ ebitda: 0, multiple: 4, debt: 0, cash: 0 }));
+  assert.throws(() => calc.calculateBusiness({ ebitda: 100, multiple: 4, debt: '', cash: 0 }), /заполните поле/);
   assert.throws(() => calc.calculateProperty({ area: -1, pricePerSqm: 100 }));
   assert.throws(() => calc.calculateEquipment({ replacementCost: 1000, depreciation: 101 }), /от 0 до 100/);
   assert.throws(() => calc.calculateEquipment({ replacementCost: 1000, depreciation: '' }), /заполните поле/);
