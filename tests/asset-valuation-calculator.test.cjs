@@ -45,6 +45,10 @@ test('public valuation page exposes three asset tabs and clear legal limitations
   assert.match(html, /data-kind="business"/);
   assert.match(html, /data-kind="property"/);
   assert.match(html, /data-kind="equipment"/);
+  assert.match(html, /id="valuation-input-panel" role="tabpanel" aria-labelledby="tab-business"/);
+  assert.match(html, /aria-controls="valuation-input-panel"/);
+  assert.match(html, /event\.key==='ArrowRight'/);
+  assert.match(html, /Все значения вводятся в выбранной валюте/);
   assert.match(html, /не является официальным отчётом об оценке/);
   assert.match(html, /не отправляет введённые значения на сервер/);
   assert.match(html, /asset-valuation-calculator\.js/);
