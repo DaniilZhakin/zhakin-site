@@ -13,8 +13,8 @@
   function calculateBusiness(input) {
     const ebitda = number(input.ebitda, 'EBITDA', { positive: true });
     const multiple = number(input.multiple, 'Мультипликатор', { positive: true });
-    const debt = number(input.debt || 0, 'Долг');
-    const cash = number(input.cash || 0, 'Денежные средства');
+    const debt = number(input.debt, 'Долг');
+    const cash = number(input.cash, 'Денежные средства');
     const enterpriseValue = ebitda * multiple;
     const equityValue = enterpriseValue - debt + cash;
     return {
