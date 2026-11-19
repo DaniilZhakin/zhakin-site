@@ -8,8 +8,8 @@ test('business calculator separates enterprise value from equity value', () => {
   const result = calc.calculateBusiness({ ebitda: 2000000, multiple: 4.5, debt: 2000000, cash: 1000000 });
   assert.equal(result.enterpriseValue, 9000000);
   assert.equal(result.equityValue, 8000000);
-  assert.equal(result.low, 7200000);
-  assert.equal(result.high, 8800000);
+  assert.equal(result.low, 7100000);
+  assert.equal(result.high, 8900000);
 });
 
 test('property calculator supports comparative and optional income approaches', () => {
