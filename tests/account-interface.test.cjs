@@ -59,3 +59,17 @@ test('homepage exposes the search-compatible 120px PNG and SVG favicons', () => 
   assert.equal(png.readUInt32BE(20), 120);
 });
 
+
+
+test('homepage mobile menu is scrollable, anchored below the header, and keyboard-closeable', () => {
+  const homepage = fs.readFileSync('index.html', 'utf8');
+  const styles = fs.readFileSync('assets/css/style.css', 'utf8');
+  const script = fs.readFileSync('assets/js/main.js', 'utf8');
+  assert.match(homepage, /class="menu-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="site-navigation"/);
+  assert.match(styles, /top:calc\(100% \+ 10px\)/);
+  assert.match(styles, /max-height:calc\(100dvh - 120px\)/);
+  assert.match(styles, /overflow-y:auto/);
+  assert.match(styles, /-webkit-overflow-scrolling:touch/);
+  assert.match(styles, /\.main-navigation\.active\s*\{\s*display:flex; visibility:visible;/);
+  assert.match(script, /event\.key === 'Escape'/);
+});

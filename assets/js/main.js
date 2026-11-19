@@ -71,6 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!clickedInsideMenu && !clickedButton) setMenuState(false);
   });
 
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navigation?.classList.contains('active')) {
+      setMenuState(false);
+      menuButton?.focus();
+    }
+  });
+
   const geography = [
     { name: 'Канада', x: 18, y: 31, note: 'международные деловые направления' },
     { name: 'Турция', x: 49, y: 43, note: 'торговое взаимодействие' },

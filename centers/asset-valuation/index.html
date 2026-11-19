@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071a16">
+<title>Центр оценки активов — ZHAKIN TEAM</title>
+<meta name="description" content="Предварительный аналитический расчёт стоимости бизнеса, недвижимости и оборудования. Методология, сценарии и калькулятор ZHAKIN TEAM.">
+<link rel="canonical" href="https://xn--80alhhq.xn--p1ai/centers/asset-valuation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>
+:root{--av-bg:#071a16;--av-panel:#102820;--av-panel2:#0b211a;--av-gold:#d4af37;--av-text:#f4f1e8;--av-muted:#aebbb2;--av-line:rgba(212,175,55,.25)}
+body{background:var(--av-bg)}
+.av-main{max-width:1240px;margin:0 auto;padding:42px 22px 90px}
+.av-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr);gap:28px;align-items:end;padding:clamp(28px,5vw,58px);border:1px solid var(--av-line);border-radius:22px;background:radial-gradient(circle at 88% 8%,rgba(212,175,55,.14),transparent 31%),linear-gradient(145deg,#102820,#071a16)}
+.av-kicker{color:var(--av-gold);font-size:.7rem;font-weight:750;letter-spacing:.18em;text-transform:uppercase}
+.av-hero h1{margin:14px 0;font-size:clamp(2.3rem,5.8vw,4.6rem);line-height:1.02;letter-spacing:-.045em;color:var(--av-text)}
+.av-hero p{max-width:780px;color:#cbd7d0;font-size:1rem;line-height:1.8}
+.av-hero-aside{padding:20px;border-left:1px solid rgba(212,175,55,.5);color:var(--av-muted);font-size:.83rem;line-height:1.8}
+.av-hero-aside strong{display:block;margin-bottom:8px;color:#ead9aa;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
+.av-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 42px}
+.av-stat{padding:17px 19px;border:1px solid var(--av-line);border-radius:12px;background:linear-gradient(145deg,#102820,#0a1d17)}
+.av-stat b{display:block;color:#ead9aa;font-size:.92rem}.av-stat span{display:block;margin-top:4px;color:#9eafa5;font-size:.72rem;line-height:1.5}
+.av-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:38px 0 16px}
+.av-heading h2{margin:0;color:var(--av-gold);font-size:clamp(1.45rem,3vw,2rem)}
+.av-heading span{color:#8fa197;font-size:.67rem;letter-spacing:.12em;text-transform:uppercase}
+.av-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.av-method{padding:22px;border:1px solid var(--av-line);border-radius:14px;background:linear-gradient(145deg,#102820,#0a1d17)}
+.av-method .num{color:#c8b36f;font-size:.66rem;letter-spacing:.13em}
+.av-method h3{margin:11px 0 8px;color:#eee6ce;font-size:1.02rem}
+.av-method p{margin:0;color:#aebbb2;font-size:.82rem;line-height:1.7}
+.av-calc{margin-top:42px;padding:clamp(20px,4vw,36px);border:1px solid rgba(212,175,55,.38);border-radius:18px;background:linear-gradient(145deg,#102820,#091c16);box-shadow:0 22px 60px rgba(0,0,0,.2)}
+.av-calc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}
+.av-calc-top h2{margin:8px 0;color:#f4f1e8;font-size:clamp(1.5rem,3.5vw,2.25rem)}
+.av-calc-top p{max-width:680px;margin:0;color:#aebbb2;font-size:.85rem;line-height:1.7}
+.av-local{flex:0 0 auto;padding:8px 11px;border:1px solid rgba(91,181,132,.4);border-radius:8px;color:#9bd4b1;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase}
+.av-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+.av-tab{min-height:43px;padding:10px 16px;border:1px solid rgba(212,175,55,.28);border-radius:9px;background:#0a1d17;color:#cbd7d0;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer}
+.av-tab[aria-selected=true]{border-color:var(--av-gold);background:rgba(212,175,55,.12);color:#f0dfaa}
+.av-form-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(270px,.9fr);gap:18px}
+.av-form{padding:22px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(4,17,12,.32)}
+.av-form h3{margin:0 0 17px;color:#ead9aa;font-size:1rem}
+.av-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.av-field{min-width:0}.av-field label{display:block;margin-bottom:7px;color:#bdc9c1;font-size:.74rem;line-height:1.4}
+.av-field input,.av-field select{width:100%;min-height:45px;padding:10px 12px;border:1px solid rgba(212,175,55,.25);border-radius:8px;background:#071a16;color:#f4f1e8;font:inherit;font-size:.9rem}
+.av-field input:focus,.av-field select:focus{outline:2px solid rgba(212,175,55,.55);outline-offset:1px}
+.av-field small{display:block;margin-top:5px;color:#81958a;font-size:.66rem;line-height:1.45}
+.av-field--wide{grid-column:1/-1}
+.av-calc-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:19px}
+.av-calculate{min-height:46px;padding:12px 19px;border:1px solid var(--av-gold);border-radius:9px;background:linear-gradient(135deg,#d4af37,#a98a28);color:#101b13;font-family:inherit;font-size:.8rem;font-weight:800;cursor:pointer}
+.av-reset{min-height:44px;padding:10px 14px;border:1px solid rgba(212,175,55,.3);border-radius:9px;background:transparent;color:#e3d5a8;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer}
+.av-result{display:flex;flex-direction:column;min-height:100%;padding:23px;border:1px solid rgba(212,175,55,.24);border-radius:13px;background:radial-gradient(circle at 100% 0,rgba(212,175,55,.1),transparent 45%),#081a14}
+.av-result-label{color:#aabbb2;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+.av-result-value{margin:8px 0 4px;color:#f1dfaa;font-size:clamp(1.8rem,4vw,2.7rem);font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+.av-result-sub{color:#879b8f;font-size:.7rem;line-height:1.6}
+.av-result-divider{height:1px;margin:18px 0;background:rgba(255,255,255,.1)}
+.av-result-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);color:#aebbb2;font-size:.75rem}
+.av-result-row strong{color:#eee6ce;text-align:right}
+.av-result-note{margin-top:auto;padding-top:17px;color:#8fa197;font-size:.68rem;line-height:1.65}
+.av-error{display:none;margin-top:14px;padding:12px 14px;border:1px solid rgba(225,112,91,.45);border-radius:8px;background:rgba(120,35,25,.16);color:#ffc0b2;font-size:.78rem;line-height:1.6}
+.av-error.is-visible{display:block}
+.av-output{display:none}.av-output.is-visible{display:block}
+.av-privacy{margin-top:16px;padding:13px 15px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.72rem;line-height:1.65}
+.av-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.av-step{padding:17px;border-top:2px solid var(--av-gold);background:#0c211a;color:#cbd7d0;font-size:.77rem;line-height:1.65}
+.av-step b{display:block;margin-bottom:7px;color:#ead9aa;font-size:.72rem}
+.av-legal{margin-top:34px;padding:21px 23px;border:1px solid rgba(212,175,55,.24);border-radius:12px;background:#0b211a;color:#aebbb2;font-size:.76rem;line-height:1.8}
+.av-legal strong{color:#ead9aa}
+.av-back{display:inline-flex;margin-top:24px;color:#ead9aa;text-decoration:none;font-size:.8rem}
+@media(max-width:850px){.av-hero{grid-template-columns:1fr}.av-hero-aside{border-left:0;border-top:1px solid rgba(212,175,55,.4);padding:16px 0 0}.av-form-layout{grid-template-columns:1fr}.av-result{min-height:270px}.av-steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.av-main{padding:25px 15px 60px}.av-strip,.av-methods{grid-template-columns:1fr}.av-heading{align-items:flex-start;flex-direction:column;gap:5px}.av-calc-top{flex-direction:column}.av-local{align-self:flex-start}.av-fields{grid-template-columns:1fr}.av-field--wide{grid-column:auto}.av-steps{grid-template-columns:1fr}.av-tab{flex:1 1 100%;text-align:left}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-container">
+<a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN TEAM</span></a>
+<button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+<nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+<a href="/">Главная</a><a href="/centers/">Экспертные центры</a><a href="/intelligence.html">ЖАК — ИИ</a><a href="/office.html">Офис управления</a><a href="/publications.html">Публикации</a>
+</nav></div></header>
+<main class="av-main">
+<section class="av-hero">
+<div><span class="av-kicker">ZHAKIN TEAM · ASSET VALUATION & ANALYSIS</span><h1>Центр оценки<br>активов</h1><p>Структурированный предварительный анализ стоимости бизнеса, недвижимости, промышленного оборудования и иных активов. От исходных данных и выбора методики — к прозрачному расчёту, диапазону чувствительности и проверяемым допущениям.</p></div>
+<aside class="av-hero-aside"><strong>Стандарт работы</strong>Каждый расчёт должен показывать дату оценки, объект, исходные данные, метод, допущения, ограничения и ответственного проверяющего. Неподтверждённые сведения не маскируются под факты.</aside>
+</section>
+<div class="av-strip" aria-label="Принципы центра">
+<div class="av-stat"><b>Методология</b><span>Доходный, сравнительный и затратный подходы</span></div>
+<div class="av-stat"><b>Прозрачность</b><span>Видимые формулы и пользовательские исходные данные</span></div>
+<div class="av-stat"><b>Контроль</b><span>Проверка допущений и независимая экспертиза при необходимости</span></div>
+</div>
+<div class="av-heading"><h2>Направления оценки</h2><span>Объекты анализа</span></div>
+<div class="av-methods">
+<article class="av-method"><span class="num">01 / BUSINESS</span><h3>Бизнес и доли участия</h3><p>EBITDA, денежные потоки, долговая нагрузка, структура капитала, рыночные мультипликаторы и сценарии развития.</p></article>
+<article class="av-method"><span class="num">02 / REAL ESTATE</span><h3>Недвижимость</h3><p>Площадь, сопоставимые цены, арендный поток, чистый операционный доход и ставка капитализации.</p></article>
+<article class="av-method"><span class="num">03 / INDUSTRIAL ASSETS</span><h3>Оборудование и техника</h3><p>Стоимость замещения, физический, функциональный и экономический износ, остаточная стоимость.</p></article>
+</div>
+<section class="av-calc" aria-labelledby="calculator-title">
+<div class="av-calc-top"><div><span class="av-kicker">INTERACTIVE MODEL · LOCAL CALCULATION</span><h2 id="calculator-title">Калькулятор предварительной оценки</h2><p>Выберите тип актива, внесите исходные показатели и получите ориентировочный результат. Все значения вводятся в выбранной валюте; вычисления выполняются в браузере на этом устройстве.</p></div><span class="av-local">Локальный расчёт</span></div>
+<div class="av-tabs" role="tablist" aria-label="Тип актива">
+<button class="av-tab" type="button" role="tab" id="tab-business" aria-controls="valuation-input-panel" aria-selected="true" data-kind="business">Бизнес</button>
+<button class="av-tab" type="button" role="tab" id="tab-property" aria-controls="valuation-input-panel" aria-selected="false" data-kind="property">Недвижимость</button>
+<button class="av-tab" type="button" role="tab" id="tab-equipment" aria-controls="valuation-input-panel" aria-selected="false" data-kind="equipment">Оборудование</button>
+</div>
+<div class="av-form-layout">
+<div class="av-form" id="valuation-input-panel" role="tabpanel" aria-labelledby="tab-business" tabindex="0">
+<form id="valuation-form" novalidate>
+<div class="av-fields">
+<div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option></select></div>
+<div class="av-field" data-field="ebitda"><label for="ebitda">Годовая EBITDA</label><input id="ebitda" name="ebitda" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 25 000 000"><small>В выбранной валюте, за 12 месяцев</small></div>
+<div class="av-field" data-field="multiple"><label for="multiple">Мультипликатор EV / EBITDA</label><input id="multiple" name="multiple" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 4.5"><small>Обоснуйте мультипликатор сопоставимыми компаниями</small></div>
+<div class="av-field" data-field="debt"><label for="debt">Финансовый долг</label><input id="debt" name="debt" type="number" min="0" step="any" inputmode="decimal" value="0"></div>
+<div class="av-field" data-field="cash"><label for="cash">Денежные средства</label><input id="cash" name="cash" type="number" min="0" step="any" inputmode="decimal" value="0"></div>
+<div class="av-field" data-field="area" hidden><label for="area">Площадь объекта, м²</label><input id="area" name="area" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 120"></div>
+<div class="av-field" data-field="pricePerSqm" hidden><label for="pricePerSqm">Цена аналога за м²</label><input id="pricePerSqm" name="pricePerSqm" type="number" min="0" step="any" inputmode="decimal" placeholder="Цена за м²"></div>
+<div class="av-field" data-field="noi" hidden><label for="noi">Годовой чистый операционный доход (NOI)</label><input id="noi" name="noi" type="number" min="0" step="any" inputmode="decimal" placeholder="Необязательно"></div>
+<div class="av-field" data-field="capRate" hidden><label for="capRate">Ставка капитализации, %</label><input id="capRate" name="capRate" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Например, 8.5"></div>
+<div class="av-field" data-field="replacementCost" hidden><label for="replacementCost">Стоимость нового аналога</label><input id="replacementCost" name="replacementCost" type="number" min="0" step="any" inputmode="decimal" placeholder="Стоимость замещения"></div>
+<div class="av-field" data-field="depreciation" hidden><label for="depreciation">Совокупный износ, %</label><input id="depreciation" name="depreciation" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="Например, 35"></div>
+</div>
+<div class="av-calc-actions"><button class="av-calculate" type="submit">Рассчитать ориентир →</button><button class="av-reset" type="reset">Сбросить значения</button></div>
+<div class="av-error" id="calc-error" role="alert" aria-live="polite"></div>
+</form>
+</div>
+<aside class="av-result" aria-live="polite" aria-atomic="true">
+<span class="av-result-label">Результат расчёта</span>
+<div class="av-result-value" id="result-value">—</div>
+<div class="av-result-sub" id="result-method">Заполните исходные данные и нажмите «Рассчитать ориентир».</div>
+<div class="av-result-divider"></div>
+<div class="av-output" id="result-details">
+<div class="av-result-row" id="row-low"><span>Нижний ориентир</span><strong id="result-low">—</strong></div>
+<div class="av-result-row" id="row-high"><span>Верхний ориентир</span><strong id="result-high">—</strong></div>
+<div class="av-result-row" id="row-extra"><span id="extra-label">Дополнительный показатель</span><strong id="result-extra">—</strong></div>
+</div>
+<div class="av-result-note" id="result-note">Результат появится после расчёта. Не является офертой, заключением оценщика или инвестиционной рекомендацией.</div>
+</aside>
+</div>
+<div class="av-privacy">Защита исходных данных: калькулятор не отправляет введённые значения на сервер, не сохраняет их в профиле и не использует внешние API. Не вводите персональные или конфиденциальные сведения.</div>
+</section>
+<div class="av-heading"><h2>Контроль качества оценки</h2><span>Процесс работы</span></div>
+<div class="av-steps">
+<div class="av-step"><b>01 / Постановка задачи</b>Фиксация объекта, цели, даты оценки и предполагаемого использования результата.</div>
+<div class="av-step"><b>02 / Проверка данных</b>Проверка состава исходных материалов, источников, полноты и ограничений.</div>
+<div class="av-step"><b>03 / Расчёт и сценарии</b>Выбор подхода, расчёт ориентиров, анализ чувствительности и раскрытие допущений.</div>
+<div class="av-step"><b>04 / Независимая проверка</b>Проверка специалистом, фиксация замечаний и утверждение ответственного лица.</div>
+</div>
+<div class="av-legal"><strong>Правовая и методологическая оговорка.</strong> Калькулятор предназначен исключительно для предварительного аналитического ориентирования. Используемые коэффициенты и исходные данные вводит пользователь; система не проверяет их достоверность и рыночную применимость. Результат не является официальным отчётом об оценке, аудиторским заключением, юридическим заключением или индивидуальной инвестиционной рекомендацией. Для официальной оценки требуется соблюдение применимых требований и привлечение квалифицированного независимого оценщика. На данном этапе приём документов и клиентские кабинеты не подключены.</div>
+<a class="av-back" href="/centers/">← Вернуться к экспертным центрам</a>
+</main>
+<footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
+<script src="/assets/js/main.js" defer></script>
+<script src="/assets/js/asset-valuation-calculator.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const tabs=[...document.querySelectorAll('.av-tab')], fields=[...document.querySelectorAll('[data-field]')], form=document.getElementById('valuation-form'), error=document.getElementById('calc-error');
+ let kind='business';
+ const groups={business:['ebitda','multiple','debt','cash'],property:['area','pricePerSqm','noi','capRate'],equipment:['replacementCost','depreciation']};
+ function setKind(next){
+  kind=next;
+  tabs.forEach(tab=>{const active=tab.dataset.kind===kind;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
+  document.getElementById('valuation-input-panel').setAttribute('aria-labelledby','tab-'+kind);
+  fields.forEach(field=>{const show=groups[kind].includes(field.dataset.field);field.hidden=!show;const input=field.querySelector('input');if(input)input.required=show&&(kind!=='property'||['area','pricePerSqm'].includes(field.dataset.field));});
+  error.classList.remove('is-visible');error.textContent='';
+  document.getElementById('result-value').textContent='—';
+  document.getElementById('result-method').textContent='Заполните исходные данные и нажмите «Рассчитать ориентир».';
+  document.getElementById('result-details').classList.remove('is-visible');
+ }
+ tabs.forEach((tab,index)=>{
+  tab.addEventListener('click',()=>setKind(tab.dataset.kind));
+  tab.addEventListener('keydown',event=>{
+   let next=index;
+   if(event.key==='ArrowRight')next=(index+1)%tabs.length;
+   else if(event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;
+   else if(event.key==='Home')next=0;
+   else if(event.key==='End')next=tabs.length-1;
+   else return;
+   event.preventDefault();tabs[next].focus();setKind(tabs[next].dataset.kind);
+  });
+ });
+ const currency=()=>document.getElementById('currency').value;
+ const money=value=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0}).format(value);
+ const val=id=>document.getElementById(id).value;
+ function showResult(result){
+  const value=result.equityValue??result.marketValue??result.value;
+  document.getElementById('result-value').textContent=money(value);
+  document.getElementById('result-method').textContent=result.method;
+  const hasRange=Number.isFinite(result.low)&&Number.isFinite(result.high);
+  document.getElementById('row-low').hidden=!hasRange;document.getElementById('row-high').hidden=!hasRange;
+  document.getElementById('result-low').textContent=money(result.low);
+  document.getElementById('result-high').textContent=money(result.high);
+  const extra=result.enterpriseValue??result.incomeValue;
+  document.getElementById('row-extra').hidden=!Number.isFinite(extra);
+  document.getElementById('extra-label').textContent=result.enterpriseValue!==undefined?'Стоимость бизнеса (EV)': 'Доходный подход';
+  document.getElementById('result-extra').textContent=Number.isFinite(extra)?money(extra):'—';
+  document.getElementById('result-note').textContent=result.assumptions||'Ориентир рассчитан на основании введённых пользователем исходных данных.';
+  document.getElementById('result-details').classList.add('is-visible');
+ }
+ form.addEventListener('submit',function(event){
+  event.preventDefault();error.classList.remove('is-visible');error.textContent='';
+  try{
+   let result;
+   if(kind==='business') result=window.ZhakinValuation.calculateBusiness({ebitda:val('ebitda'),multiple:val('multiple'),debt:val('debt'),cash:val('cash')});
+   if(kind==='property') result=window.ZhakinValuation.calculateProperty({area:val('area'),pricePerSqm:val('pricePerSqm'),noi:val('noi'),capRate:val('capRate')});
+   if(kind==='equipment') result=window.ZhakinValuation.calculateEquipment({replacementCost:val('replacementCost'),depreciation:val('depreciation')});
+   showResult(result);
+  }catch(err){error.textContent=err.message||'Проверьте введённые значения.';error.classList.add('is-visible');}
+ });
+ form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');},0);});
+ setKind('business');
+});
+</script>
+</body></html>
