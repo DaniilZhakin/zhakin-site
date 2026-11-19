@@ -7,6 +7,8 @@ on:
       - "favicon.svg"
       - "favicon-48.png"
       - "index.html"
+      - "assets/css/style.css"
+      - "assets/js/main.js"
       - "tests/account-interface.test.cjs"
       - ".github/workflows/account-interface.yml"
 
