@@ -144,11 +144,13 @@
     .wallet-demo-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.08)}
     .wallet-demo-footer p{margin:0;color:#9eada2;font-size:.72rem;line-height:1.6}
     .wallet-demo-message{min-height:1.5em;margin:12px 0 0;color:#f0dfae;font-size:.78rem;line-height:1.6}
-    .wallet-dialog{max-width:min(440px,calc(100% - 32px));padding:25px;border:1px solid rgba(216,189,120,.45);border-radius:5px;background:#101916;color:#f5f2e9;box-shadow:0 25px 90px rgba(0,0,0,.65)}
-    .wallet-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+    .wallet-dialog{width:min(440px,calc(100% - 32px));max-width:440px;max-height:calc(100vh - 32px);overflow-y:auto;margin:auto;padding:25px;border:1px solid rgba(216,189,120,.45);border-radius:18px;background:#101916;color:#f5f2e9;box-shadow:0 18px 54px rgba(0,0,0,.38)}
+    .wallet-dialog::backdrop{background:rgba(0,0,0,.48);backdrop-filter:blur(1px)}
     .wallet-dialog h2{margin:0 0 10px;font-size:1.25rem;font-weight:600}
-    .wallet-dialog p{margin:0 0 18px;color:#b8c7bc;font-size:.87rem;line-height:1.75}
+    .wallet-dialog p{margin:0 0 18px;color:#b8c7bc;font-size:.95rem;line-height:1.7}
     .wallet-dialog-actions{display:flex;justify-content:flex-end}
+    .wallet-dialog-actions .wallet-demo-button{min-width:112px;min-height:48px}
+    @media(max-width:600px){.wallet-dialog{width:calc(100% - 28px);max-width:440px;max-height:calc(100dvh - 28px);padding:20px 18px;border-radius:16px}.wallet-dialog h2{font-size:1.18rem;line-height:1.35}.wallet-dialog p{font-size:.94rem;line-height:1.65}.wallet-dialog-actions .wallet-demo-button{min-height:48px;padding:11px 18px}}
     @media(max-width:700px){.wallet-demo{padding:17px 14px}.wallet-demo-head{flex-direction:column;gap:9px}.wallet-demo-grid{grid-template-columns:1fr}.wallet-demo-panel{padding:15px}.wallet-demo-task{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}.wallet-demo-task>div{min-width:0}.wallet-demo-task .wallet-demo-button{grid-column:2;justify-self:end;min-width:112px}.wallet-demo-footer{align-items:flex-start;flex-direction:column}}
 
     .wallet-skip-link{position:absolute;z-index:20;top:8px;left:8px;transform:translateY(-160%);padding:11px 15px;background:var(--zw-gold-light);color:#101610;font-weight:700;border-radius:2px}
@@ -328,6 +330,100 @@
     }
 
 
+  
+    .wallet-collection-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(max-width:850px){.wallet-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:600px){.wallet-collection-grid{grid-template-columns:1fr}}
+    .wallet-assets{margin:24px 0 22px;padding:clamp(18px,3vw,28px);border:1px solid rgba(226,203,139,.2);border-radius:5px;background:linear-gradient(135deg,rgba(23,38,29,.94),rgba(12,19,15,.96))}
+    .wallet-assets-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .wallet-assets-heading h2{margin:0;color:#f3f0e7;font-size:clamp(1.35rem,2.5vw,1.8rem);font-weight:550;letter-spacing:-.035em}
+    .wallet-assets-heading p{margin:0;color:#9eada2;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;text-align:right}
+    .wallet-assets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .wallet-asset-card{min-width:0;padding:21px;border:1px solid rgba(226,203,139,.19);border-radius:4px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(0,0,0,.12))}
+    .wallet-asset-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .wallet-asset-name{display:flex;align-items:center;gap:11px;min-width:0}
+    .wallet-asset-mark{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border:1px solid rgba(216,189,120,.42);border-radius:50%;color:#f0dfae;font-size:.8rem;font-weight:750}
+    .wallet-asset-name strong{display:block;color:#f3f0e7;font-size:1rem;letter-spacing:.025em}
+    .wallet-asset-name small{display:block;margin-top:3px;color:#9eada2;font-size:.68rem}
+    .wallet-asset-state{padding:6px 8px;border:1px solid rgba(216,189,120,.25);color:#d9c58f;font-size:.61rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+    .wallet-asset-balance{margin:22px 0 4px;color:#f4f0e6;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:540;letter-spacing:-.055em}
+    .wallet-asset-caption{color:#9eada2;font-size:.75rem;line-height:1.6}
+    .wallet-asset-chart{position:relative;display:flex;min-height:104px;align-items:center;justify-content:center;overflow:hidden;margin-top:18px;padding:12px;border:1px solid rgba(255,255,255,.07);background:repeating-linear-gradient(to bottom,transparent 0 25px,rgba(255,255,255,.045) 26px,transparent 27px)}
+    .wallet-asset-chart:after{content:"";position:absolute;left:0;right:0;bottom:27px;border-top:1px dashed rgba(216,189,120,.22)}
+    .wallet-asset-chart span{position:relative;z-index:1;padding:5px 9px;background:#111a14;color:#9eada2;font-size:.69rem;text-align:center}
+    .wallet-asset-meta{display:flex;justify-content:space-between;gap:12px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);color:#9eada2;font-size:.69rem;line-height:1.5}
+    .wallet-asset-meta strong{color:#d8c58f;font-weight:550;text-align:right}
+    .wallet-assets-separation{display:flex;align-items:flex-start;gap:10px;margin:15px 0 0;padding:12px 14px;border-left:2px solid rgba(216,189,120,.55);background:rgba(216,189,120,.045);color:#aebbb2;font-size:.75rem;line-height:1.65}
+    .wallet-event-log{margin-top:18px;padding:20px;border:1px solid rgba(255,255,255,.09);background:rgba(0,0,0,.1)}
+    .wallet-event-log h3{margin:0 0 6px;color:#f1eee5;font-size:1rem;font-weight:550}
+    .wallet-event-log>p{margin:0 0 12px;color:#9eada2;font-size:.75rem;line-height:1.6}
+    .wallet-event-table-wrap{overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+    .wallet-event-table{width:100%;min-width:520px;border-collapse:collapse;color:#cbd4cc;font-size:.76rem}
+    .wallet-event-table th,.wallet-event-table td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+    .wallet-event-table th{color:#d8c58f;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-event-empty{text-align:center!important;color:#9eada2!important;padding:20px!important}
+    @media(max-width:720px){.wallet-assets-grid{grid-template-columns:1fr}.wallet-assets-heading{align-items:flex-start;flex-direction:column}.wallet-assets-heading p{text-align:left}}
+    .market-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(216,189,120,.55) rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:4px}
+    .market-table-scroll:focus-visible{outline:2px solid var(--zw-gold-light);outline-offset:3px}
+    .market-table-scroll table{min-width:520px}
+    @media(max-width:600px){.market-table-scroll{margin-inline:-2px}.market-table-scroll table{min-width:500px}.market-board h3{margin-top:1.2rem}}
+    /* Responsive containment: keep nested Wallet grids/flex rows inside narrow viewports. */
+    .wallet-page,
+    .wallet-page .market-board {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .wallet-intro > *,
+    .wallet-grid > *,
+    .wallet-demo-head > *,
+    .wallet-demo-grid > *,
+    .wallet-demo-task > *,
+    .wallet-demo-footer > *,
+    .wallet-dashboard-head > *,
+    .wallet-overview-grid > *,
+    .wallet-collection-heading > *,
+    .wallet-collection-grid > *,
+    .wallet-planned > *,
+    .wallet-section-heading > *,
+    .wallet-roadmap > * {
+      min-width: 0;
+    }
+    .wallet-page h1,
+    .wallet-page h2,
+    .wallet-page h3,
+    .wallet-page p,
+    .wallet-page strong,
+    .wallet-page small,
+    .wallet-page a,
+    .wallet-page span {
+      overflow-wrap: anywhere;
+    }
+    .wallet-page img,
+    .wallet-page svg,
+    .wallet-page video,
+    .wallet-page iframe {
+      max-width: 100%;
+    }
+    .wallet-page .market-board > div {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 600px) {
+      .wallet-page {
+        width: 100%;
+        padding-inline: 15px;
+      }
+      .wallet-page .wallet-demo-task {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+      .wallet-page .wallet-demo-task > div {
+        min-width: 0;
+      }
+      .wallet-page .wallet-demo-task .wallet-demo-button {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -372,11 +468,40 @@
       <p data-market-status role="status" aria-live="polite">Загрузка публичных данных…</p>
       <label>Валюта отображения <select data-market-currency aria-label="Валюта отображения"><option>USD</option><option>EUR</option><option>RUB</option></select></label>
       <h3>Криптоактивы · 24 часа</h3>
-      <div style="overflow-x:auto"><table><thead><tr><th>Актив</th><th>Цена</th><th>24 ч.</th><th>Источник</th></tr></thead><tbody data-market-crypto><tr><td colspan="4">Загрузка…</td></tr></tbody></table></div>
+      <div class="market-table-scroll" role="region" aria-label="Котировки криптоактивов, таблицу можно прокручивать по горизонтали" tabindex="0"><table><thead><tr><th scope="col">Актив</th><th scope="col">Цена</th><th scope="col">24 ч.</th><th scope="col">Источник</th></tr></thead><tbody data-market-crypto><tr><td colspan="4">Загрузка…</td></tr></tbody></table></div>
       <h3>Официальные валютные курсы</h3>
       <p>Банк России указывает рубли за единицу валюты; ЕЦБ — количество единиц валюты за 1 EUR.</p>
-      <div style="overflow-x:auto"><table><thead><tr><th>Валюта</th><th>Значение</th><th>Источник</th></tr></thead><tbody data-market-fx><tr><td colspan="3">Загрузка…</td></tr></tbody></table></div>
+      <div class="market-table-scroll" role="region" aria-label="Официальные валютные курсы, таблицу можно прокручивать по горизонтали" tabindex="0"><table><thead><tr><th scope="col">Валюта</th><th scope="col">Значение</th><th scope="col">Источник</th></tr></thead><tbody data-market-fx><tr><td colspan="3">Загрузка…</td></tr></tbody></table></div>
       <p data-market-updated>Время успешного обновления пока отсутствует.</p>
+    </section>
+    <section class="wallet-assets" aria-labelledby="wallet-assets-title">
+      <div class="wallet-assets-heading"><div><p class="wallet-kicker">ASSET OVERVIEW · READ ONLY</p><h2 id="wallet-assets-title">Цифровые активы</h2></div><p>Раздельный учёт · без подключённых счетов</p></div>
+      <div class="wallet-assets-grid">
+        <article class="wallet-asset-card" aria-labelledby="wallet-zp-title">
+          <div class="wallet-asset-top"><div class="wallet-asset-name"><span class="wallet-asset-mark" aria-hidden="true">ZP</span><div><strong id="wallet-zp-title">ZHAKIN Points</strong><small>Внутренние бонусные баллы платформы</small></div></div><span class="wallet-asset-state">Планируется</span></div>
+          <div class="wallet-asset-balance" aria-label="Баланс ZP недоступен">— ZP</div>
+          <div class="wallet-asset-caption">Личный баланс не создан. Начисления возможны только после запуска защищённого реестра и подтверждения активности.</div>
+          <div class="wallet-asset-chart" role="img" aria-label="График динамики ZHAKIN Points пока недоступен"><span>Исторические данные ещё не подключены</span></div>
+          <div class="wallet-asset-meta"><span>Тип учёта</span><strong>Внутренние баллы</strong></div>
+          <div class="wallet-asset-meta"><span>Операции</span><strong>Отключены</strong></div>
+        </article>
+        <article class="wallet-asset-card" aria-labelledby="wallet-bfu-title">
+          <div class="wallet-asset-top"><div class="wallet-asset-name"><span class="wallet-asset-mark" aria-hidden="true">BFU</span><div><strong id="wallet-bfu-title">COIN УСЕРДИЕ</strong><small>BFU · отдельный проект фонда</small></div></div><span class="wallet-asset-state">Отдельный контур</span></div>
+          <div class="wallet-asset-balance" aria-label="Баланс BFU недоступен">— BFU</div>
+          <div class="wallet-asset-caption">Данные актива не подключены к этому интерфейсу. Сведения о выпуске, хранении и обращении требуют отдельной проверки.</div>
+          <div class="wallet-asset-chart" role="img" aria-label="График динамики BFU пока недоступен"><span>Нет подтверждённого исторического ряда</span></div>
+          <div class="wallet-asset-meta"><span>Тип учёта</span><strong>Самостоятельный актив</strong></div>
+          <div class="wallet-asset-meta"><span>Операции</span><strong>Отключены</strong></div>
+        </article>
+      </div>
+      <p class="wallet-assets-separation"><strong aria-hidden="true">i</strong><span>ZP и BFU не объединяются в общий баланс, не конвертируются друг в друга и не используют общий журнал операций. Карточки показывают только структуру будущего интерфейса — реальных балансов и графиков здесь нет.</span></p>
+      <div class="wallet-event-log" aria-labelledby="wallet-event-log-title">
+        <h3 id="wallet-event-log-title">Журнал событий</h3>
+        <p>В этом разделе будут отображаться только подтверждённые системные события с источником и временем фиксации.</p>
+        <div class="wallet-event-table-wrap" tabindex="0" role="region" aria-label="Таблица журнала событий">
+          <table class="wallet-event-table"><thead><tr><th scope="col">Дата и время</th><th scope="col">Система</th><th scope="col">Событие</th><th scope="col">Статус</th></tr></thead><tbody><tr><td class="wallet-event-empty" colspan="4">Журнал пока не подключён. Записей нет.</td></tr></tbody></table>
+        </div>
+      </div>
     </section>
     <section class="wallet-dashboard" aria-labelledby="wallet-overview-title">
       <div class="wallet-dashboard-head"><h2 id="wallet-overview-title">Обзор кошелька</h2><p>Личное пространство · статус подключения</p></div>
@@ -504,9 +629,15 @@
         message.textContent = "Демо-сессия сброшена. Это не повлияло на реальные данные.";
         renderProgress();
       });
+      const walletOperationMessages = {
+        "Пополнение": "Пополнение счёта пока не подключено. В этой версии нельзя внести средства или изменить баланс. Никаких операций не выполнено.",
+        "Подарки": "Передача баллов в подарок пока не подключена. Баллы не списываются и не отправляются другим участникам.",
+        "Переводы": "Перевод баллов между участниками пока не подключён. Получатель и баланс не изменяются."
+      };
       document.querySelectorAll("[data-wallet-info]").forEach(button => {
         button.addEventListener("click", () => {
-          dialogCopy.textContent = button.dataset.walletInfo + " — функция пока не подключена. В этой версии нельзя пополнить счёт, подарить или передать баллы. Никаких операций не выполнено.";
+          const operation = button.dataset.walletInfo.trim();
+          dialogCopy.textContent = walletOperationMessages[operation] || operation + " — функция пока не подключена. Никаких операций не выполнено.";
           if (typeof dialog.showModal === "function") dialog.showModal();
           else message.textContent = dialogCopy.textContent;
         });
