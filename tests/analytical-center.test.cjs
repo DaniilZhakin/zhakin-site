@@ -169,3 +169,15 @@ test('Monitoring page describes the real automation boundary without claiming an
   assert.match(monitoring, /расписание начнёт работать после включения workflow в основную ветку/);
   assert.match(monitoring, /Загрузчик Банка России и Всемирного банка подключён/);
 });
+
+test('R&D country comparison panel renders only validated World Bank observations and discloses year coverage', () => {
+  const comparisonScript = fs.readFileSync(path.join(root, 'assets/js/analytical-rd-comparison.js'), 'utf8');
+  assert.match(monitoring, /id="rd-comparison"/);
+  assert.match(monitoring, /GB\.XPD\.RSDV\.GD\.ZS/);
+  assert.match(monitoring, /годы наблюдений могут различаться между странами/);
+  assert.match(comparisonScript, /validation_status === 'validated'/);
+  assert.match(comparisonScript, /reference_period/);
+  assert.match(comparisonScript, /source_release_date/);
+  assert.match(comparisonScript, /USA.*CHN.*DEU.*JPN.*KOR.*GBR.*FRA.*RUS/);
+  assert.match(comparisonScript, /Пропуски не заменяются оценками/);
+});
