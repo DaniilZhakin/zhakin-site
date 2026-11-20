@@ -130,7 +130,7 @@ body{background:var(--av-bg)}
 <div class="av-form" id="valuation-input-panel" role="tabpanel" aria-labelledby="tab-business" tabindex="0">
 <form id="valuation-form" novalidate>
 <div class="av-fields">
-<div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option></select></div>
+<div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option><option value="CNY">CNY · Китайский юань</option></select></div>
 <div class="av-field" data-field="ebitda"><label for="ebitda">Годовая EBITDA</label><input id="ebitda" name="ebitda" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 25 000 000"><small>В выбранной валюте, за 12 месяцев</small></div>
 <div class="av-field" data-field="multiple"><label for="multiple">Мультипликатор EV / EBITDA</label><input id="multiple" name="multiple" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 4.5"><small>Обоснуйте мультипликатор сопоставимыми компаниями</small></div>
 <div class="av-field" data-field="debt"><label for="debt">Финансовый долг</label><input id="debt" name="debt" type="number" min="0" step="any" inputmode="decimal" value="0"></div>
@@ -204,6 +204,7 @@ document.addEventListener('DOMContentLoaded',function(){
  const groups={business:['ebitda','multiple','debt','cash'],property:['area','pricePerSqm','noi','capRate'],equipment:['replacementCost','depreciation']};
  function setKind(next){
   kind=next;
+  resetScenarioState("Сначала выполните новый расчёт для выбранного типа актива.");
   tabs.forEach(tab=>{const active=tab.dataset.kind===kind;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
   document.getElementById('valuation-input-panel').setAttribute('aria-labelledby','tab-'+kind);
   fields.forEach(field=>{const show=groups[kind].includes(field.dataset.field);field.hidden=!show;const input=field.querySelector('input');if(input)input.required=show&&(kind!=='property'||['area','pricePerSqm'].includes(field.dataset.field));});
@@ -243,9 +244,23 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('result-details').classList.add('is-visible');
   currentScenarioBase=value;
   document.getElementById('scenario-currency').value=currency();
+  scenarioRun.disabled=false;
   renderScenarios();
  }
  let currentScenarioBase=null;
+ const scenarioRun=document.getElementById('scenario-run');
+ function resetScenarioState(message){
+  currentScenarioBase=null;
+  scenarioRun.disabled=true;
+  document.getElementById('scenario-rows').replaceChildren();
+  const row=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=3;cell.textContent=message;row.append(cell);document.getElementById('scenario-rows').append(row);
+  document.getElementById('scenario-sensitivity').textContent='Чувствительность будет показана после нового расчёта.';
+  document.getElementById('scenario-fx-status').textContent='Выполните новый расчёт, чтобы обновить валюту и сценарии.';
+ }
+ document.getElementById('currency').addEventListener('change',()=>{
+  document.getElementById('scenario-currency').value=currency();
+  if(currentScenarioBase!==null)resetScenarioState('Валюта изменена. Выполните основной расчёт заново.');
+ });
  function renderScenarios(){
   if(!Number.isFinite(currentScenarioBase))return;
   try{
@@ -291,7 +306,7 @@ document.addEventListener('DOMContentLoaded',function(){
    showResult(result);
   }catch(err){error.textContent=err.message||'Проверьте введённые значения.';error.classList.add('is-visible');}
  });
- form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');},0);});
+ form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');resetScenarioState('Сначала выполните основной расчёт.');},0);});
  setKind('business');
 });
 </script>
