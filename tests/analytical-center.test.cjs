@@ -127,7 +127,7 @@ test('Published observations snapshot contains only validated, sourced and times
   for (const row of observations.observations) {
     assert.ok(row.indicator_id && row.series_key && Number.isFinite(row.value));
     assert.ok(row.unit && row.geography && row.reference_period);
-    assert.ok(row.source?.name && /^https:\\/\\//.test(row.source.url));
+    assert.ok(row.source?.name && row.source.url.startsWith('https://'));
     assert.ok(row.retrieved_at && row.source_release_date);
     assert.equal(row.validation_status, 'validated');
   }
