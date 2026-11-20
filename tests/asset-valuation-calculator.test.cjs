@@ -140,3 +140,62 @@ test('valuation UI offers CNY and invalidates stale scenario results on reset, a
   assert.match(html, /scenarioRun\.disabled=true/);
   assert.match(html, /scenarioRun\.disabled=false/);
 });
+
+const handoff = require('../assets/js/valuation-analytical-handoff.js');
+
+function memoryStorage() {
+  const values = new Map();
+  return {
+    getItem: key => values.has(key) ? values.get(key) : null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: key => values.delete(key)
+  };
+}
+
+test('valuation handoff stores only an explicitly approved summary, never raw calculator inputs', () => {
+  const brief = handoff.buildBrief({
+    kind: 'business', method: 'EBITDA × multiple', value: 8000000,
+    low: 7100000, high: 8900000, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -15, optimisticPct: 10,
+    ebitda: 2000000, debt: 2000000, cash: 1000000, companyName: 'Private company'
+  }, Date.parse('2026-11-20T12:00:00Z'));
+  assert.equal(brief.value, 8000000);
+  assert.equal(brief.scenarios[0].value, 6800000);
+  assert.equal(brief.scenarios[2].value, 8800000);
+  assert.deepEqual(Object.keys(brief).sort(), [
+    'assessmentDate','createdAt','currency','expiresAt','high','kind','low','method',
+    'scenarios','schemaVersion','value'
+  ].sort());
+  assert.equal(JSON.stringify(brief).includes('Private company'), false);
+  assert.equal(JSON.stringify(brief).includes('ebitda'), false);
+});
+
+test('valuation handoff is stored in session scope and expires after two hours', () => {
+  const storage = memoryStorage();
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, {
+    kind: 'property', method: 'Площадь × цена за м²', value: 120000,
+    low: 114000, high: 126000, currency: 'RUB', assessmentDate: '2026-11-20'
+  }, now);
+  assert.equal(handoff.readBrief(storage, now + 60 * 60 * 1000).value, 120000);
+  assert.equal(handoff.readBrief(storage, now + handoff.MAX_AGE_MS + 1), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff rejects invalid asset types, currencies and values', () => {
+  const base = { kind: 'equipment', method: 'Cost approach', value: 50000, currency: 'RUB', assessmentDate: '2026-11-20' };
+  assert.throws(() => handoff.buildBrief({ ...base, kind: 'other' }), /тип актива/);
+  assert.throws(() => handoff.buildBrief({ ...base, currency: 'GBP' }), /валюта/);
+  assert.throws(() => handoff.buildBrief({ ...base, value: 0 }), /результата оценки/);
+});
+
+test('both centers expose the opt-in handoff and local-only disclosure', () => {
+  const valuation = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  const analytical = fs.readFileSync(path.join(__dirname, '../centers/analytical/index.html'), 'utf8');
+  assert.match(valuation, /id="send-valuation-brief"/);
+  assert.match(valuation, /не передаются/);
+  assert.match(valuation, /valuation-analytical-handoff\.js/);
+  assert.match(analytical, /id="valuation-brief"/);
+  assert.match(analytical, /data-clear-valuation-brief/);
+  assert.match(analytical, /valuation-analytical-handoff\.js/);
+});
