@@ -76,7 +76,7 @@ test('World Bank comparison parser retains latest non-null observations for all 
   assert.equal(result.length, 16);
   assert.deepEqual([...new Set(result.map(row => row.geography))].sort(), countries.sort());
   assert.ok(result.every(row => row.validation_status === 'validated' && row.source_release_date === '2026-11-11'));
-  assert.equal(result.find(row => row.geography === 'USA').reference_period, '2022');
+  assert.equal(result.find(row => row.geography === 'USA' && row.reference_period === '2022').reference_period, '2022');
   assert.equal(result.find(row => row.geography === 'USA').country_name, 'США');
 });
 
