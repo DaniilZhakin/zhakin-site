@@ -83,10 +83,12 @@
     const list = document.getElementById('asset-history-list');
     const compare = document.getElementById('asset-compare-list');
     const chart = document.getElementById('asset-history-chart');
+    const trendChart = document.getElementById('asset-trend-chart');
+    const trendSelect = document.getElementById('asset-trend-select');
     const status = document.getElementById('asset-dashboard-status');
     const count = document.getElementById('asset-history-count');
     const clear = document.getElementById('clear-asset-history');
-    if (!form || !list || !compare || !chart) return;
+    if (!form || !list || !compare || !chart || !trendChart || !trendSelect) return;
     let rows = readRecords(storage);
     const el = (tag, text, cls) => {
       const node = document.createElement(tag);
@@ -122,17 +124,30 @@
         item.append(remove);
         list.append(item);
       });
+      const previousTrend = trendSelect.value;
+      trendSelect.replaceChildren();
+      latest.forEach(row => {
+        const option = el('option', row.name);
+        option.value = row.name.toLocaleLowerCase('ru-RU');
+        trendSelect.append(option);
+      });
+      if ([...trendSelect.options].some(option => option.value === previousTrend)) trendSelect.value = previousTrend;
       latest.forEach((row, index) => {
         const label = el('label', undefined, 'ad-compare-option');
         const checkbox = el('input');
         checkbox.type = 'checkbox';
         checkbox.value = row.id;
         checkbox.checked = index < 3;
-        checkbox.addEventListener('change', renderChart);
+        checkbox.addEventListener('change', () => {
+          const checked = [...compare.querySelectorAll('input:checked')];
+          if (checked.length > 4) { checkbox.checked = false; status.textContent = 'Для сравнения можно выбрать не более четырёх активов.'; }
+          renderChart();
+        });
         label.append(checkbox, el('span', row.name + ' · ' + formatValue(row.value, row.currency)));
         compare.append(label);
       });
       renderChart();
+      renderTrend();
     }
     function renderChart() {
       const selectedIds = [...compare.querySelectorAll('input:checked')].map(input => input.value);
@@ -140,6 +155,10 @@
       chart.replaceChildren();
       if (!latest.length) {
         chart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Выберите активы для сравнения'));
+        return;
+      }
+      if (new Set(latest.map(row => row.currency)).size > 1) {
+        chart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Для сравнения выберите одну валюту'));
         return;
       }
       const values = latest.map(row => row.value);
@@ -153,6 +172,44 @@
         chart.append(svg('text', { x: left + width, y: y + 12, 'text-anchor': 'end', class: 'ad-chart-value' }, formatValue(row.value, row.currency)));
       });
     }
+    function renderTrend() {
+      const key = trendSelect.value;
+      trendChart.replaceChildren();
+      if (!key) {
+        trendChart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Добавьте оценки для динамики'));
+        return;
+      }
+      const points = rows.filter(row => row.name.toLocaleLowerCase('ru-RU') === key)
+        .sort((a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt));
+      if (points.length < 2) {
+        trendChart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Для динамики нужны минимум две даты оценки'));
+        return;
+      }
+      if (new Set(points.map(row => row.currency)).size > 1) {
+        trendChart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'В истории актива изменилась валюта'));
+        return;
+      }
+      const values = points.map(row => row.value);
+      const min = Math.min(...values), max = Math.max(...values);
+      const spread = max - min || Math.max(Math.abs(max) * .02, 1);
+      const low = min - spread * .15, high = max + spread * .15;
+      const x0 = 54, x1 = 690, y0 = 22, y1 = 190;
+      const x = index => x0 + (x1 - x0) * index / (points.length - 1);
+      const y = value => y1 - (value - low) / (high - low) * (y1 - y0);
+      trendChart.replaceChildren();
+      for (let i = 0; i < 4; i++) {
+        const yy = y0 + (y1 - y0) * i / 3;
+        trendChart.append(svg('line', { x1: x0, y1: yy, x2: x1, y2: yy, class: 'ad-chart-track', stroke: 'rgba(212,175,55,.2)' }));
+      }
+      trendChart.append(svg('polyline', { points: points.map((point, index) => x(index) + ',' + y(point.value)).join(' '), fill: 'none', stroke: '#d4af37', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+      points.forEach((point, index) => {
+        trendChart.append(svg('circle', { cx: x(index), cy: y(point.value), r: 5, fill: '#ead9aa' }));
+        if (index === 0 || index === points.length - 1 || points.length <= 6) {
+          trendChart.append(svg('text', { x: x(index), y: 222, 'text-anchor': index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle', class: 'ad-chart-label' }, point.date));
+        }
+      });
+    }
+    trendSelect.addEventListener('change', renderTrend);
     form.addEventListener('submit', event => {
       event.preventDefault();
       const data = new FormData(form);
@@ -176,6 +233,8 @@
       render();
       status.textContent = 'Локальная история очищена.';
     });
+    const dateInput = form.querySelector('[name="date"]');
+    if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
     render();
   }
 
