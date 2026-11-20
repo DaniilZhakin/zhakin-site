@@ -44,3 +44,17 @@ test('Page discloses its scope and does not present itself as a licensed service
   assert.match(html, /не является заявлением о наличии лицензии/);
   assert.match(html, /не являются индивидуальной инвестиционной рекомендацией/);
 });
+
+test('Mobile navigation has an explicit open state and accessible controls', () => {
+  const mainJs = fs.readFileSync(path.join(root, 'assets/js/main.js'), 'utf8');
+  const stylesheet = fs.readFileSync(path.join(root, 'assets/css/style.css'), 'utf8');
+  assert.match(html, /class="menu-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="site-navigation"/);
+  assert.match(html, /id="site-navigation" class="main-navigation"/);
+  assert.match(mainJs, /menuButton\.addEventListener\('click'/);
+  assert.match(mainJs, /navigation\.classList\.toggle\('active', isOpen\)/);
+  assert.match(mainJs, /menuButton\.setAttribute\('aria-expanded', String\(isOpen\)\)/);
+  assert.match(mainJs, /event\.key === 'Escape'/);
+  assert.match(stylesheet, /@media\s*\(max-width:\s*700px\)/);
+  assert.match(stylesheet, /\.main-navigation\.active\s*\{\s*display:flex/);
+  assert.match(stylesheet, /-webkit-overflow-scrolling:touch/);
+});
