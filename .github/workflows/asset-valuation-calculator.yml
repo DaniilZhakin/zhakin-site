@@ -15,6 +15,7 @@ on:
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
       - 'assets/js/asset-valuation-calculator.js'
+      - 'assets/js/valuation-analytical-handoff.js'
       - 'tests/asset-valuation-calculator.test.cjs'
       - '.github/workflows/asset-valuation-calculator.yml'
       - '.github/workflows/analytical-monitoring-refresh.yml'
@@ -27,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Validate local valuation handoff script syntax
+        run: node --check assets/js/valuation-analytical-handoff.js
       - name: Run valuation calculator tests
         run: node --test tests/asset-valuation-calculator.test.cjs
       - name: Run Analytical Center tests
