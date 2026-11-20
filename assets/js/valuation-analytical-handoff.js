@@ -19,7 +19,8 @@
     const currency = String(input.currency || '');
     if (!CURRENCIES.includes(currency)) throw new Error('Неподдерживаемая валюта.');
     const assessmentDate = String(input.assessmentDate || '');
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(assessmentDate)) throw new Error('Укажите корректную дату оценки.');
+    const parsedDate = new Date(assessmentDate + 'T00:00:00Z');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(assessmentDate) || !Number.isFinite(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== assessmentDate) throw new Error('Укажите корректную дату оценки.');
     const createdAt = new Date(now === undefined ? Date.now() : now).toISOString();
     const low = finiteOrNull(input.low);
     const high = finiteOrNull(input.high);
@@ -76,7 +77,7 @@
   }
 
   function clearBrief(storage) {
-    storage.removeItem(STORAGE_KEY);
+    try { storage.removeItem(STORAGE_KEY); } catch (_) {}
   }
 
   function initCalculator(document) {
