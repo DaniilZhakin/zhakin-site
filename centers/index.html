@@ -55,7 +55,7 @@
     const dict=translations[lang]||{};
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nodes=[];
     while(walker.nextNode())nodes.push(walker.currentNode);
-    nodes.forEach(node=>{const original=node.nodeValue,trimmed=original.trim(),value=dict[trimmed];if(value)node.nodeValue=original.replace(trimmed,value)});
+    nodes.forEach(node=>{if(!Object.prototype.hasOwnProperty.call(node,'_zhakinCenterOriginal'))node._zhakinCenterOriginal=node.nodeValue;const original=node._zhakinCenterOriginal,trimmed=original.trim(),value=lang==='ru'?trimmed:dict[trimmed];node.nodeValue=original.replace(trimmed,value||trimmed)});
     const title=dict['Экспертные центры'];if(title)document.title=lang==='en'?'Expert Centers — ZHAKIN TEAM':'专家中心 — ZHAKIN TEAM';
     const meta=document.querySelector('meta[name="description"]');
     if(meta)meta.content=lang==='en'?'ZHAKIN TEAM expert centers: analytical research and preliminary asset valuation.':lang==='zh'?'ZHAKIN TEAM 专家中心：分析研究与资产初步评估。':'Экспертные направления ZHAKIN TEAM: аналитические исследования и предварительная оценка активов.';
