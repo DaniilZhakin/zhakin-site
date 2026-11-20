@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_name": "ZHAKIN TEAM Analytical Monitoring Observations",
+  "status": "source_fetched_validated",
+  "generated_at": "2026-11-20T13:14:08.342Z",
+  "source_count": 2,
+  "observation_count": 4,
+  "observations": [
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/USD",
+      "value": 81.929,
+      "unit": "RUB_per_1_USD",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:14:08.342Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/EUR",
+      "value": 89.8597,
+      "unit": "RUB_per_1_EUR",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:14:08.342Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/CNY",
+      "value": 12.2546,
+      "unit": "RUB_per_1_CNY",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:14:08.342Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "USA/GB.XPD.RSDV.GD.ZS",
+      "value": 3.44716,
+      "unit": "percent_GDP",
+      "geography": "USA",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/usa/indicator/GB.XPD.RSDV.GD.ZS?format=json&per_page=100",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "USA"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:14:08.342Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    }
+  ]
+}
