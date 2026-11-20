@@ -223,3 +223,9 @@ test('valuation handoff preserves negative lower bounds where the valuation meth
   assert.equal(brief.scenarios[0].value, 0);
   assert.equal(brief.scenarios[2].value, 600);
 });
+
+test('scenario input changes invalidate the previously approved handoff until recalculation', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/valuation-analytical-handoff.js'), 'utf8');
+  assert.match(source, /scenario-date', 'scenario-stress', 'scenario-optimistic/);
+  assert.match(source, /addEventListener\('input', \(\) => root\.ZhakinValuationHandoff\.setLatest\(null\)\)/);
+});
