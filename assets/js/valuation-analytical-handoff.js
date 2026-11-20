@@ -101,6 +101,25 @@
     try { storage.removeItem(STORAGE_KEY); } catch (_) {}
   }
 
+  function saveBriefToHistory(brief, assetName, dashboard, storage) {
+    if (!brief || !dashboard || typeof dashboard.createRecord !== 'function' ||
+        typeof dashboard.readRecords !== 'function' || typeof dashboard.writeRecords !== 'function') {
+      throw new Error('Модуль локальной истории недоступен.');
+    }
+    const record = dashboard.createRecord({
+      name: assetName,
+      type: brief.kind,
+      date: brief.assessmentDate,
+      value: brief.value,
+      currency: brief.currency,
+      method: brief.method
+    });
+    const records = dashboard.readRecords(storage);
+    dashboard.writeRecords(storage, [...records, record]);
+    return record;
+  }
+
+
   function initCalculator(document) {
     const button = document.getElementById('send-valuation-brief');
     if (!button) return;
@@ -185,33 +204,18 @@
     status.textContent = 'Сводка передана вручную и хранится только в текущей вкладке. Срок действия — до 2 часов.';
     if (saveToHistory && assetName) {
       saveToHistory.addEventListener('click', function () {
-        const dashboard = root.ZhakinAssetDashboard;
         const name = String(assetName.value || '').trim();
         if (!name) {
           status.textContent = 'Укажите краткое название актива или условный код. Это имя останется только в локальной истории браузера.';
           assetName.focus();
           return;
         }
-        if (!dashboard || typeof dashboard.createRecord !== 'function' || typeof dashboard.readRecords !== 'function' || typeof dashboard.writeRecords !== 'function') {
-          status.textContent = 'Модуль локальной истории недоступен. Сводка не сохранена.';
-          return;
-        }
         try {
-          const record = dashboard.createRecord({
-            name,
-            type: brief.kind,
-            date: brief.assessmentDate,
-            value: brief.value,
-            currency: brief.currency,
-            method: brief.method
-          });
-          const storage = root.localStorage;
-          const records = dashboard.readRecords(storage);
-          dashboard.writeRecords(storage, [...records, record]);
+          saveBriefToHistory(brief, name, root.ZhakinAssetDashboard, root.localStorage);
           saveToHistory.disabled = true;
           status.textContent = 'Результат сохранён в локальную историю активов. Откройте панель, чтобы посмотреть запись и динамику.';
         } catch (_) {
-          status.textContent = 'Не удалось сохранить результат в локальной истории. Проверьте доступность хранилища браузера.';
+          status.textContent = 'Не удалось сохранить результат в локальную историю. Проверьте доступность хранилища браузера.';
         }
       });
     }
@@ -221,7 +225,7 @@
     });
   }
 
-  const api = { STORAGE_KEY, MAX_AGE_MS, buildBrief, saveBrief, readBrief, clearBrief };
+  const api = { STORAGE_KEY, MAX_AGE_MS, buildBrief, saveBrief, readBrief, clearBrief, saveBriefToHistory };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.ZhakinValuationHandoff = Object.assign(root.ZhakinValuationHandoff || {}, api);
   if (root && root.document) {
