@@ -9,7 +9,7 @@
   function finiteOrNull(value) {
     if (value === null || value === undefined || value === '') return null;
     const number = Number(value);
-    return Number.isFinite(number) && number >= 0 ? number : null;
+    return Number.isFinite(number) ? number : null;
   }
 
   function buildBrief(input, now) {
@@ -27,7 +27,7 @@
     const stressPct = Number(input.stressPct);
     const optimisticPct = Number(input.optimisticPct);
     const scenarios = Number.isFinite(stressPct) && Number.isFinite(optimisticPct) &&
-      stressPct <= 0 && optimisticPct >= 0
+      stressPct >= -100 && stressPct <= 0 && optimisticPct >= 0 && optimisticPct <= 500
       ? [
           { label: 'Стрессовый', changePct: stressPct, value: value * (1 + stressPct / 100) },
           { label: 'Базовый', changePct: 0, value },
@@ -66,10 +66,22 @@
       return null;
     }
     const current = now === undefined ? Date.now() : Number(now);
+    const created = Date.parse(brief.createdAt || '');
     const expires = Date.parse(brief.expiresAt || '');
-    if (brief.schemaVersion !== 1 || !Number.isFinite(expires) || expires <= current ||
-        !KINDS.includes(brief.kind) || !CURRENCIES.includes(brief.currency) ||
-        !Number.isFinite(Number(brief.value)) || Number(brief.value) <= 0) {
+    const value = Number(brief.value);
+    const low = brief.low === null ? null : Number(brief.low);
+    const high = brief.high === null ? null : Number(brief.high);
+    const validScenarios = Array.isArray(brief.scenarios) && brief.scenarios.length <= 3 &&
+      brief.scenarios.every(item => item && typeof item.label === 'string' &&
+        Number.isFinite(Number(item.changePct)) && Number.isFinite(Number(item.value)) &&
+        Number(item.changePct) >= -100 && Number(item.changePct) <= 500 && Number(item.value) >= 0);
+    if (brief.schemaVersion !== 1 || !Number.isFinite(created) || !Number.isFinite(expires) ||
+        expires <= current || expires <= created || expires - created > MAX_AGE_MS ||
+        created > current || !KINDS.includes(brief.kind) || !CURRENCIES.includes(brief.currency) ||
+        !Number.isFinite(value) || value <= 0 ||
+        (low !== null && !Number.isFinite(low)) || (high !== null && !Number.isFinite(high)) ||
+        !validScenarios || typeof brief.method !== 'string' || brief.method.length > 180 ||
+        typeof brief.assessmentDate !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(brief.assessmentDate)) {
       clearBrief(storage);
       return null;
     }
@@ -111,7 +123,8 @@
     const content = panel.querySelector('[data-valuation-brief-content]');
     const clear = panel.querySelector('[data-clear-valuation-brief]');
     const status = panel.querySelector('[data-valuation-brief-status]');
-    const brief = readBrief(root.sessionStorage);
+    let brief = null;
+    try { brief = readBrief(root.sessionStorage); } catch (_) { brief = null; }
     if (!brief) {
       panel.hidden = true;
       return;
