@@ -24,7 +24,7 @@ function mergeHistory(history, snapshot) {
     schema_version: '1.0.0',
     catalog_name: 'ZHAKIN TEAM Analytical Monitoring History',
     status: 'history_accumulating',
-    generated_at: snapshot.generated_at,
+    generated_at: additions.length ? snapshot.generated_at : (history.generated_at || snapshot.generated_at),
     observations: [...existing, ...additions].sort((a, b) =>
       String(a.reference_period).localeCompare(String(b.reference_period)) ||
       String(a.series_key).localeCompare(String(b.series_key)) ||
