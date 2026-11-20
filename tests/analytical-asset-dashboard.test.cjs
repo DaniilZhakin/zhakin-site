@@ -72,7 +72,7 @@ test('dashboard UI is linked from the Analytical Center and discloses local-only
   assert.match(page, /id="asset-trend-chart"/);
   assert.match(page, /id="asset-history-chart"/);
   assert.match(page, /не отправляются на сервер/);
-  assert.match(page, /не вводите коммерческую тайну/);
+  assert.match(page, /Не вводите коммерческую тайну/);
   assert.match(index, /asset-dashboard\.html/);
   assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai/centers/analytical/asset-dashboard.html'));
   assert.match(workflow, /analytical-asset-dashboard\.test\.cjs/);
