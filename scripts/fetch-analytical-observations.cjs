@@ -142,18 +142,18 @@ function stableObservationSignature(snapshot) {
 async function main() {
   const result = await collectObservations();
   if (process.argv.includes('--check')) {
-    process.stdout.write(JSON.stringify(result, null, 2) + '\\n');
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
     return;
   }
   const existing = fs.existsSync(OUTPUT) ? JSON.parse(fs.readFileSync(OUTPUT, 'utf8')) : null;
   if (process.argv.includes('--write-if-changed') && existing &&
       JSON.stringify(stableObservationSignature(existing)) === JSON.stringify(stableObservationSignature(result))) {
-    process.stdout.write('No source observation changes; keeping the existing validated snapshot.\\n');
+    process.stdout.write('No source observation changes; keeping the existing validated snapshot.\n');
     return;
   }
   fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
-  fs.writeFileSync(OUTPUT, JSON.stringify(result, null, 2) + '\\n');
-  process.stdout.write('Wrote ' + result.observation_count + ' validated observations to ' + path.relative(ROOT, OUTPUT) + '\\n');
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+  process.stdout.write('Wrote ' + result.observation_count + ' validated observations to ' + path.relative(ROOT, OUTPUT) + '\n');
 }
 
 if (require.main === module) {
