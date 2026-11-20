@@ -104,6 +104,7 @@ test('scenario engine calculates stress, base and optimistic cases from explicit
 test('scenario engine rejects invalid dates, currencies and asymmetric assumptions', () => {
   assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'GBP', assessmentDate: '2026-11-20', stressPct: -10, optimisticPct: 10 }), /валюту/);
   assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'RUB', assessmentDate: 'not-a-date', stressPct: -10, optimisticPct: 10 }), /дату/);
+  assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'RUB', assessmentDate: '2026-02-30', stressPct: -10, optimisticPct: 10 }), /дату/);
   assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'RUB', assessmentDate: '2026-11-20', stressPct: 5, optimisticPct: 10 }), /Стрессовое/);
 });
 
