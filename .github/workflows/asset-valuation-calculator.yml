@@ -4,6 +4,7 @@ on:
     paths:
       - 'centers/asset-valuation/**'
       - 'centers/analytical/**'
+      - 'data/analytical-monitoring/**'
       - 'centers/index.html'
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
