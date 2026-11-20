@@ -165,9 +165,12 @@ p { font-size: calc(18px * var(--zhakin-text-scale)); }
     align-items:flex-start;
     gap:16px;
     max-height:calc(100vh - 130px);
+    max-height:calc(100dvh - 130px);
     overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
     background:#102820;
-    padding:24px;
+    padding:24px 24px calc(24px + env(safe-area-inset-bottom));
     border:1px solid rgba(212,175,55,.3);
     border-radius:14px;
     box-shadow:0 20px 40px rgba(0,0,0,.35);
