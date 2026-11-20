@@ -214,3 +214,9 @@ p { font-size: calc(18px * var(--zhakin-text-scale)); }
 @media (min-width:701px) and (max-width:1000px) {
   .header-container:has(.main-navigation a:nth-child(9)) .main-navigation { grid-template-columns:1fr; width:min(460px,calc(100vw - 40px)); }
 }
+
+/* Shared multilingual control — compact gold/graphite treatment. */
+.zhakin-language-switcher{display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;padding:4px;border:1px solid rgba(212,175,55,.32);border-radius:10px;background:rgba(7,26,22,.72)}
+.zhakin-language-switcher button{min-width:34px;min-height:32px;padding:5px 7px;border:1px solid transparent;border-radius:7px;background:transparent;color:#cbd7d0;font:700 .68rem/1 inherit;cursor:pointer}
+.zhakin-language-switcher button:hover,.zhakin-language-switcher button.is-active{border-color:rgba(212,175,55,.65);background:rgba(212,175,55,.13);color:#f0dfaa}
+@media(max-width:700px){.zhakin-language-switcher{gap:1px;padding:3px}.zhakin-language-switcher button{min-width:31px;min-height:32px;padding:4px 5px}}
