@@ -1,0 +1,46 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.join(__dirname, '..');
+const pagePath = path.join(root, 'centers/analytical/index.html');
+const html = fs.readFileSync(pagePath, 'utf8');
+const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+const directory = fs.readFileSync(path.join(root, 'centers/index.html'), 'utf8');
+
+test('Analytical Center page has canonical metadata and Russian language declaration', () => {
+  assert.match(html, /<html lang="ru">/);
+  assert.match(html, /<title>Аналитический центр — ZHAKIN TEAM<\/title>/);
+  assert.match(html, /rel="canonical" href="https:\/\/xn--80alhhq\.xn--p1ai\/centers\/analytical\//);
+  assert.match(html, /"@type":"CollectionPage"/);
+});
+
+test('Analytical Center exposes four defined research directions', () => {
+  for (const label of ['Экономика, финансы и инвестиции', 'Международная торговля и продовольствие', 'ИИ, технологии и промышленность', 'Инфраструктура, безопасность и устойчивость']) {
+    assert.ok(html.includes(label), 'Missing research direction: ' + label);
+  }
+  assert.match(html, /Research protocol/);
+  assert.match(html, /01 · Вопрос/);
+  assert.match(html, /02 · Данные/);
+  assert.match(html, /03 · Метод/);
+  assert.match(html, /04 · Вывод/);
+});
+
+test('Selected publication links are present in sitemap', () => {
+  const links = [...html.matchAll(/href="(\/publications\/[^"]+)"/g)].map(match => match[1]);
+  assert.ok(links.length >= 6, 'Expected at least six selected publication links');
+  for (const link of links) {
+    assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai' + link), 'Missing sitemap URL: ' + link);
+  }
+});
+
+test('Expert centers directory links to the public Analytical Center', () => {
+  assert.match(directory, /href="\/centers\/analytical\/">Открыть аналитический центр/);
+  assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai/centers/analytical/'));
+});
+
+test('Page discloses its scope and does not present itself as a licensed service', () => {
+  assert.match(html, /не является заявлением о наличии лицензии/);
+  assert.match(html, /не являются индивидуальной инвестиционной рекомендацией/);
+});
