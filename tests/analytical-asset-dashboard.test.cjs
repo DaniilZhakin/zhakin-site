@@ -66,6 +66,7 @@ test('dashboard UI is linked from the Analytical Center and discloses local-only
   const page = fs.readFileSync(path.join(root, 'centers/analytical/asset-dashboard.html'), 'utf8');
   const index = fs.readFileSync(path.join(root, 'centers/analytical/index.html'), 'utf8');
   const workflow = fs.readFileSync(path.join(root, '.github/workflows/asset-valuation-calculator.yml'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
   assert.match(page, /id="asset-history-form"/);
   assert.match(page, /id="asset-history-list"/);
   assert.match(page, /id="asset-trend-chart"/);
@@ -73,6 +74,7 @@ test('dashboard UI is linked from the Analytical Center and discloses local-only
   assert.match(page, /не отправляются на сервер/);
   assert.match(page, /не вводите коммерческую тайну/);
   assert.match(index, /asset-dashboard\.html/);
+  assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai/centers/analytical/asset-dashboard.html'));
   assert.match(workflow, /analytical-asset-dashboard\.test\.cjs/);
 });
 
