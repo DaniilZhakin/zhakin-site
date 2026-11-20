@@ -83,3 +83,35 @@ test('Monitoring page is linked from the Analytical Center and included in sitem
   assert.match(html, /href="\/centers\/analytical\/monitoring\.html"/);
   assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai/centers/analytical/monitoring.html'));
 });
+
+const registryPath = path.join(root, 'data/analytical-monitoring/indicators.json');
+const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+
+test('Indicator registry is machine-readable, scoped as catalog-only and contains no fabricated observations', () => {
+  assert.equal(registry.schema_version, '1.0.0');
+  assert.equal(registry.status, 'catalog_only');
+  assert.equal(registry.policy.observations_included, false);
+  assert.equal(registry.policy.live_data_connected, false);
+  assert.equal(Array.isArray(registry.indicators), true);
+  assert.equal(registry.indicators.length, 16);
+  assert.equal(Object.hasOwn(registry, 'observations'), false);
+});
+
+test('Every registry indicator has a unique ID, source, unit, frequency, method and validation controls', () => {
+  const ids = new Set();
+  for (const indicator of registry.indicators) {
+    assert.ok(indicator.id && !ids.has(indicator.id), 'Missing or duplicate indicator ID: ' + indicator.id);
+    ids.add(indicator.id);
+    assert.ok(['macro', 'trade', 'technology'].includes(indicator.domain), 'Invalid domain: ' + indicator.domain);
+    assert.ok(indicator.title && indicator.unit && indicator.frequency);
+    assert.ok(indicator.source?.name && /^https:\/\//.test(indicator.source.url));
+    assert.ok(indicator.method && indicator.validation?.length);
+  }
+  assert.deepEqual([...new Set(registry.indicators.map(item => item.domain))].sort(), ['macro', 'technology', 'trade']);
+});
+
+test('Monitoring page links to the structured indicator registry and explains its current status', () => {
+  assert.match(monitoring, /href="\/data\/analytical-monitoring\/indicators\.json"/);
+  assert.match(monitoring, /каталог методик/);
+  assert.match(monitoring, /16 индикаторов/);
+});
