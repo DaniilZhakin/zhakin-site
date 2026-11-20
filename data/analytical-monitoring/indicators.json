@@ -1,0 +1,330 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_name": "ZHAKIN TEAM Analytical Monitoring Registry",
+  "status": "catalog_only",
+  "generated_at": "2026-11-20",
+  "policy": {
+    "observations_included": false,
+    "live_data_connected": false,
+    "publication_rule": "Do not publish a numeric observation until its source, reference period, retrieval timestamp, unit, transformation and revision status are recorded and validated.",
+    "missing_data_rule": "Use null with an explicit availability status; never replace missing source data with an estimate without a separately disclosed estimation method."
+  },
+  "indicators": [
+    {
+      "id": "macro.gdp.real_growth",
+      "domain": "macro",
+      "title": "Реальный ВВП",
+      "unit": "percent_yoy",
+      "frequency": "quarterly",
+      "geography": "country",
+      "source": {
+        "name": "Росстат",
+        "url": "https://rosstat.gov.ru/",
+        "dataset": "National accounts; GDP volume indices"
+      },
+      "method": "Use the official real GDP volume index. Retain initial estimate and each subsequent revision as separate vintages.",
+      "validation": [
+        "period_is_quarter_or_year",
+        "unit_is_percent",
+        "revision_vintage_recorded"
+      ],
+      "publication_lag": "As published by source; record actual release date."
+    },
+    {
+      "id": "macro.cpi.monthly",
+      "domain": "macro",
+      "title": "Индекс потребительских цен",
+      "unit": "percent_mom_and_yoy",
+      "frequency": "monthly",
+      "geography": "country",
+      "source": {
+        "name": "Росстат",
+        "url": "https://rosstat.gov.ru/",
+        "dataset": "Consumer price indices"
+      },
+      "method": "Store month-on-month and year-on-year measures as distinct series; do not infer one from the other without a documented calculation.",
+      "validation": [
+        "reference_month_present",
+        "comparison_basis_explicit"
+      ],
+      "publication_lag": "As published by source; record actual release date."
+    },
+    {
+      "id": "macro.policy_rate",
+      "domain": "macro",
+      "title": "Ключевая ставка",
+      "unit": "percent_per_annum",
+      "frequency": "event_driven",
+      "geography": "country",
+      "source": {
+        "name": "Банк России",
+        "url": "https://www.cbr.ru/hd_base/KeyRate/",
+        "dataset": "Key rate history"
+      },
+      "method": "Store effective-from and effective-to dates for each decision. For period averages, calculate day-weighted average and disclose the interval.",
+      "validation": [
+        "effective_date_present",
+        "rate_non_negative",
+        "period_average_method_disclosed"
+      ],
+      "publication_lag": "Decision date / effective date as published."
+    },
+    {
+      "id": "macro.industrial_production",
+      "domain": "macro",
+      "title": "Промышленное производство",
+      "unit": "index_and_percent",
+      "frequency": "monthly",
+      "geography": "country",
+      "source": {
+        "name": "Росстат",
+        "url": "https://rosstat.gov.ru/",
+        "dataset": "Industrial production indices"
+      },
+      "method": "Preserve the published index and seasonal adjustment status; do not splice adjusted and unadjusted series.",
+      "validation": [
+        "adjustment_status_present",
+        "base_period_present"
+      ],
+      "publication_lag": "As published by source."
+    },
+    {
+      "id": "macro.fx_official",
+      "domain": "macro",
+      "title": "Официальные курсы валют",
+      "unit": "currency_per_rub_or_rub_per_currency",
+      "frequency": "daily",
+      "geography": "currency_pair",
+      "source": {
+        "name": "Банк России",
+        "url": "https://www.cbr.ru/currency_base/daily/",
+        "dataset": "Official exchange rates"
+      },
+      "method": "Store currency, quote convention, effective date and nominal unit; period averages must be calculated from daily observations and labeled.",
+      "validation": [
+        "currency_code_present",
+        "quote_convention_present",
+        "effective_date_present"
+      ],
+      "publication_lag": "Daily publication schedule; record retrieval timestamp."
+    },
+    {
+      "id": "trade.goods_exports",
+      "domain": "trade",
+      "title": "Экспорт товаров",
+      "unit": "current_usd",
+      "frequency": "monthly_or_annual",
+      "geography": "reporter_partner_hs",
+      "source": {
+        "name": "UN Comtrade",
+        "url": "https://comtrade.un.org/en/trade-statistics",
+        "dataset": "International merchandise trade statistics"
+      },
+      "method": "Aggregate reported export values for a defined reporter, partner, period and HS classification. Retain trade flow, classification revision and reporting status.",
+      "validation": [
+        "reporter_and_partner_present",
+        "hs_revision_present",
+        "trade_flow_present",
+        "reporting_status_present"
+      ],
+      "publication_lag": "As reported by national authorities; may be revised."
+    },
+    {
+      "id": "trade.goods_imports",
+      "domain": "trade",
+      "title": "Импорт товаров",
+      "unit": "current_usd",
+      "frequency": "monthly_or_annual",
+      "geography": "reporter_partner_hs",
+      "source": {
+        "name": "UN Comtrade",
+        "url": "https://comtrade.un.org/en/trade-statistics",
+        "dataset": "International merchandise trade statistics"
+      },
+      "method": "Aggregate reported import values for a defined reporter, partner, period and HS classification. Preserve CIF/FOB valuation basis where supplied.",
+      "validation": [
+        "reporter_and_partner_present",
+        "hs_revision_present",
+        "valuation_basis_recorded"
+      ],
+      "publication_lag": "As reported by national authorities; may be revised."
+    },
+    {
+      "id": "trade.goods_balance",
+      "domain": "trade",
+      "title": "Сальдо торговли товарами",
+      "unit": "current_usd",
+      "frequency": "monthly_or_annual",
+      "geography": "reporter",
+      "source": {
+        "name": "UN Comtrade",
+        "url": "https://comtrade.un.org/en/trade-statistics",
+        "dataset": "Derived from reported exports and imports"
+      },
+      "method": "Exports minus imports only after aligning reporter, period, currency, HS scope and valuation convention. Flag non-comparable periods.",
+      "validation": [
+        "export_import_scope_aligned",
+        "currency_aligned",
+        "valuation_basis_reviewed"
+      ],
+      "publication_lag": "Depends on both source series."
+    },
+    {
+      "id": "trade.concentration_hhi",
+      "domain": "trade",
+      "title": "Концентрация товарных потоков",
+      "unit": "hhi_0_to_10000",
+      "frequency": "monthly_or_annual",
+      "geography": "reporter_partner_or_hs",
+      "source": {
+        "name": "UN Comtrade",
+        "url": "https://comtrade.un.org/en/trade-statistics",
+        "dataset": "Derived from partner or product-level trade values"
+      },
+      "method": "HHI = sum of squared percentage shares for a declared partner or product universe. Publish universe, missing-share treatment and whether shares are normalized.",
+      "validation": [
+        "universe_disclosed",
+        "shares_sum_reviewed",
+        "hhi_scale_disclosed"
+      ],
+      "publication_lag": "Depends on completeness of source trade records."
+    },
+    {
+      "id": "food.fao_price_index",
+      "domain": "trade",
+      "title": "Индекс продовольственных цен ФАО",
+      "unit": "index_points",
+      "frequency": "monthly",
+      "geography": "global",
+      "source": {
+        "name": "FAO",
+        "url": "https://www.fao.org/worldfoodsituation/foodpricesindex/en/",
+        "dataset": "FAO Food Price Index"
+      },
+      "method": "Use the published FAO index and its stated base period. Do not relabel it as domestic retail inflation.",
+      "validation": [
+        "base_period_recorded",
+        "source_vintage_recorded"
+      ],
+      "publication_lag": "Monthly release schedule; record release date."
+    },
+    {
+      "id": "food.production_balance",
+      "domain": "trade",
+      "title": "Производство и продовольственные балансы",
+      "unit": "tonnes_or_kg_per_capita_or_kcal",
+      "frequency": "annual",
+      "geography": "country_commodity",
+      "source": {
+        "name": "FAOSTAT",
+        "url": "https://www.fao.org/faostat/",
+        "dataset": "Production and food balance domains"
+      },
+      "method": "Keep production, trade, stocks, food availability and dietary energy supply as distinct concepts and series.",
+      "validation": [
+        "domain_definition_present",
+        "commodity_code_present",
+        "unit_consistent"
+      ],
+      "publication_lag": "Annual data may be published with a substantial lag and later revisions."
+    },
+    {
+      "id": "tech.robot_installations",
+      "domain": "technology",
+      "title": "Установки промышленных роботов",
+      "unit": "robots_installed",
+      "frequency": "annual",
+      "geography": "country_industry",
+      "source": {
+        "name": "International Federation of Robotics",
+        "url": "https://ifr.org/",
+        "dataset": "World Robotics industrial robot statistics"
+      },
+      "method": "Use annual installations, not the operational stock. Record country, industry classification and report vintage.",
+      "validation": [
+        "annual_flow_vs_stock_distinguished",
+        "industry_scope_present",
+        "report_vintage_present"
+      ],
+      "publication_lag": "Annual; record report year and underlying observation year separately."
+    },
+    {
+      "id": "tech.robot_density",
+      "domain": "technology",
+      "title": "Плотность роботизации",
+      "unit": "robots_per_10000_manufacturing_employees",
+      "frequency": "annual",
+      "geography": "country",
+      "source": {
+        "name": "IFR and ILOSTAT",
+        "url": "https://ilostat.ilo.org/data/",
+        "dataset": "Operational robot stock and manufacturing employment"
+      },
+      "method": "Operational industrial robot stock divided by manufacturing employment, multiplied by 10,000. Record numerator and denominator vintages.",
+      "validation": [
+        "numerator_vintage_present",
+        "denominator_vintage_present",
+        "employment_scope_present"
+      ],
+      "publication_lag": "Depends on availability of both series."
+    },
+    {
+      "id": "tech.rd_gdp",
+      "domain": "technology",
+      "title": "Расходы на исследования и разработки",
+      "unit": "percent_gdp",
+      "frequency": "annual",
+      "geography": "country",
+      "source": {
+        "name": "World Bank",
+        "url": "https://data.worldbank.org/indicator/GB.XPD.RSDV.GD.ZS",
+        "dataset": "Research and development expenditure (% of GDP)"
+      },
+      "method": "Use the published GERD-to-GDP indicator; retain source series code and revision date.",
+      "validation": [
+        "indicator_code_present",
+        "reference_year_present"
+      ],
+      "publication_lag": "Annual; data availability varies by country."
+    },
+    {
+      "id": "tech.patent_applications",
+      "domain": "technology",
+      "title": "Патентные заявки",
+      "unit": "applications",
+      "frequency": "annual",
+      "geography": "origin_or_office",
+      "source": {
+        "name": "WIPO",
+        "url": "https://www.wipo.int/ipstats/en/",
+        "dataset": "IP statistics data center"
+      },
+      "method": "Separate resident and non-resident applications, patent office and origin; do not combine national and PCT filings without explicit scope.",
+      "validation": [
+        "office_or_origin_present",
+        "resident_status_present",
+        "filing_route_present"
+      ],
+      "publication_lag": "Annual; revisions may follow."
+    },
+    {
+      "id": "tech.internet_use",
+      "domain": "technology",
+      "title": "Использование интернета населением",
+      "unit": "percent_population",
+      "frequency": "annual",
+      "geography": "country",
+      "source": {
+        "name": "ITU",
+        "url": "https://datahub.itu.int/",
+        "dataset": "ICT indicators"
+      },
+      "method": "Use the source definition and population denominator for each country-year; avoid mixing individuals using the internet with subscriptions.",
+      "validation": [
+        "indicator_definition_present",
+        "population_denominator_present"
+      ],
+      "publication_lag": "Annual; report data year separately from release year."
+    }
+  ]
+}
