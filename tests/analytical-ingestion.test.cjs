@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseRussianNumber, parseCbrXml, parseWorldBankJson, stableObservationSignature } = require('../scripts/fetch-analytical-observations.cjs');
+const { parseRussianNumber, parseCbrXml, parseWorldBankJson, parseWorldBankComparisonJson, stableObservationSignature } = require('../scripts/fetch-analytical-observations.cjs');
 
 const retrievedAt = '2026-11-20T13:00:00.000Z';
 
@@ -63,4 +63,24 @@ test('Stable snapshot comparison ignores retrieval timestamps but detects source
   const revised = structuredClone(base);
   revised.observations[0].value = 81;
   assert.notDeepEqual(stableObservationSignature(base), stableObservationSignature(revised));
+});
+
+test('World Bank comparison parser retains latest non-null observations for all eight requested countries', () => {
+  const countries = ['USA', 'CHN', 'DEU', 'JPN', 'KOR', 'GBR', 'FRA', 'RUS'];
+  const rows = countries.flatMap((code) => [
+    { countryiso3code: code, country: { id: code, value: code }, date: '2022', value: 2.1 },
+    { countryiso3code: code, country: { id: code, value: code }, date: '2023', value: null },
+    { countryiso3code: code, country: { id: code, value: code }, date: '2021', value: 1.9 }
+  ]);
+  const result = parseWorldBankComparisonJson([{ lastupdated: '2026-11-11' }, rows], retrievedAt);
+  assert.equal(result.length, 16);
+  assert.deepEqual([...new Set(result.map(row => row.geography))].sort(), countries.sort());
+  assert.ok(result.every(row => row.validation_status === 'validated' && row.source_release_date === '2026-11-11'));
+  assert.equal(result.find(row => row.geography === 'USA').reference_period, '2022');
+  assert.equal(result.find(row => row.geography === 'USA').country_name, 'США');
+});
+
+test('World Bank comparison parser rejects incomplete country coverage rather than filling missing countries', () => {
+  const result = [{ countryiso3code: 'USA', country: { id: 'USA', value: 'United States' }, date: '2023', value: 3.4 }];
+  assert.throws(() => parseWorldBankComparisonJson([{ lastupdated: '2026-11-11' }, result], retrievedAt), /no non-null R&D observation/);
 });
