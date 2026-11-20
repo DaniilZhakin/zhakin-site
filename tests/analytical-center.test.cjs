@@ -75,7 +75,7 @@ test('Monitoring indicators document units, sources and calculation rules withou
     assert.ok(monitoring.includes(source), 'Missing primary data source: ' + source);
   }
   assert.match(monitoring, /Метод расчёта и контроль/);
-  assert.match(monitoring, /РЕГЛАМЕНТНОЕ ОБНОВЛЕНИЕ НЕ ПОДКЛЮЧЕНО/);
+  assert.match(monitoring, /ИСТОРИЯ НАБЛЮДЕНИЙ ФОРМИРУЕТСЯ/);
   assert.match(monitoring, /значение не подменяется оценкой/);
 });
 
@@ -149,4 +149,23 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
   assert.match(monitoring, /12,2546/);
   assert.match(monitoring, /3,44716%/);
   assert.match(monitoring, /20\.11\.2026/);
+});
+
+test('FX history visualization uses only validated observations and exposes accessible series controls', () => {
+  const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
+  const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
+  assert.equal(history.status, 'history_accumulating');
+  assert.equal(history.observations.length, 4);
+  assert.match(monitoring, /id="fx-history"/);
+  assert.match(monitoring, /data-series="RUB\\/USD"/);
+  assert.match(monitoring, /aria-pressed="true"/);
+  assert.match(monitoring, /Исторические точки не моделируются/);
+  assert.match(chartScript, /points\.length < 2/);
+  assert.match(chartScript, /validation_status === 'validated'/);
+  assert.match(chartScript, /history\.json/);
+});
+
+test('Monitoring page describes the real automation boundary without claiming an active schedule on the feature branch', () => {
+  assert.match(monitoring, /расписание начнёт работать после включения workflow в основную ветку/);
+  assert.match(monitoring, /загрузчик Банка России и Всемирного банка подключён/);
 });
