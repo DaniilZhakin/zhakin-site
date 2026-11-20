@@ -81,7 +81,7 @@
         !Number.isFinite(value) || value <= 0 ||
         (low !== null && !Number.isFinite(low)) || (high !== null && !Number.isFinite(high)) ||
         !validScenarios || typeof brief.method !== 'string' || brief.method.length > 180 ||
-        typeof brief.assessmentDate !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(brief.assessmentDate)) {
+        typeof brief.assessmentDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(brief.assessmentDate)) {
       clearBrief(storage);
       return null;
     }
