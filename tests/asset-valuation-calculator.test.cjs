@@ -142,6 +142,7 @@ test('valuation UI offers CNY and invalidates stale scenario results on reset, a
 });
 
 const handoff = require('../assets/js/valuation-analytical-handoff.js');
+const dashboard = require('../assets/js/analytical-asset-dashboard.js');
 
 function memoryStorage() {
   const values = new Map();
@@ -263,4 +264,26 @@ test('scenario calculation hands off only the compact approved valuation summary
   assert.match(html, /setLatest\(\{kind,method:currentValuationResult\.method,value:currentScenarioBase,low:currentValuationResult\.low,high:currentValuationResult\.high,currency:currency\(\),assessmentDate:result\.assessmentDate,stressPct:result\.scenarios\[0\]\.changePct,optimisticPct:result\.scenarios\[2\]\.changePct\}\)/);
   assert.doesNotMatch(html, /setLatest\(\{[^}]*ebitda|setLatest\(\{[^}]*debt|setLatest\(\{[^}]*cash/);
   assert.match(html, /window\.ZhakinValuationHandoff\?\.setLatest/);
+});
+
+test('approved valuation brief can be saved as a compact local history record', () => {
+  const storage = memoryStorage();
+  const brief = handoff.buildBrief({
+    kind: 'business', method: 'EBITDA × multiple', value: 8000000,
+    low: 7100000, high: 8900000, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -15, optimisticPct: 10
+  }, Date.parse('2026-11-20T12:00:00Z'));
+  const saved = handoff.saveBriefToHistory(brief, 'Актив А', dashboard, storage);
+  const records = dashboard.readRecords(storage);
+  assert.equal(records.length, 1);
+  assert.equal(records[0].name, 'Актив А');
+  assert.equal(records[0].type, 'business');
+  assert.equal(records[0].date, '2026-11-20');
+  assert.equal(records[0].value, 8000000);
+  assert.equal(records[0].currency, 'RUB');
+  assert.equal(records[0].method, 'EBITDA × multiple');
+  assert.deepEqual(Object.keys(saved).sort(), ['createdAt','currency','date','id','method','name','type','value'].sort());
+  assert.equal(JSON.stringify(records).includes('7100000'), false);
+  assert.equal(JSON.stringify(records).includes('stressPct'), false);
+  assert.equal(JSON.stringify(records).includes('companyName'), false);
 });
