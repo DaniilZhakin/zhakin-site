@@ -186,10 +186,13 @@ test('R&D country comparison panel renders only validated World Bank observation
   const comparisonScript = fs.readFileSync(path.join(root, 'assets/js/analytical-rd-comparison.js'), 'utf8');
   assert.match(monitoring, /id="rd-comparison"/);
   assert.match(monitoring, /GB\.XPD\.RSDV\.GD\.ZS/);
-  assert.match(monitoring, /Единый общий год/);\n  assert.match(monitoring, /Последнее доступное по стране/);
+  assert.match(monitoring, /Единый общий год/);
+  assert.match(monitoring, /Последнее доступное по стране/);
   assert.match(comparisonScript, /validation_status === 'validated'/);
   assert.match(comparisonScript, /reference_period/);
-  assert.match(comparisonScript, /source_release_date/);\n  assert.match(comparisonScript, /latestCommonYear/);\n  assert.match(comparisonScript, /periodSelect\.addEventListener\('change', render\)/);
+  assert.match(comparisonScript, /source_release_date/);
+  assert.match(comparisonScript, /latestCommonYear/);
+  assert.match(comparisonScript, /periodSelect\.addEventListener\('change', render\)/);
   assert.match(comparisonScript, /USA.*CHN.*DEU.*JPN.*KOR.*GBR.*FRA.*RUS/);
   assert.match(comparisonScript, /Пропуски не заменяются оценками/);
 });
