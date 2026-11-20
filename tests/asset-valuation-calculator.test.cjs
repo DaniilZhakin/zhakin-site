@@ -193,7 +193,7 @@ test('both centers expose the opt-in handoff and local-only disclosure', () => {
   const valuation = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
   const analytical = fs.readFileSync(path.join(__dirname, '../centers/analytical/index.html'), 'utf8');
   assert.match(valuation, /id="send-valuation-brief"/);
-  assert.match(valuation, /не передаются/);
+  assert.match(valuation, /не отправляет введённые значения на сервер/);
   assert.match(valuation, /valuation-analytical-handoff\.js/);
   assert.match(analytical, /id="valuation-brief"/);
   assert.match(analytical, /data-clear-valuation-brief/);
