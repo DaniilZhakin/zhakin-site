@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import assertSql from 'node:assert/strict';
 
 const schema = JSON.parse(
   fs.readFileSync(new URL('../../docs/intelligence-3.0-collector-contract.schema.json', import.meta.url), 'utf8'),
@@ -39,5 +40,12 @@ assert.equal(schema.properties.timestamp.maxLength, 64);
 assert.equal(schema.properties.referrer_class.maxLength, 32);
 assert.equal(schema.properties.content_id.pattern, '^[A-Za-z0-9._-]+$');
 assert.equal(schema.properties.content_id.maxLength, 128);
+
+
+const migration = fs.readFileSync(new URL('./migrations/0000_create_engagement_daily.sql', import.meta.url), 'utf8');
+assertSql.match(migration, /content_id TEXT NOT NULL DEFAULT ''/);
+const worker = fs.readFileSync(new URL('./worker.js', import.meta.url), 'utf8');
+assertSql.match(worker, /ON CONFLICT\(event_day, event_type, path, content_id, referrer_class\) DO UPDATE/);
+assertSql.match(worker, /const contentId = event\.content_id \|\| '';/);
 
 console.log('PASS: Cloudflare collector schema drift gate');
