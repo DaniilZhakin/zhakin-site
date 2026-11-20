@@ -1,0 +1,99 @@
+name: PostHog read-only preflight
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/posthog-readonly-preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflow:
+    if: github.event_name == 'pull_request'
+    name: Validate workflow YAML without accessing secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Parse workflow YAML
+        run: ruby -e 'require "yaml"; YAML.load_file(".github/workflows/posthog-readonly-preflight.yml"); puts "PASS: workflow YAML parsed successfully"'
+
+  preflight:
+    if: github.event_name == 'workflow_dispatch'
+    name: Verify PostHog credentials and read-only query access
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 3
+    steps:
+      - name: Validate configuration without exposing secrets
+        env:
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: |
+          set -eu
+          test -n "$POSTHOG_HOST"
+          test -n "$POSTHOG_PROJECT_ID"
+          test -n "$POSTHOG_API_KEY"
+          POSTHOG_HOST="${POSTHOG_HOST%/}"
+          echo "POSTHOG_HOST=$POSTHOG_HOST" >> "$GITHUB_ENV"
+
+          case "$POSTHOG_HOST" in
+            https://us.posthog.com|https://eu.posthog.com) ;;
+            *)
+              echo "Preflight stopped: POSTHOG_HOST must be the official US or EU PostHog Cloud API host."
+              exit 1
+              ;;
+          esac
+
+          printf '%s' "$POSTHOG_PROJECT_ID" | grep -Eq '^[0-9]+$' || {
+            echo "Preflight stopped: POSTHOG_PROJECT_ID must contain digits only."
+            exit 1
+          }
+
+          echo "Required PostHog configuration is present; secret values are not printed."
+
+      - name: Run read-only WebOverviewQuery
+        env:
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        run: |
+          set -eu
+          HTTP_STATUS="$(curl --silent --show-error --max-time 20 \
+            --output /tmp/posthog-preflight.json \
+            --write-out '%{http_code}' \
+            --request POST "$POSTHOG_HOST/api/projects/$POSTHOG_PROJECT_ID/query/" \
+            --header "Authorization: Bearer $POSTHOG_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{"query":{"kind":"WebOverviewQuery","dateRange":{"date_from":"-7d"}}}')"
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Preflight failed: PostHog returned HTTP $HTTP_STATUS. Response body is intentionally not printed."
+            exit 1
+          fi
+
+          node --input-type=commonjs -e '
+            const fs = require("node:fs");
+            let data;
+            try { data = JSON.parse(fs.readFileSync("/tmp/posthog-preflight.json", "utf8")); }
+            catch { console.error("Preflight failed: response was not valid JSON."); process.exit(1); }
+            if (!data || typeof data !== "object" || Array.isArray(data)) {
+              console.error("Preflight failed: response shape was not an object.");
+              process.exit(1);
+            }
+            if (!Array.isArray(data.results)) {
+              console.error("Preflight failed: response did not contain a results array.");
+              process.exit(1);
+            }
+            const required = ["visitors", "views", "sessions"];
+            const returned = new Set(data.results.map((item) => item && item.key).filter((key) => typeof key === "string"));
+            const missing = required.filter((key) => !returned.has(key));
+            if (missing.length) {
+              console.error("Preflight failed: expected web analytics metrics were missing.");
+              process.exit(1);
+            }
+            console.log("PASS: PostHog credentials, project query access, and web analytics response schema verified for the last 7 days.");
+          '
