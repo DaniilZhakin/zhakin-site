@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071a16">
+<title>Мониторинги и показатели — Аналитический центр ZHAKIN TEAM</title>
+<meta name="description" content="Методологическая витрина макроэкономического, торгового и технологического мониторинга ZHAKIN TEAM: показатели, первоисточники, периодичность и правила расчёта.">
+<link rel="canonical" href="https://xn--80alhhq.xn--p1ai/centers/analytical/monitoring.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>
+.mn-main{max-width:1200px;margin:auto;padding:42px 22px 82px;color:#dce7df}
+.mn-hero{padding:clamp(28px,5vw,52px);border:1px solid rgba(212,175,55,.32);border-radius:20px;background:radial-gradient(circle at 88% 8%,rgba(212,175,55,.14),transparent 34%),linear-gradient(145deg,#102820,#071a16)}
+.mn-kicker,.mn-code{color:#d4af37;font-size:.68rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.mn-hero h1{margin:14px 0;font-size:clamp(2.1rem,5vw,4rem);line-height:1.05}
+.mn-hero p{max-width:880px;color:#c3d0c7;line-height:1.8}
+.mn-status{display:inline-flex;align-items:center;gap:8px;margin-top:15px;padding:9px 12px;border:1px solid rgba(212,175,55,.35);border-radius:8px;color:#ead9aa;font-size:.72rem}
+.mn-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#d4af37}
+.mn-section{margin-top:36px}
+.mn-section h2{margin:0 0 8px;color:#d4af37;font-size:clamp(1.45rem,3vw,2rem)}
+.mn-intro{margin:0 0 18px;color:#9fb1a6;font-size:.84rem;line-height:1.7}
+.mn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.mn-observations{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.mn-observation{padding:18px;border:1px solid rgba(212,175,55,.28);border-radius:12px;background:linear-gradient(145deg,#102820,#091c16)}
+.mn-observation-label{color:#9fb1a6;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}
+.mn-observation-value{display:block;margin:9px 0;color:#ead9aa;font-size:clamp(1.35rem,2.5vw,2rem);font-weight:800;letter-spacing:-.03em}
+.mn-observation-meta{color:#9eafa5;font-size:.68rem;line-height:1.6}
+.mn-data-note{margin-top:14px;padding:14px 16px;border-left:3px solid #d4af37;background:#0c211a;color:#aebbb2;font-size:.74rem;line-height:1.7}
+.mn-data-note a{color:#ead9aa;text-decoration:underline;text-underline-offset:3px}
+.mn-card{display:flex;flex-direction:column;padding:22px;border:1px solid rgba(212,175,55,.24);border-radius:14px;background:linear-gradient(145deg,#102820,#091c16)}
+.mn-card h3{margin:10px 0;color:#ead9aa;font-size:1.05rem}
+.mn-card p{color:#aebbb2;font-size:.8rem;line-height:1.7}
+.mn-tags{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 13px}
+.mn-tags span{padding:5px 8px;border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#c8b978;font-size:.62rem}
+.mn-card a,.mn-source a{color:#ead9aa;text-decoration:underline;text-decoration-color:rgba(212,175,55,.45);text-underline-offset:3px}
+.mn-card a{margin-top:auto;font-size:.76rem}
+.mn-table-wrap{overflow-x:auto;border:1px solid rgba(212,175,55,.2);border-radius:12px}
+.mn-table{width:100%;min-width:760px;border-collapse:collapse;background:#0b2019;font-size:.76rem}
+.mn-table th,.mn-table td{padding:13px 14px;border-bottom:1px solid rgba(212,175,55,.13);text-align:left;vertical-align:top;line-height:1.55}
+.mn-table th{color:#d9c88f;background:#102820;font-size:.68rem;letter-spacing:.06em}
+.mn-table td{color:#b8c7be}
+.mn-table td:first-child{color:#ead9aa;font-weight:700}
+.mn-table tr:last-child td{border-bottom:0}
+.mn-source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mn-source{padding:16px 18px;border:1px solid rgba(212,175,55,.18);border-radius:10px;background:#0c211a}
+.mn-source strong{display:block;margin-bottom:6px;color:#ead9aa;font-size:.82rem}
+.mn-source p{margin:0;color:#9eafa5;font-size:.72rem;line-height:1.6}
+.mn-rule{margin-top:22px;padding:19px 21px;border-left:3px solid #d4af37;background:#0c211a;color:#aebbb2;font-size:.77rem;line-height:1.8}
+.mn-chart-panel{padding:20px;border:1px solid rgba(212,175,55,.26);border-radius:14px;background:linear-gradient(145deg,#102820,#091c16)}
+.mn-chart-head{display:flex;justify-content:space-between;align-items:center;gap:16px}.mn-chart-head strong{display:block;margin-top:7px;color:#ead9aa;font-size:1.35rem}
+.mn-chart-tabs{display:flex;gap:6px}.mn-chart-tabs button{min-width:48px;padding:9px 12px;border:1px solid rgba(212,175,55,.25);border-radius:7px;background:#0a1d17;color:#b8c7be;font:inherit;font-size:.72rem;cursor:pointer}
+.mn-chart-tabs button.is-active{border-color:#d4af37;background:#18372b;color:#f0dfaa}
+.mn-chart-stage{margin-top:18px;min-height:210px}.mn-chart-stage svg{display:block;width:100%;height:auto;min-height:180px;overflow:visible}.mn-chart-stage svg text{fill:#aebbb2;font:12px system-ui,sans-serif}.mn-chart-stage .chart-grid{stroke:rgba(212,175,55,.16);stroke-width:1}.mn-chart-stage .chart-line{fill:none;stroke:#d4af37;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.mn-chart-stage .chart-point{fill:#ead9aa;stroke:#102820;stroke-width:3}
+.mn-chart-select{margin-left:6px;padding:7px 9px;border:1px solid rgba(212,175,55,.3);border-radius:6px;background:#0a1d17;color:#ead9aa;font:inherit;font-size:.7rem}.mn-rd-bar{display:block;height:7px;min-width:2px;border-radius:8px;background:linear-gradient(90deg,#8d7837,#e0c56b)}.mn-chart-foot{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#9eafa5;font-size:.7rem;line-height:1.6}.mn-chart-foot [role=status]{color:#d9c88f}
+.mn-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem}
+@media(max-width:850px){.mn-grid{grid-template-columns:1fr}.mn-observations{grid-template-columns:repeat(2,minmax(0,1fr))}.mn-source-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.mn-chart-head{align-items:flex-start;flex-direction:column}.mn-chart-foot{flex-direction:column;gap:4px}.mn-main{padding:26px 15px 58px}.mn-card{padding:19px}.mn-observations{grid-template-columns:1fr 1fr}.mn-observation{padding:14px}.mn-table{min-width:720px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-container">
+<a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN TEAM</span></a>
+<button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+<nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+<a href="/">Главная</a><a href="/centers/">Экспертные центры</a><a href="/office.html">Офис управления</a><a href="/intelligence.html">ЖАК — ИИ</a><a href="/publications.html">Публикации</a>
+</nav></div></header>
+<main class="mn-main">
+<section class="mn-hero">
+<span class="mn-kicker">ZHAKIN TEAM · DATA & MONITORING FRAMEWORK</span>
+<h1>Мониторинги и показатели</h1>
+<p>Единая методологическая основа для наблюдения за экономикой, международной торговлей и технологическими изменениями. Каждый показатель должен сопровождаться первоисточником, периодом наблюдения, датой последней загрузки, единицей измерения и воспроизводимым правилом расчёта.</p>
+<div class="mn-status">ПЕРВАЯ ВЫВЕРЕННАЯ ВЫБОРКА · 20.11.2026 · ИСТОРИЯ НАБЛЮДЕНИЙ ФОРМИРУЕТСЯ</div>
+</section>
+<section class="mn-section" id="latest-observations">
+<h2>Первые подтверждённые наблюдения</h2>
+<p class="mn-intro">Показаны значения из официальных источников, прошедшие автоматическую проверку формата, единиц и периода. Это датированный снимок, а не потоковая котировка.</p>
+<div class="mn-observations">
+<article class="mn-observation"><span class="mn-observation-label">USD / RUB</span><strong class="mn-observation-value">81,9290</strong><span class="mn-observation-meta">руб. за 1 USD<br>Банк России · 20.11.2026</span></article>
+<article class="mn-observation"><span class="mn-observation-label">EUR / RUB</span><strong class="mn-observation-value">89,8597</strong><span class="mn-observation-meta">руб. за 1 EUR<br>Банк России · 20.11.2026</span></article>
+<article class="mn-observation"><span class="mn-observation-label">CNY / RUB</span><strong class="mn-observation-value">12,2546</strong><span class="mn-observation-meta">руб. за 1 CNY<br>Банк России · 20.11.2026</span></article>
+<article class="mn-observation"><span class="mn-observation-label">R&amp;D / GDP · USA</span><strong class="mn-observation-value">3,44716%</strong><span class="mn-observation-meta">доля расходов на R&amp;D в ВВП<br>World Bank · 2023</span></article>
+</div>
+<div class="mn-data-note">Валютные курсы — официальные значения Банка России на дату действия 20.11.2026. Показатель R&amp;D — последнее доступное наблюдение Всемирного банка для США за 2023 год; версия источника — 11.11.2026. Дата получения расширенной выборки — 20.11.2026, 13:49 UTC. Сравнение R&amp;D охватывает восемь стран; последняя доступная дата для России — 2024 год, для остальных стран выборки — 2023 год. <a href="/data/analytical-monitoring/observations.json">Открыть машинно-читаемый набор данных</a>.</div>
+</section>
+<section class="mn-section" id="fx-history">
+<h2>Динамика официальных валютных курсов</h2>
+<p class="mn-intro">График строится только по сохранённым наблюдениям Банка России. Исторические точки не моделируются и не восстанавливаются приблизительно.</p>
+<div class="mn-chart-panel">
+<div class="mn-chart-head"><div><span class="mn-code">OFFICIAL FX · RUB</span><strong id="fx-chart-title">USD / RUB</strong></div><div class="mn-chart-tabs" role="group" aria-label="Выбор валютной пары"><button type="button" class="is-active" data-series="RUB/USD" aria-pressed="true">USD</button><button type="button" data-series="RUB/EUR" aria-pressed="false">EUR</button><button type="button" data-series="RUB/CNY" aria-pressed="false">CNY</button></div></div>
+<div class="mn-chart-stage"><svg id="fx-history-chart" viewBox="0 0 720 250" role="img" aria-label="График исторических официальных курсов"><text x="360" y="125" text-anchor="middle">Загрузка истории…</text></svg></div>
+<div class="mn-chart-foot"><span id="fx-chart-status" role="status" aria-live="polite">Загружаем подтверждённые наблюдения…</span><span id="fx-chart-range">Источник: Банк России</span></div>
+</div>
+<div class="mn-data-note">На старте доступна одна подтверждённая дата. Для построения линии нужны минимум две разные даты наблюдения. История будет пополняться после успешных обновлений источника; исправления официального источника сохраняются как отдельные версии.</div>
+</section>
+<section class="mn-section" id="rd-comparison">
+<h2>Международное сравнение инвестиций в R&amp;D</h2>
+<p class="mn-intro">Расходы на исследования и разработки в процентах от ВВП. Единый показатель Всемирного банка (GB.XPD.RSDV.GD.ZS), единая методика и единица измерения; год наблюдения показывается отдельно для каждой страны.</p>
+<div class="mn-chart-panel">
+<div class="mn-chart-head"><div><span class="mn-code">WORLD DEVELOPMENT INDICATORS</span><strong>R&amp;D expenditure · % of GDP</strong></div><label class="mn-observation-meta" for="rd-comparison-period">Период сравнения <select id="rd-comparison-period" class="mn-chart-select"><option value="common">Единый общий год</option><option value="latest">Последнее доступное по стране</option></select></label><span class="mn-observation-meta" id="rd-comparison-count">Загрузка сопоставимых наблюдений…</span></div>
+<div class="mn-table-wrap" style="margin-top:16px"><table class="mn-table"><thead><tr><th>Страна</th><th>Расходы на R&amp;D</th><th>Год</th><th>Относительный уровень*</th></tr></thead><tbody id="rd-comparison-body"><tr><td colspan="4">Загрузка официальных данных…</td></tr></tbody></table></div>
+<div class="mn-chart-foot"><span id="rd-comparison-status" role="status" aria-live="polite">Данные загружаются из подтверждённого снимка.</span><span>Источник: World Bank · WDI</span></div>
+</div>
+<div class="mn-data-note">* Индикативная длина полосы нормирована к наибольшему значению в отображаемой выборке; это не рейтинг эффективности и не оценка качества научной системы. Режим «Единый общий год» обеспечивает сопоставимость периода; режим «Последнее доступное по стране» показывает более свежие, но потенциально разновременные данные. Нулевые значения и пропуски не подставляются.</div>
+</section>
+<section class="mn-section">
+<h2>Три контура мониторинга</h2>
+<p class="mn-intro">Показанные выше наблюдения — первая проверенная выборка. Остальные показатели остаются в каталоге методик до подключения и валидации соответствующих источников.</p>
+<div class="mn-grid">
+<article class="mn-card"><span class="mn-code">01 / MACROECONOMY</span><h3>Макроэкономический мониторинг</h3><p>Динамика выпуска, цен, денежно-кредитных условий и промышленной активности. Сопоставление официальной статистики с финансовыми условиями и внешними прогнозами.</p><div class="mn-tags"><span>ВВП</span><span>ИНФЛЯЦИЯ</span><span>СТАВКА</span><span>ПРОМЫШЛЕННОСТЬ</span></div><a href="#macro">Перечень показателей ↓</a></article>
+<article class="mn-card"><span class="mn-code">02 / TRADE & FOOD</span><h3>Международная торговля и продовольствие</h3><p>Экспортно-импортные потоки, торговые партнёры, товарная структура, продовольственные индексы и устойчивость цепочек поставок.</p><div class="mn-tags"><span>ЭКСПОРТ</span><span>ИМПОРТ</span><span>БАЛАНС</span><span>ПРОДОВОЛЬСТВИЕ</span></div><a href="#trade">Перечень показателей ↓</a></article>
+<article class="mn-card"><span class="mn-code">03 / TECHNOLOGY</span><h3>Технологический мониторинг</h3><p>Распространение промышленной роботизации, технологическая интенсивность, цифровая инфраструктура и измеримые результаты инновационной деятельности.</p><div class="mn-tags"><span>РОБОТИЗАЦИЯ</span><span>R&amp;D</span><span>ПАТЕНТЫ</span><span>ЦИФРОВАЯ ЭКОНОМИКА</span></div><a href="#technology">Перечень показателей ↓</a></article>
+</div>
+</section>
+<section class="mn-section" id="macro">
+<h2>01. Макроэкономический мониторинг</h2>
+<p class="mn-intro">Базовая частота обновления зависит от календаря публикаций первичного источника; месячные и квартальные ряды не смешиваются без явного пересчёта.</p>
+<div class="mn-table-wrap"><table class="mn-table"><thead><tr><th>Показатель</th><th>Единица / период</th><th>Источник</th><th>Метод расчёта и контроль</th></tr></thead><tbody>
+<tr><td>Реальный ВВП</td><td>% к соответствующему периоду прошлого года; квартал / год</td><td>Росстат; для международного сопоставления — World Bank / IMF</td><td>Официальный индекс физического объёма; отдельно фиксировать первую оценку и последующие пересмотры.</td></tr>
+<tr><td>Индекс потребительских цен</td><td>% м/м и % г/г; месяц</td><td>Росстат</td><td>Не смешивать месячную инфляцию с годовой; указывать базу сравнения и период.</td></tr>
+<tr><td>Ключевая ставка</td><td>% годовых; дата действия решения</td><td>Банк России</td><td>Ставка на дату наблюдения; для периода — средневзвешенное по календарным дням, если это требуется задачей.</td></tr>
+<tr><td>Промышленное производство</td><td>Индекс; месяц / год</td><td>Росстат</td><td>Публиковать исходный индекс и сезонно скорректированный ряд отдельно, если доступен.</td></tr>
+<tr><td>Курс и финансовые условия</td><td>Рублей за единицу валюты; дата / месяц</td><td>Банк России</td><td>Указывать тип курса и правило агрегации: значение на дату, среднее за период или конец периода.</td></tr>
+</tbody></table></div>
+</section>
+<section class="mn-section" id="trade">
+<h2>02. Международная торговля и продовольствие</h2>
+<p class="mn-intro">Сопоставление торговой статистики требует контроля зеркальных потоков, классификаций товаров, страны-партнёра, валюты и календаря отчётности.</p>
+<div class="mn-table-wrap"><table class="mn-table"><thead><tr><th>Показатель</th><th>Единица / период</th><th>Источник</th><th>Метод расчёта и контроль</th></tr></thead><tbody>
+<tr><td>Экспорт товаров</td><td>Текущие доллары США; месяц / год</td><td>UN Comtrade; национальная статистика</td><td>Сумма стоимости экспортных потоков по выбранной стране, периоду и кодам HS; отдельно отмечать пропуски отчётности.</td></tr>
+<tr><td>Импорт товаров</td><td>Текущие доллары США; месяц / год</td><td>UN Comtrade; национальная статистика</td><td>Сумма стоимости импортных потоков; не приравнивать CIF к FOB без корректировки.</td></tr>
+<tr><td>Торговое сальдо</td><td>Доллары США</td><td>Расчёт на базе согласованного ряда экспорта и импорта</td><td>Экспорт минус импорт в одной валюте, классификации и временном охвате.</td></tr>
+<tr><td>Товарная и географическая концентрация</td><td>Доля, %; месяц / год</td><td>UN Comtrade; WTO</td><td>Доля крупнейших товарных групп / партнёров в общей стоимости; публиковать выбранное число групп и метод группировки.</td></tr>
+<tr><td>Продовольственные цены</td><td>Индекс / пункты; месяц</td><td>FAO Food Price Index / FAOSTAT</td><td>Использовать опубликованную методику индекса ФАО; не смешивать международный индекс с внутренними розничными ценами.</td></tr>
+<tr><td>Производство и доступность продовольствия</td><td>Тонны, кг на человека, калории; год</td><td>FAOSTAT</td><td>Разделять производство, торговлю, запасы и потребление; учитывать пересмотры и балансовые определения.</td></tr>
+</tbody></table></div>
+</section>
+<section class="mn-section" id="technology">
+<h2>03. Технологический мониторинг</h2>
+<p class="mn-intro">Технологические показатели часто выходят с годовым лагом. Дата публикации отчёта не должна подменять период, к которому относятся данные.</p>
+<div class="mn-table-wrap"><table class="mn-table"><thead><tr><th>Показатель</th><th>Единица / период</th><th>Источник</th><th>Метод расчёта и контроль</th></tr></thead><tbody>
+<tr><td>Установки промышленных роботов</td><td>Единиц за год</td><td>International Federation of Robotics (IFR)</td><td>Годовые установки по стране / отрасли; отдельно от накопленного действующего парка.</td></tr>
+<tr><td>Плотность роботизации</td><td>Роботов на 10 000 работников обрабатывающей промышленности</td><td>IFR; занятость — национальная статистика / ILOSTAT</td><td>Число действующих промышленных роботов ÷ занятость в обрабатывающей промышленности × 10 000; раскрывать источники числителя и знаменателя.</td></tr>
+<tr><td>Расходы на исследования и разработки</td><td>% ВВП и текущие цены; год</td><td>World Bank WDI; национальная статистика</td><td>GERD к ВВП; сравнивать только при согласованной методологии и одинаковом периоде.</td></tr>
+<tr><td>Патентная активность</td><td>Заявки / регистрации; год</td><td>WIPO IP Statistics</td><td>Разделять заявки резидентов и нерезидентов, национальные и международные процедуры.</td></tr>
+<tr><td>Цифровая связность</td><td>Подписки / доля населения; год</td><td>ITU DataHub; World Bank</td><td>Сопоставлять охват, доступность и качество связи раздельно; фиксировать определения индикаторов.</td></tr>
+</tbody></table></div>
+</section>
+<section class="mn-section">
+<h2>Реестр показателей и контроль качества</h2>
+<p class="mn-intro">Для перехода от описания методики к воспроизводимой аналитике создан структурированный реестр из 16 индикаторов. Он фиксирует уникальный код показателя, домен, единицу измерения, периодичность, географический разрез, источник, метод и обязательные проверки качества.</p>
+<div class="mn-rule"><strong>Текущий статус реестра: каталог методик.</strong> Наблюдения хранятся отдельно от каталога. Загрузчик Банка России и Всемирного банка подключён; регламентный запуск настроен, но активируется после включения workflow в основную ветку. Для каждой будущей записи предусмотрена фиксация периода наблюдения, времени получения, версии источника и статуса пересмотра. <a href="/data/analytical-monitoring/indicators.json" target="_blank" rel="noopener noreferrer">Открыть структурированный реестр показателей (JSON) →</a></div>
+</section>
+<section class="mn-section">
+<h2>Первоисточники данных</h2>
+<p class="mn-intro">Ссылки ведут к официальным статистическим порталам и методологическим ресурсам. Конкретный набор рядов и версии выгрузок будут фиксироваться в журнале обновлений после подключения данных.</p>
+<div class="mn-source-grid">
+<div class="mn-source"><strong>Росстат</strong><p>Национальная статистика: ВВП, цены, промышленность, занятость и другие социально-экономические показатели. <a href="https://rosstat.gov.ru/" target="_blank" rel="noopener noreferrer">Официальный портал →</a></p></div>
+<div class="mn-source"><strong>Банк России</strong><p>Денежно-кредитная статистика, финансовые рынки, курсы валют и календарь публикаций. <a href="https://www.cbr.ru/statistics/" target="_blank" rel="noopener noreferrer">Статистика Банка России →</a></p></div>
+<div class="mn-source"><strong>UN Comtrade</strong><p>Официально представленные странами данные по импорту и экспорту товаров и партнёрам. <a href="https://comtrade.un.org/en/trade-statistics" target="_blank" rel="noopener noreferrer">Торговая статистика ООН →</a></p></div>
+<div class="mn-source"><strong>Всемирная торговая организация</strong><p>Статистика торговли товарами и услугами, тарифы и торговые профили. <a href="https://www.wto.org/english/res_e/statis_e/data_pub_e.htm" target="_blank" rel="noopener noreferrer">Базы данных WTO →</a></p></div>
+<div class="mn-source"><strong>FAOSTAT</strong><p>Международные данные по сельскому хозяйству, продовольствию, производству и торговле. <a href="https://www.fao.org/faostat/" target="_blank" rel="noopener noreferrer">База FAOSTAT →</a></p></div>
+<div class="mn-source"><strong>International Federation of Robotics</strong><p>Годовая статистика установок и действующего парка промышленных и сервисных роботов. <a href="https://ifr.org/" target="_blank" rel="noopener noreferrer">IFR →</a></p></div>
+<div class="mn-source"><strong>World Bank Open Data</strong><p>Международные ряды развития и макроэкономические индикаторы. <a href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">World Bank Data →</a></p></div>
+<div class="mn-source"><strong>International Monetary Fund</strong><p>Макроэкономические и финансовые базы, прогнозы и методологические материалы. <a href="https://data.imf.org/" target="_blank" rel="noopener noreferrer">IMF Data →</a></p></div>
+</div>
+</section>
+<div class="mn-rule"><strong>Правило публикации данных.</strong> Для каждой записи сохраняются: название ряда и код индикатора; организация-источник; URL и дата обращения; период наблюдения; дата выгрузки; единица измерения; метод преобразования; версия / дата пересмотра; контроль полноты и сопоставимости. Если источник не опубликовал показатель или ряд не прошёл проверку, значение не подменяется оценкой — отображается статус «нет подтверждённых данных». На этой версии страницы данные поступают из датированных снимков официальных источников. Автоматическое расписание начнёт работать после включения workflow в основную ветку; до этого новые снимки можно проверять через CI.</div>
+<a class="mn-back" href="/centers/analytical/">← Вернуться в Аналитический центр</a>
+</main>
+<footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
+<script src="/assets/js/analytical-monitoring-charts.js" defer></script>
+<script src="/assets/js/analytical-rd-comparison.js" defer></script>
+<script src="/assets/js/main.js" defer></script>
+</body></html>

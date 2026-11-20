@@ -61,6 +61,30 @@ body{background:var(--av-bg)}
 .av-error.is-visible{display:block}
 .av-output{display:none}.av-output.is-visible{display:block}
 .av-privacy{margin-top:16px;padding:13px 15px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.72rem;line-height:1.65}
+.av-market-context{margin-top:16px;padding:18px;border:1px solid rgba(212,175,55,.22);border-radius:12px;background:rgba(4,17,12,.28)}
+.av-market-head,.av-market-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.av-market-head strong{color:#ead9aa;font-size:.86rem}.av-market-head span,.av-market-foot{color:#91a398;font-size:.68rem;line-height:1.6}
+.av-market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+.av-market-rate{padding:13px;border:1px solid rgba(212,175,55,.16);border-radius:9px;background:#071a16}
+.av-market-rate span,.av-market-rate small{display:block;color:#9eafa5;font-size:.66rem}
+.av-market-rate strong{display:block;margin:7px 0;color:#f1dfaa;font-size:1.15rem}
+.av-market-rate small{line-height:1.45}
+.av-market-foot{margin-top:13px}.av-market-foot a{color:#ead9aa;text-decoration:underline;text-underline-offset:3px}
+.av-market-disclaimer{margin:9px 0 0;color:#81958a;font-size:.67rem;line-height:1.6}
+@media(max-width:650px){.av-market-grid{grid-template-columns:1fr}.av-market-rate{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}.av-market-rate strong{grid-column:2;grid-row:1/3;margin:0}.av-market-rate small{grid-column:1}}
+.av-scenarios{margin-top:26px;padding:22px;border:1px solid rgba(212,175,55,.28);border-radius:14px;background:rgba(4,17,12,.3)}
+.av-scenarios h3{margin:0 0 8px;color:#ead9aa;font-size:1.1rem}.av-scenarios-intro{margin:0 0 18px;color:#9eafa5;font-size:.76rem;line-height:1.65}
+.av-scenario-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.av-scenario-controls label{display:block;margin-bottom:6px;color:#bdc9c1;font-size:.7rem}
+.av-scenario-controls input{width:100%;min-height:42px;padding:9px 10px;border:1px solid rgba(212,175,55,.25);border-radius:8px;background:#071a16;color:#f4f1e8;font:inherit}
+.av-scenario-run{margin-top:14px;min-height:42px;padding:10px 15px;border:1px solid var(--av-gold);border-radius:8px;background:rgba(212,175,55,.12);color:#f0dfaa;font:inherit;font-size:.75rem;font-weight:750;cursor:pointer}
+.av-scenario-table{width:100%;margin-top:18px;border-collapse:collapse;font-size:.75rem}
+.av-scenario-table th,.av-scenario-table td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+.av-scenario-table th{color:#91a398;font-size:.65rem;font-weight:650}.av-scenario-table td{color:#eee6ce}.av-scenario-table td:last-child{text-align:right;font-weight:750}
+.av-sensitivity{margin-top:18px;color:#9eafa5;font-size:.7rem;line-height:1.6}.av-sensitivity strong{color:#ead9aa}
+.av-scenario-status{margin-top:12px;padding:10px 12px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.68rem;line-height:1.6}
+@media(max-width:750px){.av-scenario-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.av-scenario-controls{grid-template-columns:1fr}.av-scenario-table th,.av-scenario-table td{padding:8px 5px;font-size:.68rem}}
 .av-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .av-step{padding:17px;border-top:2px solid var(--av-gold);background:#0c211a;color:#cbd7d0;font-size:.77rem;line-height:1.65}
 .av-step b{display:block;margin-bottom:7px;color:#ead9aa;font-size:.72rem}
@@ -106,7 +130,7 @@ body{background:var(--av-bg)}
 <div class="av-form" id="valuation-input-panel" role="tabpanel" aria-labelledby="tab-business" tabindex="0">
 <form id="valuation-form" novalidate>
 <div class="av-fields">
-<div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option></select></div>
+<div class="av-field av-field--wide"><label for="currency">Валюта расчёта</label><select id="currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option><option value="CNY">CNY · Китайский юань</option></select></div>
 <div class="av-field" data-field="ebitda"><label for="ebitda">Годовая EBITDA</label><input id="ebitda" name="ebitda" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 25 000 000"><small>В выбранной валюте, за 12 месяцев</small></div>
 <div class="av-field" data-field="multiple"><label for="multiple">Мультипликатор EV / EBITDA</label><input id="multiple" name="multiple" type="number" min="0" step="any" inputmode="decimal" placeholder="Например, 4.5"><small>Обоснуйте мультипликатор сопоставимыми компаниями</small></div>
 <div class="av-field" data-field="debt"><label for="debt">Финансовый долг</label><input id="debt" name="debt" type="number" min="0" step="any" inputmode="decimal" value="0"></div>
@@ -136,6 +160,27 @@ body{background:var(--av-bg)}
 </aside>
 </div>
 <div class="av-privacy">Защита исходных данных: калькулятор не отправляет введённые значения на сервер, не сохраняет их в профиле и не использует внешние API. Не вводите персональные или конфиденциальные сведения.</div>
+<div class="av-market-context" id="av-market-context" aria-live="polite" aria-label="Официальные валютные ориентиры">
+  <div class="av-market-head"><strong>Официальные валютные ориентиры</strong><span>Загрузка подтверждённых данных…</span></div>
+</div>
+<p class="av-market-disclaimer">Курсы Банка России отображаются только как справочный рыночный контекст. Они не меняют исходные данные, валюту или результат оценки. Для пересчёта на иную дату требуется курс, действовавший именно на дату оценки.</p>
+</section>
+<section class="av-scenarios" aria-labelledby="scenario-title">
+<h3 id="scenario-title">Сценарный анализ стоимости</h3>
+<p class="av-scenarios-intro">Сценарии рассчитываются от последнего результата калькулятора. Проценты — явные пользовательские допущения, а не прогноз Аналитического центра. Дата оценки фиксируется отдельно.</p>
+<div class="av-scenario-controls">
+<div><label for="scenario-date">Дата оценки</label><input id="scenario-date" type="date" value="2026-11-20"></div>
+<div><label for="scenario-stress">Стрессовое отклонение, %</label><input id="scenario-stress" type="number" min="-100" max="0" step="0.5" value="-15"></div>
+<div><label for="scenario-optimistic">Оптимистичное отклонение, %</label><input id="scenario-optimistic" type="number" min="0" max="500" step="0.5" value="10"></div>
+<div><label for="scenario-currency">Валюта базы</label><input id="scenario-currency" type="text" value="RUB" readonly></div>
+</div>
+<button class="av-scenario-run" id="scenario-run" type="button">Рассчитать сценарии →</button>
+<table class="av-scenario-table">
+<thead><tr><th>Сценарий</th><th>Отклонение</th><th>Стоимость</th></tr></thead>
+<tbody id="scenario-rows"><tr><td colspan="3">Сначала выполните основной расчёт.</td></tr></tbody>
+</table>
+<div class="av-sensitivity" id="scenario-sensitivity">Чувствительность ±20% будет показана после расчёта.</div>
+<div class="av-scenario-status" id="scenario-fx-status" aria-live="polite">Валютный пересчёт выполняется только по подтверждённому курсу Банка России на точную дату оценки. При отсутствии курса пересчёт не производится.</div>
 </section>
 <div class="av-heading"><h2>Контроль качества оценки</h2><span>Процесс работы</span></div>
 <div class="av-steps">
@@ -150,6 +195,8 @@ body{background:var(--av-bg)}
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/main.js" defer></script>
 <script src="/assets/js/asset-valuation-calculator.js" defer></script>
+<script src="/assets/js/asset-valuation-market-context.js" defer></script>
+<script src="/assets/js/asset-valuation-scenarios.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  const tabs=[...document.querySelectorAll('.av-tab')], fields=[...document.querySelectorAll('[data-field]')], form=document.getElementById('valuation-form'), error=document.getElementById('calc-error');
@@ -157,6 +204,7 @@ document.addEventListener('DOMContentLoaded',function(){
  const groups={business:['ebitda','multiple','debt','cash'],property:['area','pricePerSqm','noi','capRate'],equipment:['replacementCost','depreciation']};
  function setKind(next){
   kind=next;
+  resetScenarioState("Сначала выполните новый расчёт для выбранного типа актива.");
   tabs.forEach(tab=>{const active=tab.dataset.kind===kind;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
   document.getElementById('valuation-input-panel').setAttribute('aria-labelledby','tab-'+kind);
   fields.forEach(field=>{const show=groups[kind].includes(field.dataset.field);field.hidden=!show;const input=field.querySelector('input');if(input)input.required=show&&(kind!=='property'||['area','pricePerSqm'].includes(field.dataset.field));});
@@ -194,7 +242,60 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('result-extra').textContent=Number.isFinite(extra)?money(extra):'—';
   document.getElementById('result-note').textContent=result.assumptions||'Ориентир рассчитан на основании введённых пользователем исходных данных.';
   document.getElementById('result-details').classList.add('is-visible');
+  currentScenarioBase=value;
+  document.getElementById('scenario-currency').value=currency();
+  scenarioRun.disabled=false;
+  renderScenarios();
  }
+ let currentScenarioBase=null;
+ const scenarioRun=document.getElementById('scenario-run');
+ function resetScenarioState(message){
+  currentScenarioBase=null;
+  scenarioRun.disabled=true;
+  document.getElementById('scenario-rows').replaceChildren();
+  const row=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=3;cell.textContent=message;row.append(cell);document.getElementById('scenario-rows').append(row);
+  document.getElementById('scenario-sensitivity').textContent='Чувствительность будет показана после нового расчёта.';
+  document.getElementById('scenario-fx-status').textContent='Выполните новый расчёт, чтобы обновить валюту и сценарии.';
+ }
+ document.getElementById('currency').addEventListener('change',()=>{
+  document.getElementById('scenario-currency').value=currency();
+  if(currentScenarioBase!==null)resetScenarioState('Валюта изменена. Выполните основной расчёт заново.');
+ });
+ function renderScenarios(){
+  if(!Number.isFinite(currentScenarioBase))return;
+  try{
+   const result=window.ZhakinValuationScenarios.calculateScenarioSet({
+    baseValue:currentScenarioBase,currency:currency(),
+    assessmentDate:document.getElementById('scenario-date').value,
+    stressPct:document.getElementById('scenario-stress').value,
+    optimisticPct:document.getElementById('scenario-optimistic').value
+   });
+   const formatter=new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0});
+   const body=document.getElementById('scenario-rows');body.replaceChildren();
+   result.scenarios.forEach(item=>{
+    const row=document.createElement('tr');
+    [item.label,(item.changePct>0?'+':'')+item.changePct+'%',formatter.format(item.value)].forEach(value=>{
+     const cell=document.createElement('td');cell.textContent=value;row.append(cell);
+    });
+    body.append(row);
+   });
+   document.getElementById('scenario-sensitivity').textContent='Чувствительность к изменению базовой стоимости: '+result.sensitivity.map(item=>(item.changePct>0?'+':'')+item.changePct+'% — '+formatter.format(item.value)).join(' · ');
+   const fxStatus=document.getElementById('scenario-fx-status');
+   if(currency()==='RUB'){
+    fxStatus.textContent='База уже выражена в RUB. Дополнительная валютная конвертация не требуется; сценарные изменения не являются прогнозом.';
+   }else{
+    fetch('/data/analytical-monitoring/observations.json',{cache:'no-store'}).then(response=>{if(!response.ok)throw new Error('snapshot unavailable');return response.json();}).then(snapshot=>{
+     const converted=window.ZhakinValuationScenarios.convertToRub(currentScenarioBase,currency(),snapshot,result.assessmentDate);
+     if(!converted.converted){
+      fxStatus.textContent='На дату оценки '+result.assessmentDate+' нет подтверждённого курса '+currency()+'/RUB. Пересчёт в RUB не выполнен; использована исходная валюта '+currency()+'.';
+      return;
+     }
+     fxStatus.textContent='Справочный пересчёт базовой стоимости: '+formatter.format(currentScenarioBase)+' × '+converted.rate+' RUB за 1 '+currency()+' = '+new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(converted.value)+'. Дата курса совпадает с датой оценки; источник — Банк России.';
+    }).catch(()=>{fxStatus.textContent='Снимок официальных курсов недоступен. Конвертация не выполнена; сценарии сохранены в исходной валюте '+currency()+'.';});
+   }
+  }catch(err){document.getElementById('scenario-fx-status').textContent=err.message||'Проверьте допущения сценария.';}
+ }
+ document.getElementById('scenario-run').addEventListener('click',renderScenarios);
  form.addEventListener('submit',function(event){
   event.preventDefault();error.classList.remove('is-visible');error.textContent='';
   try{
@@ -205,7 +306,7 @@ document.addEventListener('DOMContentLoaded',function(){
    showResult(result);
   }catch(err){error.textContent=err.message||'Проверьте введённые значения.';error.classList.add('is-visible');}
  });
- form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');},0);});
+ form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');resetScenarioState('Сначала выполните основной расчёт.');},0);});
  setKind('business');
 });
 </script>
