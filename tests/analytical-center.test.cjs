@@ -138,7 +138,14 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     ['RUB/USD', 81.929],
     ['RUB/EUR', 89.8597],
     ['RUB/CNY', 12.2546],
-    ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],\n    ['CHN/GB.XPD.RSDV.GD.ZS', 2.58],\n    ['DEU/GB.XPD.RSDV.GD.ZS', 3.15],\n    ['JPN/GB.XPD.RSDV.GD.ZS', 3.44],\n    ['KOR/GB.XPD.RSDV.GD.ZS', 4.94],\n    ['GBR/GB.XPD.RSDV.GD.ZS', 2.68],\n    ['FRA/GB.XPD.RSDV.GD.ZS', 2.18],\n    ['RUS/GB.XPD.RSDV.GD.ZS', 0.94]
+    ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
+    ['CHN/GB.XPD.RSDV.GD.ZS', 2.58],
+    ['DEU/GB.XPD.RSDV.GD.ZS', 3.15],
+    ['JPN/GB.XPD.RSDV.GD.ZS', 3.44],
+    ['KOR/GB.XPD.RSDV.GD.ZS', 4.94],
+    ['GBR/GB.XPD.RSDV.GD.ZS', 2.68],
+    ['FRA/GB.XPD.RSDV.GD.ZS', 2.18],
+    ['RUS/GB.XPD.RSDV.GD.ZS', 0.94]
   ]);
   for (const [key, value] of expected) {
     assert.equal(observations.observations.find((row) => row.series_key === key)?.value, value);
@@ -181,4 +188,13 @@ test('R&D country comparison panel renders only validated World Bank observation
   assert.match(comparisonScript, /USA.*CHN.*DEU.*JPN.*KOR.*GBR.*FRA.*RUS/);
   assert.match(comparisonScript, /Пропуски не заменяются оценками/);
 });
-\n\ntest('R&D comparison snapshot covers eight countries with sourced values and explicit years', () => {\n const rows = observations.observations.filter(row => row.indicator_id === 'tech.rd_gdp');\n assert.equal(rows.length, 8);\n assert.deepEqual(rows.map(row => row.geography).sort(), ['CHN','DEU','FRA','GBR','JPN','KOR','RUS','USA']);\n assert.ok(rows.every(row => row.unit === 'percent_GDP' && row.country_name && row.source.indicator_code === 'GB.XPD.RSDV.GD.ZS'));\n assert.equal(rows.find(row => row.geography === 'RUS').reference_period, '2024');\n assert.ok(rows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));\n});\n
+
+
+test('R&D comparison snapshot covers eight countries with sourced values and explicit years', () => {
+ const rows = observations.observations.filter(row => row.indicator_id === 'tech.rd_gdp');
+ assert.equal(rows.length, 8);
+ assert.deepEqual(rows.map(row => row.geography).sort(), ['CHN','DEU','FRA','GBR','JPN','KOR','RUS','USA']);
+ assert.ok(rows.every(row => row.unit === 'percent_GDP' && row.country_name && row.source.indicator_code === 'GB.XPD.RSDV.GD.ZS'));
+ assert.equal(rows.find(row => row.geography === 'RUS').reference_period, '2024');
+ assert.ok(rows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
+});
