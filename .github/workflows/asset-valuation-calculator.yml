@@ -10,6 +10,7 @@ on:
       - 'scripts/append-analytical-history.cjs'
       - 'tests/analytical-history.test.cjs'
       - 'assets/js/analytical-monitoring-charts.js'
+      - 'assets/js/analytical-rd-comparison.js'
       - 'centers/index.html'
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
