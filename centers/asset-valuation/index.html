@@ -61,6 +61,17 @@ body{background:var(--av-bg)}
 .av-error.is-visible{display:block}
 .av-output{display:none}.av-output.is-visible{display:block}
 .av-privacy{margin-top:16px;padding:13px 15px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.72rem;line-height:1.65}
+.av-market-context{margin-top:16px;padding:18px;border:1px solid rgba(212,175,55,.22);border-radius:12px;background:rgba(4,17,12,.28)}
+.av-market-head,.av-market-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.av-market-head strong{color:#ead9aa;font-size:.86rem}.av-market-head span,.av-market-foot{color:#91a398;font-size:.68rem;line-height:1.6}
+.av-market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+.av-market-rate{padding:13px;border:1px solid rgba(212,175,55,.16);border-radius:9px;background:#071a16}
+.av-market-rate span,.av-market-rate small{display:block;color:#9eafa5;font-size:.66rem}
+.av-market-rate strong{display:block;margin:7px 0;color:#f1dfaa;font-size:1.15rem}
+.av-market-rate small{line-height:1.45}
+.av-market-foot{margin-top:13px}.av-market-foot a{color:#ead9aa;text-decoration:underline;text-underline-offset:3px}
+.av-market-disclaimer{margin:9px 0 0;color:#81958a;font-size:.67rem;line-height:1.6}
+@media(max-width:650px){.av-market-grid{grid-template-columns:1fr}.av-market-rate{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}.av-market-rate strong{grid-column:2;grid-row:1/3;margin:0}.av-market-rate small{grid-column:1}}
 .av-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .av-step{padding:17px;border-top:2px solid var(--av-gold);background:#0c211a;color:#cbd7d0;font-size:.77rem;line-height:1.65}
 .av-step b{display:block;margin-bottom:7px;color:#ead9aa;font-size:.72rem}
@@ -136,6 +147,10 @@ body{background:var(--av-bg)}
 </aside>
 </div>
 <div class="av-privacy">Защита исходных данных: калькулятор не отправляет введённые значения на сервер, не сохраняет их в профиле и не использует внешние API. Не вводите персональные или конфиденциальные сведения.</div>
+<div class="av-market-context" id="av-market-context" aria-live="polite" aria-label="Официальные валютные ориентиры">
+  <div class="av-market-head"><strong>Официальные валютные ориентиры</strong><span>Загрузка подтверждённых данных…</span></div>
+</div>
+<p class="av-market-disclaimer">Курсы Банка России отображаются только как справочный рыночный контекст. Они не меняют исходные данные, валюту или результат оценки. Для пересчёта на иную дату требуется курс, действовавший именно на дату оценки.</p>
 </section>
 <div class="av-heading"><h2>Контроль качества оценки</h2><span>Процесс работы</span></div>
 <div class="av-steps">
@@ -150,6 +165,7 @@ body{background:var(--av-bg)}
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/main.js" defer></script>
 <script src="/assets/js/asset-valuation-calculator.js" defer></script>
+<script src="/assets/js/asset-valuation-market-context.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  const tabs=[...document.querySelectorAll('.av-tab')], fields=[...document.querySelectorAll('[data-field]')], form=document.getElementById('valuation-form'), error=document.getElementById('calc-error');
