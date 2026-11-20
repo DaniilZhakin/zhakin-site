@@ -7,7 +7,8 @@ const path = require('node:path');
 const ROOT = path.join(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'data/analytical-monitoring/observations.json');
 const CBR_URL = 'https://www.cbr.ru/scripts/XML_daily.asp';
-const WORLD_BANK_URL = 'https://api.worldbank.org/v2/country/usa/indicator/GB.XPD.RSDV.GD.ZS?format=json&per_page=100';
+const WORLD_BANK_COUNTRIES = ['USA', 'CHN', 'DEU', 'JPN', 'KOR', 'GBR', 'FRA', 'RUS'];
+const WORLD_BANK_URL = 'https://api.worldbank.org/v2/country/' + WORLD_BANK_COUNTRIES.join(';') + '/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200';
 const TIMEOUT_MS = 15000;
 
 function parseRussianNumber(value) {
@@ -94,6 +95,53 @@ function parseWorldBankJson(payload, retrievedAt) {
   }];
 }
 
+
+const COUNTRY_NAMES_RU = {
+  USA: 'США', CHN: 'Китай', DEU: 'Германия', JPN: 'Япония',
+  KOR: 'Республика Корея', GBR: 'Великобритания', FRA: 'Франция', RUS: 'Россия'
+};
+
+function parseWorldBankComparisonJson(payload, retrievedAt) {
+  if (!Array.isArray(payload) || !payload[0] || !Array.isArray(payload[1])) {
+    throw new Error('World Bank comparison response has an unexpected JSON structure');
+  }
+  const allowed = new Set(WORLD_BANK_COUNTRIES);
+  const seen = new Set();
+  const observations = [];
+  for (const row of payload[1]) {
+    const countryCode = String(row?.countryiso3code || row?.country?.id || '').toUpperCase();
+    const year = String(row?.date ?? '');
+    if (!allowed.has(countryCode) || row.value === null || !Number.isFinite(Number(row.value)) || !/^\\d{4}$/.test(year)) continue;
+    const key = countryCode + '/' + year;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    observations.push({
+      indicator_id: 'tech.rd_gdp',
+      series_key: countryCode + '/GB.XPD.RSDV.GD.ZS',
+      value: Number(row.value),
+      unit: 'percent_GDP',
+      geography: countryCode,
+      country_name: COUNTRY_NAMES_RU[countryCode],
+      reference_period: year,
+      source: {
+        name: 'World Bank',
+        dataset: 'World Development Indicators — Research and development expenditure (% of GDP)',
+        url: WORLD_BANK_URL,
+        indicator_code: 'GB.XPD.RSDV.GD.ZS',
+        country_code: countryCode
+      },
+      source_release_date: payload[0]?.lastupdated ?? null,
+      retrieved_at: retrievedAt,
+      revision_status: 'latest_available_source_vintage',
+      validation_status: 'validated'
+    });
+  }
+  const countriesWithData = new Set(observations.map(row => row.geography));
+  const missing = WORLD_BANK_COUNTRIES.filter(code => !countriesWithData.has(code));
+  if (missing.length) throw new Error('World Bank has no non-null R&D observation in requested period for: ' + missing.join(', '));
+  return observations.sort((a, b) => a.reference_period.localeCompare(b.reference_period) || a.geography.localeCompare(b.geography));
+}
+
 async function fetchText(url) {
   const response = await fetch(url, {
     headers: { 'user-agent': 'ZHAKIN-TEAM-Analytical-Monitoring/1.0', accept: 'application/xml, application/json' },
@@ -110,14 +158,14 @@ async function collectObservations() {
   try { wbPayload = JSON.parse(wbText); } catch { throw new Error('World Bank response is not valid JSON'); }
   const observations = [
     ...parseCbrXml(cbrXml, retrievedAt),
-    ...parseWorldBankJson(wbPayload, retrievedAt)
+    ...parseWorldBankComparisonJson(wbPayload, retrievedAt)
   ];
   return {
     schema_version: '1.0.0',
     catalog_name: 'ZHAKIN TEAM Analytical Monitoring Observations',
     status: 'source_fetched_validated',
     generated_at: retrievedAt,
-    source_count: 2,
+    source_count: 2,\n    comparison_country_count: WORLD_BANK_COUNTRIES.length,
     observation_count: observations.length,
     observations
   };
@@ -163,4 +211,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseRussianNumber, parseCbrXml, parseWorldBankJson, stableObservationSignature };
+module.exports = { parseRussianNumber, parseCbrXml, parseWorldBankJson, parseWorldBankComparisonJson, stableObservationSignature, WORLD_BANK_COUNTRIES };
