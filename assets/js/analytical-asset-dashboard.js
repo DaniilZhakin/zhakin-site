@@ -12,7 +12,7 @@
     return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
   }
   function normalizeName(value) {
-    return String(value || '').trim().replace(/\\s+/g, ' ').slice(0, 80);
+    return String(value || '').trim().replace(/\s+/g, ' ').slice(0, 80);
   }
   function createRecord(input, now) {
     const name = normalizeName(input && input.name);
