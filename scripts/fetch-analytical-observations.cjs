@@ -126,7 +126,7 @@ async function collectObservations() {
 async function main() {
   const result = await collectObservations();
   if (process.argv.includes('--check')) {
-    process.stdout.write(JSON.stringify({ status: result.status, observation_count: result.observation_count, sources: [...new Set(result.observations.map((item) => item.source.name))] }, null, 2) + '\n');
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
     return;
   }
   fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
