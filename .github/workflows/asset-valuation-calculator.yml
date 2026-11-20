@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'centers/asset-valuation/**'
+      - 'centers/analytical/**'
+      - 'centers/index.html'
+      - 'sitemap.xml'
+      - 'tests/analytical-center.test.cjs'
       - 'centers/index.html'
       - 'assets/js/asset-valuation-calculator.js'
       - 'tests/asset-valuation-calculator.test.cjs'
@@ -18,3 +22,5 @@ jobs:
           node-version: 20
       - name: Run valuation calculator tests
         run: node --test tests/asset-valuation-calculator.test.cjs
+      - name: Run Analytical Center tests
+        run: node --test tests/analytical-center.test.cjs
