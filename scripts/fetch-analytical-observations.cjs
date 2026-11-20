@@ -152,7 +152,7 @@ async function main() {
     return;
   }
   fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
-    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+  fs.writeFileSync(OUTPUT, JSON.stringify(result, null, 2) + '\n');
   process.stdout.write('Wrote ' + result.observation_count + ' validated observations to ' + path.relative(ROOT, OUTPUT) + '\n');
 }
 
