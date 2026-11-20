@@ -42,15 +42,15 @@ function main() {
     : { schema_version: '1.0.0', observations: [] };
   const merged = mergeHistory(history, snapshot);
   if (JSON.stringify(merged) === JSON.stringify(history)) {
-    process.stdout.write('No new validated history observations.\\n');
+    process.stdout.write('No new validated history observations.\n');
     return;
   }
-  fs.writeFileSync(HISTORY, JSON.stringify(merged, null, 2) + '\\n');
-  process.stdout.write('History now contains ' + merged.observations.length + ' validated observations.\\n');
+  fs.writeFileSync(HISTORY, JSON.stringify(merged, null, 2) + '\n');
+  process.stdout.write('History now contains ' + merged.observations.length + ' validated observations.\n');
 }
 if (require.main === module) {
   try { main(); } catch (error) {
-    process.stderr.write('Analytical history update failed: ' + error.message + '\\n');
+    process.stderr.write('Analytical history update failed: ' + error.message + '\n');
     process.exitCode = 1;
   }
 }
