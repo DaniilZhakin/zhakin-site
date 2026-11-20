@@ -81,6 +81,12 @@
 <div class="ad-history-head"><h2 id="ad-history-title">История оценок</h2><button id="clear-asset-history" class="ad-danger" type="button">Очистить историю</button></div>
 <div id="asset-history-list" class="ad-history-list"></div>
 </section>
+<section class="ad-section" aria-labelledby="ad-trend-title">
+<h2 id="ad-trend-title">Динамика стоимости актива</h2>
+<p class="ad-intro">Выберите актив, для которого сохранены оценки минимум на две разные даты. График строится по фактически внесённым точкам.</p>
+<div class="ad-field" style="max-width:360px;margin-bottom:14px"><label for="asset-trend-select">Актив для анализа динамики</label><select id="asset-trend-select" aria-label="Выбор актива для анализа динамики"></select></div>
+<div class="ad-chart-wrap"><svg id="asset-trend-chart" viewBox="0 0 720 250" role="img" aria-label="Историческая динамика стоимости выбранного актива"><text x="360" y="125" text-anchor="middle">Добавьте оценки для динамики</text></svg><p class="ad-chart-note">Точки с разными валютами не соединяются. Изменение стоимости не объясняет причины движения и не заменяет повторную оценку.</p></div>
+</section>
 <section class="ad-section" aria-labelledby="ad-compare-title">
 <h2 id="ad-compare-title">Сравнение активов</h2>
 <p class="ad-intro">Сравниваются последние сохранённые значения. Выберите до четырёх активов; сопоставление возможно только в одной валюте.</p>
