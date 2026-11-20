@@ -2,9 +2,9 @@
   "schema_version": "1.0.0",
   "catalog_name": "ZHAKIN TEAM Analytical Monitoring Observations",
   "status": "source_fetched_validated",
-  "generated_at": "2026-11-20T13:14:08.342Z",
+  "generated_at": "2026-11-20T13:47:59.056Z",
   "source_count": 2,
-  "observation_count": 4,
+  "observation_count": 11,
   "observations": [
     {
       "indicator_id": "macro.fx_official",
@@ -63,18 +63,160 @@
       "value": 3.44716,
       "unit": "percent_GDP",
       "geography": "USA",
+      "country_name": "США",
       "reference_period": "2023",
       "source": {
         "name": "World Bank",
         "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
-        "url": "https://api.worldbank.org/v2/country/usa/indicator/GB.XPD.RSDV.GD.ZS?format=json&per_page=100",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
         "indicator_code": "GB.XPD.RSDV.GD.ZS",
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-20T13:14:08.342Z",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "CHN/GB.XPD.RSDV.GD.ZS",
+      "value": 2.58,
+      "unit": "percent_GDP",
+      "geography": "CHN",
+      "country_name": "Китай",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "CHN"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "DEU/GB.XPD.RSDV.GD.ZS",
+      "value": 3.15,
+      "unit": "percent_GDP",
+      "geography": "DEU",
+      "country_name": "Германия",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "DEU"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "JPN/GB.XPD.RSDV.GD.ZS",
+      "value": 3.44,
+      "unit": "percent_GDP",
+      "geography": "JPN",
+      "country_name": "Япония",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "JPN"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "KOR/GB.XPD.RSDV.GD.ZS",
+      "value": 4.94,
+      "unit": "percent_GDP",
+      "geography": "KOR",
+      "country_name": "Республика Корея",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "KOR"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "GBR/GB.XPD.RSDV.GD.ZS",
+      "value": 2.68,
+      "unit": "percent_GDP",
+      "geography": "GBR",
+      "country_name": "Великобритания",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "GBR"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "FRA/GB.XPD.RSDV.GD.ZS",
+      "value": 2.18,
+      "unit": "percent_GDP",
+      "geography": "FRA",
+      "country_name": "Франция",
+      "reference_period": "2023",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "FRA"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
+      "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "tech.rd_gdp",
+      "series_key": "RUS/GB.XPD.RSDV.GD.ZS",
+      "value": 0.94,
+      "unit": "percent_GDP",
+      "geography": "RUS",
+      "country_name": "Россия",
+      "reference_period": "2024",
+      "source": {
+        "name": "World Bank",
+        "dataset": "World Development Indicators — Research and development expenditure (% of GDP)",
+        "url": "https://api.worldbank.org/v2/country/USA;CHN;DEU;JPN;KOR;GBR;FRA;RUS/indicator/GB.XPD.RSDV.GD.ZS?format=json&date=2015:2025&per_page=200",
+        "indicator_code": "GB.XPD.RSDV.GD.ZS",
+        "country_code": "RUS"
+      },
+      "source_release_date": "2026-11-11",
+      "retrieved_at": "2026-11-20T13:47:59.056Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     }
-  ]
+  ],
+  "comparison_country_count": 8
 }
