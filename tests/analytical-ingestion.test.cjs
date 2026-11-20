@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseRussianNumber, parseCbrXml, parseWorldBankJson } = require('../scripts/fetch-analytical-observations.cjs');
+const { parseRussianNumber, parseCbrXml, parseWorldBankJson, stableObservationSignature } = require('../scripts/fetch-analytical-observations.cjs');
 
 const retrievedAt = '2026-11-20T13:00:00.000Z';
 
@@ -39,4 +39,28 @@ test('World Bank parser selects the latest non-null country-year observation and
 
 test('World Bank parser does not manufacture observations when source data is empty', () => {
   assert.throws(() => parseWorldBankJson([{ lastupdated: '2026-10-01' }, [{ date: '2024', value: null }]], retrievedAt), /no non-null/);
+});
+
+
+test('Stable snapshot comparison ignores retrieval timestamps but detects source value and period revisions', () => {
+  const base = {
+    observations: [{
+      series_key: 'RUB/USD',
+      value: 80,
+      unit: 'RUB_per_1_USD',
+      geography: 'currency_pair',
+      reference_period: '2026-11-20',
+      source: { name: 'Bank of Russia', url: 'https://www.cbr.ru/scripts/XML_daily.asp' },
+      source_release_date: '2026-11-20',
+      retrieved_at: '2026-11-20T08:00:00.000Z',
+      revision_status: 'source_published'
+    }]
+  };
+  const rechecked = structuredClone(base);
+  rechecked.observations[0].retrieved_at = '2026-11-21T08:00:00.000Z';
+  assert.deepEqual(stableObservationSignature(base), stableObservationSignature(rechecked));
+
+  const revised = structuredClone(base);
+  revised.observations[0].value = 81;
+  assert.notDeepEqual(stableObservationSignature(base), stableObservationSignature(revised));
 });
