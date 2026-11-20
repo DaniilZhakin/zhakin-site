@@ -4,7 +4,8 @@ on:
     paths:
       - 'centers/asset-valuation/**'
       - 'centers/analytical/**'
-      - 'assets/js/analytical-asset-dashboard.js'\n      - 'tests/analytical-asset-dashboard.test.cjs'
+      - 'assets/js/analytical-asset-dashboard.js'
+      - 'tests/analytical-asset-dashboard.test.cjs'
       - 'data/analytical-monitoring/**'
       - 'scripts/fetch-analytical-observations.cjs'
       - 'tests/analytical-ingestion.test.cjs'
