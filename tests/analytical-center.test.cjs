@@ -157,7 +157,7 @@ test('FX history visualization uses only validated observations and exposes acce
   assert.equal(history.status, 'history_accumulating');
   assert.equal(history.observations.length, 4);
   assert.match(monitoring, /id="fx-history"/);
-  assert.match(monitoring, /data-series="RUB\\/USD"/);
+  assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
   assert.match(monitoring, /Исторические точки не моделируются/);
   assert.match(chartScript, /points\.length < 2/);
@@ -167,5 +167,5 @@ test('FX history visualization uses only validated observations and exposes acce
 
 test('Monitoring page describes the real automation boundary without claiming an active schedule on the feature branch', () => {
   assert.match(monitoring, /расписание начнёт работать после включения workflow в основную ветку/);
-  assert.match(monitoring, /загрузчик Банка России и Всемирного банка подключён/);
+  assert.match(monitoring, /Загрузчик Банка России и Всемирного банка подключён/);
 });
