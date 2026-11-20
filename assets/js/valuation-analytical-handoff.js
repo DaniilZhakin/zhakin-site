@@ -136,6 +136,8 @@
     const content = panel.querySelector('[data-valuation-brief-content]');
     const clear = panel.querySelector('[data-clear-valuation-brief]');
     const status = panel.querySelector('[data-valuation-brief-status]');
+    const assetName = panel.querySelector('[data-valuation-asset-name]');
+    const saveToHistory = panel.querySelector('[data-save-valuation-brief]');
     let brief = null;
     try { brief = readBrief(root.sessionStorage); } catch (_) { brief = null; }
     if (!brief) {
@@ -181,6 +183,38 @@
     }
     panel.hidden = false;
     status.textContent = 'Сводка передана вручную и хранится только в текущей вкладке. Срок действия — до 2 часов.';
+    if (saveToHistory && assetName) {
+      saveToHistory.addEventListener('click', function () {
+        const dashboard = root.ZhakinAssetDashboard;
+        const name = String(assetName.value || '').trim();
+        if (!name) {
+          status.textContent = 'Укажите краткое название актива или условный код. Это имя останется только в локальной истории браузера.';
+          assetName.focus();
+          return;
+        }
+        if (!dashboard || typeof dashboard.createRecord !== 'function' || typeof dashboard.readRecords !== 'function' || typeof dashboard.writeRecords !== 'function') {
+          status.textContent = 'Модуль локальной истории недоступен. Сводка не сохранена.';
+          return;
+        }
+        try {
+          const record = dashboard.createRecord({
+            name,
+            type: brief.kind,
+            date: brief.assessmentDate,
+            value: brief.value,
+            currency: brief.currency,
+            method: brief.method
+          });
+          const storage = root.localStorage;
+          const records = dashboard.readRecords(storage);
+          dashboard.writeRecords(storage, [...records, record]);
+          saveToHistory.disabled = true;
+          status.textContent = 'Результат сохранён в локальную историю активов. Откройте панель, чтобы посмотреть запись и динамику.';
+        } catch (_) {
+          status.textContent = 'Не удалось сохранить результат в локальной истории. Проверьте доступность хранилища браузера.';
+        }
+      });
+    }
     clear.addEventListener('click', function () {
       try { clearBrief(root.sessionStorage); } catch (_) {}
       panel.hidden = true;
