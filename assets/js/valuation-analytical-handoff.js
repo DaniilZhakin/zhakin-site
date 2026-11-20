@@ -113,8 +113,12 @@
       const status = document.getElementById('valuation-handoff-status');
       if (status) status.textContent = input
         ? 'Готова краткая сводка. Исходные поля калькулятора не передаются.'
-        : 'Сначала выполните расчёт.';
+        : 'Параметры изменены. Повторите расчёт сценариев.';
     };
+    ['scenario-date', 'scenario-stress', 'scenario-optimistic'].forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.addEventListener('input', () => root.ZhakinValuationHandoff.setLatest(null));
+    });
   }
 
   function initAnalytical(document) {
