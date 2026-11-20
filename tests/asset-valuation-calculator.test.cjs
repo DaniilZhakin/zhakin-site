@@ -257,3 +257,10 @@ test('valuation handoff tolerates storage access failures when clearing the pane
   assert.equal(handoff.readBrief(blockedStorage), null);
   assert.doesNotThrow(() => handoff.clearBrief(blockedStorage));
 });
+
+test('scenario calculation hands off only the compact approved valuation summary', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /setLatest\(\{kind,method:currentValuationResult\.method,value:currentScenarioBase,low:currentValuationResult\.low,high:currentValuationResult\.high,currency:currency\(\),assessmentDate:result\.assessmentDate,stressPct:result\.scenarios\[0\]\.changePct,optimisticPct:result\.scenarios\[2\]\.changePct\}\)/);
+  assert.doesNotMatch(html, /setLatest\(\{[^}]*ebitda|setLatest\(\{[^}]*debt|setLatest\(\{[^}]*cash/);
+  assert.match(html, /window\.ZhakinValuationHandoff\?\.setLatest/);
+});
