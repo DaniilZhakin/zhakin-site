@@ -122,8 +122,8 @@ const observations = JSON.parse(fs.readFileSync(observationsPath, 'utf8'));
 test('Published observations snapshot contains only validated, sourced and timestamped records', () => {
   assert.equal(observations.schema_version, '1.0.0');
   assert.equal(observations.status, 'source_fetched_validated');
-  assert.equal(observations.observation_count, 11);
-  assert.equal(observations.observations.length, 11);
+  assert.equal(observations.observation_count, 76);
+  assert.equal(observations.observations.length, 76);
   for (const row of observations.observations) {
     assert.ok(row.indicator_id && row.series_key && Number.isFinite(row.value));
     assert.ok(row.unit && row.geography && row.reference_period);
@@ -139,13 +139,13 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     ['RUB/EUR', 89.8597],
     ['RUB/CNY', 12.2546],
     ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
-    ['CHN/GB.XPD.RSDV.GD.ZS', 2.58],
-    ['DEU/GB.XPD.RSDV.GD.ZS', 3.15],
-    ['JPN/GB.XPD.RSDV.GD.ZS', 3.44],
-    ['KOR/GB.XPD.RSDV.GD.ZS', 4.94],
-    ['GBR/GB.XPD.RSDV.GD.ZS', 2.68],
-    ['FRA/GB.XPD.RSDV.GD.ZS', 2.18],
-    ['RUS/GB.XPD.RSDV.GD.ZS', 0.94]
+    ['CHN/GB.XPD.RSDV.GD.ZS', 2.57729],
+    ['DEU/GB.XPD.RSDV.GD.ZS', 3.1539],
+    ['JPN/GB.XPD.RSDV.GD.ZS', 3.44125],
+    ['KOR/GB.XPD.RSDV.GD.ZS', 4.94352],
+    ['GBR/GB.XPD.RSDV.GD.ZS', 2.67614],
+    ['FRA/GB.XPD.RSDV.GD.ZS', 2.17832],
+    ['RUS/GB.XPD.RSDV.GD.ZS', 0.93706]
   ]);
   for (const [key, value] of expected) {
     assert.equal(observations.observations.find((row) => row.series_key === key)?.value, value);
@@ -162,7 +162,7 @@ test('FX history visualization uses only validated observations and exposes acce
   const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
   const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
   assert.equal(history.status, 'history_accumulating');
-  assert.equal(history.observations.length, 11);
+  assert.equal(history.observations.length, 76);
   assert.match(monitoring, /id="fx-history"/);
   assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
@@ -181,7 +181,7 @@ test('R&D country comparison panel renders only validated World Bank observation
   const comparisonScript = fs.readFileSync(path.join(root, 'assets/js/analytical-rd-comparison.js'), 'utf8');
   assert.match(monitoring, /id="rd-comparison"/);
   assert.match(monitoring, /GB\.XPD\.RSDV\.GD\.ZS/);
-  assert.match(monitoring, /годы наблюдений могут различаться между странами/);
+  assert.match(monitoring, /Годы наблюдений могут различаться между странами/);
   assert.match(comparisonScript, /validation_status === 'validated'/);
   assert.match(comparisonScript, /reference_period/);
   assert.match(comparisonScript, /source_release_date/);
