@@ -84,3 +84,12 @@ test('dashboard comparison code prevents mixed-currency comparisons and limits s
   assert.match(source, /checked\.length > 4/);
   assert.match(source, /new Set\(points\.map\(row => row\.currency\)\)\.size > 1/);
 });
+
+test('dashboard exposes a safe shared API for the Analytical Center handoff', () => {
+  assert.equal(globalThis.ZhakinAssetDashboard, dashboard);
+  const index = fs.readFileSync(path.join(__dirname, '../centers/analytical/index.html'), 'utf8');
+  assert.match(index, /assets\/js\/analytical-asset-dashboard\.js/);
+  assert.match(index, /data-valuation-asset-name/);
+  assert.match(index, /data-save-valuation-brief/);
+  assert.match(index, /asset-dashboard\.html/);
+});
