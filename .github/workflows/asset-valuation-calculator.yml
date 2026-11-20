@@ -7,7 +7,6 @@ on:
       - 'centers/index.html'
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
-      - 'centers/index.html'
       - 'assets/js/asset-valuation-calculator.js'
       - 'tests/asset-valuation-calculator.test.cjs'
       - '.github/workflows/asset-valuation-calculator.yml'
