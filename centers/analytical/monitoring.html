@@ -83,6 +83,16 @@
 </div>
 <div class="mn-data-note">Валютные курсы — официальные значения Банка России на дату действия 20.11.2026. Показатель R&amp;D — последнее доступное наблюдение Всемирного банка для США за 2023 год; версия источника — 11.11.2026. Дата получения выборки — 20.11.2026, 13:14 UTC. <a href="/data/analytical-monitoring/observations.json">Открыть машинно-читаемый набор данных</a>.</div>
 </section>
+<section class="mn-section" id="fx-history">
+<h2>Динамика официальных валютных курсов</h2>
+<p class="mn-intro">График строится только по сохранённым наблюдениям Банка России. Исторические точки не моделируются и не восстанавливаются приблизительно.</p>
+<div class="mn-chart-panel">
+<div class="mn-chart-head"><div><span class="mn-code">OFFICIAL FX · RUB</span><strong id="fx-chart-title">USD / RUB</strong></div><div class="mn-chart-tabs" role="group" aria-label="Выбор валютной пары"><button type="button" class="is-active" data-series="RUB/USD" aria-pressed="true">USD</button><button type="button" data-series="RUB/EUR" aria-pressed="false">EUR</button><button type="button" data-series="RUB/CNY" aria-pressed="false">CNY</button></div></div>
+<div class="mn-chart-stage"><svg id="fx-history-chart" viewBox="0 0 720 250" role="img" aria-label="График исторических официальных курсов"><text x="360" y="125" text-anchor="middle">Загрузка истории…</text></svg></div>
+<div class="mn-chart-foot"><span id="fx-chart-status" role="status" aria-live="polite">Загружаем подтверждённые наблюдения…</span><span id="fx-chart-range">Источник: Банк России</span></div>
+</div>
+<div class="mn-data-note">На старте доступна одна подтверждённая дата. Для построения линии нужны минимум две разные даты наблюдения. История будет пополняться после успешных обновлений источника; исправления официального источника сохраняются как отдельные версии.</div>
+</section>
 <section class="mn-section">
 <h2>Три контура мониторинга</h2>
 <p class="mn-intro">Показанные выше наблюдения — первая проверенная выборка. Остальные показатели остаются в каталоге методик до подключения и валидации соответствующих источников.</p>
@@ -149,5 +159,6 @@
 <a class="mn-back" href="/centers/analytical/">← Вернуться в Аналитический центр</a>
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
-<script src="/assets/js/analytical-monitoring-charts.js" defer></script>\n<script src="/assets/js/main.js" defer></script>
+<script src="/assets/js/analytical-monitoring-charts.js" defer></script>
+<script src="/assets/js/main.js" defer></script>
 </body></html>
