@@ -26,7 +26,8 @@ function hasRole(principal, roles) {
  * Dependencies:
  * - authenticate(request, env): returns a server-verified principal or null.
  * - repository.getBalance(participantId)
- * - repository.listLedger(participantId, { limit, cursor })
+ * - repository.listLedger(participantId, { limit, cursor }) returns either
+ *   an array (legacy test adapter) or { entries, next_cursor }.
  *
  * No request body, header, query parameter, or browser-supplied ID is accepted
  * as proof of identity. Authentication must validate a real session/token in
@@ -45,7 +46,6 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       return json(405, { error: "method_not_allowed" });
     }
 
-    // Fail closed when no trusted authentication adapter is wired.
     if (typeof authenticate !== "function") return unavailable();
 
     let principal;
@@ -68,7 +68,6 @@ export function createWalletHandler({ authenticate, repository } = {}) {
     if (request.method === "GET" && (
       path === "/api/v1/me/balance" || path === "/api/v1/me/ledger"
     )) {
-      // No public or in-memory fallback is permitted for account data.
       if (!repository) return unavailable();
 
       try {
@@ -82,12 +81,17 @@ export function createWalletHandler({ authenticate, repository } = {}) {
         }
 
         if (typeof repository.listLedger !== "function") return unavailable();
-        const entries = await repository.listLedger(principal.id, {
+        const result = await repository.listLedger(principal.id, {
           limit: 50,
           cursor: url.searchParams.get("cursor"),
         });
+        const entries = Array.isArray(result) ? result : result?.entries;
         if (!Array.isArray(entries)) return json(503, { error: "ledger_unavailable" });
-        return json(200, { entries });
+        const nextCursor = Array.isArray(result) ? null : (result.next_cursor ?? null);
+        if (nextCursor !== null && typeof nextCursor !== "string") {
+          return json(503, { error: "ledger_unavailable" });
+        }
+        return json(200, { entries, next_cursor: nextCursor });
       } catch {
         return json(503, { error: "ledger_unavailable" });
       }
@@ -97,8 +101,8 @@ export function createWalletHandler({ authenticate, repository } = {}) {
       return json(403, { error: "forbidden" });
     }
 
-    // Mutations intentionally remain disabled until transactional repository,
-    // persistent idempotency, review workflow and audit adapter are implemented.
+    // Mutations intentionally remain disabled until the review workflow,
+    // authorization policy, and transactional audit/ledger path are complete.
     return json(501, { error: "not_implemented" });
   };
 }
