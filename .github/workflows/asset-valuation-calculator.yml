@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - 'centers/asset-valuation/**'
-      - 'centers/analytical/**'
+      - 'centers/analytical/**'\n      - 'assets/js/analytical-asset-dashboard.js'\n      - 'tests/analytical-asset-dashboard.test.cjs'
       - 'data/analytical-monitoring/**'
       - 'scripts/fetch-analytical-observations.cjs'
       - 'tests/analytical-ingestion.test.cjs'
