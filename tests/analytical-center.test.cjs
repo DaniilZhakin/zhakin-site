@@ -155,7 +155,7 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
   for (const [key, value] of expected) {
     assert.equal(latestBySeries.get(key)?.value, value);
   }
-  assert.equal(observations.observations.find((row) => row.series_key === 'USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
+  assert.equal(latestBySeries.get('USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
   assert.match(monitoring, /81,9290/);
   assert.match(monitoring, /89,8597/);
   assert.match(monitoring, /12,2546/);
