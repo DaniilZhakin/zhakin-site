@@ -89,3 +89,42 @@ test('market context freshness flags old observations and never changes valuatio
   assert.match(html, /asset-valuation-market-context\.js/);
   assert.match(html, /не меняют исходные данные, валюту или результат оценки/);
 });
+
+const scenarios = require('../assets/js/asset-valuation-scenarios.js');
+
+test('scenario engine calculates stress, base and optimistic cases from explicit assumptions', () => {
+  const result = scenarios.calculateScenarioSet({
+    baseValue: 1000000, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -15, optimisticPct: 10
+  });
+  assert.deepEqual(result.scenarios.map(row => row.value), [850000, 1000000, 1100000]);
+  assert.deepEqual(result.sensitivity.map(row => row.changePct), [-20, -10, 0, 10, 20]);
+});
+
+test('scenario engine rejects invalid dates, currencies and asymmetric assumptions', () => {
+  assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'GBP', assessmentDate: '2026-11-20', stressPct: -10, optimisticPct: 10 }), /валюту/);
+  assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'RUB', assessmentDate: 'not-a-date', stressPct: -10, optimisticPct: 10 }), /дату/);
+  assert.throws(() => scenarios.calculateScenarioSet({ baseValue: 100, currency: 'RUB', assessmentDate: '2026-11-20', stressPct: 5, optimisticPct: 10 }), /Стрессовое/);
+});
+
+test('FX conversion requires a validated official observation on the exact valuation date', () => {
+  const base = { indicator_id: 'macro.fx_official', unit: 'RUB_per_1_USD', validation_status: 'validated', source: { name: 'Bank of Russia', url: 'https://www.cbr.ru/scripts/XML_daily.asp' } };
+  const snapshot = { observations: [
+    { ...base, series_key: 'RUB/USD', value: 90, reference_period: '2026-11-20', retrieved_at: '2026-11-20T10:00:00Z' },
+    { ...base, series_key: 'RUB/USD', value: 91, reference_period: '2026-11-19', retrieved_at: '2026-11-20T11:00:00Z' }
+  ] };
+  assert.equal(scenarios.findOfficialRateOnDate(snapshot, 'USD', '2026-11-20').value, 90);
+  assert.equal(scenarios.findOfficialRateOnDate(snapshot, 'USD', '2026-11-18'), null);
+  assert.equal(scenarios.convertToRub(100, 'USD', snapshot, '2026-11-20').value, 9000);
+  assert.equal(scenarios.convertToRub(100, 'USD', snapshot, '2026-11-18').converted, false);
+});
+
+test('valuation page exposes date-scoped scenario analysis and local-only safeguards', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /id="scenario-date"/);
+  assert.match(html, /id="scenario-stress"/);
+  assert.match(html, /id="scenario-optimistic"/);
+  assert.match(html, /asset-valuation-scenarios\.js/);
+  assert.match(html, /точную дату оценки/);
+  assert.match(html, /не являются прогнозом/);
+});
