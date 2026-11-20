@@ -5,6 +5,8 @@ on:
       - 'centers/asset-valuation/**'
       - 'centers/analytical/**'
       - 'data/analytical-monitoring/**'
+      - 'scripts/fetch-analytical-observations.cjs'
+      - 'tests/analytical-ingestion.test.cjs'
       - 'centers/index.html'
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
@@ -26,3 +28,15 @@ jobs:
         run: node --test tests/analytical-center.test.cjs
       - name: Run analytical ingestion parser tests
         run: node --test tests/analytical-ingestion.test.cjs
+
+  analytical-source-smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify live official data sources without writing observations
+        run: node scripts/fetch-analytical-observations.cjs --check
