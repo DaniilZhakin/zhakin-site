@@ -1,0 +1,12 @@
+{
+  "name": "zhakin-intelligence-browser-transport",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Fail-closed, consent-gated browser event transport contract tests",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
