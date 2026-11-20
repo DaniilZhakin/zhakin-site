@@ -58,3 +58,28 @@ test('Mobile navigation has an explicit open state and accessible controls', () 
   assert.match(stylesheet, /\.main-navigation\.active\s*\{\s*display:flex/);
   assert.match(stylesheet, /-webkit-overflow-scrolling:touch/);
 });
+
+const monitoringPath = path.join(root, 'centers/analytical/monitoring.html');
+const monitoring = fs.readFileSync(monitoringPath, 'utf8');
+
+test('Monitoring framework has canonical metadata and all three monitoring domains', () => {
+  assert.match(monitoring, /<html lang="ru">/);
+  assert.match(monitoring, /centers\/analytical\/monitoring\.html/);
+  for (const section of ['Макроэкономический мониторинг', 'Международная торговля и продовольствие', 'Технологический мониторинг']) {
+    assert.ok(monitoring.includes(section), 'Missing monitoring section: ' + section);
+  }
+});
+
+test('Monitoring indicators document units, sources and calculation rules without fabricated live values', () => {
+  for (const source of ['Росстат', 'Банк России', 'UN Comtrade', 'FAOSTAT', 'International Federation of Robotics', 'World Bank']) {
+    assert.ok(monitoring.includes(source), 'Missing primary data source: ' + source);
+  }
+  assert.match(monitoring, /Метод расчёта и контроль/);
+  assert.match(monitoring, /АВТОМАТИЧЕСКАЯ ЗАГРУЗКА НЕ ПОДКЛЮЧЕНА/);
+  assert.match(monitoring, /значение не подменяется оценкой/);
+});
+
+test('Monitoring page is linked from the Analytical Center and included in sitemap', () => {
+  assert.match(html, /href="\/centers\/analytical\/monitoring\.html"/);
+  assert.ok(sitemap.includes('https://xn--80alhhq.xn--p1ai/centers/analytical/monitoring.html'));
+});
