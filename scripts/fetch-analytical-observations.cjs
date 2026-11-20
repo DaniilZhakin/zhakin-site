@@ -111,7 +111,7 @@ function parseWorldBankComparisonJson(payload, retrievedAt) {
   for (const row of payload[1]) {
     const countryCode = String(row?.countryiso3code || row?.country?.id || '').toUpperCase();
     const year = String(row?.date ?? '');
-    if (!allowed.has(countryCode) || row.value === null || !Number.isFinite(Number(row.value)) || !/^\\d{4}$/.test(year)) continue;
+    if (!allowed.has(countryCode) || row.value === null || !Number.isFinite(Number(row.value)) || !/^\d{4}$/.test(year)) continue;
     const key = countryCode + '/' + year;
     if (seen.has(key)) continue;
     seen.add(key);
