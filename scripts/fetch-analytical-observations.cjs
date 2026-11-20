@@ -123,15 +123,37 @@ async function collectObservations() {
   };
 }
 
+function stableObservationSignature(snapshot) {
+  return snapshot.observations
+    .map((row) => ({
+      series_key: row.series_key,
+      value: row.value,
+      unit: row.unit,
+      geography: row.geography,
+      reference_period: row.reference_period,
+      source_name: row.source?.name,
+      source_url: row.source?.url,
+      source_release_date: row.source_release_date,
+      revision_status: row.revision_status
+    }))
+    .sort((a, b) => a.series_key.localeCompare(b.series_key));
+}
+
 async function main() {
   const result = await collectObservations();
   if (process.argv.includes('--check')) {
-    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+    process.stdout.write(JSON.stringify(result, null, 2) + '\\n');
+    return;
+  }
+  const existing = fs.existsSync(OUTPUT) ? JSON.parse(fs.readFileSync(OUTPUT, 'utf8')) : null;
+  if (process.argv.includes('--write-if-changed') && existing &&
+      JSON.stringify(stableObservationSignature(existing)) === JSON.stringify(stableObservationSignature(result))) {
+    process.stdout.write('No source observation changes; keeping the existing validated snapshot.\\n');
     return;
   }
   fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
-  fs.writeFileSync(OUTPUT, JSON.stringify(result, null, 2) + '\n');
-  process.stdout.write('Wrote ' + result.observation_count + ' validated observations to ' + path.relative(ROOT, OUTPUT) + '\n');
+  fs.writeFileSync(OUTPUT, JSON.stringify(result, null, 2) + '\\n');
+  process.stdout.write('Wrote ' + result.observation_count + ' validated observations to ' + path.relative(ROOT, OUTPUT) + '\\n');
 }
 
 if (require.main === module) {
@@ -141,4 +163,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseRussianNumber, parseCbrXml, parseWorldBankJson };
+module.exports = { parseRussianNumber, parseCbrXml, parseWorldBankJson, stableObservationSignature };
