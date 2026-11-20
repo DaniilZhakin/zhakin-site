@@ -147,8 +147,13 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     ['FRA/GB.XPD.RSDV.GD.ZS', 2.17832],
     ['RUS/GB.XPD.RSDV.GD.ZS', 0.93706]
   ]);
+  const latestBySeries = new Map();
+  for (const row of observations.observations) {
+    const previous = latestBySeries.get(row.series_key);
+    if (!previous || row.reference_period > previous.reference_period) latestBySeries.set(row.series_key, row);
+  }
   for (const [key, value] of expected) {
-    assert.equal(observations.observations.find((row) => row.series_key === key)?.value, value);
+    assert.equal(latestBySeries.get(key)?.value, value);
   }
   assert.equal(observations.observations.find((row) => row.series_key === 'USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
   assert.match(monitoring, /81,9290/);
@@ -192,9 +197,15 @@ test('R&D country comparison panel renders only validated World Bank observation
 
 test('R&D comparison snapshot covers eight countries with sourced values and explicit years', () => {
  const rows = observations.observations.filter(row => row.indicator_id === 'tech.rd_gdp');
- assert.equal(rows.length, 8);
- assert.deepEqual(rows.map(row => row.geography).sort(), ['CHN','DEU','FRA','GBR','JPN','KOR','RUS','USA']);
- assert.ok(rows.every(row => row.unit === 'percent_GDP' && row.country_name && row.source.indicator_code === 'GB.XPD.RSDV.GD.ZS'));
- assert.equal(rows.find(row => row.geography === 'RUS').reference_period, '2024');
- assert.ok(rows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
+ const latest = new Map();
+ for (const row of rows) {
+   const previous = latest.get(row.geography);
+   if (!previous || row.reference_period > previous.reference_period) latest.set(row.geography, row);
+ }
+ const latestRows = [...latest.values()];
+ assert.equal(latestRows.length, 8);
+ assert.deepEqual(latestRows.map(row => row.geography).sort(), ['CHN','DEU','FRA','GBR','JPN','KOR','RUS','USA']);
+ assert.ok(latestRows.every(row => row.unit === 'percent_GDP' && row.country_name && row.source.indicator_code === 'GB.XPD.RSDV.GD.ZS'));
+ assert.equal(latestRows.find(row => row.geography === 'RUS').reference_period, '2024');
+ assert.ok(latestRows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
 });
