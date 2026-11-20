@@ -1,8 +1,0 @@
-{
-  "name": "zhakin-intelligence-collector-reference",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "node worker.test.js && node schema-contract.test.js"
-  }
-}
