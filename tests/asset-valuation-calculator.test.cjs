@@ -129,3 +129,14 @@ test('valuation page exposes date-scoped scenario analysis and local-only safegu
   assert.match(html, /точную дату оценки/);
   assert.match(html, /не являются прогнозом/);
 });
+
+
+test('valuation UI offers CNY and invalidates stale scenario results on reset, asset switch and currency change', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /<option value="CNY">CNY · Китайский юань<\/option>/);
+  assert.match(html, /resetScenarioState\('Сначала выполните основной расчёт\.'\)/);
+  assert.match(html, /resetScenarioState\('Валюта изменена\. Выполните основной расчёт заново\.'\)/);
+  assert.match(html, /resetScenarioState\("Сначала выполните новый расчёт для выбранного типа актива\."\)/);
+  assert.match(html, /scenarioRun\.disabled=true/);
+  assert.match(html, /scenarioRun\.disabled=false/);
+});
