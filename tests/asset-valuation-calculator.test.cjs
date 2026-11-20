@@ -199,3 +199,27 @@ test('both centers expose the opt-in handoff and local-only disclosure', () => {
   assert.match(analytical, /data-clear-valuation-brief/);
   assert.match(analytical, /valuation-analytical-handoff\.js/);
 });
+
+test('valuation handoff rejects impossible dates and tampered stored payloads', () => {
+  const base = { kind: 'business', method: 'Test', value: 100, currency: 'RUB', assessmentDate: '2026-11-20' };
+  assert.throws(() => handoff.buildBrief({ ...base, assessmentDate: '2026-02-30' }), /корректную дату/);
+  const storage = memoryStorage();
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, base, now);
+  const tampered = JSON.parse(storage.getItem(handoff.STORAGE_KEY));
+  tampered.expiresAt = new Date(now + handoff.MAX_AGE_MS * 3).toISOString();
+  storage.setItem(handoff.STORAGE_KEY, JSON.stringify(tampered));
+  assert.equal(handoff.readBrief(storage, now), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff preserves negative lower bounds where the valuation method produces them', () => {
+  const brief = handoff.buildBrief({
+    kind: 'business', method: 'EV less net debt', value: 100,
+    low: -25, high: 125, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -100, optimisticPct: 500
+  }, Date.parse('2026-11-20T12:00:00Z'));
+  assert.equal(brief.low, -25);
+  assert.equal(brief.scenarios[0].value, 0);
+  assert.equal(brief.scenarios[2].value, 600);
+});
