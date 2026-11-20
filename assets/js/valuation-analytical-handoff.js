@@ -65,7 +65,16 @@
       clearBrief(storage);
       return null;
     }
+    if (!brief || typeof brief !== 'object' || Array.isArray(brief)) {
+      clearBrief(storage);
+      return null;
+    }
     const current = now === undefined ? Date.now() : Number(now);
+    const assessmentDate = typeof brief.assessmentDate === 'string' ? brief.assessmentDate : '';
+    const parsedAssessmentDate = new Date(assessmentDate + 'T00:00:00Z');
+    const validAssessmentDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(assessmentDate) &&
+      Number.isFinite(parsedAssessmentDate.getTime()) &&
+      parsedAssessmentDate.toISOString().slice(0, 10) === assessmentDate;
     const created = Date.parse(brief.createdAt || '');
     const expires = Date.parse(brief.expiresAt || '');
     const value = Number(brief.value);
@@ -173,7 +182,7 @@
     panel.hidden = false;
     status.textContent = 'Сводка передана вручную и хранится только в текущей вкладке. Срок действия — до 2 часов.';
     clear.addEventListener('click', function () {
-      clearBrief(root.sessionStorage);
+      try { clearBrief(root.sessionStorage); } catch (_) {}
       panel.hidden = true;
     });
   }
