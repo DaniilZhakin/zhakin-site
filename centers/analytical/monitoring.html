@@ -52,7 +52,7 @@
 .mn-chart-tabs{display:flex;gap:6px}.mn-chart-tabs button{min-width:48px;padding:9px 12px;border:1px solid rgba(212,175,55,.25);border-radius:7px;background:#0a1d17;color:#b8c7be;font:inherit;font-size:.72rem;cursor:pointer}
 .mn-chart-tabs button.is-active{border-color:#d4af37;background:#18372b;color:#f0dfaa}
 .mn-chart-stage{margin-top:18px;min-height:210px}.mn-chart-stage svg{display:block;width:100%;height:auto;min-height:180px;overflow:visible}.mn-chart-stage svg text{fill:#aebbb2;font:12px system-ui,sans-serif}.mn-chart-stage .chart-grid{stroke:rgba(212,175,55,.16);stroke-width:1}.mn-chart-stage .chart-line{fill:none;stroke:#d4af37;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.mn-chart-stage .chart-point{fill:#ead9aa;stroke:#102820;stroke-width:3}
-.mn-chart-foot{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#9eafa5;font-size:.7rem;line-height:1.6}.mn-chart-foot [role=status]{color:#d9c88f}
+.mn-rd-bar{display:block;height:7px;min-width:2px;border-radius:8px;background:linear-gradient(90deg,#8d7837,#e0c56b)}.mn-chart-foot{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#9eafa5;font-size:.7rem;line-height:1.6}.mn-chart-foot [role=status]{color:#d9c88f}
 .mn-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem}
 @media(max-width:850px){.mn-grid{grid-template-columns:1fr}.mn-observations{grid-template-columns:repeat(2,minmax(0,1fr))}.mn-source-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.mn-chart-head{align-items:flex-start;flex-direction:column}.mn-chart-foot{flex-direction:column;gap:4px}.mn-main{padding:26px 15px 58px}.mn-card{padding:19px}.mn-observations{grid-template-columns:1fr 1fr}.mn-observation{padding:14px}.mn-table{min-width:720px}}
@@ -92,6 +92,16 @@
 <div class="mn-chart-foot"><span id="fx-chart-status" role="status" aria-live="polite">Загружаем подтверждённые наблюдения…</span><span id="fx-chart-range">Источник: Банк России</span></div>
 </div>
 <div class="mn-data-note">На старте доступна одна подтверждённая дата. Для построения линии нужны минимум две разные даты наблюдения. История будет пополняться после успешных обновлений источника; исправления официального источника сохраняются как отдельные версии.</div>
+</section>
+<section class="mn-section" id="rd-comparison">
+<h2>Международное сравнение инвестиций в R&amp;D</h2>
+<p class="mn-intro">Расходы на исследования и разработки в процентах от ВВП. Единый показатель Всемирного банка (GB.XPD.RSDV.GD.ZS); для каждой страны сохраняется собственный последний доступный год наблюдения.</p>
+<div class="mn-chart-panel">
+<div class="mn-chart-head"><div><span class="mn-code">WORLD DEVELOPMENT INDICATORS</span><strong>R&amp;D expenditure · % of GDP</strong></div><span class="mn-observation-meta" id="rd-comparison-count">Загрузка сопоставимых наблюдений…</span></div>
+<div class="mn-table-wrap" style="margin-top:16px"><table class="mn-table"><thead><tr><th>Страна</th><th>Расходы на R&amp;D</th><th>Год</th><th>Относительный уровень*</th></tr></thead><tbody id="rd-comparison-body"><tr><td colspan="4">Загрузка официальных данных…</td></tr></tbody></table></div>
+<div class="mn-chart-foot"><span id="rd-comparison-status" role="status" aria-live="polite">Данные загружаются из подтверждённого снимка.</span><span>Источник: World Bank · WDI</span></div>
+</div>
+<div class="mn-data-note">* Индикативная длина полосы нормирована к наибольшему значению в отображаемой выборке; это не рейтинг эффективности и не оценка качества научной системы. Годы наблюдений могут различаться между странами — сравнение следует трактовать с учётом этого ограничения. Нулевые значения и пропуски не подставляются.</div>
 </section>
 <section class="mn-section">
 <h2>Три контура мониторинга</h2>
@@ -160,5 +170,6 @@
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/analytical-monitoring-charts.js" defer></script>
+<script src="/assets/js/analytical-rd-comparison.js" defer></script>
 <script src="/assets/js/main.js" defer></script>
 </body></html>
