@@ -30,7 +30,9 @@ jobs:
           node-version: 20
       - name: Fetch and validate official source data
         run: node scripts/fetch-analytical-observations.cjs --write-if-changed
-      - name: Append validated observations to the historical series\n        run: node scripts/append-analytical-history.cjs\n      - name: Commit only changed source observations
+      - name: Append validated observations to the historical series
+        run: node scripts/append-analytical-history.cjs
+      - name: Commit only changed source observations
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
