@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071a16">
+<title>Аналитическая панель активов — ZHAKIN TEAM</title>
+<meta name="description" content="Локальная история оценок, сравнение стоимости активов и динамика по датам в аналитическом контуре ZHAKIN TEAM.">
+<link rel="canonical" href="https://xn--80alhhq.xn--p1ai/centers/analytical/asset-dashboard.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<style>
+.ad-main{max-width:1180px;margin:auto;padding:42px 22px 84px;color:#dce7df}
+.ad-hero{padding:clamp(26px,5vw,50px);border:1px solid rgba(212,175,55,.32);border-radius:20px;background:radial-gradient(circle at 88% 8%,rgba(212,175,55,.14),transparent 34%),linear-gradient(145deg,#102820,#071a16)}
+.ad-kicker{color:#d4af37;font-size:.68rem;font-weight:800;letter-spacing:.15em}
+.ad-hero h1{margin:14px 0;font-size:clamp(2rem,5vw,3.8rem);line-height:1.05}
+.ad-hero p{max-width:850px;color:#c3d0c7;line-height:1.8}
+.ad-badge{display:inline-flex;margin-top:10px;padding:8px 11px;border:1px solid rgba(105,185,139,.4);border-radius:7px;color:#a9d8b9;font-size:.67rem;letter-spacing:.08em}
+.ad-section{margin-top:32px;padding:clamp(18px,3vw,28px);border:1px solid rgba(212,175,55,.23);border-radius:15px;background:linear-gradient(145deg,#102820,#091c16)}
+.ad-section h2{margin:0 0 8px;color:#d4af37;font-size:clamp(1.35rem,3vw,1.9rem)}
+.ad-intro{margin:0 0 20px;color:#9fb1a6;font-size:.8rem;line-height:1.7}
+.ad-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.ad-field label{display:block;margin-bottom:6px;color:#bdc9c1;font-size:.72rem}
+.ad-field input,.ad-field select{width:100%;min-height:44px;padding:10px 11px;border:1px solid rgba(212,175,55,.25);border-radius:8px;background:#071a16;color:#f4f1e8;font:inherit;font-size:.86rem}
+.ad-field--wide{grid-column:span 2}
+.ad-actions{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ad-primary,.ad-danger{min-height:43px;padding:10px 16px;border-radius:8px;font:inherit;font-size:.75rem;font-weight:750;cursor:pointer}
+.ad-primary{border:1px solid #d4af37;background:linear-gradient(135deg,#d4af37,#a98a28);color:#101b13}
+.ad-danger{border:1px solid rgba(225,112,91,.45);background:transparent;color:#ffc0b2}
+.ad-privacy{margin-top:15px;padding:12px 14px;border-left:3px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.72rem;line-height:1.65}
+.ad-status{min-height:24px;margin-top:12px;color:#ead9aa;font-size:.75rem;line-height:1.6}
+.ad-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;color:#9fb1a6;font-size:.72rem}
+.ad-history-list{display:grid;gap:9px}
+.ad-history-item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:13px 14px;border:1px solid rgba(212,175,55,.16);border-radius:9px;background:#071a16}
+.ad-history-item strong,.ad-history-item span{display:block}.ad-history-item strong{color:#ead9aa;font-size:.82rem}.ad-history-item span{margin-top:4px;color:#91a398;font-size:.66rem;line-height:1.5}.ad-history-item>b{color:#f1dfaa;font-size:.83rem;text-align:right}
+.ad-remove{padding:7px 9px;border:1px solid rgba(212,175,55,.2);border-radius:6px;background:transparent;color:#b9c8bf;font:inherit;font-size:.65rem;cursor:pointer}
+.ad-empty{padding:18px;border:1px dashed rgba(212,175,55,.25);border-radius:9px;color:#9fb1a6;font-size:.76rem;line-height:1.6}
+.ad-compare-grid{display:grid;grid-template-columns:minmax(230px,.75fr) minmax(0,1.25fr);gap:18px}
+.ad-compare-list{display:grid;align-content:start;gap:8px}
+.ad-compare-option{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid rgba(212,175,55,.16);border-radius:8px;color:#c4d0c8;font-size:.72rem;line-height:1.5;cursor:pointer}
+.ad-compare-option input{margin:2px 0 0;accent-color:#d4af37}
+.ad-chart-wrap{min-width:0;padding:12px;border:1px solid rgba(212,175,55,.16);border-radius:10px;background:#071a16}
+.ad-chart-wrap svg{display:block;width:100%;height:auto;min-height:130px;overflow:visible}
+.ad-chart-label{fill:#cbd7d0;font:12px system-ui,sans-serif}.ad-chart-value{fill:#ead9aa;font:11px system-ui,sans-serif}.ad-chart-track{fill:#18372b}.ad-chart-bar{fill:#d4af37}
+.ad-chart-note{margin-top:9px;color:#91a398;font-size:.67rem;line-height:1.6}
+.ad-back{display:inline-flex;margin-top:22px;color:#ead9aa;font-size:.78rem;text-decoration:none}
+@media(max-width:760px){.ad-form{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-compare-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.ad-main{padding:25px 14px 58px}.ad-form{grid-template-columns:1fr}.ad-field--wide{grid-column:auto}.ad-history-item{grid-template-columns:minmax(0,1fr) auto}.ad-history-item>b{grid-column:1;grid-row:2;text-align:left}.ad-remove{grid-column:2;grid-row:1/3}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-container">
+<a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN TEAM</span></a>
+<button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+<nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+<a href="/">Главная</a><a href="/centers/">Экспертные центры</a><a href="/centers/asset-valuation/">Центр оценки активов</a><a href="/centers/analytical/">Аналитический центр</a><a href="/office.html">Офис управления</a><a href="/intelligence.html">ЖАК — ИИ</a><a href="/publications.html">Публикации</a>
+</nav></div></header>
+<main class="ad-main">
+<section class="ad-hero">
+<span class="ad-kicker">ZHAKIN TEAM · ASSET INTELLIGENCE</span>
+<h1>Аналитическая панель активов</h1>
+<p>Рабочее пространство для накопления датированных оценок, отслеживания изменения стоимости и сопоставления нескольких активов. Здесь фиксируется итоговая оценка, а не исходные финансовые и корпоративные данные.</p>
+<span class="ad-badge">ЛОКАЛЬНОЕ ХРАНЕНИЕ · БЕЗ СЕРВЕРНОЙ ПЕРЕДАЧИ</span>
+</section>
+<section class="ad-section" aria-labelledby="ad-entry-title">
+<h2 id="ad-entry-title">Добавить результат оценки</h2>
+<p class="ad-intro">Внесите итог из Центра оценки активов. Для динамики одного актива используйте одинаковое краткое название в разных датах.</p>
+<form id="asset-history-form" class="ad-form">
+<div class="ad-field ad-field--wide"><label for="ad-name">Название актива или условный код</label><input id="ad-name" name="name" maxlength="80" required placeholder="Например, Актив А"></div>
+<div class="ad-field"><label for="ad-type">Тип актива</label><select id="ad-type" name="type" required><option value="business">Бизнес</option><option value="property">Недвижимость</option><option value="equipment">Оборудование</option><option value="other">Другой актив</option></select></div>
+<div class="ad-field"><label for="ad-date">Дата оценки</label><input id="ad-date" name="date" type="date" required></div>
+<div class="ad-field"><label for="ad-value">Итоговая стоимость</label><input id="ad-value" name="value" type="number" min="0.01" max="1000000000000000" step="any" required placeholder="0,00"></div>
+<div class="ad-field"><label for="ad-currency">Валюта</label><select id="ad-currency" name="currency"><option value="RUB">RUB · Российский рубль</option><option value="USD">USD · Доллар США</option><option value="EUR">EUR · Евро</option><option value="CNY">CNY · Китайский юань</option></select></div>
+<div class="ad-field ad-field--wide"><label for="ad-method">Метод оценки (необязательно)</label><input id="ad-method" name="method" maxlength="120" placeholder="Например, доходно-рыночный ориентир"></div>
+<div class="ad-actions"><button class="ad-primary" type="submit">Сохранить оценку</button><span id="asset-history-count" aria-live="polite">0 записей</span></div>
+</form>
+<div class="ad-privacy">Записи хранятся только в локальном хранилище этого браузера. Они не отправляются на сервер и не синхронизируются между устройствами. Не вводите коммерческую тайну, персональные данные или конфиденциальные сведения. Очистка данных браузера может удалить историю.</div>
+<p class="ad-status" id="asset-dashboard-status" role="status" aria-live="polite"></p>
+</section>
+<section class="ad-section" aria-labelledby="ad-history-title">
+<div class="ad-history-head"><h2 id="ad-history-title">История оценок</h2><button id="clear-asset-history" class="ad-danger" type="button">Очистить историю</button></div>
+<div id="asset-history-list" class="ad-history-list"></div>
+</section>
+<section class="ad-section" aria-labelledby="ad-compare-title">
+<h2 id="ad-compare-title">Сравнение активов</h2>
+<p class="ad-intro">Сравниваются последние сохранённые значения. Выберите до четырёх активов; сопоставление возможно только в одной валюте.</p>
+<div class="ad-compare-grid">
+<div id="asset-compare-list" class="ad-compare-list"></div>
+<div class="ad-chart-wrap"><svg id="asset-history-chart" viewBox="0 0 720 250" role="img" aria-label="Сравнение последних оценок выбранных активов"><text x="360" y="125" text-anchor="middle">Добавьте оценки для сравнения</text></svg><p class="ad-chart-note">Длина полосы показывает относительный размер значения в выбранной выборке. Это не рыночный рейтинг и не корректировка на ликвидность, риск или различия методик.</p></div>
+</div>
+</section>
+<div class="ad-privacy">Методологическое ограничение: панель фиксирует введённые пользователем результаты и не подтверждает достоверность оценки. Для корректной динамики сохраняйте единый подход, валюту, периметр актива и сопоставимые допущения. Инструмент не является официальным отчётом об оценке или индивидуальной инвестиционной рекомендацией.</div>
+<a class="ad-back" href="/centers/analytical/">← Вернуться в Аналитический центр</a>
+</main>
+<footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
+<script src="/assets/js/analytical-asset-dashboard.js" defer></script>
+<script src="/assets/js/main.js" defer></script>
+</body></html>
