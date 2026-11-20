@@ -241,6 +241,7 @@
 
   const api = { STORAGE_KEY, MAX_RECORDS, TYPES, CURRENCIES, createRecord, validateRecords, readRecords, writeRecords, groupLatest, formatValue, init };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  if (root) root.ZhakinAssetDashboard = api;
   if (root && root.document) {
     const start = () => {
       try { init(root.document, root.localStorage); }
