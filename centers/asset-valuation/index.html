@@ -270,7 +270,7 @@ function apply(lang){
 document.documentElement.lang=lang==='zh'?'zh-CN':lang;
 window.ZHAKIN_LOCALE=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ru-RU';
 const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nodes=[];while(walk.nextNode())nodes.push(walk.currentNode);
-nodes.forEach(n=>{const t=n.nodeValue.trim(),v=(dict[lang]||{})[t];if(v)n.nodeValue=n.nodeValue.replace(t,v)});
+nodes.forEach(n=>{if(!Object.prototype.hasOwnProperty.call(n,'_zhakinAssetOriginal'))n._zhakinAssetOriginal=n.nodeValue;const original=n._zhakinAssetOriginal,t=original.trim(),v=lang==='ru'?t:(dict[lang]||{})[t];n.nodeValue=original.replace(t,v||t)});
 const s=document.getElementById('zhakin-language-switcher');if(s)s.querySelectorAll('button').forEach(b=>{b.classList.toggle('is-active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});
 document.querySelectorAll('.av-tab').forEach(b=>{const t=b.dataset.kind;b.textContent=lang==='en'?({business:'Business',property:'Real estate',equipment:'Equipment'}[t]):lang==='zh'?({business:'企业',property:'房地产',equipment:'设备'}[t]):({business:'Бизнес',property:'Недвижимость',equipment:'Оборудование'}[t])});
 window.dispatchEvent(new CustomEvent('zhakin:languagechange',{detail:{language:lang}}));
