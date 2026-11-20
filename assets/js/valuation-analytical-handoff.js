@@ -72,7 +72,7 @@
     const current = now === undefined ? Date.now() : Number(now);
     const assessmentDate = typeof brief.assessmentDate === 'string' ? brief.assessmentDate : '';
     const parsedAssessmentDate = new Date(assessmentDate + 'T00:00:00Z');
-    const validAssessmentDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(assessmentDate) &&
+    const validAssessmentDate = assessmentDate.length === 10 &&
       Number.isFinite(parsedAssessmentDate.getTime()) &&
       parsedAssessmentDate.toISOString().slice(0, 10) === assessmentDate;
     const created = Date.parse(brief.createdAt || '');
@@ -90,7 +90,7 @@
         !Number.isFinite(value) || value <= 0 ||
         (low !== null && !Number.isFinite(low)) || (high !== null && !Number.isFinite(high)) ||
         !validScenarios || typeof brief.method !== 'string' || brief.method.length > 180 ||
-        typeof brief.assessmentDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(brief.assessmentDate)) {
+        !validAssessmentDate) {
       clearBrief(storage);
       return null;
     }
