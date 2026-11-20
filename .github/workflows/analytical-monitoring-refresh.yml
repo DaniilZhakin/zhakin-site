@@ -1,0 +1,43 @@
+name: ZHAKIN TEAM analytical monitoring refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 8 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: analytical-monitoring-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-official-observations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch and validate official source data
+        run: node scripts/fetch-analytical-observations.cjs --write-if-changed
+      - name: Commit only changed source observations
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/analytical-monitoring/observations.json
+          if git diff --cached --quiet; then
+            echo "No source changes; no commit created."
+            exit 0
+          fi
+          git commit -m "Refresh validated analytical monitoring observations"
+          git push
