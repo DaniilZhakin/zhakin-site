@@ -165,7 +165,8 @@ async function collectObservations() {
     catalog_name: 'ZHAKIN TEAM Analytical Monitoring Observations',
     status: 'source_fetched_validated',
     generated_at: retrievedAt,
-    source_count: 2,\n    comparison_country_count: WORLD_BANK_COUNTRIES.length,
+    source_count: 2,
+    comparison_country_count: WORLD_BANK_COUNTRIES.length,
     observation_count: observations.length,
     observations
   };
