@@ -59,7 +59,8 @@
     } catch (_) { return []; }
   }
   function writeRecords(storage, rows) {
-    const valid = validateRecords(rows).slice(-MAX_RECORDS);
+    const source = Array.isArray(rows) ? rows.slice(-MAX_RECORDS) : rows;
+    const valid = validateRecords(source);
     storage.setItem(STORAGE_KEY, JSON.stringify(valid));
     return valid;
   }
