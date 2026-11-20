@@ -6,7 +6,7 @@ on:
       - 'centers/analytical/**'
       - 'data/analytical-monitoring/**'
       - 'scripts/fetch-analytical-observations.cjs'
-      - 'tests/analytical-ingestion.test.cjs'
+      - 'tests/analytical-ingestion.test.cjs'\n      - 'scripts/append-analytical-history.cjs'\n      - 'tests/analytical-history.test.cjs'\n      - 'assets/js/analytical-monitoring-charts.js'
       - 'centers/index.html'
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
