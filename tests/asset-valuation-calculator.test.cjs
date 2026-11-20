@@ -229,3 +229,31 @@ test('scenario input changes invalidate the previously approved handoff until re
   assert.match(source, /scenario-date', 'scenario-stress', 'scenario-optimistic/);
   assert.match(source, /addEventListener\('input', \(\) => root\.ZhakinValuationHandoff\.setLatest\(null\)\)/);
 });
+
+
+test('valuation handoff rejects null payloads and impossible dates tampered in session storage', () => {
+  const storage = memoryStorage();
+  storage.setItem(handoff.STORAGE_KEY, 'null');
+  assert.equal(handoff.readBrief(storage), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, {
+    kind: 'business', method: 'Test', value: 100,
+    currency: 'RUB', assessmentDate: '2026-11-20'
+  }, now);
+  const tampered = JSON.parse(storage.getItem(handoff.STORAGE_KEY));
+  tampered.assessmentDate = '2026-02-30';
+  storage.setItem(handoff.STORAGE_KEY, JSON.stringify(tampered));
+  assert.equal(handoff.readBrief(storage, now), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff tolerates storage access failures when clearing the panel', () => {
+  const blockedStorage = {
+    getItem() { throw new Error('storage blocked'); },
+    removeItem() { throw new Error('storage blocked'); }
+  };
+  assert.equal(handoff.readBrief(blockedStorage), null);
+  assert.doesNotThrow(() => handoff.clearBrief(blockedStorage));
+});
