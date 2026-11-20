@@ -177,3 +177,40 @@ p { font-size: calc(18px * var(--zhakin-text-scale)); }
   .menu-toggle.active span:nth-child(2) { opacity:0; }
   .menu-toggle.active span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
 }
+
+
+
+/* Collapse only genuinely long navigation lists; keep compact section menus unchanged. */
+@media (min-width:701px) {
+  .header-container:has(.main-navigation a:nth-child(9)) { position:relative; gap:18px; min-width:0; }
+  .header-container:has(.main-navigation a:nth-child(9)) .brand { flex:0 1 auto; min-width:0; }
+  .header-container:has(.main-navigation a:nth-child(9)) .menu-toggle {
+    display:block; flex:0 0 auto; position:relative; z-index:22;
+    border:1px solid rgba(212,175,55,.42); border-radius:10px;
+    background:rgba(16,40,32,.8); padding:8px 9px;
+  }
+  .header-container:has(.main-navigation a:nth-child(9)) .main-navigation {
+    display:none; position:absolute; top:calc(100% + 12px); right:0; left:auto;
+    z-index:21; width:min(720px,calc(100vw - 56px));
+    max-height:calc(100vh - 130px); max-height:calc(100dvh - 130px);
+    overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start;
+    gap:4px 22px; padding:22px;
+    border:1px solid rgba(212,175,55,.34); border-radius:14px;
+    background:#102820; box-shadow:0 20px 44px rgba(0,0,0,.42);
+  }
+  .header-container:has(.main-navigation a:nth-child(9)) .main-navigation.active { display:grid; visibility:visible; }
+  .header-container:has(.main-navigation a:nth-child(9)) .main-navigation a {
+    display:block; min-width:0; width:100%; padding:9px 4px;
+    line-height:1.4; overflow-wrap:anywhere;
+    border-bottom:1px solid rgba(212,175,55,.10);
+  }
+  .header-container:has(.main-navigation a:nth-child(9)) .main-navigation a:after { display:none; }
+  .header-container:has(.main-navigation a:nth-child(9)) .menu-toggle.active span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+  .header-container:has(.main-navigation a:nth-child(9)) .menu-toggle.active span:nth-child(2) { opacity:0; }
+  .header-container:has(.main-navigation a:nth-child(9)) .menu-toggle.active span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+}
+@media (min-width:701px) and (max-width:1000px) {
+  .header-container:has(.main-navigation a:nth-child(9)) .main-navigation { grid-template-columns:1fr; width:min(460px,calc(100vw - 40px)); }
+}
