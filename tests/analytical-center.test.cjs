@@ -75,7 +75,7 @@ test('Monitoring indicators document units, sources and calculation rules withou
     assert.ok(monitoring.includes(source), 'Missing primary data source: ' + source);
   }
   assert.match(monitoring, /Метод расчёта и контроль/);
-  assert.match(monitoring, /АВТОМАТИЧЕСКАЯ ЗАГРУЗКА НЕ ПОДКЛЮЧЕНА/);
+  assert.match(monitoring, /РЕГЛАМЕНТНОЕ ОБНОВЛЕНИЕ НЕ ПОДКЛЮЧЕНО/);
   assert.match(monitoring, /значение не подменяется оценкой/);
 });
 
@@ -114,4 +114,39 @@ test('Monitoring page links to the structured indicator registry and explains it
   assert.match(monitoring, /href="\/data\/analytical-monitoring\/indicators\.json"/);
   assert.match(monitoring, /каталог методик/);
   assert.match(monitoring, /16 индикаторов/);
+});
+
+const observationsPath = path.join(root, 'data/analytical-monitoring/observations.json');
+const observations = JSON.parse(fs.readFileSync(observationsPath, 'utf8'));
+
+test('Published observations snapshot contains only validated, sourced and timestamped records', () => {
+  assert.equal(observations.schema_version, '1.0.0');
+  assert.equal(observations.status, 'source_fetched_validated');
+  assert.equal(observations.observation_count, 4);
+  assert.equal(observations.observations.length, 4);
+  for (const row of observations.observations) {
+    assert.ok(row.indicator_id && row.series_key && Number.isFinite(row.value));
+    assert.ok(row.unit && row.geography && row.reference_period);
+    assert.ok(row.source?.name && /^https:\\/\\//.test(row.source.url));
+    assert.ok(row.retrieved_at && row.source_release_date);
+    assert.equal(row.validation_status, 'validated');
+  }
+});
+
+test('First snapshot values match the monitoring cards and preserve distinct reference periods', () => {
+  const expected = new Map([
+    ['RUB/USD', 81.929],
+    ['RUB/EUR', 89.8597],
+    ['RUB/CNY', 12.2546],
+    ['USA/GB.XPD.RSDV.GD.ZS', 3.44716]
+  ]);
+  for (const [key, value] of expected) {
+    assert.equal(observations.observations.find((row) => row.series_key === key)?.value, value);
+  }
+  assert.equal(observations.observations.find((row) => row.series_key === 'USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
+  assert.match(monitoring, /81,9290/);
+  assert.match(monitoring, /89,8597/);
+  assert.match(monitoring, /12,2546/);
+  assert.match(monitoring, /3,44716%/);
+  assert.match(monitoring, /20\.11\.2026/);
 });
