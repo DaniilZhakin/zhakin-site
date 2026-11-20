@@ -30,8 +30,13 @@ function parseCbrXml(xml, retrievedAt) {
   for (const match of xml.matchAll(/<Valute\b[^>]*>([\s\S]*?)<\/Valute>/g)) {
     const block = match[1];
     const field = (name) => {
-      const found = block.match(new RegExp('<' + name + '>([\\\\s\\\\S]*?)<\\\\/' + name + '>'));
-      return found ? found[1].trim() : null;
+      const openTag = '<' + name + '>';
+      const closeTag = '</' + name + '>';
+      const start = block.indexOf(openTag);
+      if (start < 0) return null;
+      const valueStart = start + openTag.length;
+      const end = block.indexOf(closeTag, valueStart);
+      return end < 0 ? null : block.slice(valueStart, end).trim();
     };
     const code = field('CharCode');
     if (!wanted.has(code)) continue;
