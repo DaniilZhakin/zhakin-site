@@ -459,11 +459,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node => {
-      const original = node.nodeValue;
+      if (!Object.prototype.hasOwnProperty.call(node, '_zhakinOriginalText')) node._zhakinOriginalText = node.nodeValue;
+      const original = node._zhakinOriginalText;
       const trimmed = original.trim();
       if (!trimmed) return;
-      const translated = dict[trimmed];
-      if (translated) node.nodeValue = original.replace(trimmed, translated);
+      const translated = lang === 'ru' ? trimmed : dict[trimmed];
+      node.nodeValue = original.replace(trimmed, translated || trimmed);
     });
     document.querySelectorAll('[data-i18n-ru]').forEach(el => {
       const value = el.getAttribute('data-i18n-' + lang);
