@@ -426,4 +426,93 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+  // Global RU / EN / ZH language selector. The selected language is shared across site pages.
+  const ZHAKIN_LANG_KEY = 'zhakin_language_v1';
+  const ZHAKIN_I18N = {
+    en: {
+      'Главная':'Home','Обо мне':'About','Международная деятельность':'International activity','Международная география':'International geography','Цифровые профили':'Digital profiles','Проекты':'Projects','Публикации':'Publications','Политическая аналитика':'Political analysis','Институциональный контур':'Institutional framework','Приёмная':'Contact office','Экспертные центры':'Expert centers','Офис управления':'Management office','ЖАК — ИИ':'ZHAK AI',
+      'Центр оценки активов':'Asset Valuation Center','Аналитический центр':'Analytical Center','Направления оценки':'Valuation areas','Бизнес и доли участия':'Businesses and equity interests','Недвижимость':'Real estate','Оборудование и техника':'Equipment and machinery','Калькулятор предварительной оценки':'Preliminary valuation calculator','Валюта расчёта':'Calculation currency','Годовая EBITDA':'Annual EBITDA','Методология':'Methodology','Прозрачность':'Transparency','Контроль':'Control','Локальный расчёт':'Local calculation','Тип актива':'Asset type','Бизнес':'Business','Оборудование':'Equipment','Рассчитать стоимость':'Calculate value','Сбросить':'Reset','Предварительный анализ':'Preliminary analysis',
+      'Профессиональные направления для аналитических исследований, предварительного анализа активов и подготовки обоснованных материалов. Общая основа — проверяемые исходные данные, прозрачная методология, раскрытие ограничений и человеческая ответственность за выводы.':'Professional areas for analytical research, preliminary asset analysis and evidence-based materials. The common foundation is verifiable source data, transparent methodology, disclosed limitations and human accountability.',
+      'Экономика, международная торговля, экспорт, инвестиции, промышленность, технологии и стратегические риски. Методологическая и редакционная модель центра находится в разработке.':'Economics, international trade, exports, investment, industry, technology and strategic risks. The center’s methodology and editorial model are under development.',
+      'Предварительный анализ бизнеса, недвижимости и оборудования. Интерактивный калькулятор, сравнительный, доходный и затратный подходы, раскрытие допущений и диапазонов чувствительности.':'Preliminary analysis of businesses, real estate and equipment. Interactive calculator, market, income and cost approaches, disclosed assumptions and sensitivity ranges.',
+      'Открыть центр и калькулятор →':'Open center and calculator →','Публичная интерфейсная версия · предварительные расчёты':'Public interface · preliminary calculations','Разработка · публичный кабинет пока не открыт':'In development · public workspace not yet available',
+      'Официальный профессиональный профиль':'Official professional profile','Настройки отображения':'Display settings','Выбрать язык':'Select language','Русский':'Russian','Английский':'English','Китайский':'Chinese'
+    },
+    zh: {
+      'Главная':'首页','Обо мне':'关于我','Международная деятельность':'国际合作','Международная география':'国际地理','Цифровые профили':'数字档案','Проекты':'项目','Публикации':'出版物','Политическая аналитика':'政治分析','Институциональный контур':'制度体系','Приёмная':'联系办公室','Экспертные центры':'专家中心','Офис управления':'管理办公室','ЖАК — ИИ':'ЖAK 人工智能',
+      'Центр оценки активов':'资产评估中心','Аналитический центр':'分析中心','Направления оценки':'评估领域','Бизнес и доли участия':'企业与股权','Недвижимость':'房地产','Оборудование и техника':'设备与机械','Калькулятор предварительной оценки':'初步估值计算器','Валюта расчёта':'计算货币','Годовая EBITDA':'年度 EBITDA','Методология':'方法论','Прозрачность':'透明度','Контроль':'审核','Локальный расчёт':'本地计算','Тип актива':'资产类型','Бизнес':'企业','Оборудование':'设备','Рассчитать стоимость':'计算价值','Сбросить':'重置','Предварительный анализ':'初步分析',
+      'Профессиональные направления для аналитических исследований, предварительного анализа активов и подготовки обоснованных материалов. Общая основа — проверяемые исходные данные, прозрачная методология, раскрытие ограничений и человеческая ответственность за выводы。':'专业分析研究、资产初步分析及有依据材料的准备方向。共同基础是可核验的源数据、透明的方法论、明确披露限制以及对结论的人类责任。',
+      'Экономика, международная торговля, экспорт, инвестиции, промышленность, технологии и стратегические риски. Методологическая и редакционная модель центра находится в разработке.':'经济、国际贸易、出口、投资、工业、技术与战略风险。该中心的方法论和编辑模式正在开发中。',
+      'Предварительный анализ бизнеса, недвижимости и оборудования. Интерактивный калькулятор, сравнительный, доходный и затратный подходы, раскрытие допущений и диапазонов чувствительности.':'企业、房地产和设备的初步分析。交互式计算器、市场法、收益法和成本法，并披露假设与敏感性区间。',
+      'Открыть центр и калькулятор →':'进入中心与计算器 →','Публичная интерфейсная версия · предварительные расчёты':'公开界面 · 初步计算','Разработка · публичный кабинет пока не открыт':'开发中 · 公共工作区尚未开放',
+      'Официальный профессиональный профиль':'官方专业档案','Настройки отображения':'显示设置','Выбрать язык':'选择语言','Русский':'俄语','Английский':'英语','Китайский':'中文'
+    }
+  };
+  const currentLang = () => {
+    try { return localStorage.getItem(ZHAKIN_LANG_KEY) || 'ru'; } catch (_) { return 'ru'; }
+  };
+  const translateSite = (lang) => {
+    const dict = ZHAKIN_I18N[lang] || {};
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      if (!Object.prototype.hasOwnProperty.call(node, '_zhakinOriginalText')) node._zhakinOriginalText = node.nodeValue;
+      const original = node._zhakinOriginalText;
+      const trimmed = original.trim();
+      if (!trimmed) return;
+      const translated = lang === 'ru' ? trimmed : dict[trimmed];
+      node.nodeValue = original.replace(trimmed, translated || trimmed);
+    });
+    document.querySelectorAll('[data-i18n-ru]').forEach(el => {
+      const value = el.getAttribute('data-i18n-' + lang);
+      if (value) el.textContent = value;
+    });
+    document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el => {
+      const ru = el.getAttribute('data-placeholder-ru');
+      const value = el.getAttribute('data-placeholder-' + lang);
+      if (ru && value) el.placeholder = lang === 'ru' ? ru : value;
+    });
+    const switcher = document.getElementById('zhakin-language-switcher');
+    if (switcher) {
+      switcher.querySelectorAll('button[data-lang]').forEach(button => {
+        const selected = button.dataset.lang === lang;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+    }
+    window.dispatchEvent(new CustomEvent('zhakin:languagechange', {detail:{language:lang}}));
+  };
+  const installLanguageSwitcher = () => {
+    const header = document.querySelector('.header-container');
+    if (!header || document.getElementById('zhakin-language-switcher')) return;
+    const switcher = document.createElement('div');
+    switcher.id = 'zhakin-language-switcher';
+    switcher.className = 'zhakin-language-switcher';
+    switcher.setAttribute('role','group');
+    switcher.setAttribute('aria-label','Выбор языка');
+    switcher.innerHTML = '<button type="button" data-lang="ru" aria-label="Русский">RU</button><button type="button" data-lang="en" aria-label="English">EN</button><button type="button" data-lang="zh" aria-label="中文">中文</button>';
+    const menuButton = header.querySelector('.menu-toggle');
+    if (menuButton) header.insertBefore(switcher, menuButton);
+    else header.appendChild(switcher);
+    switcher.addEventListener('click', event => {
+      const button = event.target.closest('button[data-lang]');
+      if (!button) return;
+      const lang = button.dataset.lang;
+      try { localStorage.setItem(ZHAKIN_LANG_KEY, lang); } catch (_) {}
+      translateSite(lang);
+    });
+  };
+  installLanguageSwitcher();
+  translateSite(currentLang());
+  const translationObserver = new MutationObserver(() => {
+    if (translationObserver._queued) return;
+    translationObserver._queued = true;
+    requestAnimationFrame(() => { translationObserver._queued = false; translateSite(currentLang()); });
+  });
+  translationObserver.observe(document.body, {childList:true,subtree:true});
+
+
 });

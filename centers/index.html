@@ -14,4 +14,62 @@
 </div>
 <div class="ec-note"><strong>Принцип достоверности.</strong> Наличие страницы или калькулятора не означает аккредитацию, лицензирование либо готовность к оказанию регулируемых услуг. Предварительные расчёты не заменяют официальную оценку, аудит, юридическую экспертизу или индивидуальную инвестиционную рекомендацию.</div>
 </main><footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
-<script src="/assets/js/main.js" defer></script></body></html>
+<script src="/assets/js/main.js" defer></script>
+<script>
+(function(){
+  const KEY='zhakin_language_v1';
+  const translations={
+    en:{
+      'Экспертные центры':'Expert Centers',
+      'Профессиональные направления для аналитических исследований, предварительного анализа активов и подготовки обоснованных материалов. Общая основа — проверяемые исходные данные, прозрачная методология, раскрытие ограничений и человеческая ответственность за выводы.':'Professional areas for analytical research, preliminary asset analysis and evidence-based materials. The common foundation is verifiable source data, transparent methodology, disclosed limitations and human accountability.',
+      'Центр оценки активов':'Asset Valuation Center',
+      'Предварительный анализ бизнеса, недвижимости и оборудования. Интерактивный калькулятор, сравнительный, доходный и затратный подходы, раскрытие допущений и диапазонов чувствительности.':'Preliminary analysis of businesses, real estate and equipment. Interactive calculator, market, income and cost approaches, with disclosed assumptions and sensitivity ranges.',
+      'Открыть центр и калькулятор →':'Open center and calculator →',
+      'Публичная интерфейсная версия · предварительные расчёты':'Public interface · preliminary calculations',
+      'Аналитический центр':'Analytical Center',
+      'Экономика, международная торговля, экспорт, инвестиции, промышленность, технологии и стратегические риски. Методологическая и редакционная модель центра находится в разработке.':'Economics, international trade, exports, investment, industry, technology and strategic risks. The center’s methodology and editorial model are in development.',
+      'Разработка · публичный кабинет пока не открыт':'In development · public workspace not yet available',
+      'Принцип достоверности.':'Integrity principle.',
+      'Наличие страницы или калькулятора не означает аккредитацию, лицензирование либо готовность к оказанию регулируемых услуг. Предварительные расчёты не заменяют официальную оценку, аудит, юридическую экспертизу или индивидуальную инвестиционную рекомендацию.':'The presence of a page or calculator does not imply accreditation, licensing or readiness to provide regulated services. Preliminary calculations do not replace a formal valuation, audit, legal review or individual investment recommendation.',
+      'Политика конфиденциальности':'Privacy Policy','Правовая информация':'Legal Information',
+      'Главная':'Home','Экспертные центры':'Expert Centers','Офис управления':'Management Office','ЖАК — ИИ':'ZHAK AI','Публикации':'Publications'
+    },
+    zh:{
+      'Экспертные центры':'专家中心',
+      'Профессиональные направления для аналитических исследований, предварительного анализа активов и подготовки обоснованных материалов. Общая основа — проверяемые исходные данные, прозрачная методология, раскрытие ограничений и человеческая ответственность за выводы.':'用于分析研究、资产初步分析和编制有依据材料的专业领域。共同基础是可核验的数据、透明的方法、明确披露限制以及对结论承担人的责任。',
+      'Центр оценки активов':'资产评估中心',
+      'Предварительный анализ бизнеса, недвижимости и оборудования. Интерактивный калькулятор, сравнительный, доходный и затратный подходы, раскрытие допущений и диапазонов чувствительности.':'企业、房地产和设备的初步分析。提供交互式计算器、市场法、收益法和成本法，并披露假设与敏感性区间。',
+      'Открыть центр и калькулятор →':'进入中心与计算器 →',
+      'Публичная интерфейсная версия · предварительные расчёты':'公开界面 · 初步计算',
+      'Аналитический центр':'分析中心',
+      'Экономика, международная торговля, экспорт, инвестиции, промышленность, технологии и стратегические риски. Методологическая и редакционная модель центра находится в разработке.':'经济、国际贸易、出口、投资、工业、技术与战略风险。该中心的方法论和编辑模式正在开发中。',
+      'Разработка · публичный кабинет пока не открыт':'开发中 · 公共工作区尚未开放',
+      'Принцип достоверности.':'真实性原则。',
+      'Наличие страницы или калькулятора не означает аккредитацию, лицензирование либо готовность к оказанию регулируемых услуг. Предварительные расчёты не заменяют официальную оценку, аудит, юридическую экспертизу или индивидуальную инвестиционную рекомендацию。':'页面或计算器的存在并不代表已获得认证、许可或具备提供受监管服务的资格。初步计算不能替代正式估值、审计、法律审查或个性化投资建议。',
+      'Политика конфиденциальности':'隐私政策','Правовая информация':'法律信息',
+      'Главная':'首页','Экспертные центры':'专家中心','Офис управления':'管理办公室','ЖАК — ИИ':'ЖAK 人工智能','Публикации':'出版物'
+    }
+  };
+  function apply(lang){
+    document.documentElement.lang=lang==='zh'?'zh-CN':lang;
+    const dict=translations[lang]||{};
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nodes=[];
+    while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(node=>{if(!Object.prototype.hasOwnProperty.call(node,'_zhakinCenterOriginal'))node._zhakinCenterOriginal=node.nodeValue;const original=node._zhakinCenterOriginal,trimmed=original.trim(),value=lang==='ru'?trimmed:dict[trimmed];node.nodeValue=original.replace(trimmed,value||trimmed)});
+    const title=dict['Экспертные центры'];if(title)document.title=lang==='en'?'Expert Centers — ZHAKIN TEAM':'专家中心 — ZHAKIN TEAM';
+    const meta=document.querySelector('meta[name="description"]');
+    if(meta)meta.content=lang==='en'?'ZHAKIN TEAM expert centers: analytical research and preliminary asset valuation.':lang==='zh'?'ZHAKIN TEAM 专家中心：分析研究与资产初步评估。':'Экспертные направления ZHAKIN TEAM: аналитические исследования и предварительная оценка активов.';
+  }
+  function current(){try{return localStorage.getItem(KEY)||'ru'}catch(_){return 'ru'}}
+  apply(current());
+  document.addEventListener('click',function(event){
+    const button=event.target.closest('#zhakin-language-switcher button[data-lang]');
+    if(!button)return;
+    const lang=button.dataset.lang;
+    try{localStorage.setItem(KEY,lang)}catch(_){}
+    requestAnimationFrame(()=>apply(lang));
+  });
+  window.addEventListener('storage',event=>{if(event.key===KEY)apply(current())});
+})();
+</script>
+</body></html>
