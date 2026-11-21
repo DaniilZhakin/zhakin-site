@@ -1,0 +1,149 @@
+name: ZHAKIN TEAM OFFICE schema checks
+
+on:
+  pull_request:
+    paths:
+      - "office/prototype/migrations/**"
+      - "office/prototype/src/**"
+      - "office/prototype/tests/**"
+  push:
+    branches:
+      - "feat/office-db-schema-20261116"
+    paths:
+      - "office/prototype/migrations/**"
+      - "office/prototype/src/**"
+      - "office/prototype/tests/**"
+      - ".github/workflows/office-schema.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  office-schema:
+    name: Validate isolated OFFICE_DB schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run in-memory SQLite schema checks
+        run: |
+          python office/prototype/tests/schema_smoke.py
+          python office/prototype/tests/robot_registry_smoke.py
+          python office/prototype/tests/robot_proposals_smoke.py
+          python office/prototype/tests/human_approval_smoke.py
+      - name: Run Robot Execution Gateway contract tests
+        run: node --test office/prototype/tests/robot-execution-gateway.test.mjs office/prototype/tests/human-approval-gateway.test.mjs office/prototype/tests/oidc-bearer-verifier.test.mjs office/prototype/tests/human-approval-http-boundary.test.mjs office/prototype/tests/durable-object-rate-limiter.test.mjs
+      - name: Run migrations in disposable local D1 runtime
+        run: |
+          cat > wrangler.toml <<'EOF'
+          name = "zhakin-office-d1-smoke"
+          main = "office/prototype/tests/d1_batch_worker.mjs"
+          compatibility_date = "2026-10-13"
+
+          [[d1_databases]]
+          binding = "OFFICE_DB"
+          database_name = "office-db-test"
+          database_id = "00000000-0000-0000-0000-000000000001"
+          EOF
+          for migration in office/prototype/migrations/0001_office_core.sql office/prototype/migrations/0002_robot_service_principals.sql office/prototype/migrations/0003_robot_task_proposals.sql office/prototype/migrations/0004_human_proposal_approval.sql; do
+            npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file="$migration"
+          done
+          npx --yes wrangler@4.148.0 d1 execute office-db-test --local --file=office/prototype/tests/d1_runtime_smoke.sql
+      - name: Verify D1 batch rollback and Human Approval Gateway in local Worker runtime
+        run: |
+          npx --yes wrangler@4.148.0 dev --ip 127.0.0.1 --port 8787 --show-interactive-dev-session=false > /tmp/office-d1-worker.log 2>&1 &
+          worker_pid=$!
+          trap 'kill "$worker_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --show-error http://127.0.0.1:8787/ -o /tmp/office-d1-response.json -w '%{http_code}' > /tmp/office-d1-status.txt; then
+              if [ -s /tmp/office-d1-response.json ]; then break; fi
+            fi
+            if ! kill -0 "$worker_pid" 2>/dev/null; then
+              cat /tmp/office-d1-worker.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "HTTP status: $(cat /tmp/office-d1-status.txt 2>/dev/null || echo unavailable)"
+          cat /tmp/office-d1-worker.log
+          cat /tmp/office-d1-response.json
+          grep -q '"ok":true' /tmp/office-d1-response.json
+          cat > wrangler-approval.toml <<'EOF'
+          name = "zhakin-office-approval-d1-smoke"
+          main = "office/prototype/tests/human_approval_d1_worker.mjs"
+          compatibility_date = "2026-10-13"
+
+          [[d1_databases]]
+          binding = "OFFICE_DB"
+          database_name = "office-db-test"
+          database_id = "00000000-0000-0000-0000-000000000001"
+          EOF
+          npx --yes wrangler@4.148.0 dev --config wrangler-approval.toml --ip 127.0.0.1 --port 8788 --show-interactive-dev-session=false > /tmp/office-approval-worker.log 2>&1 &
+          approval_worker_pid=$!
+          trap 'kill "$worker_pid" "$approval_worker_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --show-error http://127.0.0.1:8788/ -o /tmp/office-approval-response.json -w '%{http_code}' > /tmp/office-approval-status.txt; then
+              if [ -s /tmp/office-approval-response.json ]; then break; fi
+            fi
+            if ! kill -0 "$approval_worker_pid" 2>/dev/null; then
+              cat /tmp/office-approval-worker.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Approval Worker HTTP status: $(cat /tmp/office-approval-status.txt 2>/dev/null || echo unavailable)"
+          cat /tmp/office-approval-worker.log
+          cat /tmp/office-approval-response.json
+          grep -q '"ok":true' /tmp/office-approval-response.json
+          grep -q '"acceptanceAtomicity":true' /tmp/office-approval-response.json
+          grep -q '"rejectionLeavesTaskUnchanged":true' /tmp/office-approval-response.json
+          grep -q '"staleProposalNotApplied":true' /tmp/office-approval-response.json
+          grep -q '"revokedApproverDenied":true' /tmp/office-approval-response.json
+          grep -q '"revocationRaceFailsClosed":true' /tmp/office-approval-response.json
+          grep -q '"auditFailureRollsBackDecision":true' /tmp/office-approval-response.json
+          grep -q '"concurrentDuplicateApprovalRejected":true' /tmp/office-approval-response.json
+
+      - name: Verify Durable Object rate limiter in disposable local Worker runtime
+        run: |
+          cat > wrangler-rate-limit.toml <<'EOF'
+          name = "zhakin-office-rate-limit-smoke"
+          main = "office/prototype/tests/durable_object_rate_limit_worker.mjs"
+          compatibility_date = "2026-10-13"
+
+          [[durable_objects.bindings]]
+          name = "OFFICE_RATE_LIMITER"
+          class_name = "OfficeRateLimitDurableObject"
+
+          [[migrations]]
+          tag = "v1"
+          new_sqlite_classes = ["OfficeRateLimitDurableObject"]
+          EOF
+          npx --yes wrangler@4.148.0 dev --config wrangler-rate-limit.toml --ip 127.0.0.1 --port 8789 --show-interactive-dev-session=false > /tmp/office-rate-limit-worker.log 2>&1 &
+          rate_worker_pid=$!
+          trap 'kill "$rate_worker_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --show-error http://127.0.0.1:8789/ -o /tmp/office-rate-limit-response.json -w '%{http_code}' > /tmp/office-rate-limit-status.txt; then
+              if [ -s /tmp/office-rate-limit-response.json ]; then break; fi
+            fi
+            if ! kill -0 "$rate_worker_pid" 2>/dev/null; then
+              cat /tmp/office-rate-limit-worker.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Rate limiter Worker HTTP status: $(cat /tmp/office-rate-limit-status.txt 2>/dev/null || echo unavailable)"
+          cat /tmp/office-rate-limit-worker.log
+          cat /tmp/office-rate-limit-response.json
+          grep -q '"ok":true' /tmp/office-rate-limit-response.json
+          grep -q '"atomicAdmission":true' /tmp/office-rate-limit-response.json
+          grep -q '"allowed":3' /tmp/office-rate-limit-response.json
+          grep -q '"denied":9' /tmp/office-rate-limit-response.json
