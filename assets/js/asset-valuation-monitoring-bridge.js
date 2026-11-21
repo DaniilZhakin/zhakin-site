@@ -4,13 +4,12 @@
   const SUPPORTED = ['RUB', 'USD', 'EUR', 'CNY'];
 
   function isDate(value) {
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(String(value || ''))) return false;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
     const parsed = new Date(value + 'T00:00:00Z');
     return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
   }
 
-  // This adapter exposes provenance only. It deliberately accepts no valuation
-  // amount and never mutates calculator inputs or produces a converted value.
+  // Provenance-only adapter: no valuation amount enters this function.
   function resolveReference(snapshot, currency, assessmentDate, scenarioApi) {
     const code = String(currency || '');
     const date = String(assessmentDate || '');
