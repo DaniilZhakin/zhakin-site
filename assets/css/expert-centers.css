@@ -1,0 +1,61 @@
+/* ZHAKIN TEAM expert-centre interface system — shared visual layer */
+:root{--zc-ink:#f4f1e8;--zc-muted:#aebbb2;--zc-soft:#81958a;--zc-gold:#d4af37;--zc-emerald:#102820;--zc-deep:#071a16;--zc-line:rgba(212,175,55,.22);--zc-panel:rgba(12,33,26,.82)}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:var(--zc-deep);color:var(--zc-ink)}
+::selection{background:rgba(212,175,55,.28);color:#fff8df}
+:where(.ec-main,.ac-main,.av-main) a:focus-visible,:where(.ec-main,.ac-main,.av-main) button:focus-visible,:where(.ec-main,.ac-main,.av-main) input:focus-visible,:where(.ec-main,.ac-main,.av-main) select:focus-visible{outline:2px solid #e8c85e;outline-offset:3px}
+:where(.ec-main,.ac-main,.av-main) :is(.ec-hero,.ac-hero,.av-hero){box-shadow:0 24px 70px rgba(0,0,0,.16)}
+.ec-main,.ac-main,.av-main{isolation:isolate}
+.ec-hero,.ac-hero,.av-hero{border-radius:18px!important}
+.ec-hero,.ac-hero{position:relative;overflow:hidden}
+.ec-hero:after,.ac-hero:after{z-index:0;content:"";position:absolute;right:-90px;bottom:-170px;width:340px;height:340px;border:1px solid rgba(212,175,55,.13);border-radius:50%;pointer-events:none}
+.ec-hero:before,.ac-hero:before{z-index:0;content:"";position:absolute;right:35px;bottom:-110px;width:220px;height:220px;border:1px solid rgba(212,175,55,.09);border-radius:50%;pointer-events:none}
+.ec-hero>*,.ac-hero>*{position:relative;z-index:1}
+.ec-label,.ac-kicker,.av-kicker{font-variant-numeric:tabular-nums}
+.ec-card,.ac-card,.ac-publication,.av-stat,.av-method,.av-form,.av-result,.av-scenarios{transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
+.ec-card:hover,.ac-card:hover,.ac-publication:hover,.av-method:hover{border-color:rgba(212,175,55,.48);box-shadow:0 16px 38px rgba(0,0,0,.18);transform:translateY(-2px)}
+.ec-card h2,.ac-heading h2,.av-heading h2{letter-spacing:-.025em}
+.ec-card a,.ac-card a,.ac-publication a,.ac-back,.av-back{transition:color .18s ease,border-color .18s ease,background .18s ease}
+.ec-card a:hover,.ac-card a:hover,.ac-publication a:hover,.ac-back:hover,.av-back:hover{color:#f0d77e}
+.ac-section,.av-heading{scroll-margin-top:90px}
+.ac-method{counter-reset:research-step}
+.ac-step{position:relative;border-top:2px solid rgba(212,175,55,.78);border-radius:0 0 8px 8px;background:linear-gradient(180deg,rgba(12,33,26,.96),rgba(7,26,22,.72))}
+.ac-publication{display:flex;flex-direction:column;min-height:190px}
+.ac-publication a{margin-top:auto;padding-top:15px}
+.ac-note{border-radius:0 10px 10px 0;background:linear-gradient(100deg,rgba(12,33,26,.98),rgba(12,33,26,.55))}
+.av-hero{min-height:310px}
+.av-strip{margin-top:16px}
+.av-stat{border-radius:10px}
+.av-calc{scroll-margin-top:24px}
+.av-tabs{padding-bottom:10px;border-bottom:1px solid rgba(212,175,55,.13)}
+.av-tab{transition:background .18s ease,border-color .18s ease,color .18s ease}
+.av-tab:hover{border-color:rgba(212,175,55,.7);background:rgba(212,175,55,.07)}
+.av-calculate{box-shadow:0 7px 20px rgba(212,175,55,.12);transition:transform .18s ease,filter .18s ease}
+.av-calculate:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.av-reset:hover,.av-scenario-run:hover{border-color:rgba(212,175,55,.7);background:rgba(212,175,55,.08)}
+.av-result{border-top:2px solid rgba(212,175,55,.72)}
+.av-result-value{font-variant-numeric:tabular-nums}
+.av-field input,.av-field select,.av-scenario-controls input{min-width:0;max-width:100%;box-sizing:border-box}
+.av-field input:focus-visible,.av-field select:focus-visible,.av-scenario-controls input:focus-visible{outline:2px solid rgba(212,175,55,.72);outline-offset:2px}
+.av-market-rate,.av-scenarios{border-radius:10px}
+.av-scenario-table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.av-scenario-table th,.av-scenario-table td{white-space:nowrap}
+@media(max-width:650px){
+ .ec-hero,.ac-hero,.av-hero{border-radius:14px!important}
+ .ec-hero:before,.ec-hero:after,.ac-hero:before,.ac-hero:after{opacity:.45}
+ .ec-card,.ac-card,.ac-publication{border-radius:11px}
+ .ac-meta{gap:7px}
+ .ac-meta span{font-size:.61rem;line-height:1.45}
+ .av-hero{min-height:0}
+ .av-calc{padding:18px 14px;border-radius:13px}
+ .av-form,.av-result{padding:17px}
+ .av-calc-actions>*{flex:1 1 100%;width:100%}
+ .av-tabs{gap:7px}
+ .av-tab{flex:1 1 100%;text-align:left;padding-inline:12px}
+ .av-market-rate{min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .ec-card,.ac-card,.ac-publication,.av-method,.av-tab,.av-calculate{transition:none}
+ .ec-card:hover,.ac-card:hover,.ac-publication:hover,.av-method:hover,.av-calculate:hover{transform:none}
+}
