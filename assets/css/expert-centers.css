@@ -46,11 +46,12 @@ body{background:var(--zc-deep);color:var(--zc-ink)}
  .ec-card,.ac-card,.ac-publication{border-radius:11px}
  .ac-meta{gap:7px}
  .ac-meta span{font-size:.61rem;line-height:1.45}
+ .av-hero{min-height:0}
  .av-calc{padding:18px 14px;border-radius:13px}
  .av-form,.av-result{padding:17px}
  .av-calc-actions>*{flex:1 1 100%;width:100%}
  .av-tabs{gap:7px}
- .av-tab{flex:1 1 calc(50% - 7px);text-align:center;padding-inline:9px}
+ .av-tab{flex:1 1 100%;text-align:left;padding-inline:12px}
  .av-market-rate{min-width:0}
 }
 @media(prefers-reduced-motion:reduce){
