@@ -7,9 +7,9 @@ body{background:var(--zc-deep);color:var(--zc-ink)}
 :where(.ec-main,.ac-main,.av-main) :is(.ec-hero,.ac-hero,.av-hero){box-shadow:0 24px 70px rgba(0,0,0,.16)}
 .ec-main,.ac-main,.av-main{isolation:isolate}
 .ec-hero,.ac-hero,.av-hero{border-radius:18px!important}
-.ec-hero:after,.ac-hero:after{content:"";position:absolute;right:-90px;bottom:-170px;width:340px;height:340px;border:1px solid rgba(212,175,55,.13);border-radius:50%;pointer-events:none}
-.ec-hero:before,.ac-hero:before{content:"";position:absolute;right:35px;bottom:-110px;width:220px;height:220px;border:1px solid rgba(212,175,55,.09);border-radius:50%;pointer-events:none}
-.ec-label,.ac-kicker,.av-kicker{font-variant-numeric:tabular-nums}
+.ec-hero,.ac-hero{position:relative;overflow:hidden}\n.ec-hero:after,.ac-hero:after{z-index:0;content:"";position:absolute;right:-90px;bottom:-170px;width:340px;height:340px;border:1px solid rgba(212,175,55,.13);border-radius:50%;pointer-events:none}
+.ec-hero:before,.ac-hero:before{z-index:0;content:"";position:absolute;right:35px;bottom:-110px;width:220px;height:220px;border:1px solid rgba(212,175,55,.09);border-radius:50%;pointer-events:none}
+.ec-hero>*,.ac-hero>*{position:relative;z-index:1}\n.ec-label,.ac-kicker,.av-kicker{font-variant-numeric:tabular-nums}
 .ec-card,.ac-card,.ac-publication,.av-stat,.av-method,.av-form,.av-result,.av-scenarios{transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
 .ec-card:hover,.ac-card:hover,.ac-publication:hover,.av-method:hover{border-color:rgba(212,175,55,.48);box-shadow:0 16px 38px rgba(0,0,0,.18);transform:translateY(-2px)}
 .ec-card h2,.ac-heading h2,.av-heading h2{letter-spacing:-.025em}
