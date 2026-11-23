@@ -109,3 +109,9 @@ test('dashboard requires explicit confirmation before deleting an individual his
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
   assert.match(source, /root\.confirm\('Удалить эту запись из локальной истории\?'\)/);
 });
+test('dashboard reports inaccessible browser storage instead of treating it as an empty history', () => {
+  const blockedRead = { getItem() { throw new Error('blocked'); }, setItem() {} };
+  assert.throws(() => dashboard.readRecords(blockedRead), /Локальное хранилище недоступно/);
+  const blockedWrite = { getItem() { return JSON.stringify([{ unexpected: true }]); }, setItem() { throw new Error('blocked'); } };
+  assert.throws(() => dashboard.readRecords(blockedWrite), /Не удалось обновить локальную историю/);
+});
