@@ -68,7 +68,9 @@
       if (!raw) return [];
       const parsed = JSON.parse(raw);
       const valid = validateRecords(parsed);
-      if (!Array.isArray(parsed) || valid.length !== parsed.length) storage.setItem(STORAGE_KEY, JSON.stringify(valid));
+      if (!Array.isArray(parsed) || JSON.stringify(parsed) !== JSON.stringify(valid)) {
+        storage.setItem(STORAGE_KEY, JSON.stringify(valid));
+      }
       return valid;
     } catch (_) { return []; }
   }
