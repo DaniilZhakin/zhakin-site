@@ -118,7 +118,7 @@ test('dashboard reports inaccessible browser storage instead of treating it as a
 
 test('trend chart uses one point per date and scales the horizontal axis by elapsed time', () => {
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
-  assert.match(source, /const pointsByDate = new Map\\(\\)/);
-  assert.match(source, /const x = date =>/);
-  assert.match(source, /Date\\.parse\\(date \\+ 'T00:00:00Z'\\)/);
+  assert.ok(source.includes('const pointsByDate = new Map()'));
+  assert.ok(source.includes('const x = date =>'));
+  assert.ok(source.includes("Date.parse(date + 'T00:00:00Z')"));
 });
