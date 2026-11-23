@@ -40,6 +40,8 @@
 .ac-publication h3{margin:9px 0;color:#ead9aa;font-size:.95rem;line-height:1.45}
 .ac-publication p{margin:0;color:#9eafa5;font-size:.75rem;line-height:1.65}
 .ac-publication a{display:inline-block;margin-top:13px;color:#ead9aa;font-size:.72rem;text-decoration:none}
+.ac-valuation-panel{margin-top:28px;padding:22px;border:1px solid rgba(212,175,55,.35);border-radius:14px;background:linear-gradient(145deg,#102820,#091c16)}.ac-valuation-panel[hidden]{display:none}.ac-valuation-panel h2{margin:0 0 8px;color:#d4af37;font-size:1.35rem}.ac-valuation-panel p{color:#aebbb2;font-size:.76rem;line-height:1.7}.ac-valuation-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}.ac-valuation-row{display:flex;justify-content:space-between;gap:14px;padding:11px 12px;border:1px solid rgba(212,175,55,.16);border-radius:8px;background:#071a16;color:#aebbb2;font-size:.73rem}.ac-valuation-row strong{color:#ead9aa;text-align:right}.ac-valuation-content h3{grid-column:1/-1;margin:10px 0 0;color:#d4af37;font-size:.9rem}.ac-valuation-clear{margin-top:15px;padding:9px 13px;border:1px solid rgba(212,175,55,.4);border-radius:8px;background:transparent;color:#ead9aa;font:inherit;font-size:.72rem;cursor:pointer}.ac-valuation-status{color:#91a398!important;font-size:.68rem!important}
+@media(max-width:650px){.ac-valuation-content{grid-template-columns:1fr}.ac-valuation-row{align-items:flex-start}}
 .ac-note{margin-top:30px;padding:20px 22px;border-left:3px solid #d4af37;background:#0c211a;color:#aebbb2;font-size:.78rem;line-height:1.8}
 .ac-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem;text-decoration:none}
 @media(max-width:850px){.ac-method{grid-template-columns:repeat(2,1fr)}.ac-publications{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -60,6 +62,13 @@
 <h1>Аналитический центр</h1>
 <p>Публичная исследовательская площадка ZHAKIN TEAM. Мы рассматриваем экономику как систему взаимосвязанных рынков, институтов, технологий, инфраструктуры и международных потоков. Задача центра — не подменять данные мнением, а связывать проверяемые источники, прозрачные допущения и сценарный анализ.</p>
 <div class="ac-meta"><span>ЭКОНОМИКА И ФИНАНСЫ</span><span>МЕЖДУНАРОДНАЯ ТОРГОВЛЯ</span><span>ТЕХНОЛОГИИ И ИИ</span><span>ИНФРАСТРУКТУРА И РИСКИ</span></div>
+</section>
+<section class="ac-valuation-panel" id="valuation-brief" aria-labelledby="valuation-brief-title" hidden>
+<h2 id="valuation-brief-title">Сводка из Центра оценки активов</h2>
+<p>Здесь отображается только краткий результат, который пользователь отдельно передал из калькулятора. Исходные финансовые поля, сведения об объекте и конфиденциальные материалы не передаются.</p>
+<div class="ac-valuation-content" data-valuation-brief-content></div>
+<p class="ac-valuation-status" data-valuation-brief-status role="status" aria-live="polite"></p>
+<button class="ac-valuation-clear" type="button" data-clear-valuation-brief>Очистить сводку</button>
 </section>
 <section class="ac-section">
 <div class="ac-heading"><h2>Исследовательские направления</h2><span>Research agenda</span></div>
@@ -102,4 +111,5 @@
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/main.js" defer></script>
+<script src="/assets/js/valuation-analytical-handoff.js" defer></script>
 </body></html>

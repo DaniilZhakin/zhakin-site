@@ -15,6 +15,8 @@ on:
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
       - 'assets/js/asset-valuation-calculator.js'
+      - 'assets/js/valuation-analytical-handoff.js'
+      - 'tests/valuation-analytical-handoff.test.cjs'
       - 'tests/asset-valuation-calculator.test.cjs'
       - '.github/workflows/asset-valuation-calculator.yml'
       - '.github/workflows/analytical-monitoring-refresh.yml'
@@ -29,6 +31,8 @@ jobs:
           node-version: 20
       - name: Run valuation calculator tests
         run: node --test tests/asset-valuation-calculator.test.cjs
+      - name: Run privacy-safe valuation handoff tests
+        run: node --test tests/valuation-analytical-handoff.test.cjs
       - name: Run Analytical Center tests
         run: node --test tests/analytical-center.test.cjs
       - name: Run analytical ingestion parser tests
