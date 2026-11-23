@@ -16,6 +16,8 @@ on:
       - 'tests/analytical-center.test.cjs'
       - 'assets/js/asset-valuation-calculator.js'
       - 'assets/js/valuation-analytical-handoff.js'
+      - 'assets/js/analytical-asset-dashboard.js'
+      - 'tests/analytical-asset-dashboard.test.cjs'
       - 'tests/valuation-analytical-handoff.test.cjs'
       - 'tests/asset-valuation-calculator.test.cjs'
       - '.github/workflows/asset-valuation-calculator.yml'
@@ -31,6 +33,8 @@ jobs:
           node-version: 20
       - name: Run valuation calculator tests
         run: node --test tests/asset-valuation-calculator.test.cjs
+      - name: Run local asset dashboard tests
+        run: node --test tests/analytical-asset-dashboard.test.cjs
       - name: Run privacy-safe valuation handoff tests
         run: node --test tests/valuation-analytical-handoff.test.cjs
       - name: Run Analytical Center tests
