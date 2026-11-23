@@ -6,6 +6,7 @@ on:
       - feat/zhakin-team-office-interface-20261123
     paths:
       - 'office.html'
+      - 'sitemap.xml'
       - 'tests/office-interface.test.cjs'
       - '.github/workflows/office-schema.yml'
   pull_request:
