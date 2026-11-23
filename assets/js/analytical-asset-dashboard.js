@@ -138,7 +138,12 @@
         remove.setAttribute('aria-label', 'Удалить запись: ' + row.name + ', ' + row.date);
         remove.addEventListener('click', () => {
           if (typeof root.confirm !== 'function' || !root.confirm('Удалить эту запись из локальной истории?')) return;
-          rows = writeRecords(storage, rows.filter(itemRow => itemRow.id !== row.id));
+          try {
+            rows = writeRecords(storage, rows.filter(itemRow => itemRow.id !== row.id));
+          } catch (_) {
+            status.textContent = 'Не удалось удалить запись: браузер не разрешил обновить локальную историю.';
+            return;
+          }
           render();
           status.textContent = 'Запись удалена из локальной истории.';
         });
