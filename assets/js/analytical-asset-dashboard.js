@@ -34,7 +34,7 @@
       date,
       value,
       currency,
-      method: String(input.method || '').trim().slice(0, 120),
+      method: String(input && input.method || '').trim().slice(0, 120),
       createdAt
     };
   }
@@ -134,6 +134,7 @@
         remove.type = 'button';
         remove.setAttribute('aria-label', 'Удалить запись: ' + row.name + ', ' + row.date);
         remove.addEventListener('click', () => {
+          if (typeof root.confirm !== 'function' || !root.confirm('Удалить эту запись из локальной истории?')) return;
           rows = writeRecords(storage, rows.filter(itemRow => itemRow.id !== row.id));
           render();
           status.textContent = 'Запись удалена из локальной истории.';
