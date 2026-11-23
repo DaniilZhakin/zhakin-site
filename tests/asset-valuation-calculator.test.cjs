@@ -140,3 +140,127 @@ test('valuation UI offers CNY and invalidates stale scenario results on reset, a
   assert.match(html, /scenarioRun\.disabled=true/);
   assert.match(html, /scenarioRun\.disabled=false/);
 });
+
+const handoff = require('../assets/js/valuation-analytical-handoff.js');
+
+function memoryStorage() {
+  const values = new Map();
+  return {
+    getItem: key => values.has(key) ? values.get(key) : null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: key => values.delete(key)
+  };
+}
+
+test('valuation handoff stores only an explicitly approved summary, never raw calculator inputs', () => {
+  const brief = handoff.buildBrief({
+    kind: 'business', method: 'EBITDA × multiple', value: 8000000,
+    low: 7100000, high: 8900000, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -15, optimisticPct: 10,
+    ebitda: 2000000, debt: 2000000, cash: 1000000, companyName: 'Private company'
+  }, Date.parse('2026-11-20T12:00:00Z'));
+  assert.equal(brief.value, 8000000);
+  assert.equal(brief.scenarios[0].value, 6800000);
+  assert.equal(brief.scenarios[2].value, 8800000);
+  assert.deepEqual(Object.keys(brief).sort(), [
+    'assessmentDate','createdAt','currency','expiresAt','high','kind','low','method',
+    'scenarios','schemaVersion','value'
+  ].sort());
+  assert.equal(JSON.stringify(brief).includes('Private company'), false);
+  assert.equal(JSON.stringify(brief).includes('ebitda'), false);
+});
+
+test('valuation handoff is stored in session scope and expires after two hours', () => {
+  const storage = memoryStorage();
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, {
+    kind: 'property', method: 'Площадь × цена за м²', value: 120000,
+    low: 114000, high: 126000, currency: 'RUB', assessmentDate: '2026-11-20'
+  }, now);
+  assert.equal(handoff.readBrief(storage, now + 60 * 60 * 1000).value, 120000);
+  assert.equal(handoff.readBrief(storage, now + handoff.MAX_AGE_MS + 1), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff rejects invalid asset types, currencies and values', () => {
+  const base = { kind: 'equipment', method: 'Cost approach', value: 50000, currency: 'RUB', assessmentDate: '2026-11-20' };
+  assert.throws(() => handoff.buildBrief({ ...base, kind: 'other' }), /тип актива/);
+  assert.throws(() => handoff.buildBrief({ ...base, currency: 'GBP' }), /валюта/);
+  assert.throws(() => handoff.buildBrief({ ...base, value: 0 }), /результата оценки/);
+});
+
+test('both centers expose the opt-in handoff and local-only disclosure', () => {
+  const valuation = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  const analytical = fs.readFileSync(path.join(__dirname, '../centers/analytical/index.html'), 'utf8');
+  assert.match(valuation, /id="send-valuation-brief"/);
+  assert.match(valuation, /не отправляет введённые значения на сервер/);
+  assert.match(valuation, /valuation-analytical-handoff\.js/);
+  assert.match(analytical, /id="valuation-brief"/);
+  assert.match(analytical, /data-clear-valuation-brief/);
+  assert.match(analytical, /valuation-analytical-handoff\.js/);
+});
+
+test('valuation handoff rejects impossible dates and tampered stored payloads', () => {
+  const base = { kind: 'business', method: 'Test', value: 100, currency: 'RUB', assessmentDate: '2026-11-20' };
+  assert.throws(() => handoff.buildBrief({ ...base, assessmentDate: '2026-02-30' }), /корректную дату/);
+  const storage = memoryStorage();
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, base, now);
+  const tampered = JSON.parse(storage.getItem(handoff.STORAGE_KEY));
+  tampered.expiresAt = new Date(now + handoff.MAX_AGE_MS * 3).toISOString();
+  storage.setItem(handoff.STORAGE_KEY, JSON.stringify(tampered));
+  assert.equal(handoff.readBrief(storage, now), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff preserves negative lower bounds where the valuation method produces them', () => {
+  const brief = handoff.buildBrief({
+    kind: 'business', method: 'EV less net debt', value: 100,
+    low: -25, high: 125, currency: 'RUB', assessmentDate: '2026-11-20',
+    stressPct: -100, optimisticPct: 500
+  }, Date.parse('2026-11-20T12:00:00Z'));
+  assert.equal(brief.low, -25);
+  assert.equal(brief.scenarios[0].value, 0);
+  assert.equal(brief.scenarios[2].value, 600);
+});
+
+test('scenario input changes invalidate the previously approved handoff until recalculation', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/valuation-analytical-handoff.js'), 'utf8');
+  assert.match(source, /scenario-date', 'scenario-stress', 'scenario-optimistic/);
+  assert.match(source, /addEventListener\('input', \(\) => root\.ZhakinValuationHandoff\.setLatest\(null\)\)/);
+});
+
+
+test('valuation handoff rejects null payloads and impossible dates tampered in session storage', () => {
+  const storage = memoryStorage();
+  storage.setItem(handoff.STORAGE_KEY, 'null');
+  assert.equal(handoff.readBrief(storage), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+
+  const now = Date.parse('2026-11-20T12:00:00Z');
+  handoff.saveBrief(storage, {
+    kind: 'business', method: 'Test', value: 100,
+    currency: 'RUB', assessmentDate: '2026-11-20'
+  }, now);
+  const tampered = JSON.parse(storage.getItem(handoff.STORAGE_KEY));
+  tampered.assessmentDate = '2026-02-30';
+  storage.setItem(handoff.STORAGE_KEY, JSON.stringify(tampered));
+  assert.equal(handoff.readBrief(storage, now), null);
+  assert.equal(storage.getItem(handoff.STORAGE_KEY), null);
+});
+
+test('valuation handoff tolerates storage access failures when clearing the panel', () => {
+  const blockedStorage = {
+    getItem() { throw new Error('storage blocked'); },
+    removeItem() { throw new Error('storage blocked'); }
+  };
+  assert.equal(handoff.readBrief(blockedStorage), null);
+  assert.doesNotThrow(() => handoff.clearBrief(blockedStorage));
+});
+
+test('scenario calculation hands off only the compact approved valuation summary', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /setLatest\(\{kind,method:currentValuationResult\.method,value:currentScenarioBase,low:currentValuationResult\.low,high:currentValuationResult\.high,currency:currency\(\),assessmentDate:result\.assessmentDate,stressPct:result\.scenarios\[0\]\.changePct,optimisticPct:result\.scenarios\[2\]\.changePct\}\)/);
+  assert.doesNotMatch(html, /setLatest\(\{[^}]*ebitda|setLatest\(\{[^}]*debt|setLatest\(\{[^}]*cash/);
+  assert.match(html, /window\.ZhakinValuationHandoff\?\.setLatest/);
+});

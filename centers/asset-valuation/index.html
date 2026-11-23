@@ -60,6 +60,7 @@ body{background:var(--av-bg)}
 .av-error{display:none;margin-top:14px;padding:12px 14px;border:1px solid rgba(225,112,91,.45);border-radius:8px;background:rgba(120,35,25,.16);color:#ffc0b2;font-size:.78rem;line-height:1.6}
 .av-error.is-visible{display:block}
 .av-output{display:none}.av-output.is-visible{display:block}
+.av-handoff-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:16px}.av-handoff-actions span{color:#9eafa5;font-size:.72rem;line-height:1.5}.av-handoff-actions button:disabled{opacity:.45;cursor:not-allowed}
 .av-privacy{margin-top:16px;padding:13px 15px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.72rem;line-height:1.65}
 .av-market-context{margin-top:16px;padding:18px;border:1px solid rgba(212,175,55,.22);border-radius:12px;background:rgba(4,17,12,.28)}
 .av-market-head,.av-market-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -160,6 +161,7 @@ body{background:var(--av-bg)}
 <div class="av-result-note" id="result-note">Результат появится после расчёта. Не является офертой, заключением оценщика или инвестиционной рекомендацией.</div>
 </aside>
 </div>
+<div class="av-handoff-actions"><button class="av-scenario-run" id="send-valuation-brief" type="button" disabled>Передать аналитическую сводку →</button><span id="valuation-handoff-status" role="status" aria-live="polite">Сначала выполните расчёт.</span></div>
 <div class="av-privacy">Защита исходных данных: калькулятор не отправляет введённые значения на сервер, не сохраняет их в профиле и не использует внешние API. Не вводите персональные или конфиденциальные сведения.</div>
 <div class="av-market-context" id="av-market-context" aria-live="polite" aria-label="Официальные валютные ориентиры">
   <div class="av-market-head"><strong>Официальные валютные ориентиры</strong><span>Загрузка подтверждённых данных…</span></div>
@@ -198,6 +200,7 @@ body{background:var(--av-bg)}
 <script src="/assets/js/asset-valuation-calculator.js" defer></script>
 <script src="/assets/js/asset-valuation-market-context.js" defer></script>
 <script src="/assets/js/asset-valuation-scenarios.js" defer></script>
+<script src="/assets/js/valuation-analytical-handoff.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  const tabs=[...document.querySelectorAll('.av-tab')], fields=[...document.querySelectorAll('[data-field]')], form=document.getElementById('valuation-form'), error=document.getElementById('calc-error');
@@ -244,14 +247,18 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('result-note').textContent=result.assumptions||'Ориентир рассчитан на основании введённых пользователем исходных данных.';
   document.getElementById('result-details').classList.add('is-visible');
   currentScenarioBase=value;
+  currentValuationResult=result;
   document.getElementById('scenario-currency').value=currency();
   scenarioRun.disabled=false;
   renderScenarios();
  }
  let currentScenarioBase=null;
+ let currentValuationResult=null;
  const scenarioRun=document.getElementById('scenario-run');
  function resetScenarioState(message){
   currentScenarioBase=null;
+  currentValuationResult=null;
+  if(window.ZhakinValuationHandoff?.setLatest)window.ZhakinValuationHandoff.setLatest(null);
   scenarioRun.disabled=true;
   document.getElementById('scenario-rows').replaceChildren();
   const row=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=3;cell.textContent=message;row.append(cell);document.getElementById('scenario-rows').append(row);
@@ -264,6 +271,7 @@ document.addEventListener('DOMContentLoaded',function(){
  });
  function renderScenarios(){
   if(!Number.isFinite(currentScenarioBase))return;
+  if(window.ZhakinValuationHandoff?.setLatest)window.ZhakinValuationHandoff.setLatest(null);
   try{
    const result=window.ZhakinValuationScenarios.calculateScenarioSet({
     baseValue:currentScenarioBase,currency:currency(),
@@ -281,6 +289,7 @@ document.addEventListener('DOMContentLoaded',function(){
     body.append(row);
    });
    document.getElementById('scenario-sensitivity').textContent='Чувствительность к изменению базовой стоимости: '+result.sensitivity.map(item=>(item.changePct>0?'+':'')+item.changePct+'% — '+formatter.format(item.value)).join(' · ');
+   if(currentValuationResult&&window.ZhakinValuationHandoff?.setLatest)window.ZhakinValuationHandoff.setLatest({kind,method:currentValuationResult.method,value:currentScenarioBase,low:currentValuationResult.low,high:currentValuationResult.high,currency:currency(),assessmentDate:result.assessmentDate,stressPct:result.scenarios[0].changePct,optimisticPct:result.scenarios[2].changePct});
    const fxStatus=document.getElementById('scenario-fx-status');
    if(currency()==='RUB'){
     fxStatus.textContent='База уже выражена в RUB. Дополнительная валютная конвертация не требуется; сценарные изменения не являются прогнозом.';
