@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-23T00:54:32Z",
+  "timestamp": "2026-11-23T09:06:53Z",
   "history_points": 30,
   "current": {
     "robots_ok": true,
@@ -11,19 +11,27 @@
     "canonical_ok_pages": 43,
     "jsonld_pages": 43,
     "noindex_pages": 0,
-    "avg_response_time_ms": 150.0,
-    "max_response_time_ms": 469,
-    "health_score": 100.0,
+    "avg_response_time_ms": 304.9,
+    "max_response_time_ms": 5108,
+    "health_score": 99.0,
     "health_grade": "healthy"
   },
-  "health_score": 100.0,
+  "health_score": 99.0,
   "health_grade": "healthy",
   "trend_direction": "stable",
-  "trend_delta": 0.0,
-  "baseline_timestamp": "2026-11-22T19:41:21Z",
-  "warnings": [],
-  "page_changes": {},
+  "trend_delta": -1.0,
+  "baseline_timestamp": "2026-11-23T00:54:32Z",
+  "warnings": [
+    "page-level change: /publications/money-capital-friction.html"
+  ],
+  "page_changes": {
+    "/publications/money-capital-friction.html": [
+      "response_time_ms: 114 -> 5108"
+    ]
+  },
   "critical_pages": [],
-  "warning_pages": [],
-  "status": "ok"
+  "warning_pages": [
+    "/publications/money-capital-friction.html"
+  ],
+  "status": "warning"
 }

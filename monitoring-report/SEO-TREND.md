@@ -1,10 +1,10 @@
 # SEO 3.1 — Health & Trend Intelligence
 
-Snapshot: `2026-11-23T00:54:32Z`
+Snapshot: `2026-11-23T09:06:53Z`
 History points: **30**
-Status: **OK**
-Health score: **100.0/100 (HEALTHY)**
-Trend: **STABLE** (+0.0)
+Status: **WARNING**
+Health score: **99.0/100 (HEALTHY)**
+Trend: **STABLE** (-1.0)
 
 ## Current signals
 
@@ -17,15 +17,16 @@ Trend: **STABLE** (+0.0)
 - `canonical_ok_pages`: **43**
 - `jsonld_pages`: **43**
 - `noindex_pages`: **0**
-- `avg_response_time_ms`: **150.0**
-- `max_response_time_ms`: **469**
-- `health_score`: **100.0**
+- `avg_response_time_ms`: **304.9**
+- `max_response_time_ms`: **5108**
+- `health_score`: **99.0**
 - `health_grade`: **healthy**
 
 ## Page-level intelligence
 
-No page-level change detected.
+### `/publications/money-capital-friction.html`
+- response_time_ms: 114 -> 5108
 
 ## Anomaly detection
 
-No regression detected.
+- page-level change: /publications/money-capital-friction.html
