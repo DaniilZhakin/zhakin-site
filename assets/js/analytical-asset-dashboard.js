@@ -63,16 +63,19 @@
     }));
   }
   function readRecords(storage) {
-    try {
-      const raw = storage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      const valid = validateRecords(parsed);
-      if (!Array.isArray(parsed) || JSON.stringify(parsed) !== JSON.stringify(valid)) {
-        storage.setItem(STORAGE_KEY, JSON.stringify(valid));
-      }
-      return valid;
-    } catch (_) { return []; }
+    let raw;
+    try { raw = storage.getItem(STORAGE_KEY); }
+    catch (_) { throw new Error('Локальное хранилище недоступно.'); }
+    if (!raw) return [];
+    let parsed;
+    try { parsed = JSON.parse(raw); }
+    catch (_) { parsed = []; }
+    const valid = validateRecords(parsed);
+    if (!Array.isArray(parsed) || JSON.stringify(parsed) !== JSON.stringify(valid)) {
+      try { storage.setItem(STORAGE_KEY, JSON.stringify(valid)); }
+      catch (_) { throw new Error('Не удалось обновить локальную историю.'); }
+    }
+    return valid;
   }
   function writeRecords(storage, rows) {
     const source = Array.isArray(rows) ? rows.slice(-MAX_RECORDS) : rows;
@@ -246,7 +249,11 @@
     });
     clear.addEventListener('click', () => {
       if (!rows.length || !root.confirm('Удалить всю историю оценок из этого браузера?')) return;
-      try { storage.removeItem(STORAGE_KEY); } catch (_) {}
+      try { storage.removeItem(STORAGE_KEY); }
+      catch (_) {
+        status.textContent = 'Не удалось очистить историю: браузер не разрешил удалить локальные данные.';
+        return;
+      }
       rows = [];
       render();
       status.textContent = 'Локальная история очищена.';
