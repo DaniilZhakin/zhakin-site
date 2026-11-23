@@ -105,3 +105,7 @@ test('record validation strips unexpected fields and separates asset types with 
   const property = record({ type: 'property', value: 2500000 });
   assert.equal(dashboard.groupLatest([item, property]).length, 2);
 });
+test('dashboard requires explicit confirmation before deleting an individual history record', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
+  assert.match(source, /root\.confirm\('Удалить эту запись из локальной истории\?'\)/);
+});
