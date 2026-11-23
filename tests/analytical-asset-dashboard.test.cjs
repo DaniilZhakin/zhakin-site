@@ -122,3 +122,8 @@ test('trend chart uses one point per date and scales the horizontal axis by elap
   assert.ok(source.includes('const x = date =>'));
   assert.ok(source.includes("Date.parse(date + 'T00:00:00Z')"));
 });
+
+test('dashboard reports local storage write failures when deleting an individual record', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
+  assert.match(source, /Не удалось удалить запись: браузер не разрешил обновить локальную историю/);
+});
