@@ -4,7 +4,7 @@
   const SUPPORTED = ['RUB', 'USD', 'EUR', 'CNY'];
 
   function isDate(value) {
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(String(value || ''))) return false;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
     const parsed = new Date(value + 'T00:00:00Z');
     return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
   }
