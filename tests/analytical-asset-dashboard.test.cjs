@@ -101,6 +101,7 @@ test('record validation strips unexpected fields and separates asset types with 
   const restored = dashboard.readRecords(storage);
   assert.equal(Object.hasOwn(restored[0], 'secret'), false);
   assert.equal(JSON.stringify(restored).includes('must-not-persist'), false);
+  assert.equal(JSON.stringify(JSON.parse(storage.getItem(dashboard.STORAGE_KEY))).includes('must-not-persist'), false);
   const property = record({ type: 'property', value: 2500000 });
   assert.equal(dashboard.groupLatest([item, property]).length, 2);
 });
