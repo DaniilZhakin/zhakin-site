@@ -1,0 +1,36 @@
+name: ZHAKIN TEAM Office interface checks
+
+on:
+  push:
+    branches:
+      - feat/zhakin-team-office-interface-20261123
+    paths:
+      - 'office.html'
+      - 'sitemap.xml'
+      - 'tests/office-interface.test.cjs'
+      - '.github/workflows/office-schema.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'office.html'
+      - 'tests/office-interface.test.cjs'
+      - '.github/workflows/office-schema.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  office-interface:
+    name: Validate office interface and safety boundaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run office interface regression tests
+        run: node --test tests/office-interface.test.cjs

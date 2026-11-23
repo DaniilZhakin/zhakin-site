@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a16">
+  <title>ZHAKIN TEAM OFFICE — Офис управления</title>
+  <meta name="description" content="Концепция управленческого контура ZHAKIN TEAM: направления, проекты, поручения, решения, контроль результатов и управленческая аналитика.">
+  <link rel="canonical" href="https://xn--80alhhq.xn--p1ai/office.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    :root{--of-bg:#071a16;--of-panel:#102820;--of-panel2:#0b211a;--of-gold:#d4af37;--of-text:#f4f1e8;--of-muted:#aebbb2;--of-line:rgba(212,175,55,.24)}
+    body{background:var(--of-bg);color:var(--of-text)}
+    .office-page{max-width:1240px;margin:0 auto;padding:44px 22px 84px}
+    .office-eyebrow{color:var(--of-gold);font-size:.7rem;font-weight:750;letter-spacing:.18em;text-transform:uppercase}
+    .office-topline{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--of-line);margin-bottom:28px}
+    .office-state{padding:7px 11px;border:1px solid var(--of-line);color:#e5d49d;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase}
+    .office-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr);gap:28px;align-items:center;padding:clamp(25px,4vw,44px);border:1px solid var(--of-line);border-radius:17px;background:radial-gradient(ellipse at 90% 8%,rgba(212,175,55,.12),transparent 34%),linear-gradient(145deg,#102820,#081b15)}
+    .office-hero h1{margin:13px 0 15px;font-size:clamp(2.4rem,5.4vw,4.6rem);line-height:1.02;letter-spacing:-.045em}
+    .office-hero p{max-width:760px;margin:0;color:#c1cdc4;line-height:1.8;font-size:1rem}
+    .office-principle{padding:19px 20px;border-left:2px solid var(--of-gold);background:rgba(4,16,12,.35);color:var(--of-muted);font-size:.84rem;line-height:1.75}
+    .office-principle strong{display:block;margin-bottom:7px;color:#ead9aa;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase}
+    .office-notice{margin:20px 0 28px;padding:15px 18px;border:1px solid rgba(212,175,55,.25);background:rgba(212,175,55,.055);color:#d4ded6;font-size:.82rem;line-height:1.75}
+    .office-section{margin:32px 0}
+    .office-section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:15px}
+    .office-section-head h2{margin:0;color:var(--of-gold);font-size:clamp(1.35rem,3vw,1.8rem)}
+    .office-section-head span{color:#8fa197;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+    .office-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .office-card{min-width:0;padding:21px;border:1px solid var(--of-line);border-radius:11px;background:linear-gradient(145deg,rgba(16,40,32,.97),rgba(8,24,18,.98))}
+    .office-card-index{color:#c9b36f;font-size:.66rem;letter-spacing:.14em}
+    .office-card h3{margin:13px 0 8px;color:#f2eee3;font-size:1.08rem}
+    .office-card p{margin:0;color:var(--of-muted);font-size:.83rem;line-height:1.75}
+    .office-card a{display:inline-block;margin-top:15px;color:#ead9aa;font-size:.78rem;text-decoration:none}
+    .office-card a:hover{text-decoration:underline}
+    .office-card-status{display:block;margin-top:13px;color:#a8b7aa;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase}
+    .office-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+    .office-flow-step{padding:15px 12px;border:1px solid var(--of-line);border-radius:9px;background:#0b211a}
+    .office-flow-step b{display:block;color:#ead9aa;font-size:.8rem;margin-bottom:6px}
+    .office-flow-step span{display:block;color:#9eafa3;font-size:.72rem;line-height:1.55}
+    .office-guardrails{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .office-guardrail{padding:17px;border-top:2px solid rgba(212,175,55,.55);background:var(--of-panel2);color:#b7c4ba;font-size:.8rem;line-height:1.7}
+    .office-guardrail strong{display:block;margin-bottom:6px;color:#ead9aa}
+    .office-footer{margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);color:#829389;font-size:.74rem;line-height:1.8}
+    @media(max-width:850px){.office-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.office-flow{grid-template-columns:repeat(3,minmax(0,1fr))}.office-guardrails{grid-template-columns:1fr 1fr}}
+    @media(max-width:650px){.office-page{padding:27px 15px 60px}.office-hero{grid-template-columns:1fr;gap:18px}.office-grid,.office-flow,.office-guardrails{grid-template-columns:1fr}.office-section-head{align-items:flex-start;flex-direction:column;gap:5px}.office-topline{align-items:flex-start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-container">
+    <a class="brand" href="/"><span class="brand-title">ЖАКИН</span><span class="brand-subtitle">ZHAKIN TEAM</span></a>
+    <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-navigation"><span></span><span></span><span></span></button>
+    <nav id="site-navigation" class="main-navigation" aria-label="Основная навигация">
+      <a href="/">Главная</a><a href="/centers/">Экспертные центры</a><a href="/centers/asset-valuation/">Центр оценки активов</a><a href="/centers/analytical/">Аналитический центр</a><a href="/office.html" aria-current="page">Офис управления</a><a href="/intelligence.html">ЖАК — ИИ</a><a href="/projects.html">Проекты</a><a href="/publications.html">Публикации</a>
+    </nav>
+  </div>
+</header>
+<main class="office-page">
+  <div class="office-topline"><span class="office-eyebrow">ZHAKIN TEAM · GOVERNANCE & OPERATIONS</span><span class="office-state">Концепция интерфейса</span></div>
+  <section class="office-hero">
+    <div><span class="office-eyebrow">УПРАВЛЕНЧЕСКИЙ КОНТУР</span><h1>Офис управления</h1><p>Единое рабочее пространство для руководства и координаторов: стратегические направления, портфель проектов, поручения, решения, контроль исполнения и измеримые результаты. Офис связывает процессы организации, но не подменяет полномочия ответственных лиц.</p></div>
+    <aside class="office-principle"><strong>Ключевой принцип</strong>Каждое поручение имеет основание, владельца, срок, ожидаемый результат и историю изменений. Критические решения подтверждаются уполномоченным человеком.</aside>
+  </section>
+  <div class="office-notice" role="note"><strong>Статус:</strong> демонстрационная версия интерфейса. Реестр задач, авторизация, роли, документы, уведомления, аудит и сохранение изменений пока не подключены. Показатели и рабочие статусы не имитируются; не вводите здесь конфиденциальные данные.</div>
+
+  <section class="office-section" aria-labelledby="office-overview-title">
+    <div class="office-section-head"><h2 id="office-overview-title">Контур управления</h2><span>Функциональные модули</span></div>
+    <div class="office-grid">
+      <article class="office-card"><span class="office-card-index">01 / STRATEGY</span><h3>Стратегические направления</h3><p>Цели, приоритеты, владельцы направлений, ключевые показатели и взаимосвязи между программами.</p><span class="office-card-status">Модель раздела · без реестра</span></article>
+      <article class="office-card"><span class="office-card-index">02 / PORTFOLIO</span><h3>Портфель проектов</h3><p>Единая структура инициатив, этапов, ресурсов, рисков, зависимостей и ожидаемых результатов.</p><a href="/projects.html">Перейти к публичным проектам →</a></article>
+      <article class="office-card"><span class="office-card-index">03 / TASKS</span><h3>Поручения и исполнение</h3><p>Постановка задачи, ответственный, срок, критерий готовности, подтверждение результата и эскалация просрочек.</p><span class="office-card-status">Рабочая доска не подключена</span></article>
+      <article class="office-card"><span class="office-card-index">04 / DECISIONS</span><h3>Решения и протоколы</h3><p>Основание решения, согласующие лица, версия документа, дата утверждения и связанные поручения.</p><span class="office-card-status">Журнал решений не подключён</span></article>
+      <article class="office-card"><span class="office-card-index">05 / PERFORMANCE</span><h3>Результаты и аналитика</h3><p>Фактические результаты, KPI, отклонения, риски и источники данных с возможностью проверить происхождение показателя.</p><a href="/centers/analytical/">Открыть Аналитический центр →</a></article>
+      <article class="office-card"><span class="office-card-index">06 / KNOWLEDGE</span><h3>Документы и знания</h3><p>Регламенты, шаблоны, исследования и рабочие материалы с разграничением доступа и историей версий.</p><a href="/publications.html">Открыть библиотеку публикаций →</a></article>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="office-process-title">
+    <div class="office-section-head"><h2 id="office-process-title">Цикл исполнения поручения</h2><span>Единый стандарт процесса</span></div>
+    <div class="office-flow">
+      <div class="office-flow-step"><b>01 · Основание</b><span>Цель, контекст и полномочия</span></div>
+      <div class="office-flow-step"><b>02 · Назначение</b><span>Ответственный и срок</span></div>
+      <div class="office-flow-step"><b>03 · Исполнение</b><span>Промежуточные этапы и риски</span></div>
+      <div class="office-flow-step"><b>04 · Проверка</b><span>Критерии и доказательства результата</span></div>
+      <div class="office-flow-step"><b>05 · Закрытие</b><span>Подтверждение и запись в журнал</span></div>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="office-assistant-title">
+    <div class="office-section-head"><h2 id="office-assistant-title">Управленческий помощник</h2><span>Отдельный робот офисного контура</span></div>
+    <div class="office-card">
+      <span class="office-card-index">OFFICE AGENT / HUMAN-IN-CONTROL</span>
+      <h3>Помощник руководителя и координатора</h3>
+      <p>Планируемая роль: собирать сводки по доступным проектам, находить просрочки и зависимости, готовить проекты поручений, протоколов и управленческих отчётов. Помощник не утверждает решения, не меняет ответственных и не отправляет документы без подтверждения человека.</p>
+      <a href="/intelligence.html">Открыть интеллектуальную платформу ЖАК →</a>
+      <span class="office-card-status">Интеграция с реальными рабочими данными не подключена</span>
+    </div>
+  </section>
+
+  <section class="office-section" aria-labelledby="office-controls-title">
+    <div class="office-section-head"><h2 id="office-controls-title">Контроль и безопасность</h2><span>Обязательные архитектурные ограничения</span></div>
+    <div class="office-guardrails">
+      <div class="office-guardrail"><strong>Ролевой доступ</strong>Руководитель, координатор, исполнитель и наблюдатель получают только необходимые права в пределах назначенных направлений.</div>
+      <div class="office-guardrail"><strong>Журналирование</strong>Изменения задач, сроков, ролей и решений фиксируются с автором, временем и основанием.</div>
+      <div class="office-guardrail"><strong>Подтверждение человеком</strong>Назначения, утверждения, внешние отправки и критические операции требуют явного согласования.</div>
+    </div>
+  </section>
+  <p class="office-footer">ZHAKIN TEAM OFFICE — проектируемый управленческий интерфейс. Публикация этой страницы не означает запуск внутреннего реестра, авторизации или системы поручений. Доступ к рабочим данным появится только после отдельной проверки серверной архитектуры, ролевой модели, защиты данных и аудита.</p>
+</main>
+<script src="/assets/js/main.js?v=20261123-office-menu"></script>
+</body>
+</html>
