@@ -200,8 +200,12 @@
         trendChart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Добавьте оценки для динамики'));
         return;
       }
-      const points = rows.filter(row => assetIdentity(row) === key)
-        .sort((a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt));
+      const pointsByDate = new Map();
+      rows.filter(row => assetIdentity(row) === key).forEach(row => {
+        const previous = pointsByDate.get(row.date);
+        if (!previous || row.createdAt > previous.createdAt) pointsByDate.set(row.date, row);
+      });
+      const points = [...pointsByDate.values()].sort((a, b) => a.date.localeCompare(b.date));
       if (points.length < 2) {
         trendChart.append(svg('text', { x: 360, y: 125, 'text-anchor': 'middle' }, 'Для динамики нужны минимум две даты оценки'));
         return;
@@ -215,18 +219,20 @@
       const spread = max - min || Math.max(Math.abs(max) * .02, 1);
       const low = min - spread * .15, high = max + spread * .15;
       const x0 = 54, x1 = 690, y0 = 22, y1 = 190;
-      const x = index => x0 + (x1 - x0) * index / (points.length - 1);
+      const firstDate = Date.parse(points[0].date + 'T00:00:00Z');
+      const lastDate = Date.parse(points[points.length - 1].date + 'T00:00:00Z');
+      const x = date => x0 + (x1 - x0) * (Date.parse(date + 'T00:00:00Z') - firstDate) / (lastDate - firstDate);
       const y = value => y1 - (value - low) / (high - low) * (y1 - y0);
       trendChart.replaceChildren();
       for (let i = 0; i < 4; i++) {
         const yy = y0 + (y1 - y0) * i / 3;
         trendChart.append(svg('line', { x1: x0, y1: yy, x2: x1, y2: yy, class: 'ad-chart-track', stroke: 'rgba(212,175,55,.2)' }));
       }
-      trendChart.append(svg('polyline', { points: points.map((point, index) => x(index) + ',' + y(point.value)).join(' '), fill: 'none', stroke: '#d4af37', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+      trendChart.append(svg('polyline', { points: points.map(point => x(point.date) + ',' + y(point.value)).join(' '), fill: 'none', stroke: '#d4af37', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
       points.forEach((point, index) => {
-        trendChart.append(svg('circle', { cx: x(index), cy: y(point.value), r: 5, fill: '#ead9aa' }));
+        trendChart.append(svg('circle', { cx: x(point.date), cy: y(point.value), r: 5, fill: '#ead9aa' }));
         if (index === 0 || index === points.length - 1 || points.length <= 6) {
-          trendChart.append(svg('text', { x: x(index), y: 222, 'text-anchor': index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle', class: 'ad-chart-label' }, point.date));
+          trendChart.append(svg('text', { x: x(point.date), y: 222, 'text-anchor': index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle', class: 'ad-chart-label' }, point.date));
         }
       });
     }
