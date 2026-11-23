@@ -38,3 +38,11 @@ test('office links only to existing public routes', () => {
     assert.ok(html.includes(`href="${route}"`), `missing route: ${route}`);
   }
 });
+
+test('office page is discoverable exactly once in the XML sitemap', () => {
+  const sitemap = fs.readFileSync('sitemap.xml', 'utf8');
+  const route = 'https://xn--80alhhq.xn--p1ai/office.html';
+  assert.equal(sitemap.split(route).length - 1, 1);
+  assert.match(sitemap, /<urlset[^>]+sitemaps\.org\/schemas\/sitemap\/0\.9/);
+  assert.match(sitemap, /<\/urlset>/);
+});
