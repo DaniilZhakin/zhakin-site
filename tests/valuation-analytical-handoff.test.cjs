@@ -89,3 +89,17 @@ test('changing original calculator inputs invalidates the previously approved su
   assert.match(page, /Параметры изменены\. Выполните основной расчёт заново/);
   assert.match(page, /currentValuationResult=null/);
 });
+
+test('approved valuation brief saves only compact fields into local asset history', () => {
+  const dashboard = require('../assets/js/analytical-asset-dashboard.js');
+  const storage = memoryStorage();
+  const brief = handoff.buildBrief({ ...base, companyName: 'Private company', ebitda: 2000000 }, Date.parse('2026-11-20T12:00:00Z'));
+  const saved = handoff.saveBriefToHistory(brief, 'Актив А', dashboard, storage);
+  const rows = dashboard.readRecords(storage);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].name, 'Актив А');
+  assert.equal(rows[0].value, 8000000);
+  assert.equal(JSON.stringify(rows).includes('Private company'), false);
+  assert.equal(JSON.stringify(rows).includes('ebitda'), false);
+  assert.equal(Object.keys(saved).includes('companyName'), false);
+});
