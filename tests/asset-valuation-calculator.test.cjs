@@ -125,6 +125,9 @@ test('valuation page exposes date-scoped scenario analysis and local-only safegu
   assert.match(html, /id="scenario-date"/);
   assert.match(html, /id="scenario-stress"/);
   assert.match(html, /id="scenario-optimistic"/);
+  assert.match(html, /id="scenario-chart-svg"/);
+  assert.match(html, /id="scenario-sensitivity-rows"/);
+  assert.match(html, /result\.sensitivity\.forEach/);
   assert.match(html, /asset-valuation-scenarios\.js/);
   assert.match(html, /точную дату оценки/);
   assert.match(html, /не являются прогнозом/);
@@ -139,4 +142,39 @@ test('valuation UI offers CNY and invalidates stale scenario results on reset, a
   assert.match(html, /resetScenarioState\("Сначала выполните новый расчёт для выбранного типа актива\."\)/);
   assert.match(html, /scenarioRun\.disabled=true/);
   assert.match(html, /scenarioRun\.disabled=false/);
+});
+
+
+test('comparison workspace limits the list to four validated local valuation entries', () => {
+  const comparison = require('../assets/js/asset-valuation-comparison.js');
+  const result = { method: 'Сравнительный подход', marketValue: 100000, low: 95000, high: 105000 };
+  const entries = [];
+  for (let index = 1; index <= 4; index += 1) comparison.addEntry(entries, { name: 'Объект ' + index, kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' });
+  assert.equal(entries.length, 4);
+  assert.throws(() => comparison.addEntry(entries, { name: 'Пятый объект', kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' }), /не более четырёх/);
+  assert.equal(entries[0].name, 'Объект 1');
+  const oneCurrencyEntry = [entries[0]];
+  assert.throws(() => comparison.addEntry(oneCurrencyEntry, { name: 'В другой валюте', kind: 'property', result, currency: 'USD', assessmentDate: '2026-11-20' }), /только в одной валюте/);
+  assert.throws(() => comparison.createEntry({ name: 'Неверная дата', kind: 'property', result, currency: 'RUB', assessmentDate: '2026-02-30' }), /корректную дату/);
+});
+
+test('method comparison shows only actually calculated valuation approaches', () => {
+  const comparison = require('../assets/js/asset-valuation-comparison.js');
+  const property = comparison.buildMethodRows({ method: 'Сравнительный подход', marketValue: 100000, incomeValue: 120000, incomeMethod: 'Доходный подход' }, 'property');
+  assert.deepEqual(property.map(row => row.method), ['Сравнительный подход', 'Доходный подход']);
+  assert.deepEqual(property.map(row => row.value), [100000, 120000]);
+  const business = comparison.buildMethodRows({ method: 'Доходно-рыночный ориентир', equityValue: 800000, enterpriseValue: 900000 }, 'business');
+  assert.equal(business.length, 1);
+  assert.equal(business[0].value, 800000);
+  assert.throws(() => comparison.createEntry({ name: 'X', kind: 'property', result: { method: 'Сравнительный подход' }, currency: 'RUB', assessmentDate: '2026-11-20' }), /расчётная стоимость/);
+});
+
+test('valuation page exposes an in-memory four-object comparison workspace', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /id="comparison-add"/);
+  assert.match(html, /id="comparison-rows"/);
+  assert.match(html, /id="method-comparison-rows"/);
+  assert.match(html, /asset-valuation-comparison\.js/);
+  assert.match(html, /не более четырёх объектов/);
+  assert.match(html, /только в памяти текущей страницы/);
 });
