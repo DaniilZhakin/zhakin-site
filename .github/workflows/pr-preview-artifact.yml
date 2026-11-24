@@ -40,6 +40,7 @@ jobs:
               Path("publications/economy-growth-living-standards.html"),
               Path("publications/future-office-operating-model.html"),
               Path("sitemap.xml"),
+              Path("preview.html"),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
@@ -70,6 +71,5 @@ jobs:
             assets/
             sitemap.xml
             robots.txt
-            CNAME
           if-no-files-found: error
           retention-days: 7
