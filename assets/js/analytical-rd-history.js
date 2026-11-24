@@ -14,7 +14,16 @@
   const SNAPSHOT_URL = '/data/analytical-monitoring/observations.json';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
-  function isWorldBankUrl(value) {\n    try {\n      const url = new URL(value);\n      return url.protocol === 'https:' && url.hostname === 'api.worldbank.org';\n    } catch (_) {\n      return false;\n    }\n  }\n\n  function getSeries(snapshot, country) {
+  function isWorldBankUrl(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' && url.hostname === 'api.worldbank.org';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function getSeries(snapshot, country) {
     if (!snapshot || snapshot.schema_version !== '1.0.0' ||
         snapshot.status !== 'source_fetched_validated' ||
         !Array.isArray(snapshot.observations) || !Object.hasOwn(COUNTRIES, country)) return [];
