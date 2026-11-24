@@ -212,3 +212,46 @@ test('R&D comparison snapshot covers eight countries with sourced values and exp
  assert.equal(latestRows.find(row => row.geography === 'RUS').reference_period, '2024');
  assert.ok(latestRows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
 });
+
+
+const dashboardScriptPath = path.join(root, 'assets/js/analytical-overview-dashboard.js');
+const dashboardScript = fs.readFileSync(dashboardScriptPath, 'utf8');
+
+test('Executive dashboard is embedded in the Analytical Center and remains responsive', () => {
+  assert.match(html, /id="ac-live-dashboard"/);
+  assert.match(html, /Панель ключевых показателей/);
+  assert.match(html, /data-fx-cards/);
+  assert.match(html, /data-rd-chart/);
+  assert.match(html, /data-rd-table/);
+  assert.match(html, /analytical-overview-dashboard\.js/);
+  assert.match(html, /@media\(max-width:700px\)/);
+});
+
+test('Executive dashboard reads only validated official observations and discloses snapshot provenance', () => {
+  assert.match(dashboardScript, /observations\.json/);
+  assert.match(dashboardScript, /validation_status === 'validated'/);
+  assert.match(dashboardScript, /source\.name/);
+  assert.match(dashboardScript, /source\.url/);
+  assert.match(dashboardScript, /generated_at/);
+  assert.match(dashboardScript, /cache: 'no-store'/);
+  assert.match(dashboardScript, /Пропуски не заменяются оценками/);
+  assert.match(dashboardScript, /latestCommonYear|commonYears/);
+});
+
+test('Executive R&D chart and table use a common year across all eight countries', () => {
+  const rows = observations.observations.filter(row =>
+    row.indicator_id === 'tech.rd_gdp' && row.unit === 'percent_GDP' &&
+    row.validation_status === 'validated'
+  );
+  const countries = ['USA', 'CHN', 'DEU', 'JPN', 'KOR', 'GBR', 'FRA', 'RUS'];
+  const years = new Map();
+  rows.forEach(row => {
+    if (!years.has(row.reference_period)) years.set(row.reference_period, new Set());
+    years.get(row.reference_period).add(row.geography);
+  });
+  const common = [...years.entries()].filter(([, set]) => countries.every(code => set.has(code)));
+  assert.ok(common.length > 0, 'Expected at least one common year for all eight countries');
+  assert.match(dashboardScript, /aria-label/);
+  assert.match(dashboardScript, /<svg|svg\('svg'/);
+  assert.match(dashboardScript, /data-rd-table/);
+});
