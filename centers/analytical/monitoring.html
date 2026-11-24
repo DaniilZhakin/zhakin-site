@@ -53,7 +53,7 @@
 .mn-chart-tabs button.is-active{border-color:#d4af37;background:#18372b;color:#f0dfaa}
 .mn-chart-stage{margin-top:18px;min-height:210px}.mn-chart-stage svg{display:block;width:100%;height:auto;min-height:180px;overflow:visible}.mn-chart-stage svg text{fill:#aebbb2;font:12px system-ui,sans-serif}.mn-chart-stage .chart-grid{stroke:rgba(212,175,55,.16);stroke-width:1}.mn-chart-stage .chart-line{fill:none;stroke:#d4af37;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.mn-chart-stage .chart-point{fill:#ead9aa;stroke:#102820;stroke-width:3}
 .mn-chart-select{margin-left:6px;padding:7px 9px;border:1px solid rgba(212,175,55,.3);border-radius:6px;background:#0a1d17;color:#ead9aa;font:inherit;font-size:.7rem}.mn-rd-bar{display:block;height:7px;min-width:2px;border-radius:8px;background:linear-gradient(90deg,#8d7837,#e0c56b)}.mn-chart-foot{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#9eafa5;font-size:.7rem;line-height:1.6}.mn-chart-foot [role=status]{color:#d9c88f}
-.mn-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem}
+.mn-trend-stage{margin-top:18px;padding:12px 8px;border:1px solid rgba(212,175,55,.14);border-radius:10px;background:#071a16;overflow-x:auto}.mn-trend-stage svg{display:block;width:100%;min-width:560px;height:auto;min-height:220px}.mn-trend-stage svg text{fill:#aebbb2;font:12px system-ui,sans-serif}.mn-trend-grid{stroke:rgba(212,175,55,.16);stroke-width:1}.mn-trend-line{fill:none;stroke:#d4af37;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.mn-trend-point{fill:#ead9aa;stroke:#102820;stroke-width:2}.mn-trend-table{width:100%;min-width:280px;border-collapse:collapse;background:#0b2019;font-size:.76rem}.mn-trend-table th,.mn-trend-table td{padding:10px 13px;border-bottom:1px solid rgba(212,175,55,.13);text-align:left}.mn-trend-table th{color:#d9c88f;background:#102820;font-size:.68rem}.mn-trend-table td{color:#b8c7be}.mn-trend-table tr:last-child td{border-bottom:0}\n.mn-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem}
 @media(max-width:850px){.mn-grid{grid-template-columns:1fr}.mn-observations{grid-template-columns:repeat(2,minmax(0,1fr))}.mn-source-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.mn-chart-head{align-items:flex-start;flex-direction:column}.mn-chart-foot{flex-direction:column;gap:4px}.mn-main{padding:26px 15px 58px}.mn-card{padding:19px}.mn-observations{grid-template-columns:1fr 1fr}.mn-observation{padding:14px}.mn-table{min-width:720px}}
 </style>
@@ -102,6 +102,17 @@
 <div class="mn-chart-foot"><span id="rd-comparison-status" role="status" aria-live="polite">Данные загружаются из подтверждённого снимка.</span><span>Источник: World Bank · WDI</span></div>
 </div>
 <div class="mn-data-note">* Индикативная длина полосы нормирована к наибольшему значению в отображаемой выборке; это не рейтинг эффективности и не оценка качества научной системы. Режим «Единый общий год» обеспечивает сопоставимость периода; режим «Последнее доступное по стране» показывает более свежие, но потенциально разновременные данные. Нулевые значения и пропуски не подставляются.</div>
+</section>
+<section class="mn-section" id="rd-history">
+<h2>Историческая динамика инвестиций в R&amp;D</h2>
+<p class="mn-intro">Выберите страну, чтобы проследить фактическую динамику расходов на исследования и разработки в процентах ВВП. График строится по ежегодным подтверждённым наблюдениям Всемирного банка; пропущенные годы не интерполируются.</p>
+<div class="mn-chart-panel">
+<div class="mn-chart-head"><div><span class="mn-code">WORLD DEVELOPMENT INDICATORS</span><strong>R&amp;D expenditure · % of GDP</strong></div><label class="mn-observation-meta" for="rd-history-country">Страна <select id="rd-history-country" class="mn-chart-select"><option value="USA">США</option></select></label></div>
+<div class="mn-trend-stage"><svg id="rd-history-chart" viewBox="0 0 720 280" role="img" aria-label="Историческая динамика расходов на исследования и разработки"><text x="360" y="135" text-anchor="middle">Загрузка подтверждённых наблюдений…</text></svg></div>
+<div class="mn-table-wrap" style="margin-top:16px"><table class="mn-trend-table" aria-label="Исторические годовые значения расходов на исследования и разработки"><thead><tr><th>Год наблюдения</th><th>Расходы на R&amp;D, % ВВП</th></tr></thead><tbody id="rd-history-rows"><tr><td colspan="2">Загрузка данных…</td></tr></tbody></table></div>
+<div class="mn-chart-foot"><span id="rd-history-status" role="status" aria-live="polite">Данные загружаются из подтверждённого снимка.</span><span id="rd-history-range">Источник: World Bank · WDI</span></div>
+<p class="mn-data-note">Показатель: GERD (% ВВП), индикатор World Bank GB.XPD.RSDV.GD.ZS. Отдельные точки отражают опубликованные значения; разрывы в ряду остаются разрывами. <a id="rd-history-source" href="#" target="_blank" rel="noopener noreferrer" hidden>Открыть первичный набор данных World Bank →</a></p>
+</div>
 </section>
 <section class="mn-section">
 <h2>Три контура мониторинга</h2>
@@ -170,6 +181,6 @@
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/analytical-monitoring-charts.js" defer></script>
-<script src="/assets/js/analytical-rd-comparison.js" defer></script>
+<script src="/assets/js/analytical-rd-comparison.js" defer></script>\n<script src="/assets/js/analytical-rd-history.js" defer></script>
 <script src="/assets/js/main.js" defer></script>
 </body></html>
