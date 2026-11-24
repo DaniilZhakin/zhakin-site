@@ -240,7 +240,7 @@ test('R&D history chart preserves missing years as gaps instead of interpolating
   assert.equal(geometry.points.length, 3);
   assert.deepEqual(geometry.segments.map(segment => segment.length), [2, 1]);
   assert.equal(rdHistory.getSeries({ ...observations, status: 'unvalidated' }, 'USA').length, 0);
-  const unsafeSnapshot = structuredClone(observations);
+  const unsafeSnapshot = JSON.parse(JSON.stringify(observations));
   unsafeSnapshot.observations.find(row => row.geography === 'USA' && row.indicator_id === 'tech.rd_gdp').source.url = 'https://example.com/forged-data';
   assert.equal(rdHistory.getSeries(unsafeSnapshot, 'USA').length, 0);
 });
