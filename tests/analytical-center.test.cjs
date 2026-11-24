@@ -212,3 +212,32 @@ test('R&D comparison snapshot covers eight countries with sourced values and exp
  assert.equal(latestRows.find(row => row.geography === 'RUS').reference_period, '2024');
  assert.ok(latestRows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
 });
+
+
+const rdHistory = require('../assets/js/analytical-rd-history.js');
+
+test('R&D history chart uses only validated World Bank annual observations', () => {
+  assert.match(monitoring, /id="rd-history"/);
+  assert.match(monitoring, /id="rd-history-country"/);
+  assert.match(monitoring, /id="rd-history-chart"/);
+  assert.match(monitoring, /id="rd-history-rows"/);
+  assert.match(monitoring, /analytical-rd-history\.js/);
+  assert.match(monitoring, /пропущенные годы не интерполируются/i);
+  for (const country of ['USA', 'CHN', 'DEU', 'JPN', 'KOR', 'GBR', 'FRA', 'RUS']) {
+    const rows = rdHistory.getSeries(observations, country);
+    assert.ok(rows.length >= 9, 'Expected historical observations for ' + country);
+    assert.ok(rows.every(row => row.validation_status === 'validated' && row.source.name === 'World Bank'));
+    assert.deepEqual(rows.map(row => row.reference_period), [...rows.map(row => row.reference_period)].sort());
+  }
+});
+
+test('R&D history chart preserves missing years as gaps instead of interpolating values', () => {
+  const geometry = rdHistory.chartGeometry([
+    { reference_period: '2015', value: 1.2 },
+    { reference_period: '2016', value: 1.3 },
+    { reference_period: '2018', value: 1.5 }
+  ]);
+  assert.equal(geometry.points.length, 3);
+  assert.deepEqual(geometry.segments.map(segment => segment.length), [2, 1]);
+  assert.equal(rdHistory.getSeries({ ...observations, status: 'unvalidated' }, 'USA').length, 0);
+});
