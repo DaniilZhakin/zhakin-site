@@ -212,3 +212,13 @@ test('R&D comparison snapshot covers eight countries with sourced values and exp
  assert.equal(latestRows.find(row => row.geography === 'RUS').reference_period, '2024');
  assert.ok(latestRows.filter(row => row.geography !== 'RUS').every(row => row.reference_period === '2023'));
 });
+
+
+test('executive dashboard exposes sourced FX cards and comparable R&D chart', () => {
+  assert.match(html, /data-fx-cards/);
+  assert.match(html, /data-rd-chart/);
+  assert.match(html, /analytical-overview-dashboard\.js/);
+  const dashboard = fs.readFileSync(path.join(root, 'assets/js/analytical-overview-dashboard.js'), 'utf8');
+  assert.match(dashboard, /validation_status === 'validated'/);
+  assert.match(dashboard, /cache: 'no-store'/);
+});
