@@ -4,7 +4,7 @@
  const CURRENCIES=['RUB','USD','EUR','CNY'];
  function validDate(value){
   const date=String(value||'');
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return false;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
   const parsed=new Date(date+'T00:00:00Z');
   return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
  }
@@ -34,7 +34,9 @@
  function addEntry(entries,input){
   if(!Array.isArray(entries))throw new Error('Некорректный список сравнения.');
   if(entries.length>=4)throw new Error('В сравнении может быть не более четырёх объектов.');
-  const entry=createEntry(input);entries.push(entry);return entry;
+  const entry=createEntry(input);
+  if(entries.length&&entries.some(existing=>existing.currency!==entry.currency))throw new Error('Сравнение возможно только в одной валюте. Очистите список перед сменой валюты.');
+  entries.push(entry);return entry;
  }
  const api={createEntry,addEntry,buildMethodRows};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
