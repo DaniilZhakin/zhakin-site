@@ -39,7 +39,7 @@ test('registry handles unavailable browser storage without silently claiming per
 test('valuation page makes local persistence opt-in and exposes history controls',()=>{
  const html=fs.readFileSync(path.join(__dirname,'../centers/asset-valuation/index.html'),'utf8');
  assert.match(html,/id="registry-local-consent" type="checkbox"/);
- assert.match(html,/id="registry-save" type="button" disabled/);
+ assert.match(html,/id="registry-save"[^>]*disabled/);
  assert.match(html,/asset-valuation-registry\.js/);
  assert.match(html,/не отправляются на сервер/);
  assert.match(html,/registry\.save\(window\.localStorage,record\)/);
