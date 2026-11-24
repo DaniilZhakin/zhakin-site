@@ -56,7 +56,7 @@ body{background:var(--av-bg)}
 .av-result-divider{height:1px;margin:18px 0;background:rgba(255,255,255,.1)}
 .av-result-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);color:#aebbb2;font-size:.75rem}
 .av-result-row strong{color:#eee6ce;text-align:right}
-.av-result-note{margin-top:auto;padding-top:17px;color:#8fa197;font-size:.68rem;line-height:1.65}
+.av-comparison{margin-top:22px;padding:22px;border:1px solid rgba(212,175,55,.2);border-radius:12px;background:linear-gradient(145deg,rgba(8,31,25,.96),rgba(11,19,17,.98))}.av-comparison h3{margin:0 0 8px;color:#e4c66f;font-size:1.08rem}.av-comparison-intro,.av-comparison-note{color:#9eafa5;font-size:.78rem;line-height:1.65}.av-comparison-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:end;margin:16px 0}.av-comparison-controls label{display:block;margin-bottom:7px;color:#c6d2ca;font-size:.72rem}.av-comparison-controls input{width:100%;min-height:42px;padding:10px 12px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#091b16;color:#f4f1e8}.av-comparison-controls button{min-height:42px;padding:10px 14px;border:1px solid rgba(212,175,55,.48);border-radius:7px;background:rgba(212,175,55,.1);color:#e8d18c;font-weight:700;cursor:pointer}.av-comparison-controls button:disabled{opacity:.45;cursor:not-allowed}.av-comparison-table-wrap{width:100%;overflow-x:auto}.av-comparison-table{width:100%;min-width:650px;border-collapse:collapse;font-size:.72rem}.av-comparison-table th,.av-comparison-table td{padding:11px 9px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}.av-comparison-table th{color:#9eafa5;font-size:.65rem;font-weight:600}.av-comparison-table td{color:#f0eadb}.av-comparison-table td strong{color:#e4c66f}.av-method-compare{margin-top:20px}.av-method-compare h4{margin:0 0 8px;color:#e6e0d2;font-size:.88rem}.av-comparison-empty{padding:16px;border:1px dashed rgba(255,255,255,.15);border-radius:8px;color:#9eafa5;font-size:.76rem;line-height:1.6}@media(max-width:650px){.av-comparison{padding:16px}.av-comparison-controls{grid-template-columns:1fr 1fr}.av-comparison-controls>div:first-child{grid-column:1/-1}.av-comparison-controls button{width:100%}}.av-result-note{margin-top:auto;padding-top:17px;color:#8fa197;font-size:.68rem;line-height:1.65}
 .av-error{display:none;margin-top:14px;padding:12px 14px;border:1px solid rgba(225,112,91,.45);border-radius:8px;background:rgba(120,35,25,.16);color:#ffc0b2;font-size:.78rem;line-height:1.6}
 .av-error.is-visible{display:block}
 .av-output{display:none}.av-output.is-visible{display:block}
@@ -158,6 +158,27 @@ body{background:var(--av-bg)}
 <div class="av-result-row" id="row-high"><span>Верхний ориентир</span><strong id="result-high">—</strong></div>
 <div class="av-result-row" id="row-extra"><span id="extra-label">Дополнительный показатель</span><strong id="result-extra">—</strong></div>
 </div>
+<section class="av-comparison" aria-labelledby="av-comparison-title">
+<h3 id="av-comparison-title">Сравнение объектов и методов оценки</h3>
+<p class="av-comparison-intro">Добавляйте до четырёх рассчитанных объектов и сопоставляйте результаты в одной валюте. Список существует только в памяти текущей страницы и очищается при её закрытии или перезагрузке.</p>
+<div class="av-comparison-controls">
+<div><label for="comparison-object-name">Название объекта для сравнения</label><input id="comparison-object-name" type="text" maxlength="60" autocomplete="off" placeholder="Например, Объект А"></div>
+<button id="comparison-add" type="button" disabled>Добавить расчёт</button>
+<button id="comparison-clear" type="button" disabled>Очистить список</button>
+</div>
+<div id="comparison-status" class="av-comparison-note" role="status" aria-live="polite">Сначала выполните расчёт, затем добавьте объект в таблицу.</div>
+<div class="av-comparison-table-wrap">
+<table class="av-comparison-table" aria-label="Сравнение рассчитанных объектов">
+<thead><tr><th>Объект</th><th>Тип</th><th>Метод</th><th>Оценка</th><th>Нижний ориентир</th><th>Верхний ориентир</th><th>Валюта</th><th>Дата</th></tr></thead>
+<tbody id="comparison-rows"><tr><td colspan="8" class="av-comparison-empty">Пока нет объектов для сравнения.</td></tr></tbody>
+</table>
+</div>
+<div class="av-method-compare">
+<h4>Сопоставление методов текущего объекта</h4>
+<div class="av-comparison-table-wrap"><table class="av-comparison-table" aria-label="Сопоставление методов оценки текущего объекта"><thead><tr><th>Подход / метод</th><th>Расчётная стоимость</th><th>Пояснение</th></tr></thead><tbody id="method-comparison-rows"><tr><td colspan="3" class="av-comparison-empty">Методы будут показаны после расчёта.</td></tr></tbody></table></div>
+<p class="av-comparison-note" id="method-comparison-note">Сравниваются только методы, для которых введены необходимые исходные данные. Отсутствующие значения не моделируются.</p>
+</div>
+</section>
 <div class="av-result-note" id="result-note">Результат появится после расчёта. Не является офертой, заключением оценщика или инвестиционной рекомендацией.</div>
 </aside>
 </div>
@@ -200,6 +221,7 @@ body{background:var(--av-bg)}
 <script src="/assets/js/asset-valuation-calculator.js" defer></script>
 <script src="/assets/js/asset-valuation-market-context.js" defer></script>
 <script src="/assets/js/asset-valuation-scenarios.js" defer></script>
+<script src="/assets/js/asset-valuation-comparison.js" defer></script>
 <script src="/assets/js/valuation-analytical-handoff.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
@@ -229,6 +251,40 @@ document.addEventListener('DOMContentLoaded',function(){
    event.preventDefault();tabs[next].focus();setKind(tabs[next].dataset.kind);
   });
  });
+ const comparisonEntries=[];
+ const comparisonAdd=document.getElementById('comparison-add');
+ const comparisonClear=document.getElementById('comparison-clear');
+ const comparisonStatus=document.getElementById('comparison-status');
+ const kindLabels={business:'Бизнес',property:'Недвижимость',equipment:'Оборудование'};
+ function renderComparison(){
+  const body=document.getElementById('comparison-rows');body.replaceChildren();
+  if(!comparisonEntries.length){const row=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=8;cell.className='av-comparison-empty';cell.textContent='Пока нет объектов для сравнения.';row.append(cell);body.append(row);}
+  comparisonEntries.forEach(entry=>{
+   const row=document.createElement('tr');
+   [entry.name,kindLabels[entry.kind]||entry.kind,entry.method,new Intl.NumberFormat('ru-RU',{style:'currency',currency:entry.currency,maximumFractionDigits:0}).format(entry.value),Number.isFinite(entry.low)?new Intl.NumberFormat('ru-RU',{style:'currency',currency:entry.currency,maximumFractionDigits:0}).format(entry.low):'—',Number.isFinite(entry.high)?new Intl.NumberFormat('ru-RU',{style:'currency',currency:entry.currency,maximumFractionDigits:0}).format(entry.high):'—',entry.currency,entry.assessmentDate].forEach((value,index)=>{const cell=document.createElement('td');cell.textContent=value;if(index===3){const strong=document.createElement('strong');strong.textContent=value;cell.replaceChildren(strong);}row.append(cell);});
+   body.append(row);
+  });
+  comparisonClear.disabled=comparisonEntries.length===0;
+  comparisonAdd.disabled=!currentValuationResult||comparisonEntries.length>=4;
+  if(comparisonEntries.length>=4)comparisonStatus.textContent='Достигнут лимит: можно сравнить не более четырёх объектов.';
+ }
+ function renderMethodComparison(result){
+  const body=document.getElementById('method-comparison-rows');body.replaceChildren();
+  const rows=window.ZhakinValuationComparison.buildMethodRows(result,kind);
+  rows.forEach(item=>{const row=document.createElement('tr');[item.method,new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0}).format(item.value),item.note].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.append(cell);});body.append(row);});
+  if(rows.length===1)document.getElementById('method-comparison-note').textContent=kind==='property'?'Для второго подхода заполните NOI и ставку капитализации. Сравнение появится только после фактического расчёта доходного подхода.':'Для этого типа объекта текущий калькулятор содержит один расчётный метод. Дополнительные подходы не подменяются оценочными предположениями.';
+  else document.getElementById('method-comparison-note').textContent='Показаны только подходы, рассчитанные по введённым исходным данным. Разница между подходами требует профессионального анализа причин.';
+ }
+ comparisonAdd.addEventListener('click',()=>{
+  if(!currentValuationResult)return;
+  try{
+   const name=document.getElementById('comparison-object-name').value.trim()||('Объект '+(comparisonEntries.length+1));
+   const entry=window.ZhakinValuationComparison.createEntry({name,kind,result:currentValuationResult,currency:currency(),assessmentDate:document.getElementById('scenario-date').value});
+   comparisonEntries.push(entry);renderComparison();
+   comparisonStatus.textContent='Объект «'+entry.name+'» добавлен. В сравнении '+comparisonEntries.length+' из 4.';
+  }catch(err){comparisonStatus.textContent=err.message||'Не удалось добавить объект.';}
+ });
+ comparisonClear.addEventListener('click',()=>{comparisonEntries.splice(0,comparisonEntries.length);renderComparison();comparisonStatus.textContent='Список сравнения очищен.';});
  const currency=()=>document.getElementById('currency').value;
  const money=value=>new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0}).format(value);
  const val=id=>document.getElementById(id).value;
@@ -248,6 +304,8 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('result-details').classList.add('is-visible');
   currentScenarioBase=value;
   currentValuationResult=result;
+  comparisonAdd.disabled=false;
+  renderMethodComparison(result);
   document.getElementById('scenario-currency').value=currency();
   scenarioRun.disabled=false;
   renderScenarios();
@@ -259,6 +317,7 @@ document.addEventListener('DOMContentLoaded',function(){
  function resetScenarioState(message){
   currentScenarioBase=null;
   currentValuationResult=null;
+  comparisonAdd.disabled=true;
   if(window.ZhakinValuationHandoff?.setLatest)window.ZhakinValuationHandoff.setLatest(null);
   scenarioRun.disabled=true;
   document.getElementById('scenario-rows').replaceChildren();
