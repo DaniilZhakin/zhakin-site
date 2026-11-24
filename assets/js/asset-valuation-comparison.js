@@ -38,7 +38,13 @@
   if(entries.length&&entries.some(existing=>existing.currency!==entry.currency))throw new Error('Сравнение возможно только в одной валюте. Очистите список перед сменой валюты.');
   entries.push(entry);return entry;
  }
- const api={createEntry,addEntry,buildMethodRows};
+ function buildMethodSpread(rows){
+  if(!Array.isArray(rows))return [];
+  const valid=rows.filter(row=>row&&typeof row.method==='string'&&row.method.trim()&&finite(row.value)&&Number(row.value)>=0);
+  const maximum=Math.max(0,...valid.map(row=>Number(row.value)));
+  return valid.map(row=>({method:row.method,value:Number(row.value),share:maximum>0?Number(row.value)/maximum:0}));
+ }
+ const api={createEntry,addEntry,buildMethodRows,buildMethodSpread};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(root)root.ZhakinValuationComparison=api;
 })(typeof window!=='undefined'?window:globalThis);

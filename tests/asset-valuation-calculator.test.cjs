@@ -178,3 +178,88 @@ test('valuation page exposes an in-memory four-object comparison workspace', () 
   assert.match(html, /не более четырёх объектов/);
   assert.match(html, /только в памяти текущей страницы/);
 });
+
+
+test('method spread chart scales only calculated methods against the largest observed value', () => {
+  const comparison = require('../assets/js/asset-valuation-comparison.js');
+  const spread = comparison.buildMethodSpread([
+    { method: 'Сравнительный подход', value: 100000 },
+    { method: 'Доходный подход', value: 125000 },
+    { method: 'Не рассчитано', value: null }
+  ]);
+  assert.equal(spread.length, 2);
+  assert.equal(spread[0].share, 0.8);
+  assert.equal(spread[1].share, 1);
+  assert.equal(comparison.buildMethodSpread([]).length, 0);
+  assert.equal(comparison.buildMethodSpread([{ method: 'Ноль', value: 0 }])[0].share, 0);
+});
+
+test('valuation page renders method comparison chart without automatic weighting', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /id="method-comparison-chart"/);
+  assert.match(html, /id="method-comparison-svg"/);
+  assert.match(html, /buildMethodSpread\(rows\)/);
+  assert.match(html, /не усредняются и не взвешиваются автоматически/);
+});
+
+
+const quality = require('../assets/js/asset-valuation-quality.js');
+
+test('quality passport checks required inputs, methods, date and declared source without claiming verification', () => {
+  const report = quality.buildQualityReport({
+    kind: 'property',
+    inputs: { area: '100', pricePerSqm: '50000', noi: '3000000', capRate: '8' },
+    assessmentDate: '2026-11-25',
+    sourceDescription: 'Отчёт о сделках за квартал',
+    sourceUrl: 'https://example.org/report',
+    result: { assumptions: 'Диапазон ±5% — чувствительность.' }
+  });
+  assert.equal(report.completeness.value, '2/2 обязательных');
+  assert.equal(report.methods.value, '2 из 2 доступных');
+  assert.equal(report.date.state, 'good');
+  assert.equal(report.source.state, 'good');
+  assert.match(report.source.note, /не верифицировано/);
+  assert.match(report.limitations.join(' '), /не заменяет/);
+});
+
+test('quality passport flags partial optional method data and insecure source URLs', () => {
+  const report = quality.buildQualityReport({
+    kind: 'property',
+    inputs: { area: '100', pricePerSqm: '50000', noi: '3000000', capRate: '' },
+    assessmentDate: '2026-02-30',
+    sourceDescription: 'Внутренняя таблица',
+    sourceUrl: 'http://example.org'
+  });
+  assert.equal(report.methods.state, 'missing');
+  assert.equal(report.date.state, 'missing');
+  assert.equal(report.source.state, 'missing');
+  assert.equal(report.completeness.state, 'good');
+});
+
+test('quality passport distinguishes supported calculation methods from unavailable valuation approaches', () => {
+  const business = quality.buildQualityReport({
+    kind: 'business',
+    inputs: { ebitda: '100', multiple: '4', debt: '0', cash: '0' },
+    assessmentDate: '2026-11-25'
+  });
+  const equipment = quality.buildQualityReport({
+    kind: 'equipment',
+    inputs: { replacementCost: '1000', depreciation: '20' },
+    assessmentDate: '2026-11-25'
+  });
+  assert.equal(business.methods.value, '1 из 1 в текущей модели');
+  assert.match(business.methods.note, /DCF/);
+  assert.equal(equipment.methods.value, '1 из 1 в текущей модели');
+  assert.equal(quality.isValidDate('2026-02-30'), false);
+  assert.equal(quality.isValidDate('2026-11-25'), true);
+});
+
+test('valuation page exposes the quality passport and keeps source verification claims explicit', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /id="valuation-quality"/);
+  assert.match(html, /id="assessment-date"/);
+  assert.match(html, /id="quality-source-url"/);
+  assert.match(html, /asset-valuation-quality\.js/);
+  const qualitySource = fs.readFileSync(path.join(__dirname, '../assets/js/asset-valuation-quality.js'), 'utf8');
+  assert.match(qualitySource, /содержание источника не верифицировано|не верифицировано/);
+});
