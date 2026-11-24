@@ -194,7 +194,7 @@ test('R&D country comparison panel renders only validated World Bank observation
   assert.match(comparisonScript, /latestCommonYear/);
   assert.match(comparisonScript, /periodSelect\.addEventListener\('change', render\)/);
   assert.match(comparisonScript, /USA.*CHN.*DEU.*JPN.*KOR.*GBR.*FRA.*RUS/);
-  assert.match(comparisonScript, /Пропуски не заменяются оценками/);
+  assert.match(comparisonScript, /пропуски не заменяются оценками/i);
 });
 
 
