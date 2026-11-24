@@ -195,6 +195,10 @@ body{background:var(--av-bg)}
 <p class="av-comparison-note" id="method-comparison-note">Сравниваются только методы, для которых введены необходимые исходные данные. Отсутствующие значения не моделируются.</p>
 </div>
 </section>
+
+<div class="av-result-note" id="result-note">Результат появится после расчёта. Не является офертой, заключением оценщика или инвестиционной рекомендацией.</div>
+</aside>
+</div>
 <section class="av-registry" aria-labelledby="av-registry-title">
  <div class="av-registry-head"><div><span class="av-kicker">LOCAL WORKSPACE · DEVICE ONLY</span><h3 id="av-registry-title">Реестр объектов и история оценок</h3><p>Сохраняйте отдельные итоги расчётов на этом устройстве. Автоматического сохранения нет.</p></div><span class="av-registry-count" id="registry-count">0 записей</span></div>
  <label class="av-registry-consent"><input id="registry-local-consent" type="checkbox"><span><strong>Разрешить локальное хранение истории на этом устройстве</strong><small>Записи остаются в хранилище браузера и не отправляются на сервер. Не сохраняйте конфиденциальные сведения: локальное хранилище не является защищённым архивом.</small></span></label>
@@ -203,9 +207,6 @@ body{background:var(--av-bg)}
  <div class="av-comparison-table-wrap"><table class="av-comparison-table av-registry-table" aria-label="Локальный реестр оценок"><thead><tr><th>Объект</th><th>Тип</th><th>Метод</th><th>Стоимость</th><th>Валюта</th><th>Дата оценки</th><th>Сохранено</th><th>Действие</th></tr></thead><tbody id="registry-rows"><tr><td colspan="8" class="av-comparison-empty">История пока скрыта.</td></tr></tbody></table></div>
  <p class="av-registry-foot">Лимит — 100 последних записей. Удаление истории очищает локальные записи этого реестра; очистка данных браузера также может удалить их.</p>
 </section>
-<div class="av-result-note" id="result-note">Результат появится после расчёта. Не является офертой, заключением оценщика или инвестиционной рекомендацией.</div>
-</aside>
-</div>
 <div class="av-handoff-actions"><button class="av-scenario-run" id="send-valuation-brief" type="button" disabled>Передать аналитическую сводку →</button><span id="valuation-handoff-status" role="status" aria-live="polite">Сначала выполните расчёт.</span></div>
 <div class="av-privacy">Защита исходных данных: калькулятор не отправляет введённые значения на сервер, не сохраняет их в профиле и не использует внешние API. Не вводите персональные или конфиденциальные сведения.</div>
 <div class="av-market-context" id="av-market-context" aria-live="polite" aria-label="Официальные валютные ориентиры">
