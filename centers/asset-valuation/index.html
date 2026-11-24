@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded',function(){
    showResult(result);
   }catch(err){error.textContent=err.message||'Проверьте введённые значения.';error.classList.add('is-visible');}
  });
- form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');resetScenarioState('Сначала выполните основной расчёт.');},0);});
+ form.addEventListener('reset',()=>{setTimeout(()=>{error.classList.remove('is-visible');error.textContent='';document.getElementById('result-value').textContent='—';document.getElementById('result-details').classList.remove('is-visible');document.getElementById('scenario-date').value=val('assessment-date');resetScenarioState('Сначала выполните основной расчёт.');},0);});
  setKind('business');
 });
 </script>
