@@ -26,10 +26,10 @@
           row.validation_status !== 'validated' ||
           row.geography !== country ||
           typeof row.reference_period !== 'string' ||
-          !/^\\d{4}$/.test(row.reference_period) ||
+          !/^\d{4}$/.test(row.reference_period) ||
           !Number.isFinite(row.value) || row.value < 0 ||
           !row.source || row.source.name !== 'World Bank' ||
-          typeof row.source.url !== 'string' || !/^https:\\/\\//.test(row.source.url)) return;
+          typeof row.source.url !== 'string' || !/^https:\/\/\//.test(row.source.url)) return;
       const previous = byYear.get(row.reference_period);
       if (!previous || String(row.retrieved_at || '') > String(previous.retrieved_at || '')) {
         byYear.set(row.reference_period, row);
