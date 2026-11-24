@@ -46,6 +46,31 @@
 .ac-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem;text-decoration:none}
 @media(max-width:850px){.ac-method{grid-template-columns:repeat(2,1fr)}.ac-publications{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.ac-main{padding:26px 15px 60px}.ac-grid,.ac-method,.ac-publications{grid-template-columns:1fr}.ac-heading{align-items:flex-start;flex-direction:column;gap:5px}.ac-card{min-height:0}}
+
+.ac-live-dashboard{margin-top:42px;padding:clamp(20px,4vw,34px);border:1px solid rgba(212,175,55,.32);border-radius:18px;background:linear-gradient(145deg,#102820,#081b15)}
+.ac-live-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+.ac-live-top h2{margin:0;color:#d4af37;font-size:clamp(1.4rem,3vw,2rem)}
+.ac-live-top p{max-width:720px;margin:9px 0 0;color:#aebbb2;font-size:.8rem;line-height:1.7}
+.ac-live-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 28px}
+.ac-live-stat{padding:17px;border:1px solid rgba(212,175,55,.23);border-radius:11px;background:#0a1d17}
+.ac-live-label,.ac-live-meta{display:block;color:#9eafa5;font-size:.68rem;line-height:1.5}
+.ac-live-value{display:block;margin:8px 0;color:#ead9aa;font-size:clamp(1.35rem,2.5vw,1.9rem);font-weight:800}
+.ac-live-block{margin-top:24px}
+.ac-live-block h3{margin:0 0 8px;color:#ead9aa;font-size:1rem}
+.ac-live-chart{overflow-x:auto;padding:12px 8px;border:1px solid rgba(212,175,55,.15);border-radius:10px;background:rgba(4,17,12,.28)}
+.ac-live-chart svg{display:block;width:100%;min-width:520px;height:auto}
+.ac-live-chart svg text{fill:#c5d0c8;font:12px system-ui,sans-serif}
+.ac-live-table-wrap{overflow-x:auto;margin-top:14px;border:1px solid rgba(212,175,55,.18);border-radius:10px}
+.ac-live-table{width:100%;min-width:560px;border-collapse:collapse;background:#091c16;font-size:.73rem}
+.ac-live-table th,.ac-live-table td{padding:11px 13px;border-bottom:1px solid rgba(212,175,55,.12);text-align:left;white-space:nowrap}
+.ac-live-table th{color:#d9c88f;background:#102820;font-size:.66rem}
+.ac-live-table td{color:#b8c7be}
+.ac-live-table tr:last-child td{border-bottom:0}
+.ac-live-status{margin:12px 0 0;color:#9eafa5;font-size:.7rem;line-height:1.7}
+.ac-live-status a{color:#ead9aa}
+.ac-live-empty{color:#c8b978;font-size:.78rem}
+@media(max-width:700px){.ac-live-stats{grid-template-columns:1fr}.ac-live-top{flex-direction:column}.ac-live-dashboard{padding:19px}}
+
 </style>
 <link rel="stylesheet" href="/assets/css/expert-centers.css">
 </head>
@@ -93,6 +118,23 @@
 <article class="ac-card"><span class="num">DATA / 02</span><h3>Аналитическая панель активов</h3><p>Локальная история оценок, сравнение нескольких активов и график изменения стоимости по датам. Данные остаются в браузере пользователя.</p><a href="/centers/analytical/asset-dashboard.html">Открыть панель активов →</a></article>
 </div>
 </section>
+<section class="ac-live-dashboard" id="ac-live-dashboard" aria-labelledby="ac-live-title">
+<div class="ac-live-top">
+<div><span class="ac-kicker">Validated data / Executive view</span><h2 id="ac-live-title">Панель ключевых показателей</h2><p>Сводный экран объединяет официальные валютные ориентиры и сопоставимые данные о расходах на исследования и разработки. Все значения загружаются из датированного снимка мониторинга.</p></div>
+<a class="ac-dashboard-link" href="/centers/analytical/monitoring.html">Методология и полный реестр →</a>
+</div>
+<div class="ac-live-stats" data-fx-cards aria-live="polite"><p class="ac-live-empty">Загрузка подтверждённых валютных ориентиров…</p></div>
+<div class="ac-live-block">
+<h3>Расходы на исследования и разработки — международное сравнение</h3>
+<p class="ac-live-status">Доля ВВП, единый общий год для всех восьми стран.</p>
+<div class="ac-live-chart" data-rd-chart role="img" aria-label="Сравнительная диаграмма расходов на исследования и разработки"></div>
+<div class="ac-live-table-wrap"><table class="ac-live-table"><thead><tr><th>Страна</th><th>Расходы на R&amp;D</th><th>Год</th><th>Источник</th></tr></thead><tbody data-rd-table><tr><td colspan="4">Загрузка данных…</td></tr></tbody></table></div>
+<p class="ac-live-status" data-rd-status>Проверка сопоставимости периодов…</p>
+</div>
+<p class="ac-live-status" data-snapshot-date>Проверка даты снимка…</p>
+<p class="ac-live-status" data-snapshot-source>Проверка статуса данных…</p>
+<p class="ac-live-status" data-dashboard-status hidden role="status"></p>
+</section>
 <section class="ac-section">
 <div class="ac-heading"><h2>Как строится аналитический материал</h2><span>Research protocol</span></div>
 <div class="ac-method">
@@ -117,6 +159,7 @@
 <a class="ac-back" href="/centers/">← Вернуться к экспертным центрам</a>
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
+<script src="/assets/js/analytical-overview-dashboard.js" defer></script>
 <script src="/assets/js/main.js" defer></script>
 <script src="/assets/js/analytical-asset-dashboard.js" defer></script>
 <script src="/assets/js/valuation-analytical-handoff.js" defer></script>
