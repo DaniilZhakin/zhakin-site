@@ -150,7 +150,8 @@ test('comparison workspace limits the list to four validated local valuation ent
   assert.equal(entries.length, 4);
   assert.throws(() => comparison.addEntry(entries, { name: 'Пятый объект', kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' }), /не более четырёх/);
   assert.equal(entries[0].name, 'Объект 1');
-  assert.throws(() => comparison.addEntry(entries, { name: 'В другой валюте', kind: 'property', result, currency: 'USD', assessmentDate: '2026-11-20' }), /только в одной валюте/);
+  const oneCurrencyEntry = [entries[0]];
+  assert.throws(() => comparison.addEntry(oneCurrencyEntry, { name: 'В другой валюте', kind: 'property', result, currency: 'USD', assessmentDate: '2026-11-20' }), /только в одной валюте/);
   assert.throws(() => comparison.createEntry({ name: 'Неверная дата', kind: 'property', result, currency: 'RUB', assessmentDate: '2026-02-30' }), /корректную дату/);
 });
 
@@ -162,7 +163,7 @@ test('method comparison shows only actually calculated valuation approaches', ()
   const business = comparison.buildMethodRows({ method: 'Доходно-рыночный ориентир', equityValue: 800000, enterpriseValue: 900000 }, 'business');
   assert.equal(business.length, 1);
   assert.equal(business[0].value, 800000);
-  assert.throws(() => comparison.createEntry({ name: 'X', kind: 'property', result: { method: 'Сравнительный подход' }, currency: 'RUB', assessmentDate: '2026-11-20' }), /расчётную стоимость/);
+  assert.throws(() => comparison.createEntry({ name: 'X', kind: 'property', result: { method: 'Сравнительный подход' }, currency: 'RUB', assessmentDate: '2026-11-20' }), /расчётная стоимость/);
 });
 
 test('valuation page exposes an in-memory four-object comparison workspace', () => {
