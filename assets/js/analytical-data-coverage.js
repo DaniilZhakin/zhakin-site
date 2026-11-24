@@ -72,7 +72,7 @@
     [
       ['Подтверждённые наблюдения', number(rows.length)],
       ['Первоисточники', number(summary.sources.length)],
-      ['Географии', number(summary.geographies.length)],
+      ['Географии и пары', number(summary.geographies.length)],
       ['Последняя загрузка', dateTime(summary.latestRetrieved)]
     ].forEach(([label, value]) => {
       const card = node('article', undefined, 'mn-observation');
