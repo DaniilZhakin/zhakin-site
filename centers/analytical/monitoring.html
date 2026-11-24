@@ -57,6 +57,17 @@
 .mn-back{display:inline-flex;margin-top:24px;color:#ead9aa;font-size:.8rem}
 @media(max-width:850px){.mn-grid{grid-template-columns:1fr}.mn-observations{grid-template-columns:repeat(2,minmax(0,1fr))}.mn-source-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.mn-chart-head{align-items:flex-start;flex-direction:column}.mn-chart-foot{flex-direction:column;gap:4px}.mn-main{padding:26px 15px 58px}.mn-card{padding:19px}.mn-observations{grid-template-columns:1fr 1fr}.mn-observation{padding:14px}.mn-table{min-width:720px}}
+
+.mn-coverage{padding:24px;border:1px solid rgba(212,175,55,.24);border-radius:16px;background:linear-gradient(145deg,rgba(16,40,32,.72),rgba(7,26,22,.62))}
+.mn-coverage h3{margin:24px 0 12px;color:#ead9aa;font-size:1rem}
+.mn-coverage-table-wrap{max-width:100%;margin-top:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.mn-coverage-table{width:100%;min-width:650px;border-collapse:collapse;font-size:.76rem}
+.mn-coverage-table th,.mn-coverage-table td{padding:12px 13px;border-bottom:1px solid rgba(212,175,55,.13);text-align:left;vertical-align:top}
+.mn-coverage-table th{color:#d4af37;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase}
+.mn-coverage-table td{color:#c3d0c7;line-height:1.55}
+.mn-coverage-table tbody tr:hover{background:rgba(212,175,55,.045)}
+.mn-coverage .mn-observation-value{font-size:clamp(1rem,2vw,1.35rem);overflow-wrap:anywhere}
+@media(max-width:700px){.mn-coverage{padding:17px 13px}.mn-coverage .mn-observations{grid-template-columns:repeat(2,minmax(0,1fr))}.mn-coverage-table{min-width:610px}}
 </style>
 </head>
 <body>
@@ -163,6 +174,22 @@
 <p class="mn-intro">Для перехода от описания методики к воспроизводимой аналитике создан структурированный реестр из 16 индикаторов. Он фиксирует уникальный код показателя, домен, единицу измерения, периодичность, географический разрез, источник, метод и обязательные проверки качества.</p>
 <div class="mn-rule"><strong>Текущий статус реестра: каталог методик.</strong> Наблюдения хранятся отдельно от каталога. Загрузчик Банка России и Всемирного банка подключён; регламентный запуск настроен, но активируется после включения workflow в основную ветку. Для каждой будущей записи предусмотрена фиксация периода наблюдения, времени получения, версии источника и статуса пересмотра. <a href="/data/analytical-monitoring/indicators.json" target="_blank" rel="noopener noreferrer">Открыть структурированный реестр показателей (JSON) →</a></div>
 </section>
+<section class="mn-section mn-coverage" data-coverage-dashboard aria-labelledby="coverage-title">
+<h2 id="coverage-title">Полнота данных и покрытие наблюдений</h2>
+<p class="mn-intro">Панель описывает только фактически загруженные и прошедшие валидацию записи. Она помогает оценить структуру текущего снимка, но не подменяет оценку полноты официальной статистики.</p>
+<div class="mn-observations" data-coverage-kpis aria-live="polite"><article class="mn-observation"><span class="mn-observation-label">Статус</span><strong class="mn-observation-value">Загрузка…</strong></article></div>
+<div class="mn-coverage-table-wrap">
+<h3>Покрытие по индикаторам</h3>
+<table class="mn-coverage-table"><thead><tr><th>Индикатор</th><th>Наблюдения</th><th>Географии</th><th>Период</th><th>Источник</th></tr></thead><tbody data-coverage-rows><tr><td colspan="5">Загрузка подтверждённых записей…</td></tr></tbody></table>
+</div>
+<div class="mn-coverage-table-wrap">
+<h3>Исторический охват R&amp;D по странам</h3>
+<p class="mn-intro">Количество точек и фактические годы в текущем снимке World Bank. Пропущенные годы не интерполируются.</p>
+<table class="mn-coverage-table"><thead><tr><th>Страна</th><th>Код</th><th>Точек</th><th>Доступный период</th></tr></thead><tbody data-coverage-geographies><tr><td colspan="4">Загрузка странового покрытия…</td></tr></tbody></table>
+</div>
+<p class="mn-data-note" data-coverage-status role="status">Проверка снимка данных…</p>
+<p class="mn-data-note" data-coverage-sources>Проверка перечня источников…</p>
+</section>
 <section class="mn-section">
 <h2>Первоисточники данных</h2>
 <p class="mn-intro">Ссылки ведут к официальным статистическим порталам и методологическим ресурсам. Конкретный набор рядов и версии выгрузок будут фиксироваться в журнале обновлений после подключения данных.</p>
@@ -182,6 +209,7 @@
 </main>
 <footer class="site-footer"><div class="footer-container"><p>© 2026 ZHAKIN TEAM</p><p><a href="/privacy.html">Политика конфиденциальности</a> · <a href="/legal.html">Правовая информация</a></p></div></footer>
 <script src="/assets/js/analytical-monitoring-charts.js" defer></script>
+<script src="/assets/js/analytical-data-coverage.js" defer></script>
 <script src="/assets/js/analytical-rd-comparison.js" defer></script>
 <script src="/assets/js/analytical-rd-history.js" defer></script>
 <script src="/assets/js/main.js" defer></script>
