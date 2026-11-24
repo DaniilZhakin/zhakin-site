@@ -67,6 +67,7 @@ jobs:
           name: zhakin-site-pr-${{ github.event.pull_request.number || 'manual' }}-preview
           path: |
             *.html
+            favicon.svg
             publications/
             centers/
             assets/
