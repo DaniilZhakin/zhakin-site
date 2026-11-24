@@ -178,3 +178,26 @@ test('valuation page exposes an in-memory four-object comparison workspace', () 
   assert.match(html, /не более четырёх объектов/);
   assert.match(html, /только в памяти текущей страницы/);
 });
+
+
+test('method spread chart scales only calculated methods against the largest observed value', () => {
+  const comparison = require('../assets/js/asset-valuation-comparison.js');
+  const spread = comparison.buildMethodSpread([
+    { method: 'Сравнительный подход', value: 100000 },
+    { method: 'Доходный подход', value: 125000 },
+    { method: 'Не рассчитано', value: null }
+  ]);
+  assert.equal(spread.length, 2);
+  assert.equal(spread[0].share, 0.8);
+  assert.equal(spread[1].share, 1);
+  assert.equal(comparison.buildMethodSpread([]).length, 0);
+  assert.equal(comparison.buildMethodSpread([{ method: 'Ноль', value: 0 }])[0].share, 0);
+});
+
+test('valuation page renders method comparison chart without automatic weighting', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /id="method-comparison-chart"/);
+  assert.match(html, /id="method-comparison-svg"/);
+  assert.match(html, /buildMethodSpread\(rows\)/);
+  assert.match(html, /не усредняются и не взвешиваются автоматически/);
+});
