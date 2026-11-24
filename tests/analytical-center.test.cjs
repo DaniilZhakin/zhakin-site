@@ -135,9 +135,9 @@ test('Published observations snapshot contains only validated, sourced and times
 
 test('First snapshot values match the monitoring cards and preserve distinct reference periods', () => {
   const expected = new Map([
-    ['RUB/USD', 81.929],
-    ['RUB/EUR', 89.8597],
-    ['RUB/CNY', 12.2546],
+    ['RUB/USD', 82.1664],
+    ['RUB/EUR', 89.8818],
+    ['RUB/CNY', 12.2767],
     ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
     ['CHN/GB.XPD.RSDV.GD.ZS', 2.57729],
     ['DEU/GB.XPD.RSDV.GD.ZS', 3.1539],
@@ -156,18 +156,18 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     assert.equal(latestBySeries.get(key)?.value, value);
   }
   assert.equal(latestBySeries.get('USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
-  assert.match(monitoring, /81,9290/);
-  assert.match(monitoring, /89,8597/);
-  assert.match(monitoring, /12,2546/);
+  assert.match(monitoring, /82,1664/);
+  assert.match(monitoring, /89,8818/);
+  assert.match(monitoring, /12,2767/);
   assert.match(monitoring, /3,44716%/);
-  assert.match(monitoring, /20\.11\.2026/);
+  assert.match(monitoring, /25\.11\.2026/);
 });
 
 test('FX history visualization uses only validated observations and exposes accessible series controls', () => {
   const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
   const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
   assert.equal(history.status, 'history_accumulating');
-  assert.equal(history.observations.length, 76);
+  assert.equal(history.observations.length, 79);
   assert.match(monitoring, /id="fx-history"/);
   assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
@@ -221,4 +221,37 @@ test('executive dashboard exposes sourced FX cards and comparable R&D chart', ()
   const dashboard = fs.readFileSync(path.join(root, 'assets/js/analytical-overview-dashboard.js'), 'utf8');
   assert.match(dashboard, /validation_status === 'validated'/);
   assert.match(dashboard, /cache: 'no-store'/);
+});
+
+
+test('Monitoring coverage dashboard exposes validated observation, indicator and country coverage tables', () => {
+  const page = fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8');
+  const script = fs.readFileSync(path.join(root, 'assets/js/analytical-data-coverage.js'), 'utf8');
+  assert.match(page, /data-coverage-dashboard/);
+  assert.match(page, /data-coverage-kpis/);
+  assert.match(page, /data-coverage-rows/);
+  assert.match(page, /data-coverage-geographies/);
+  assert.match(page, /analytical-data-coverage\.js/);
+  assert.match(script, /source_fetched_validated/);
+  assert.match(script, /validation_status === 'validated'/);
+  assert.ok(script.includes('https:'));
+  assert.match(script, /data-coverage-kpis/);
+  assert.match(script, /data-coverage-rows/);
+  assert.match(script, /data-coverage-geographies/);
+  assert.match(script, /cache: 'no-store'/);
+  assert.match(script, /textContent/);
+  assert.doesNotMatch(script, /innerHTML|eval/);
+});
+
+test('Coverage dashboard reports counts from the published snapshot without inventing missing years', () => {
+  const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/observations.json'), 'utf8'));
+  const validated = snapshot.observations.filter(row => row.validation_status === 'validated' &&
+    row.source && row.source.url.startsWith('https://'));
+  const countries = new Set(validated.filter(row => row.indicator_id === 'tech.rd_gdp').map(row => row.geography));
+  const sources = new Set(validated.map(row => row.source.name));
+  assert.equal(validated.length, snapshot.observation_count);
+  assert.equal(countries.size, 8);
+  assert.ok(sources.has('World Bank'));
+  assert.ok(sources.has('Bank of Russia'));
+  assert.match(fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8'), /Пропущенные годы не интерполируются/);
 });
