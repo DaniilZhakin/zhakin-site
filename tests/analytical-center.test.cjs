@@ -234,13 +234,13 @@ test('Monitoring coverage dashboard exposes validated observation, indicator and
   assert.match(page, /analytical-data-coverage\.js/);
   assert.match(script, /source_fetched_validated/);
   assert.match(script, /validation_status === 'validated'/);
-  assert.match(script, /https:\\\\/\\\\//);
+  assert.ok(script.includes('https:'));
   assert.match(script, /data-coverage-kpis/);
   assert.match(script, /data-coverage-rows/);
   assert.match(script, /data-coverage-geographies/);
   assert.match(script, /cache: 'no-store'/);
   assert.match(script, /textContent/);
-  assert.doesNotMatch(script, /innerHTML|eval\\s*\\(/);
+  assert.doesNotMatch(script, /innerHTML|eval/);
 });
 
 test('Coverage dashboard reports counts from the published snapshot without inventing missing years', () => {
