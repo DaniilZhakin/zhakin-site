@@ -42,5 +42,5 @@ test('valuation page makes local persistence opt-in and exposes history controls
  assert.match(html,/id="registry-save"[^>]*disabled/);
  assert.match(html,/asset-valuation-registry\.js/);
  assert.match(html,/не отправляются на сервер/);
- assert.match(html,/registry\.save\(window\.localStorage,record\)/);
+ assert.match(html,/ZhakinValuationRegistry\.save\(window\.localStorage,record\)/);
 });
