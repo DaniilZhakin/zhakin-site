@@ -146,7 +146,7 @@ test('comparison workspace limits the list to four validated local valuation ent
   const comparison = require('../assets/js/asset-valuation-comparison.js');
   const result = { method: 'Сравнительный подход', marketValue: 100000, low: 95000, high: 105000 };
   const entries = [];
-  for (let index = 1; index <= 4; index += 1) entries.push(comparison.addEntry(entries, { name: 'Объект ' + index, kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' }));
+  for (let index = 1; index <= 4; index += 1) comparison.addEntry(entries, { name: 'Объект ' + index, kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' });
   assert.equal(entries.length, 4);
   assert.throws(() => comparison.addEntry(entries, { name: 'Пятый объект', kind: 'property', result, currency: 'RUB', assessmentDate: '2026-11-20' }), /не более четырёх/);
   assert.equal(entries[0].name, 'Объект 1');
@@ -162,7 +162,7 @@ test('method comparison shows only actually calculated valuation approaches', ()
   const business = comparison.buildMethodRows({ method: 'Доходно-рыночный ориентир', equityValue: 800000, enterpriseValue: 900000 }, 'business');
   assert.equal(business.length, 1);
   assert.equal(business[0].value, 800000);
-  assert.throws(() => comparison.createEntry({ name: 'X', kind: 'property', result: {}, currency: 'RUB', assessmentDate: '2026-11-20' }), /расчётную стоимость/);
+  assert.throws(() => comparison.createEntry({ name: 'X', kind: 'property', result: { method: 'Сравнительный подход' }, currency: 'RUB', assessmentDate: '2026-11-20' }), /расчётную стоимость/);
 });
 
 test('valuation page exposes an in-memory four-object comparison workspace', () => {
