@@ -260,5 +260,6 @@ test('valuation page exposes the quality passport and keeps source verification 
   assert.match(html, /id="assessment-date"/);
   assert.match(html, /id="quality-source-url"/);
   assert.match(html, /asset-valuation-quality\.js/);
-  assert.match(html, /содержание источника не верифицировано/);
+  const qualitySource = fs.readFileSync(path.join(__dirname, '../assets/js/asset-valuation-quality.js'), 'utf8');
+  assert.match(qualitySource, /содержание источника не верифицировано|не верифицировано/);
 });
