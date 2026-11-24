@@ -84,6 +84,7 @@ body{background:var(--av-bg)}
 .av-scenario-table th{color:#91a398;font-size:.65rem;font-weight:650}.av-scenario-table td{color:#eee6ce}.av-scenario-table td:last-child{text-align:right;font-weight:750}
 .av-sensitivity{margin-top:18px;color:#9eafa5;font-size:.7rem;line-height:1.6}.av-sensitivity strong{color:#ead9aa}
 .av-scenario-status{margin-top:12px;padding:10px 12px;border-left:2px solid #69b98b;background:rgba(52,120,79,.08);color:#a9c7b4;font-size:.68rem;line-height:1.6}
+.av-scenario-chart{margin-top:18px;padding:14px;border:1px solid rgba(212,175,55,.16);border-radius:10px;background:#071a16;overflow:hidden}.av-scenario-chart svg{display:block;width:100%;height:auto;min-height:150px}.av-scenario-chart text{font-family:inherit}.av-sensitivity-table{width:100%;margin-top:14px;border-collapse:collapse;font-size:.72rem}.av-sensitivity-table th,.av-sensitivity-table td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.07);text-align:left}.av-sensitivity-table th{color:#91a398;font-size:.65rem}.av-sensitivity-table td{color:#eee6ce}.av-sensitivity-table td:last-child{text-align:right;font-weight:700}.av-scenario-chart-note{margin:8px 0 0;color:#81958a;font-size:.65rem;line-height:1.5}
 @media(max-width:750px){.av-scenario-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.av-scenario-controls{grid-template-columns:1fr}.av-scenario-table th,.av-scenario-table td{padding:8px 5px;font-size:.68rem}}
 .av-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -178,11 +179,13 @@ body{background:var(--av-bg)}
 <div><label for="scenario-currency">Валюта базы</label><input id="scenario-currency" type="text" value="RUB" readonly></div>
 </div>
 <button class="av-scenario-run" id="scenario-run" type="button">Рассчитать сценарии →</button>
+<div class="av-scenario-chart" id="scenario-chart" role="group" aria-label="График сценарной оценки"><p class="av-scenario-chart-note" id="scenario-chart-note">График появится после основного расчёта.</p><svg id="scenario-chart-svg" viewBox="0 0 640 172" role="img" aria-labelledby="scenario-chart-title scenario-chart-desc"><title id="scenario-chart-title">Сравнение сценариев стоимости</title><desc id="scenario-chart-desc">Стрессовый, базовый и оптимистичный сценарии будут построены по результатам калькулятора.</desc><text x="12" y="28" fill="#91a398" font-size="13">Ожидание расчёта…</text></svg></div>
 <table class="av-scenario-table">
 <thead><tr><th>Сценарий</th><th>Отклонение</th><th>Стоимость</th></tr></thead>
 <tbody id="scenario-rows"><tr><td colspan="3">Сначала выполните основной расчёт.</td></tr></tbody>
 </table>
 <div class="av-sensitivity" id="scenario-sensitivity">Чувствительность ±20% будет показана после расчёта.</div>
+<table class="av-sensitivity-table"><thead><tr><th>Чувствительность</th><th>Отклонение от базы</th><th>Расчётная стоимость</th></tr></thead><tbody id="scenario-sensitivity-rows"><tr><td colspan="3">Сначала выполните основной расчёт.</td></tr></tbody></table>
 <div class="av-scenario-status" id="scenario-fx-status" aria-live="polite">Валютный пересчёт выполняется только по подтверждённому курсу Банка России на точную дату оценки. При отсутствии курса пересчёт не производится.</div>
 </section>
 <div class="av-heading"><h2>Контроль качества оценки</h2><span>Процесс работы</span></div>
@@ -282,6 +285,20 @@ document.addEventListener('DOMContentLoaded',function(){
    });
    const formatter=new Intl.NumberFormat('ru-RU',{style:'currency',currency:currency(),maximumFractionDigits:0});
    const body=document.getElementById('scenario-rows');body.replaceChildren();
+   const chart=document.getElementById('scenario-chart-svg');
+   chart.replaceChildren();
+   const ns='http://www.w3.org/2000/svg';
+   const maxValue=Math.max(...result.scenarios.map(item=>item.value),1);
+   const colors=['#b58b43','#69b98b','#e4c66f'];
+   result.scenarios.forEach((item,index)=>{
+    const y=24+index*48;
+    const label=document.createElementNS(ns,'text');label.setAttribute('x','12');label.setAttribute('y',String(y+15));label.setAttribute('fill','#cbd7d0');label.setAttribute('font-size','13');label.textContent=item.label;chart.append(label);
+    const bar=document.createElementNS(ns,'rect');bar.setAttribute('x','158');bar.setAttribute('y',String(y));bar.setAttribute('width',String(Math.max(2,430*item.value/maxValue)));bar.setAttribute('height','23');bar.setAttribute('rx','4');bar.setAttribute('fill',colors[index]);chart.append(bar);
+    const amount=document.createElementNS(ns,'text');amount.setAttribute('x',String(Math.min(620,166+430*item.value/maxValue)));amount.setAttribute('y',String(y+16));amount.setAttribute('fill','#f4f1e8');amount.setAttribute('font-size','12');amount.setAttribute('text-anchor','start');amount.textContent=formatter.format(item.value);chart.append(amount);
+   });
+   document.getElementById('scenario-chart-note').textContent='Сравнение трёх сценариев от базовой стоимости. Дата оценки: '+result.assessmentDate+'. Все отклонения заданы пользователем.';
+   const sensitivityBody=document.getElementById('scenario-sensitivity-rows');sensitivityBody.replaceChildren();
+   result.sensitivity.forEach(item=>{const row=document.createElement('tr');const label=document.createElement('td');label.textContent=item.changePct===0?'База':(item.changePct>0?'+':'')+item.changePct+'%';const delta=document.createElement('td');delta.textContent=(item.changePct>0?'+':'')+item.changePct+'%';const value=document.createElement('td');value.textContent=formatter.format(item.value);row.append(label,delta,value);sensitivityBody.append(row);});
    result.scenarios.forEach(item=>{
     const row=document.createElement('tr');
     [item.label,(item.changePct>0?'+':'')+item.changePct+'%',formatter.format(item.value)].forEach(value=>{
