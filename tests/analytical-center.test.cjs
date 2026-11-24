@@ -230,7 +230,7 @@ test('Executive dashboard is embedded in the Analytical Center and remains respo
 test('Executive dashboard reads only validated official observations and discloses snapshot provenance', () => {
   assert.match(dashboardScript, /observations\.json/);
   assert.match(dashboardScript, /validation_status === 'validated'/);
-  assert.match(dashboardScript, /row\\.source\\.name/);
+  assert.match(dashboardScript, /row\.source\.name/);
   assert.match(dashboardScript, /source\.url/);
   assert.match(dashboardScript, /generated_at/);
   assert.match(dashboardScript, /cache: 'no-store'/);
