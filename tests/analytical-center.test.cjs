@@ -234,7 +234,7 @@ test('Executive dashboard reads only validated official observations and disclos
   assert.match(dashboardScript, /source\.url/);
   assert.match(dashboardScript, /generated_at/);
   assert.match(dashboardScript, /cache: 'no-store'/);
-  assert.match(dashboardScript, /Пропуски не заменяются оценками/);
+  assert.match(dashboardScript, /пропуски не заменяются оценками/);
   assert.match(dashboardScript, /latestCommonYear|commonYears/);
 });
 
