@@ -125,6 +125,11 @@ test('valuation page exposes date-scoped scenario analysis and local-only safegu
   assert.match(html, /id="scenario-date"/);
   assert.match(html, /id="scenario-stress"/);
   assert.match(html, /id="scenario-optimistic"/);
+  assert.match(html, /id="scenario-chart-svg"/);
+  assert.match(html, /id="scenario-sensitivity-rows"/);
+  assert.match(html, /scenario-chart-note/);
+  assert.match(html, /result\.scenarios\.forEach/);
+  assert.match(html, /result\.sensitivity\.forEach/);
   assert.match(html, /asset-valuation-scenarios\.js/);
   assert.match(html, /точную дату оценки/);
   assert.match(html, /не являются прогнозом/);
