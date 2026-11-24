@@ -2,59 +2,8 @@
   "schema_version": "1.0.0",
   "catalog_name": "ZHAKIN TEAM Analytical Monitoring History",
   "status": "history_accumulating",
-  "generated_at": "2026-11-20T13:49:34.403Z",
+  "generated_at": "2026-11-24T19:30:01.037Z",
   "observations": [
-    {
-      "indicator_id": "macro.fx_official",
-      "series_key": "RUB/USD",
-      "value": 81.929,
-      "unit": "RUB_per_1_USD",
-      "geography": "currency_pair",
-      "reference_period": "2026-11-20",
-      "source": {
-        "name": "Bank of Russia",
-        "dataset": "Daily official exchange rates",
-        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
-      },
-      "source_release_date": "2026-11-20",
-      "retrieved_at": "2026-11-20T13:49:34.403Z",
-      "revision_status": "source_published",
-      "validation_status": "validated"
-    },
-    {
-      "indicator_id": "macro.fx_official",
-      "series_key": "RUB/EUR",
-      "value": 89.8597,
-      "unit": "RUB_per_1_EUR",
-      "geography": "currency_pair",
-      "reference_period": "2026-11-20",
-      "source": {
-        "name": "Bank of Russia",
-        "dataset": "Daily official exchange rates",
-        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
-      },
-      "source_release_date": "2026-11-20",
-      "retrieved_at": "2026-11-20T13:49:34.403Z",
-      "revision_status": "source_published",
-      "validation_status": "validated"
-    },
-    {
-      "indicator_id": "macro.fx_official",
-      "series_key": "RUB/CNY",
-      "value": 12.2546,
-      "unit": "RUB_per_1_CNY",
-      "geography": "currency_pair",
-      "reference_period": "2026-11-20",
-      "source": {
-        "name": "Bank of Russia",
-        "dataset": "Daily official exchange rates",
-        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
-      },
-      "source_release_date": "2026-11-20",
-      "retrieved_at": "2026-11-20T13:49:34.403Z",
-      "revision_status": "source_published",
-      "validation_status": "validated"
-    },
     {
       "indicator_id": "tech.rd_gdp",
       "series_key": "CHN/GB.XPD.RSDV.GD.ZS",
@@ -1513,6 +1462,108 @@
       "source_release_date": "2026-11-11",
       "retrieved_at": "2026-11-20T13:49:34.403Z",
       "revision_status": "latest_available_source_vintage",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/CNY",
+      "value": 12.2546,
+      "unit": "RUB_per_1_CNY",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:49:34.403Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/EUR",
+      "value": 89.8597,
+      "unit": "RUB_per_1_EUR",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:49:34.403Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/USD",
+      "value": 81.929,
+      "unit": "RUB_per_1_USD",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-20",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-20",
+      "retrieved_at": "2026-11-20T13:49:34.403Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/CNY",
+      "value": 12.2767,
+      "unit": "RUB_per_1_CNY",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-25",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-25",
+      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/EUR",
+      "value": 89.8818,
+      "unit": "RUB_per_1_EUR",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-25",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-25",
+      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/USD",
+      "value": 82.1664,
+      "unit": "RUB_per_1_USD",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-25",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-25",
+      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "revision_status": "source_published",
       "validation_status": "validated"
     }
   ]
