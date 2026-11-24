@@ -222,3 +222,36 @@ test('executive dashboard exposes sourced FX cards and comparable R&D chart', ()
   assert.match(dashboard, /validation_status === 'validated'/);
   assert.match(dashboard, /cache: 'no-store'/);
 });
+
+
+test('Monitoring coverage dashboard exposes validated observation, indicator and country coverage tables', () => {
+  const page = fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8');
+  const script = fs.readFileSync(path.join(root, 'assets/js/analytical-data-coverage.js'), 'utf8');
+  assert.match(page, /data-coverage-dashboard/);
+  assert.match(page, /data-coverage-kpis/);
+  assert.match(page, /data-coverage-rows/);
+  assert.match(page, /data-coverage-geographies/);
+  assert.match(page, /analytical-data-coverage\.js/);
+  assert.match(script, /source_fetched_validated/);
+  assert.match(script, /validation_status === 'validated'/);
+  assert.match(script, /https:\\\\/\\\\//);
+  assert.match(script, /data-coverage-kpis/);
+  assert.match(script, /data-coverage-rows/);
+  assert.match(script, /data-coverage-geographies/);
+  assert.match(script, /cache: 'no-store'/);
+  assert.match(script, /textContent/);
+  assert.doesNotMatch(script, /innerHTML|eval\\s*\\(/);
+});
+
+test('Coverage dashboard reports counts from the published snapshot without inventing missing years', () => {
+  const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/observations.json'), 'utf8'));
+  const validated = snapshot.observations.filter(row => row.validation_status === 'validated' &&
+    row.source && /^https:\\/\\//.test(row.source.url));
+  const countries = new Set(validated.filter(row => row.indicator_id === 'tech.rd_gdp').map(row => row.geography));
+  const sources = new Set(validated.map(row => row.source.name));
+  assert.equal(validated.length, snapshot.observation_count);
+  assert.equal(countries.size, 8);
+  assert.ok(sources.has('World Bank'));
+  assert.ok(sources.has('Bank of Russia'));
+  assert.match(fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8'), /Пропущенные годы не интерполируются/);
+});
