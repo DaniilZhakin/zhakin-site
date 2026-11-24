@@ -246,7 +246,7 @@ test('Monitoring coverage dashboard exposes validated observation, indicator and
 test('Coverage dashboard reports counts from the published snapshot without inventing missing years', () => {
   const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/observations.json'), 'utf8'));
   const validated = snapshot.observations.filter(row => row.validation_status === 'validated' &&
-    row.source && /^https:\\/\\//.test(row.source.url));
+    row.source && row.source.url.startsWith('https://'));
   const countries = new Set(validated.filter(row => row.indicator_id === 'tech.rd_gdp').map(row => row.geography));
   const sources = new Set(validated.map(row => row.source.name));
   assert.equal(validated.length, snapshot.observation_count);
