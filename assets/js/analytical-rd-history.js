@@ -14,7 +14,7 @@
   const SNAPSHOT_URL = '/data/analytical-monitoring/observations.json';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
-  function getSeries(snapshot, country) {
+  function isWorldBankUrl(value) {\n    try {\n      const url = new URL(value);\n      return url.protocol === 'https:' && url.hostname === 'api.worldbank.org';\n    } catch (_) {\n      return false;\n    }\n  }\n\n  function getSeries(snapshot, country) {
     if (!snapshot || snapshot.schema_version !== '1.0.0' ||
         snapshot.status !== 'source_fetched_validated' ||
         !Array.isArray(snapshot.observations) || !Object.hasOwn(COUNTRIES, country)) return [];
@@ -29,7 +29,7 @@
           !/^\d{4}$/.test(row.reference_period) ||
           !Number.isFinite(row.value) || row.value < 0 ||
           !row.source || row.source.name !== 'World Bank' ||
-          typeof row.source.url !== 'string' || !/^https:\/\/\//.test(row.source.url)) return;
+          !isWorldBankUrl(row.source.url)) return;
       const previous = byYear.get(row.reference_period);
       if (!previous || String(row.retrieved_at || '') > String(previous.retrieved_at || '')) {
         byYear.set(row.reference_period, row);
