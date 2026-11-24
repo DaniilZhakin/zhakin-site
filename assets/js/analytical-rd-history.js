@@ -15,12 +15,7 @@
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   function isWorldBankUrl(value) {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' && url.hostname === 'api.worldbank.org';
-    } catch (_) {
-      return false;
-    }
+    return typeof value === 'string' && value.startsWith('https://api.worldbank.org/');
   }
 
   function getSeries(snapshot, country) {
