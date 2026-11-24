@@ -160,7 +160,7 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
   assert.match(monitoring, /89,8818/);
   assert.match(monitoring, /12,2767/);
   assert.match(monitoring, /3,44716%/);
-  assert.match(monitoring, /20\.11\.2026/);
+  assert.match(monitoring, /25\.11\.2026/);
 });
 
 test('FX history visualization uses only validated observations and exposes accessible series controls', () => {
