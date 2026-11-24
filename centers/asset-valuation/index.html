@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded',function(){
    result.scenarios.forEach((item,index)=>{
     const y=24+index*48;
     const label=document.createElementNS(ns,'text');label.setAttribute('x','12');label.setAttribute('y',String(y+15));label.setAttribute('fill','#cbd7d0');label.setAttribute('font-size','13');label.textContent=item.label;chart.append(label);
-    const bar=document.createElementNS(ns,'rect');bar.setAttribute('x','158');bar.setAttribute('y',String(y));bar.setAttribute('width',String(Math.max(2,430*item.value/maxValue)));bar.setAttribute('height','23');bar.setAttribute('rx','4');bar.setAttribute('fill',colors[index]);chart.append(bar);
-    const amount=document.createElementNS(ns,'text');amount.setAttribute('x',String(Math.min(620,166+430*item.value/maxValue)));amount.setAttribute('y',String(y+16));amount.setAttribute('fill','#f4f1e8');amount.setAttribute('font-size','12');amount.setAttribute('text-anchor','start');amount.textContent=formatter.format(item.value);chart.append(amount);
+    const bar=document.createElementNS(ns,'rect');bar.setAttribute('x','158');bar.setAttribute('y',String(y));bar.setAttribute('width',String(Math.max(2,360*item.value/maxValue)));bar.setAttribute('height','23');bar.setAttribute('rx','4');bar.setAttribute('fill',colors[index]);chart.append(bar);
+    const amount=document.createElementNS(ns,'text');amount.setAttribute('x','630');amount.setAttribute('y',String(y+16));amount.setAttribute('fill','#f4f1e8');amount.setAttribute('font-size','12');amount.setAttribute('text-anchor','end');amount.textContent=formatter.format(item.value);chart.append(amount);
    });
    document.getElementById('scenario-chart-note').textContent='Сравнение трёх сценариев от базовой стоимости. Дата оценки: '+result.assessmentDate+'. Все отклонения заданы пользователем.';
    const sensitivityBody=document.getElementById('scenario-sensitivity-rows');sensitivityBody.replaceChildren();
