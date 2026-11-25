@@ -32,6 +32,14 @@ test('registry rejects invalid dates, currencies and malformed records; CSV esca
  const csv=registry.toCsv([registry.createRecord(baseInput,{id:'csv-1',createdAt:'2026-11-25T10:00:00.000Z'})]);
  assert.match(csv,/"Склад «Север»"/);assert.match(csv,/Стоимость/);assert.match(csv,/Сравнительный подход/);
 });
+test('CSV export neutralizes spreadsheet formulas in user-controlled text and uses CRLF rows',()=>{
+ const risky=registry.createRecord({...baseInput,name:'=HYPERLINK("https://example.org","open")',result:{...baseInput.result,method:' +SUM(1,1)'}},{id:'csv-risk-1',createdAt:'2026-11-25T10:00:00.000Z'});
+ const csv=registry.toCsv([risky]);
+ assert.ok(csv.includes('"\'=HYPERLINK(""https://example.org"",""open"")"'));
+ assert.ok(csv.includes('"\' +SUM(1,1)"'));
+ assert.ok(csv.includes('\r\n'));
+ assert.equal(csv.includes('\\r\\n'),false);
+});
 test('registry handles unavailable browser storage without silently claiming persistence',()=>{
  const broken={getItem(){throw new Error('blocked');}};
  assert.throws(()=>registry.read(broken),/blocked/);
