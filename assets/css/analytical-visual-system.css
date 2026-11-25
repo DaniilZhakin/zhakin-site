@@ -1,0 +1,49 @@
+/* ZHAKIN TEAM analytical visual system — shared chart and table components */
+:root{
+  --zv-ink:#f4f1e8;--zv-muted:#aebbb2;--zv-soft:#81958a;
+  --zv-gold:#d4af37;--zv-emerald:#102820;--zv-deep:#071a16;
+  --zv-line:rgba(212,175,55,.18);--zv-panel:rgba(4,17,12,.34);
+}
+:where(.ac-live-chart,.mn-chart-stage,.mn-trend-stage,.ad-chart-wrap,.av-scenario-chart,.av-comparison-chart){
+  min-width:0;max-width:100%;border:1px solid var(--zv-line);border-radius:12px;
+  background:linear-gradient(145deg,rgba(4,17,12,.42),rgba(7,26,22,.72));
+}
+:where(.ac-live-chart,.mn-chart-stage,.mn-trend-stage,.ad-chart-wrap,.av-scenario-chart,.av-comparison-chart) svg{
+  display:block;max-width:100%;height:auto;
+}
+:where(.ac-live-table-wrap,.mn-table-wrap,.mn-coverage-table-wrap,.ad-table-wrap,.av-comparison-table-wrap,.av-scenario-table-wrap,.av-sensitivity-table-wrap){
+  width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;border:1px solid var(--zv-line);border-radius:11px;
+  background:rgba(7,26,22,.58);scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.48) rgba(7,26,22,.7);
+}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table){
+  width:100%;border-collapse:separate;border-spacing:0;background:transparent;
+  color:var(--zv-muted);font-size:.75rem;font-variant-numeric:tabular-nums;
+}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) th{
+  padding:12px 14px;border-bottom:1px solid rgba(212,175,55,.2);
+  background:linear-gradient(180deg,rgba(16,40,32,.98),rgba(12,33,26,.94));
+  color:#e5d6a5;text-align:left;font-size:.66rem;font-weight:750;letter-spacing:.035em;
+  vertical-align:bottom;
+}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) td{
+  padding:11px 14px;border-bottom:1px solid rgba(212,175,55,.1);
+  color:#c0cdc5;line-height:1.55;vertical-align:top;
+}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) tbody tr:nth-child(even){background:rgba(212,175,55,.025)}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) tbody tr:hover{background:rgba(212,175,55,.055)}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) tbody tr:last-child td{border-bottom:0}
+:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) td:is([data-numeric],.numeric),:where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) th:is([data-numeric],.numeric){text-align:right;white-space:nowrap}
+:where(.ac-live-chart,.mn-chart-stage,.mn-trend-stage,.ad-chart-wrap,.av-scenario-chart,.av-comparison-chart) :focus-visible,
+:where(.ac-live-table-wrap,.mn-table-wrap,.mn-coverage-table-wrap,.ad-table-wrap,.av-comparison-table-wrap,.av-scenario-table-wrap,.av-sensitivity-table-wrap):focus-visible{
+  outline:2px solid #e8c85e;outline-offset:3px;
+}
+@media(max-width:700px){
+  :where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table){font-size:.69rem}
+  :where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) th,
+  :where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) td{padding:10px 11px}
+  :where(.ac-live-chart,.mn-chart-stage,.mn-trend-stage,.ad-chart-wrap,.av-scenario-chart,.av-comparison-chart){border-radius:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  :where(.ac-live-table,.mn-table,.mn-trend-table,.mn-coverage-table,.ad-table,.av-comparison-table,.av-scenario-table,.av-sensitivity-table) tbody tr{transition:none}
+}
