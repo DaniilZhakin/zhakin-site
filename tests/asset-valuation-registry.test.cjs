@@ -52,3 +52,24 @@ test('valuation page makes local persistence opt-in and exposes history controls
  assert.match(html,/не отправляются на сервер/);
  assert.match(html,/ZhakinValuationRegistry\.save\(window\.localStorage,record\)/);
 });
+
+test('history trend uses the latest saved record per assessment date and keeps assets separate',()=>{
+ const records=[
+  registry.createRecord({...baseInput,name:'Склад Север'},{id:'trend-1',createdAt:'2026-11-01T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-10',result:{...baseInput.result,marketValue:1300000}},{id:'trend-2',createdAt:'2026-11-10T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-10',result:{...baseInput.result,marketValue:1350000}},{id:'trend-3',createdAt:'2026-11-10T12:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Юг',assessmentDate:'2026-11-10'},{id:'trend-4',createdAt:'2026-11-10T11:00:00.000Z'})
+ ];
+ const points=registry.buildTrendSeries(records,'property::склад север');
+ assert.equal(points.length,2);
+ assert.deepEqual(points.map(row=>row.value),[1250000,1350000]);
+ assert.equal(registry.buildTrendSeries(records,'property::склад юг').length,1);
+});
+test('history trend UI is accessible, consent-gated and uses an SVG chart',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'../assets/js/asset-valuation-registry.js'),'utf8');
+ assert.match(source,/registry-history-chart/);
+ assert.match(source,/registry-trend-select/);
+ assert.match(source,/aria-label/);
+ assert.match(source,/consent\.checked/);
+ assert.match(source,/createElementNS/);
+});
