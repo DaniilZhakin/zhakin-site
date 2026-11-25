@@ -97,6 +97,20 @@ body{background:var(--av-bg)}
 @media(max-width:850px){.av-hero{grid-template-columns:1fr}.av-hero-aside{border-left:0;border-top:1px solid rgba(212,175,55,.4);padding:16px 0 0}.av-form-layout{grid-template-columns:1fr}.av-result{min-height:270px}.av-steps{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.av-main{padding:25px 15px 60px}.av-strip,.av-methods{grid-template-columns:1fr}.av-heading{align-items:flex-start;flex-direction:column;gap:5px}.av-calc-top{flex-direction:column}.av-local{align-self:flex-start}.av-fields{grid-template-columns:1fr}.av-field--wide{grid-column:auto}.av-steps{grid-template-columns:1fr}.av-tab{flex:1 1 100%;text-align:left}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+
+/* Mobile viewport containment: prevent calculator controls from exceeding the card. */
+@media(max-width:650px){
+ html,body{max-width:100%;overflow-x:clip}
+ .av-main{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+ .av-hero,.av-strip,.av-calc,.av-calc-top,.av-form-layout,.av-form,.av-fields,.av-field,.av-result,.av-comparison,.av-registry,.av-quality,.av-scenarios{min-width:0;max-width:100%;box-sizing:border-box}
+ .av-form-layout{width:100%;grid-template-columns:minmax(0,1fr)}
+ .av-fields{width:100%;grid-template-columns:minmax(0,1fr)}
+ .av-field,.av-field--wide{grid-column:1/-1;width:100%;min-width:0}
+ .av-field input,.av-field select,.av-quality-meta input,.av-scenario-controls input,.av-comparison-controls input{display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+ .av-calc-actions{min-width:0;width:100%}
+ .av-calc-actions>*{min-width:0;max-width:100%;box-sizing:border-box}
+ .av-result-value,.av-result-row,.av-result-row strong{min-width:0;overflow-wrap:anywhere}
+}
 </style>
 <link rel="stylesheet" href="/assets/css/expert-centers.css">
 </head>
