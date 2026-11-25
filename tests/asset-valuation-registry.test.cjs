@@ -73,3 +73,25 @@ test('history trend UI is accessible, consent-gated and uses an SVG chart',()=>{
  assert.match(source,/consent\.checked/);
  assert.match(source,/createElementNS/);
 });
+
+test('comparison series normalizes each asset to its first observation and rejects mixed currencies',()=>{
+ const records=[
+  registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-01'},{id:'compare-1',createdAt:'2026-11-01T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-10',result:{...baseInput.result,marketValue:1500000}},{id:'compare-2',createdAt:'2026-11-10T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Юг',assessmentDate:'2026-11-03',result:{...baseInput.result,marketValue:2000000}},{id:'compare-3',createdAt:'2026-11-03T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Юг',assessmentDate:'2026-11-12',result:{...baseInput.result,marketValue:1800000}},{id:'compare-4',createdAt:'2026-11-12T10:00:00.000Z'})
+ ];
+ const series=registry.buildComparisonSeries(records,['property::склад север','property::склад юг']);
+ assert.equal(series.length,2);
+ assert.deepEqual(series[0].points.map(point=>point.index),[100,120]);
+ assert.deepEqual(series[1].points.map(point=>point.index),[100,90]);
+ const mixed=[...records,registry.createRecord({...baseInput,name:'Склад USD',currency:'USD',assessmentDate:'2026-11-04'},{id:'compare-usd',createdAt:'2026-11-04T10:00:00.000Z'})];
+ assert.throws(()=>registry.buildComparisonSeries(mixed,['property::склад север','property::склад usd']),/одной валюте/);
+});
+test('comparison chart supports multi-select, preserves selection and avoids date interpolation',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'../assets/js/asset-valuation-registry.js'),'utf8');
+ assert.match(source,/select\.multiple=true/);
+ assert.match(source,/previousSelection\.includes\(key\)/);
+ assert.match(source,/Пропущенные даты не интерполируются/);
+ assert.match(source,/Базовая точка каждого — 100/);
+});
