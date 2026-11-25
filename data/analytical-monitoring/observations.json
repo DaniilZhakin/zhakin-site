@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "catalog_name": "ZHAKIN TEAM Analytical Monitoring Observations",
   "status": "source_fetched_validated",
-  "generated_at": "2026-11-24T19:30:01.037Z",
+  "generated_at": "2026-11-25T18:38:59.332Z",
   "source_count": 2,
   "comparison_country_count": 8,
   "observation_count": 76,
@@ -10,51 +10,51 @@
     {
       "indicator_id": "macro.fx_official",
       "series_key": "RUB/USD",
-      "value": 82.1664,
+      "value": 82.313,
       "unit": "RUB_per_1_USD",
       "geography": "currency_pair",
-      "reference_period": "2026-11-25",
+      "reference_period": "2026-11-26",
       "source": {
         "name": "Bank of Russia",
         "dataset": "Daily official exchange rates",
         "url": "https://www.cbr.ru/scripts/XML_daily.asp"
       },
-      "source_release_date": "2026-11-25",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "source_release_date": "2026-11-26",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "source_published",
       "validation_status": "validated"
     },
     {
       "indicator_id": "macro.fx_official",
       "series_key": "RUB/EUR",
-      "value": 89.8818,
+      "value": 90.2397,
       "unit": "RUB_per_1_EUR",
       "geography": "currency_pair",
-      "reference_period": "2026-11-25",
+      "reference_period": "2026-11-26",
       "source": {
         "name": "Bank of Russia",
         "dataset": "Daily official exchange rates",
         "url": "https://www.cbr.ru/scripts/XML_daily.asp"
       },
-      "source_release_date": "2026-11-25",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "source_release_date": "2026-11-26",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "source_published",
       "validation_status": "validated"
     },
     {
       "indicator_id": "macro.fx_official",
       "series_key": "RUB/CNY",
-      "value": 12.2767,
+      "value": 12.3154,
       "unit": "RUB_per_1_CNY",
       "geography": "currency_pair",
-      "reference_period": "2026-11-25",
+      "reference_period": "2026-11-26",
       "source": {
         "name": "Bank of Russia",
         "dataset": "Daily official exchange rates",
         "url": "https://www.cbr.ru/scripts/XML_daily.asp"
       },
-      "source_release_date": "2026-11-25",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "source_release_date": "2026-11-26",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "source_published",
       "validation_status": "validated"
     },
@@ -74,7 +74,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -94,7 +94,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -114,7 +114,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -134,7 +134,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -154,7 +154,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -174,7 +174,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -194,7 +194,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -214,7 +214,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -234,7 +234,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -254,7 +254,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -274,7 +274,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -294,7 +294,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -314,7 +314,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -334,7 +334,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -354,7 +354,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -374,7 +374,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -394,7 +394,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -414,7 +414,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -434,7 +434,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -454,7 +454,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -474,7 +474,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -494,7 +494,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -514,7 +514,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -534,7 +534,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -554,7 +554,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -574,7 +574,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -594,7 +594,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -614,7 +614,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -634,7 +634,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -654,7 +654,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -674,7 +674,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -694,7 +694,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -714,7 +714,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -734,7 +734,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -754,7 +754,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -774,7 +774,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -794,7 +794,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -814,7 +814,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -834,7 +834,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -854,7 +854,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -874,7 +874,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -894,7 +894,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -914,7 +914,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -934,7 +934,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -954,7 +954,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -974,7 +974,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -994,7 +994,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1014,7 +1014,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1034,7 +1034,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1054,7 +1054,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1074,7 +1074,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1094,7 +1094,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1114,7 +1114,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1134,7 +1134,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1154,7 +1154,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1174,7 +1174,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1194,7 +1194,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1214,7 +1214,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1234,7 +1234,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1254,7 +1254,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1274,7 +1274,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1294,7 +1294,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1314,7 +1314,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1334,7 +1334,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1354,7 +1354,7 @@
         "country_code": "CHN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1374,7 +1374,7 @@
         "country_code": "DEU"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1394,7 +1394,7 @@
         "country_code": "FRA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1414,7 +1414,7 @@
         "country_code": "GBR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1434,7 +1434,7 @@
         "country_code": "JPN"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1454,7 +1454,7 @@
         "country_code": "KOR"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1474,7 +1474,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1494,7 +1494,7 @@
         "country_code": "USA"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     },
@@ -1514,7 +1514,7 @@
         "country_code": "RUS"
       },
       "source_release_date": "2026-11-11",
-      "retrieved_at": "2026-11-24T19:30:01.037Z",
+      "retrieved_at": "2026-11-25T18:38:59.332Z",
       "revision_status": "latest_available_source_vintage",
       "validation_status": "validated"
     }
