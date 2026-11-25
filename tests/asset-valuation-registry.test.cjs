@@ -55,7 +55,7 @@ test('valuation page makes local persistence opt-in and exposes history controls
 
 test('history trend uses the latest saved record per assessment date and keeps assets separate',()=>{
  const records=[
-  registry.createRecord({...baseInput,name:'Склад Север'},{id:'trend-1',createdAt:'2026-11-01T10:00:00.000Z'}),
+  registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-01'},{id:'trend-1',createdAt:'2026-11-01T10:00:00.000Z'}),
   registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-10',result:{...baseInput.result,marketValue:1300000}},{id:'trend-2',createdAt:'2026-11-10T10:00:00.000Z'}),
   registry.createRecord({...baseInput,name:'Склад Север',assessmentDate:'2026-11-10',result:{...baseInput.result,marketValue:1350000}},{id:'trend-3',createdAt:'2026-11-10T12:00:00.000Z'}),
   registry.createRecord({...baseInput,name:'Склад Юг',assessmentDate:'2026-11-10'},{id:'trend-4',createdAt:'2026-11-10T11:00:00.000Z'})
