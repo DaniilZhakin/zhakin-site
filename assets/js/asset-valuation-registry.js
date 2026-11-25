@@ -129,11 +129,12 @@
   const ns='http://www.w3.org/2000/svg',palette=['#d4af37','#69b98b','#8aa9d6','#c58bd8'];
   function node(name,attrs,text){const el=doc.createElementNS(ns,name);Object.entries(attrs||{}).forEach(([key,value])=>el.setAttribute(key,String(value)));if(text!==undefined)el.textContent=text;return el;}
   function draw(){
+   const previousSelection=[...select.selectedOptions].map(option=>option.value);
    svg.replaceChildren();select.replaceChildren();legend.replaceChildren();
    if(!consent.checked){select.disabled=true;summary.textContent='График скрыт до включения локального хранения.';return;}
    let records;try{records=read(root.localStorage);}catch(_){select.disabled=true;summary.textContent='Браузер не предоставил доступ к локальной истории.';return;}
    const assets=new Map();records.forEach(row=>assets.set(assetKey(row),row));
-   const keys=[...assets.keys()];keys.forEach((key,index)=>{const row=assets.get(key),option=doc.createElement('option');option.value=key;option.textContent=row.name+' · '+({business:'Бизнес',property:'Недвижимость',equipment:'Оборудование'}[row.kind]||row.kind);select.append(option);if(index<2)option.selected=true;});
+   const keys=[...assets.keys()];keys.forEach((key,index)=>{const row=assets.get(key),option=doc.createElement('option');option.value=key;option.textContent=row.name+' · '+({business:'Бизнес',property:'Недвижимость',equipment:'Оборудование'}[row.kind]||row.kind);select.append(option);option.selected=previousSelection.length?previousSelection.includes(key):index<2;});
    select.disabled=!keys.length;
    if(!keys.length){summary.textContent='Сохраните оценки, чтобы построить динамику.';return;}
    const selected=[...select.selectedOptions].map(option=>option.value);
