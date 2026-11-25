@@ -4,6 +4,8 @@ on:
     paths:
       - 'centers/asset-valuation/**'
       - 'centers/analytical/**'
+      - 'assets/css/analytical-visual-system.css'
+      - 'tests/analytical-visual-system.test.cjs'
       - 'data/analytical-monitoring/**'
       - 'scripts/fetch-analytical-observations.cjs'
       - 'tests/analytical-ingestion.test.cjs'
@@ -47,6 +49,8 @@ jobs:
         run: node --test tests/valuation-analytical-handoff.test.cjs
       - name: Run Analytical Center tests
         run: node --test tests/analytical-center.test.cjs
+      - name: Run shared analytical visual system tests
+        run: node --test tests/analytical-visual-system.test.cjs
       - name: Run analytical ingestion parser tests
         run: node --test tests/analytical-ingestion.test.cjs
       - name: Run analytical history integrity tests
