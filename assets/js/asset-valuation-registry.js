@@ -7,7 +7,7 @@
  const CURRENCIES=['RUB','USD','EUR','CNY'];
  function validDate(value){
   const date=String(value||'');
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return false;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
   const parsed=new Date(date+'T00:00:00Z');
   return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
  }
@@ -75,14 +75,14 @@
  function csvCell(value){
   let text=String(value??'');
   // Prevent spreadsheet formula execution from user-controlled text fields.
-  if(typeof value==='string'&&/^[\\s\\u0000-\\u001F]*[=+\\-@]/.test(text))text="'"+text;
+  if(typeof value==='string'&&/^[\s\u0000-\u001F]*[=+\-@]/.test(text))text="'"+text;
   return '"'+text.replace(/"/g,'""')+'"';
  }
  function toCsv(records){
   const rows=Array.isArray(records)?records.map(normalizeRecord).filter(Boolean):[];
   const header=['Объект','Тип','Метод','Стоимость','Валюта','Дата оценки','Дата сохранения'];
   const body=rows.map(row=>[row.name,row.kind,row.method,row.value,row.currency,row.assessmentDate,row.createdAt]);
-  return [header,...body].map(row=>row.map(csvCell).join(';')).join('\\r\\n');
+  return [header,...body].map(row=>row.map(csvCell).join(';')).join('\r\n');
  }
  function assetKey(record){return record.kind+'::'+record.name.toLocaleLowerCase('ru-RU');}
  function buildTrendSeries(records,key){
