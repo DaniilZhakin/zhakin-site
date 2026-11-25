@@ -15,6 +15,8 @@ on:
       - 'sitemap.xml'
       - 'tests/analytical-center.test.cjs'
       - 'assets/js/asset-valuation-calculator.js'
+      - 'assets/js/asset-valuation-registry.js'
+      - 'tests/asset-valuation-registry.test.cjs'
       - 'assets/js/asset-valuation-monitoring-bridge.js'
       - 'tests/asset-valuation-monitoring-bridge.test.cjs'
       - 'assets/js/analytical-asset-dashboard.js'
@@ -35,6 +37,8 @@ jobs:
           node-version: 20
       - name: Run valuation calculator tests
         run: node --test tests/asset-valuation-calculator.test.cjs
+      - name: Run local valuation registry tests
+        run: node --test tests/asset-valuation-registry.test.cjs
       - name: Run monitoring-to-valuation bridge tests
         run: node --test tests/asset-valuation-monitoring-bridge.test.cjs
       - name: Run local asset dashboard tests
