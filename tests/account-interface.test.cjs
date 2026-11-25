@@ -70,6 +70,7 @@ test('homepage mobile menu is scrollable, anchored below the header, and keyboar
   assert.match(styles, /max-height:calc\(100dvh - 120px\)/);
   assert.match(styles, /overflow-y:auto/);
   assert.match(styles, /-webkit-overflow-scrolling:touch/);
+  assert.match(styles, /padding-bottom:calc\\(20px \\+ env\\(safe-area-inset-bottom, 0px\\)\\)/);
   assert.match(styles, /\.main-navigation\.active\s*\{\s*display:flex; visibility:visible;/);
   assert.match(script, /event\.key === 'Escape'/);
 });
