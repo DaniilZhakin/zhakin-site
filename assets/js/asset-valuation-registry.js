@@ -166,6 +166,6 @@
   draw();
  }
  if(typeof module!=='undefined'&&module.exports)module.exports={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv,buildTrendSeries,buildComparisonSeries,assetKey};
- if(root)root.ZhakinValuationRegistry={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv,buildTrendSeries,assetKey};
+ if(root)root.ZhakinValuationRegistry={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv,buildTrendSeries,buildComparisonSeries,assetKey};
  if(root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',mountHistoryChart,{once:true});else mountHistoryChart();}
 })(typeof window!=='undefined'?window:globalThis);
