@@ -36,7 +36,7 @@ test('CSV export neutralizes spreadsheet formulas in user-controlled text and us
  const risky=registry.createRecord({...baseInput,name:'=HYPERLINK("https://example.org","open")',result:{...baseInput.result,method:' +SUM(1,1)'}},{id:'csv-risk-1',createdAt:'2026-11-25T10:00:00.000Z'});
  const csv=registry.toCsv([risky]);
  assert.ok(csv.includes('"\'=HYPERLINK(""https://example.org"",""open"")"'));
- assert.ok(csv.includes('"\' +SUM(1,1)"'));
+ assert.ok(csv.includes('"\'+SUM(1,1)"'));
  assert.ok(csv.includes('\r\n'));
  assert.equal(csv.includes('\\r\\n'),false);
 });
