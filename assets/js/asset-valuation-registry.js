@@ -7,7 +7,7 @@
  const CURRENCIES=['RUB','USD','EUR','CNY'];
  function validDate(value){
   const date=String(value||'');
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return false;
   const parsed=new Date(date+'T00:00:00Z');
   return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
  }
@@ -75,16 +75,73 @@
  function csvCell(value){
   let text=String(value??'');
   // Prevent spreadsheet formula execution from user-controlled text fields.
-  if(typeof value==='string'&&/^[\s\u0000-\u001F]*[=+\-@]/.test(text))text="'"+text;
+  if(typeof value==='string'&&/^[\\s\\u0000-\\u001F]*[=+\\-@]/.test(text))text="'"+text;
   return '"'+text.replace(/"/g,'""')+'"';
  }
  function toCsv(records){
   const rows=Array.isArray(records)?records.map(normalizeRecord).filter(Boolean):[];
   const header=['Объект','Тип','Метод','Стоимость','Валюта','Дата оценки','Дата сохранения'];
   const body=rows.map(row=>[row.name,row.kind,row.method,row.value,row.currency,row.assessmentDate,row.createdAt]);
-  return [header,...body].map(row=>row.map(csvCell).join(';')).join('\r\n');
+  return [header,...body].map(row=>row.map(csvCell).join(';')).join('\\r\\n');
  }
- const api={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv};
- if(typeof module!=='undefined'&&module.exports)module.exports=api;
- if(root)root.ZhakinValuationRegistry=api;
+ function assetKey(record){return record.kind+'::'+record.name.toLocaleLowerCase('ru-RU');}
+ function buildTrendSeries(records,key){
+  const valid=Array.isArray(records)?records.map(normalizeRecord).filter(Boolean):[];
+  const byDate=new Map();
+  valid.filter(row=>assetKey(row)===key).forEach(row=>{
+   const previous=byDate.get(row.assessmentDate);
+   if(!previous||row.createdAt>previous.createdAt)byDate.set(row.assessmentDate,row);
+  });
+  return [...byDate.values()].sort((a,b)=>a.assessmentDate.localeCompare(b.assessmentDate));
+ }
+ function mountHistoryChart(){
+  if(!root.document||root.document.getElementById('registry-history-chart'))return;
+  const consent=root.document.getElementById('registry-local-consent');
+  const table=root.document.querySelector('.av-registry .av-comparison-table-wrap');
+  if(!consent||!table)return;
+  const doc=root.document,section=doc.createElement('section');section.id='registry-history-chart';section.className='av-registry-chart';
+  const heading=doc.createElement('div');heading.className='av-registry-chart-head';
+  const title=doc.createElement('h4');title.textContent='Динамика стоимости объекта';
+  const note=doc.createElement('p');note.textContent='Локальная история по датам оценки. Для линии нужны минимум две даты в одной валюте.';
+  heading.append(title,note);
+  const controls=doc.createElement('div');controls.className='av-registry-chart-controls';
+  const label=doc.createElement('label');label.htmlFor='registry-trend-select';label.textContent='Объект';
+  const select=doc.createElement('select');select.id='registry-trend-select';select.disabled=true;controls.append(label,select);
+  const summary=doc.createElement('p');summary.className='av-registry-chart-summary';summary.setAttribute('aria-live','polite');summary.textContent='Включите локальное хранение, чтобы построить график.';
+  const svg=doc.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 720 250');svg.setAttribute('role','img');svg.setAttribute('aria-label','Динамика сохранённых оценок объекта');svg.classList.add('av-registry-trend-svg');
+  const style=doc.createElement('style');style.textContent='.av-registry-chart{margin:16px 0;padding:16px;border:1px solid rgba(212,175,55,.16);border-radius:10px;background:rgba(4,17,12,.28)}.av-registry-chart-head h4{margin:0;color:#ead9aa;font-size:.9rem}.av-registry-chart-head p,.av-registry-chart-summary{margin:6px 0;color:#91a398;font-size:.68rem;line-height:1.55}.av-registry-chart-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;max-width:420px;margin:12px 0}.av-registry-chart-controls label{color:#bdc9c1;font-size:.68rem}.av-registry-chart-controls select{width:100%;min-height:40px;padding:8px 10px;border:1px solid rgba(212,175,55,.25);border-radius:7px;background:#071a16;color:#f4f1e8}.av-registry-trend-svg{display:block;width:100%;height:auto;min-height:150px;overflow:visible}.av-registry-trend-svg text{font-family:inherit}.av-registry-trend-svg .grid{stroke:rgba(212,175,55,.16);stroke-width:1}.av-registry-trend-svg .line{fill:none;stroke:#d4af37;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.av-registry-trend-svg .point{fill:#69b98b;stroke:#e4c66f;stroke-width:2}.av-registry-trend-svg .axis-label{fill:#91a398;font-size:11px}.av-registry-trend-svg .value-label{fill:#f1dfaa;font-size:11px}@media(max-width:520px){.av-registry-chart{padding:12px}.av-registry-trend-svg{min-height:120px}}';
+  doc.head.append(style);section.append(heading,controls,summary,svg);table.parentNode.insertBefore(section,table);
+  const ns='http://www.w3.org/2000/svg';
+  function node(name,attrs,text){const el=doc.createElementNS(ns,name);Object.entries(attrs||{}).forEach(([key,value])=>el.setAttribute(key,String(value)));if(text!==undefined)el.textContent=text;return el;}
+  function draw(){
+   svg.replaceChildren();select.replaceChildren();
+   if(!consent.checked){select.disabled=true;summary.textContent='График скрыт до включения локального хранения.';return;}
+   let records;try{records=read(root.localStorage);}catch(_){select.disabled=true;summary.textContent='Браузер не предоставил доступ к локальной истории.';return;}
+   const assets=new Map();records.forEach(row=>assets.set(assetKey(row),row));
+   const keys=[...assets.keys()];keys.forEach(key=>{const row=assets.get(key),option=doc.createElement('option');option.value=key;option.textContent=row.name+' · '+({business:'Бизнес',property:'Недвижимость',equipment:'Оборудование'}[row.kind]||row.kind);select.append(option);});
+   select.disabled=!keys.length;
+   if(!keys.length){summary.textContent='Сохраните оценки, чтобы построить динамику.';return;}
+   const points=buildTrendSeries(records,select.value);
+   if(points.length<2){summary.textContent='Для выбранного объекта пока только одна дата оценки. Добавьте ещё одну оценку на другую дату.';return;}
+   if(new Set(points.map(point=>point.currency)).size!==1){summary.textContent='В истории выбраны разные валюты. Сопоставление временно недоступно.';return;}
+   const values=points.map(point=>point.value),min=Math.min(...values),max=Math.max(...values),spread=max-min||Math.max(Math.abs(max)*.02,1),low=min-spread*.15,high=max+spread*.15;
+   const x0=64,x1=690,y0=24,y1=190,first=Date.parse(points[0].assessmentDate+'T00:00:00Z'),last=Date.parse(points[points.length-1].assessmentDate+'T00:00:00Z');
+   const x=date=>x0+(x1-x0)*(Date.parse(date+'T00:00:00Z')-first)/(last-first);
+   const y=value=>y1-(value-low)/(high-low)*(y1-y0);
+   for(let i=0;i<4;i++){const yy=y0+(y1-y0)*i/3;svg.append(node('line',{x1:x0,y1:yy,x2:x1,y2:yy,class:'grid'}));}
+   svg.append(node('polyline',{points:points.map(point=>x(point.assessmentDate)+','+y(point.value)).join(' '),class:'line'}));
+   points.forEach(point=>{const px=x(point.assessmentDate),py=y(point.value);svg.append(node('circle',{cx:px,cy:py,r:5,class:'point'}));svg.append(node('text',{x:px,y:py-10,'text-anchor':'middle',class:'value-label'},new Intl.NumberFormat('ru-RU',{notation:'compact',maximumFractionDigits:1}).format(point.value)));});
+   svg.append(node('text',{x:x0,y:218,class:'axis-label'},points[0].assessmentDate));
+   svg.append(node('text',{x:x1,y:218,'text-anchor':'end',class:'axis-label'},points[points.length-1].assessmentDate));
+   const firstValue=points[0].value,lastValue=points[points.length-1].value,change=firstValue===0?null:(lastValue/firstValue-1)*100;
+   summary.textContent='Последняя оценка: '+new Intl.NumberFormat('ru-RU',{style:'currency',currency:points[0].currency,maximumFractionDigits:0}).format(lastValue)+' · изменение за период: '+(change===null?'—':(change>0?'+':'')+change.toFixed(1)+'%')+' · '+points.length+' дат.';
+   svg.setAttribute('aria-label','Динамика стоимости '+points[0].name+' с '+points[0].assessmentDate+' по '+points[points.length-1].assessmentDate);
+  }
+  select.addEventListener('change',draw);consent.addEventListener('change',draw);
+  const observer=new MutationObserver(draw);observer.observe(root.document.getElementById('registry-rows'),{childList:true,subtree:true});
+  draw();
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv,buildTrendSeries,assetKey};
+ if(root)root.ZhakinValuationRegistry={STORAGE_KEY,MAX_RECORDS,createRecord,read,save,remove,clear,toCsv,buildTrendSeries,assetKey};
+ if(root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',mountHistoryChart,{once:true});else mountHistoryChart();}
 })(typeof window!=='undefined'?window:globalThis);
