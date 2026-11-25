@@ -263,3 +263,11 @@ test('valuation page exposes the quality passport and keeps source verification 
   const qualitySource = fs.readFileSync(path.join(__dirname, '../assets/js/asset-valuation-quality.js'), 'utf8');
   assert.match(qualitySource, /содержание источника не верифицировано|не верифицировано/);
 });
+
+test('asset valuation calculator constrains mobile form controls to the viewport', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../centers/asset-valuation/index.html'), 'utf8');
+  assert.match(html, /Mobile viewport containment: prevent calculator controls from exceeding the card/);
+  assert.match(html, /\.av-form-layout\{width:100%;grid-template-columns:minmax\(0,1fr\)\}/);
+  assert.match(html, /\.av-field input,\.av-field select[^}]*width:100%;min-width:0;max-width:100%;box-sizing:border-box/);
+  assert.match(html, /html,body\{max-width:100%;overflow-x:clip\}/);
+});
