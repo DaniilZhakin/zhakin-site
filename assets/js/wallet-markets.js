@@ -51,7 +51,11 @@
   const dateFmt = (value) => new Intl.DateTimeFormat("ru-RU", {
     dateStyle: "medium", timeStyle: "short"
   }).format(value);
-  const safeNumber = (value) => Number.isFinite(Number(value)) ? Number(value) : null;
+  const safeNumber = (value) => {
+    if (value === null || value === undefined || (typeof value === "string" && value.trim() === "")) return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  };
   const text = (tag, value, className) => {
     const el = document.createElement(tag);
     el.textContent = value;
@@ -129,7 +133,9 @@
         url: "https://api.bybit.com/v5/market/tickers?category=spot",
         parse: (data) => symbols.map((s) => {
           const q = data?.result?.list?.find((item) => item.symbol === s.symbol);
-          return q ? { ...s, source: "Bybit", price: safeNumber(q.lastPrice), change: safeNumber(q.price24hPcnt) * 100 } : null;
+          if (!q) return null;
+          const changeRaw = safeNumber(q.price24hPcnt);
+          return { ...s, source: "Bybit", price: safeNumber(q.lastPrice), change: changeRaw === null ? null : changeRaw * 100 };
         }).filter(Boolean)
       }
     ];
