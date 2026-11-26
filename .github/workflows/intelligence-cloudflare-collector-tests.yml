@@ -39,6 +39,9 @@ jobs:
       - name: Collector HTTP contract tests
         run: node worker.test.js
 
+      - name: Local Cloudflare D1 migration and aggregation test
+        run: node test-d1-aggregation.mjs
+
       - name: Schema drift contract gate
         run: node schema-contract.test.js
 
