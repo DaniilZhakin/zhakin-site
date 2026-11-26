@@ -73,8 +73,9 @@
       if (!previous || row.createdAt > previous.createdAt) byId.set(row.id, row);
     });
     const rows = [...byId.values()]
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.assessmentDate.localeCompare(a.assessmentDate))
-      .slice(0, MAX_RECORDS);
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.assessmentDate.localeCompare(a.assessmentDate));
+    // Never silently discard legacy assessments. Keep oversized histories readable,
+    // and do not rewrite either legacy key until the history is within the limit.
     // Strip unexpected or malformed fields from parseable legacy stores before returning them.
     let rewrite = false;
     try {
@@ -89,7 +90,7 @@
         if (Array.isArray(parsed)) rewrite = rewrite || JSON.stringify(parsed) !== JSON.stringify(parseDashboard(dashboardRaw).map(toDashboard));
       }
     } catch (_) { /* Leave unparseable legacy bytes untouched for recovery. */ }
-    if (rewrite) { try { write(storage, rows); } catch (_) { /* Keep validated in-memory rows readable when storage is read-only. */ } }
+    if (rewrite && rows.length <= MAX_RECORDS) { try { write(storage, rows); } catch (_) { /* Keep validated in-memory rows readable when storage is read-only. */ } }
     return rows;
   }
 
@@ -115,8 +116,10 @@
       throw new Error('Локальное хранилище недоступно.');
     }
     const rows = (Array.isArray(records) ? records : []).map(normalize).filter(Boolean)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, MAX_RECORDS);
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    if (rows.length > MAX_RECORDS) {
+      throw new Error('История содержит более 200 оценок. Удалите ненужные записи перед добавлением новых; существующие данные сохранены.');
+    }
     const registryValue = JSON.stringify({ schemaVersion: 1, records: rows.map(toRegistry) });
     const dashboardValue = JSON.stringify(rows.map(toDashboard));
     const previousRegistry = storage.getItem(REGISTRY_KEY);
@@ -148,7 +151,34 @@
   }
 
   function remove(storage, id) {
-    return write(storage, read(storage).filter(row => row.id !== String(id)));
+    const remaining = read(storage).filter(row => row.id !== String(id));
+    // A deliberate deletion may need to persist a still-oversized legacy history.
+    if (remaining.length <= MAX_RECORDS) return write(storage, remaining);
+    return writeOversizedForRemoval(storage, remaining);
+  }
+
+  function writeOversizedForRemoval(storage, records) {
+    const rows = records.map(normalize).filter(Boolean)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const registryValue = JSON.stringify({ schemaVersion: 1, records: rows.map(toRegistry) });
+    const dashboardValue = JSON.stringify(rows.map(toDashboard));
+    const previousRegistry = storage.getItem(REGISTRY_KEY);
+    const previousDashboard = storage.getItem(DASHBOARD_KEY);
+    try {
+      storage.setItem(REGISTRY_KEY, registryValue);
+      storage.setItem(DASHBOARD_KEY, dashboardValue);
+    } catch (_) {
+      try {
+        if (previousRegistry === null) storage.removeItem(REGISTRY_KEY);
+        else storage.setItem(REGISTRY_KEY, previousRegistry);
+        if (previousDashboard === null) storage.removeItem(DASHBOARD_KEY);
+        else storage.setItem(DASHBOARD_KEY, previousDashboard);
+      } catch (_) {
+        throw new Error('Не удалось сохранить удаление и восстановить прежние локальные данные.');
+      }
+      throw new Error('Не удалось удалить запись: браузер отклонил запись.');
+    }
+    return rows;
   }
 
   function clear(storage) {

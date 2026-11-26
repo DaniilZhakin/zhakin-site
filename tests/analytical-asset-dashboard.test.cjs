@@ -54,12 +54,21 @@ test('dashboard groups asset history by normalized name and picks latest valuati
   assert.equal(grouped.find(row => row.name === 'Актив А').value, 1000000);
 });
 
-test('dashboard caps stored history to 200 records', () => {
+test('dashboard enforces the 200-record limit without truncating existing history', () => {
   const storage = storageMock();
-  const rows = Array.from({ length: 205 }, (_, index) => record({ name: 'Актив ' + index }));
+  const rows = Array.from({ length: 200 }, (_, index) => record({ name: 'Актив ' + index }));
   const saved = dashboard.writeRecords(storage, rows);
   assert.equal(saved.length, 200);
   assert.equal(dashboard.readRecords(storage).length, 200);
+  const before = [
+    storage.getItem('zhakin.assetValuation.registry.v1'),
+    storage.getItem(dashboard.STORAGE_KEY)
+  ];
+  assert.throws(() => dashboard.writeRecords(storage, [...rows, record({ name: 'Актив сверх лимита' })]), /более 200 оценок/);
+  assert.deepEqual([
+    storage.getItem('zhakin.assetValuation.registry.v1'),
+    storage.getItem(dashboard.STORAGE_KEY)
+  ], before);
 });
 
 test('dashboard UI is linked from the Analytical Center and discloses local-only storage', () => {
