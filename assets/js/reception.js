@@ -5,10 +5,14 @@
   const status=document.getElementById('reception-status');
   const copy=document.getElementById('reception-copy');
   if(!form||!preview||!output||!status)return;
+  const messageField=form.querySelector('[name="message"]');
+  const messageCount=document.getElementById('message-count');
 
   const labels={international:'Международное сотрудничество',investment:'Экономические и инвестиционные проекты',analytics:'Аналитика и экспертное взаимодействие',social:'Социальные и общественные инициативы',other:'Другое'};
   const clean=v=>v.replace(/[ \t]+/g,' ').trim();
   const show=(text,ok)=>{status.hidden=false;status.textContent=text;status.dataset.state=ok?'success':'error';};
+  const updateMessageCount=()=>{if(messageField&&messageCount)messageCount.textContent=messageField.value.length+' из '+messageField.maxLength+' символов';};
+  if(messageField){messageField.addEventListener('input',updateMessageCount);updateMessageCount();}
 
   form.addEventListener('submit',function(e){
     e.preventDefault();
@@ -28,7 +32,7 @@
     output.focus();
   });
 
-  form.addEventListener('reset',function(){preview.hidden=true;status.hidden=true;output.value='';});
+  form.addEventListener('reset',function(){preview.hidden=true;status.hidden=true;output.value='';window.setTimeout(updateMessageCount,0);});
 
   if(copy)copy.addEventListener('click',async function(){
     const text=output.value;
