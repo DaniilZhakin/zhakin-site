@@ -19,12 +19,18 @@ test('registry persists, lists, removes and clears only its versioned local reco
  registry.remove(store,'record-1');assert.equal(registry.read(store).length,0);
  registry.save(store,record);registry.clear(store);assert.equal(registry.read(store).length,0);
 });
-test('registry replaces duplicate ids and retains at most 200 latest records',()=>{
+test('registry enforces the 200-record limit without truncating existing history and replaces duplicate ids',()=>{
  const store=storageMock();
- for(let i=0;i<205;i++){const record=registry.createRecord({...baseInput,name:'Object '+i},{id:'id-'+i,createdAt:new Date(Date.UTC(2026,0,1,0,0,i)).toISOString()});registry.save(store,record);}
- assert.equal(registry.read(store).length,200);assert.equal(registry.read(store)[0].id,'id-204');
- const updated=registry.createRecord({...baseInput,name:'Updated'},{id:'id-204',createdAt:'2026-11-25T12:00:00.000Z'});
- registry.save(store,updated);assert.equal(registry.read(store).length,200);assert.equal(registry.read(store)[0].name,'Updated');
+ for(let i=0;i<200;i++){const record=registry.createRecord({...baseInput,name:'Object '+i},{id:'id-'+i,createdAt:new Date(Date.UTC(2026,0,1,0,0,i)).toISOString()});registry.save(store,record);}
+ assert.equal(registry.read(store).length,200);
+ const before=store.raw('zhakin.assetValuation.registry.v1');
+ const overflow=registry.createRecord({...baseInput,name:'Overflow'},{id:'id-overflow',createdAt:'2026-11-25T11:00:00.000Z'});
+ assert.throws(()=>registry.save(store,overflow),/более 200 оценок/);
+ assert.equal(store.raw('zhakin.assetValuation.registry.v1'),before);
+ const updated=registry.createRecord({...baseInput,name:'Updated'},{id:'id-199',createdAt:'2026-11-25T12:00:00.000Z'});
+ registry.save(store,updated);
+ assert.equal(registry.read(store).length,200);
+ assert.equal(registry.read(store)[0].name,'Updated');
 });
 test('registry rejects invalid dates, currencies and malformed records; CSV escapes delimiters and quotes',()=>{
  assert.throws(()=>registry.createRecord({...baseInput,assessmentDate:'2026-02-30'}),/корректную дату/);
