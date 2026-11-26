@@ -1,0 +1,70 @@
+name: Reception Form Integrity
+
+on:
+  pull_request:
+    paths:
+      - 'reception.html'
+      - 'assets/js/reception.js'
+      - 'assets/css/reception.css'
+      - '.github/workflows/reception-form-integrity.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'reception.html'
+      - 'assets/js/reception.js'
+      - 'assets/css/reception.css'
+      - '.github/workflows/reception-form-integrity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate reception form structure and safeguards
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+
+          html = Path("reception.html").read_text(encoding="utf-8")
+          js = Path("assets/js/reception.js").read_text(encoding="utf-8")
+          css = Path("assets/css/reception.css").read_text(encoding="utf-8")
+
+          class FormParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids = {}
+                  self.textareas = []
+                  self.forms = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if "id" in attrs:
+                      self.ids[attrs["id"]] = attrs
+                  if tag == "textarea":
+                      self.textareas.append(attrs)
+                  if tag == "form":
+                      self.forms.append(attrs)
+
+          parser = FormParser()
+          parser.feed(html)
+
+          assert "reception-form" in parser.ids, "Reception form is missing"
+          assert "message" in parser.ids, "Message field is missing"
+          assert "message-counter" in parser.ids, "Live counter is missing"
+          assert parser.ids["message-counter"].get("aria-live") == "polite", "Counter must announce updates politely"
+          message = next((x for x in parser.textareas if x.get("id") == "message"), None)
+          assert message and message.get("maxlength") == "5000", "Message field must enforce 5,000-character limit"
+          assert "updateCounter" in js and "addEventListener('input'" in js, "Counter must update while typing"
+          assert "addEventListener('reset'" in js, "Counter must update after form reset"
+          assert "window.setTimeout(updateCounter,0)" in js, "Reset counter must update after native reset"
+          assert "preventDefault()" in js, "Form must not submit to an unconfigured backend"
+          assert "fetch(" not in js and "XMLHttpRequest" not in js, "Unexpected network submission found"
+          assert re.search(r"@media\s*\(max-width:\s*640px\)", css), "Mobile layout rule is missing"
+          assert ".field-counter" in css, "Counter styling is missing"
+          print("Reception form integrity: PASS")
+          PY
