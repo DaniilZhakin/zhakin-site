@@ -1,0 +1,64 @@
+name: ZHAKIN Wallet visual review
+
+on:
+  push:
+    branches:
+      - test/wallet-visual-regression-20261104
+    paths:
+      - "wallet.html"
+      - "scripts/wallet-visual-smoke.mjs"
+      - ".github/workflows/wallet-visual-review.yml"
+  pull_request:
+    paths:
+      - "wallet.html"
+      - "scripts/wallet-visual-smoke.mjs"
+      - ".github/workflows/wallet-visual-review.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture-wallet:
+    name: Capture desktop and iPhone-sized Wallet views
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out pull request revision
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: npm install --no-save playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local site preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/zhakin-wallet-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/wallet.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/zhakin-wallet-http.log
+          exit 1
+
+      - name: Capture and inspect checked-out Wallet revision
+        run: node scripts/wallet-visual-smoke.mjs
+        env:
+          WALLET_URL: http://127.0.0.1:4173/wallet.html
+
+      - name: Upload real browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhakin-wallet-visual-review
+          path: artifacts/wallet/
+          if-no-files-found: warn
+          retention-days: 14
