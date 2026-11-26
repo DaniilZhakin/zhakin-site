@@ -18,6 +18,8 @@ on:
       - 'tests/analytical-center.test.cjs'
       - 'assets/js/asset-valuation-calculator.js'
       - 'assets/js/asset-valuation-registry.js'
+      - 'assets/js/asset-history-unification.js'
+      - 'tests/asset-history-unification.test.cjs'
       - 'tests/asset-valuation-registry.test.cjs'
       - 'assets/js/asset-valuation-monitoring-bridge.js'
       - 'tests/asset-valuation-monitoring-bridge.test.cjs'
@@ -41,6 +43,8 @@ jobs:
         run: node --test tests/asset-valuation-calculator.test.cjs
       - name: Run local valuation registry tests
         run: node --test tests/asset-valuation-registry.test.cjs
+      - name: Run unified local asset history tests
+        run: node --test tests/asset-history-unification.test.cjs
       - name: Run monitoring-to-valuation bridge tests
         run: node --test tests/asset-valuation-monitoring-bridge.test.cjs
       - name: Run local asset dashboard tests

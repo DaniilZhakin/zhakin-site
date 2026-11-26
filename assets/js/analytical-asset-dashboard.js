@@ -1,5 +1,6 @@
 (function (root) {
   'use strict';
+  const sharedHistory = root.ZhakinAssetHistory || (typeof module !== 'undefined' && module.exports && typeof require === 'function' ? require('./asset-history-unification.js') : null);
   const STORAGE_KEY = 'zhakin_analytical_asset_history_v1';
   const MAX_RECORDS = 200;
   const TYPES = ['business', 'property', 'equipment', 'other'];
@@ -63,6 +64,7 @@
     }));
   }
   function readRecords(storage) {
+    if (sharedHistory) return sharedHistory.read(storage).map(row => ({ id: row.id, name: row.name, type: row.kind, date: row.assessmentDate, value: row.value, currency: row.currency, method: row.method.slice(0, 120), createdAt: row.createdAt }));
     let raw;
     try { raw = storage.getItem(STORAGE_KEY); }
     catch (_) { throw new Error('Локальное хранилище недоступно.'); }
@@ -78,6 +80,7 @@
     return valid;
   }
   function writeRecords(storage, rows) {
+    if (sharedHistory) return sharedHistory.write(storage, rows).map(row => ({ id: row.id, name: row.name, type: row.kind, date: row.assessmentDate, value: row.value, currency: row.currency, method: row.method.slice(0, 120), createdAt: row.createdAt }));
     const source = Array.isArray(rows) ? rows.slice(-MAX_RECORDS) : rows;
     const valid = validateRecords(source);
     storage.setItem(STORAGE_KEY, JSON.stringify(valid));
@@ -108,8 +111,47 @@
     const status = document.getElementById('asset-dashboard-status');
     const count = document.getElementById('asset-history-count');
     const clear = document.getElementById('clear-asset-history');
+    const historySection = list && list.closest('.ad-section');
+    const summary = document.createElement('div');
+    summary.className = 'ad-kpi-grid';
+    summary.setAttribute('aria-label', 'Сводные показатели истории оценок');
+    const filterBar = document.createElement('div');
+    filterBar.className = 'ad-filter-bar';
+    const searchInput = document.createElement('input');
+    searchInput.type = 'search';
+    searchInput.placeholder = 'Поиск по названию актива';
+    searchInput.setAttribute('aria-label', 'Поиск по названию актива');
+    const typeFilter = document.createElement('select');
+    typeFilter.setAttribute('aria-label', 'Фильтр по типу актива');
+    [['all', 'Все типы'], ...TYPES.map(type => [type, LABELS[type]])].forEach(([value, label]) => {
+      const option = document.createElement('option'); option.value = value; option.textContent = label; typeFilter.append(option);
+    });
+    const currencyFilter = document.createElement('select');
+    currencyFilter.setAttribute('aria-label', 'Фильтр по валюте');
+    [['all', 'Все валюты'], ...CURRENCIES.map(currency => [currency, currency])].forEach(([value, label]) => {
+      const option = document.createElement('option'); option.value = value; option.textContent = label; currencyFilter.append(option);
+    });
+    const periodFilter = document.createElement('select');
+    periodFilter.setAttribute('aria-label', 'Фильтр по периоду');
+    [['all', 'За всё время'], ['30', '30 дней'], ['90', '90 дней'], ['365', '12 месяцев']].forEach(([value, label]) => {
+      const option = document.createElement('option'); option.value = value; option.textContent = label; periodFilter.append(option);
+    });
+    [searchInput, typeFilter, currencyFilter, periodFilter].forEach(control => filterBar.append(control));
+    const style = document.createElement('style');
+    style.textContent = '.ad-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 18px}.ad-kpi{min-width:0;padding:14px;border:1px solid rgba(212,175,55,.2);border-radius:10px;background:linear-gradient(145deg,rgba(212,175,55,.08),rgba(7,26,22,.8))}.ad-kpi span{display:block;color:#91a398;font-size:.65rem;letter-spacing:.05em;text-transform:uppercase}.ad-kpi strong{display:block;margin-top:7px;color:#ead9aa;font-size:clamp(1rem,2vw,1.45rem);overflow-wrap:anywhere}.ad-filter-bar{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(3,minmax(110px,1fr));gap:9px;margin:0 0 14px}.ad-filter-bar input,.ad-filter-bar select{width:100%;min-width:0;min-height:42px;padding:9px 10px;border:1px solid rgba(212,175,55,.22);border-radius:8px;background:#071a16;color:#e4eee7;font:inherit;font-size:.74rem}.ad-filter-result{margin:0 0 12px;color:#91a398;font-size:.68rem}@media(max-width:700px){.ad-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-filter-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-filter-bar input{grid-column:1/-1}}@media(max-width:380px){.ad-kpi{padding:11px}.ad-filter-bar{gap:7px}}';
+    if (historySection && !historySection.querySelector('.ad-kpi-grid')) {
+      document.head.append(style);
+      historySection.insertBefore(summary, list);
+      historySection.insertBefore(filterBar, list);
+    }
+    const filterResult = document.createElement('p');
+    filterResult.className = 'ad-filter-result';
+    filterResult.setAttribute('aria-live', 'polite');
+    if (historySection) historySection.insertBefore(filterResult, list);
     if (!form || !list || !compare || !chart || !trendChart || !trendSelect) return;
     let rows = readRecords(storage);
+    let selectedAssetIds = new Set();
+    let comparisonInitialized = false;
     const el = (tag, text, cls) => {
       const node = document.createElement(tag);
       if (text !== undefined) node.textContent = text;
@@ -124,11 +166,36 @@
     };
     function render() {
       list.replaceChildren();
+      const previouslySelected = new Set([...compare.querySelectorAll('input:checked')].map(input => input.value));
+      if (comparisonInitialized) selectedAssetIds = previouslySelected;
       compare.replaceChildren();
       const latest = groupLatest(rows);
+      const dates = rows.map(row => row.date).sort();
+      const currencies = [...new Set(rows.map(row => row.currency))];
+      const kpis = [
+        ['Оценки', String(rows.length)],
+        ['Активы', String(latest.length)],
+        ['Последняя оценка', dates.length ? dates[dates.length - 1] : '—'],
+        ['Валюты', currencies.length ? currencies.join(' · ') : '—']
+      ];
+      summary.replaceChildren();
+      kpis.forEach(([label, value]) => {
+        const card = el('div', undefined, 'ad-kpi');
+        card.append(el('span', label), el('strong', value));
+        summary.append(card);
+      });
       count.textContent = rows.length + ' записей · ' + latest.length + ' активов';
+      const cutoff = periodFilter.value === 'all' ? null : Date.now() - Number(periodFilter.value) * 86400000;
+      const visible = rows.filter(row =>
+        (!searchInput.value.trim() || row.name.toLocaleLowerCase('ru-RU').includes(searchInput.value.trim().toLocaleLowerCase('ru-RU'))) &&
+        (typeFilter.value === 'all' || row.type === typeFilter.value) &&
+        (currencyFilter.value === 'all' || row.currency === currencyFilter.value) &&
+        (cutoff === null || Date.parse(row.date + 'T23:59:59Z') >= cutoff)
+      );
+      filterResult.textContent = 'Показано ' + visible.length + ' из ' + rows.length + ' записей. Фильтры влияют только на список; графики используют всю историю.';
       if (!rows.length) list.append(el('p', 'История пока пуста. Добавьте первую оценку — запись останется в этом браузере.', 'ad-empty'));
-      [...rows].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)).forEach(row => {
+      else if (!visible.length) list.append(el('p', 'По заданным фильтрам записей не найдено. Измените условия поиска.', 'ad-empty'));
+      [...visible].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)).forEach(row => {
         const item = el('article', undefined, 'ad-history-item');
         const info = el('div');
         info.append(el('strong', row.name), el('span', LABELS[row.type] + ' · ' + row.date + (row.method ? ' · ' + row.method : '')));
@@ -163,15 +230,22 @@
         const checkbox = el('input');
         checkbox.type = 'checkbox';
         checkbox.value = row.id;
-        checkbox.checked = index < 3;
+        checkbox.checked = comparisonInitialized ? selectedAssetIds.has(row.id) : index < 3;
         checkbox.addEventListener('change', () => {
           const checked = [...compare.querySelectorAll('input:checked')];
-          if (checked.length > 4) { checkbox.checked = false; status.textContent = 'Для сравнения можно выбрать не более четырёх активов.'; }
+          if (checked.length > 4) {
+            checkbox.checked = false;
+            status.textContent = 'Для сравнения можно выбрать не более четырёх активов.';
+          }
+          selectedAssetIds = new Set([...compare.querySelectorAll('input:checked')].map(input => input.value));
+          comparisonInitialized = true;
           renderChart();
         });
         label.append(checkbox, el('span', row.name + ' · ' + formatValue(row.value, row.currency)));
         compare.append(label);
       });
+      selectedAssetIds = new Set([...compare.querySelectorAll('input:checked')].map(input => input.value));
+      comparisonInitialized = true;
       renderChart();
       renderTrend();
     }
@@ -194,7 +268,9 @@
         const y = top + index * (barHeight + gap);
         chart.append(svg('text', { x: left, y: y + 12, class: 'ad-chart-label' }, row.name.slice(0, 28)));
         chart.append(svg('rect', { x: left, y: y + 18, width, height: 9, rx: 4, class: 'ad-chart-track' }));
-        chart.append(svg('rect', { x: left, y: y + 18, width: Math.max(3, width * row.value / max), height: 9, rx: 4, class: 'ad-chart-bar' }));
+        const bar = svg('rect', { x: left, y: y + 18, width: Math.max(3, width * row.value / max), height: 9, rx: 4, class: 'ad-chart-bar' });
+        bar.append(svg('title', {}, row.name + ': ' + formatValue(row.value, row.currency)));
+        chart.append(bar);
         chart.append(svg('text', { x: left + width, y: y + 12, 'text-anchor': 'end', class: 'ad-chart-value' }, formatValue(row.value, row.currency)));
       });
     }
@@ -230,17 +306,24 @@
       const y = value => y1 - (value - low) / (high - low) * (y1 - y0);
       trendChart.replaceChildren();
       for (let i = 0; i < 4; i++) {
-        const yy = y0 + (y1 - y0) * i / 3;
+        const ratio = i / 3;
+        const yy = y0 + (y1 - y0) * ratio;
+        const tickValue = high - (high - low) * ratio;
         trendChart.append(svg('line', { x1: x0, y1: yy, x2: x1, y2: yy, class: 'ad-chart-track', stroke: 'rgba(212,175,55,.2)' }));
+        trendChart.append(svg('text', { x: x0 - 8, y: yy + 4, 'text-anchor': 'end', class: 'ad-chart-value' }, formatValue(tickValue, points[0].currency)));
       }
       trendChart.append(svg('polyline', { points: points.map(point => x(point.date) + ',' + y(point.value)).join(' '), fill: 'none', stroke: '#d4af37', 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
       points.forEach((point, index) => {
-        trendChart.append(svg('circle', { cx: x(point.date), cy: y(point.value), r: 5, fill: '#ead9aa' }));
+        const marker = svg('circle', { cx: x(point.date), cy: y(point.value), r: 5, fill: '#ead9aa' });
+        marker.append(svg('title', {}, point.date + ' · ' + formatValue(point.value, point.currency)));
+        trendChart.append(marker);
         if (index === 0 || index === points.length - 1 || points.length <= 6) {
           trendChart.append(svg('text', { x: x(point.date), y: 222, 'text-anchor': index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle', class: 'ad-chart-label' }, point.date));
         }
       });
     }
+    [searchInput, typeFilter, currencyFilter, periodFilter].forEach(control => control.addEventListener('input', render));
+    [typeFilter, currencyFilter, periodFilter].forEach(control => control.addEventListener('change', render));
     trendSelect.addEventListener('change', renderTrend);
     form.addEventListener('submit', event => {
       event.preventDefault();
@@ -260,7 +343,7 @@
     });
     clear.addEventListener('click', () => {
       if (!rows.length || !root.confirm('Удалить всю историю оценок из этого браузера?')) return;
-      try { storage.removeItem(STORAGE_KEY); }
+      try { if (sharedHistory) sharedHistory.clear(storage); else storage.removeItem(STORAGE_KEY); }
       catch (_) {
         status.textContent = 'Не удалось очистить историю: браузер не разрешил удалить локальные данные.';
         return;

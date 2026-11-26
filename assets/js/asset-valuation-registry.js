@@ -1,9 +1,11 @@
 (function(root){
  'use strict';
+ const sharedHistory=root.ZhakinAssetHistory||(typeof module!=='undefined'&&module.exports&&typeof require==='function'?require('./asset-history-unification.js'):null);
  const STORAGE_KEY='zhakin.assetValuation.registry.v1';
  const SCHEMA_VERSION=1;
- const MAX_RECORDS=100;
+ const MAX_RECORDS=200;
  const KINDS=['business','property','equipment'];
+ const RECORD_KINDS=[...KINDS,'other'];
  const CURRENCIES=['RUB','USD','EUR','CNY'];
  function validDate(value){
   const date=String(value||'');
@@ -13,13 +15,13 @@
  }
  function finite(value){return value!==null&&value!==undefined&&value!==''&&Number.isFinite(Number(value));}
  function normalizeRecord(record){
-  if(!record||typeof record!=='object'||!KINDS.includes(record.kind)||!CURRENCIES.includes(record.currency))return null;
+  if(!record||typeof record!=='object'||!RECORD_KINDS.includes(record.kind)||!CURRENCIES.includes(record.currency))return null;
   if(typeof record.id!=='string'||!record.id||typeof record.method!=='string'||!record.method.trim()||!finite(record.value)||!validDate(record.assessmentDate))return null;
   const createdAt=String(record.createdAt||'');
   if(!Number.isFinite(Date.parse(createdAt)))return null;
   return {
    id:record.id.slice(0,80),
-   name:String(record.name||'Объект').trim().slice(0,60)||'Объект',
+   name:String(record.name||'Объект').trim().slice(0,80)||'Объект',
    kind:record.kind,
    method:record.method.trim().slice(0,160),
    value:Number(record.value),
@@ -49,6 +51,7 @@
   return record;
  }
  function read(storage){
+  if(sharedHistory)return sharedHistory.read(storage);
   if(!storage||typeof storage.getItem!=='function')throw new Error('Локальное хранилище недоступно.');
   const raw=storage.getItem(STORAGE_KEY);
   if(!raw)return [];
@@ -57,18 +60,22 @@
   return parsed.records.map(normalizeRecord).filter(Boolean).slice(0,MAX_RECORDS);
  }
  function write(storage,records){
+  if(sharedHistory)return sharedHistory.write(storage,records);
   if(!storage||typeof storage.setItem!=='function')throw new Error('Локальное хранилище недоступно.');
   storage.setItem(STORAGE_KEY,JSON.stringify({schemaVersion:SCHEMA_VERSION,records:records.slice(0,MAX_RECORDS)}));
  }
  function save(storage,record){
   const normalized=normalizeRecord(record);if(!normalized)throw new Error('Некорректная запись оценки.');
+  if(sharedHistory)return sharedHistory.save(storage,normalized);
   const records=read(storage).filter(item=>item.id!==normalized.id);
   records.unshift(normalized);write(storage,records);return normalized;
  }
  function remove(storage,id){
+  if(sharedHistory)return sharedHistory.remove(storage,id);
   const records=read(storage).filter(item=>item.id!==String(id));write(storage,records);return records;
  }
  function clear(storage){
+  if(sharedHistory)return sharedHistory.clear(storage);
   if(!storage||typeof storage.removeItem!=='function')throw new Error('Локальное хранилище недоступно.');
   storage.removeItem(STORAGE_KEY);
  }
