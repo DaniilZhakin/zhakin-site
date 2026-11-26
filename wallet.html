@@ -328,6 +328,41 @@
     }
 
 
+
+    /* Wallet V04: separate asset identities and an explicitly illustrative activity chart. */
+    .wallet-v04{margin:22px 0 24px}
+    .wallet-v04-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:15px}
+    .wallet-v04-head h2{margin:0;color:#f3f0e7;font-size:1.3rem;font-weight:560;letter-spacing:-.025em}
+    .wallet-v04-head p{margin:6px 0 0;color:#9eada2;font-size:.78rem;line-height:1.6}
+    .wallet-v04-tag{flex:0 0 auto;padding:7px 10px;border:1px solid rgba(216,189,120,.24);border-radius:999px;color:#d9c58f;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-v04-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .wallet-asset-card{position:relative;min-width:0;overflow:hidden;padding:21px 22px;border:1px solid rgba(216,189,120,.2);border-radius:12px;background:linear-gradient(145deg,rgba(26,49,37,.88),rgba(12,21,16,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+    .wallet-asset-card:after{content:"";position:absolute;right:-58px;top:-70px;width:155px;height:155px;border:1px solid rgba(216,189,120,.16);border-radius:50%;box-shadow:0 0 0 18px rgba(216,189,120,.025),0 0 0 38px rgba(216,189,120,.018);pointer-events:none}
+    .wallet-asset-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .wallet-asset-name{display:flex;align-items:center;gap:10px;color:#f1eee5;font-size:.92rem;font-weight:650;letter-spacing:.04em}
+    .wallet-asset-mark{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(216,189,120,.38);border-radius:50%;color:#f0dfae;font-size:.78rem}
+    .wallet-asset-state{color:#aebdb1;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase}
+    .wallet-asset-value{position:relative;z-index:1;display:block;margin:20px 0 5px;color:#f0dfae;font-size:1.65rem;font-weight:560;letter-spacing:-.045em}
+    .wallet-asset-note{position:relative;z-index:1;max-width:440px;margin:0;color:#aab8ae;font-size:.77rem;line-height:1.65}
+    .wallet-asset-divider{position:relative;z-index:1;margin:17px 0 12px;border:0;border-top:1px solid rgba(255,255,255,.08)}
+    .wallet-asset-meta{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;color:#91a095;font-size:.69rem;line-height:1.5}
+    .wallet-chart-card{margin-top:14px;padding:20px 22px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:linear-gradient(130deg,rgba(255,255,255,.035),rgba(255,255,255,.012))}
+    .wallet-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+    .wallet-chart-head h3{margin:0;color:#f0eee6;font-size:.98rem;font-weight:600}
+    .wallet-chart-head p{margin:5px 0 0;color:#9eada2;font-size:.73rem;line-height:1.55}
+    .wallet-chart-label{flex:0 0 auto;color:#d9c58f;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+    .wallet-chart{display:block;width:100%;height:auto;min-height:120px;overflow:visible}
+    .wallet-chart-caption{margin:8px 0 0;color:#899a8e;font-size:.69rem;line-height:1.6}
+    @media(max-width:600px){
+      .wallet-v04{margin:17px 0 20px}
+      .wallet-v04-head{align-items:flex-start;flex-direction:column;gap:9px}
+      .wallet-v04-grid{grid-template-columns:1fr;gap:10px}
+      .wallet-asset-card{padding:18px;border-radius:10px}
+      .wallet-asset-value{font-size:1.5rem}
+      .wallet-chart-card{padding:16px 13px;border-radius:10px}
+      .wallet-chart-head{flex-direction:column;gap:7px}
+      .wallet-chart{min-height:95px}
+    }
   </style>
 </head>
 <body>
@@ -387,6 +422,42 @@
       </div>
       <nav class="wallet-shortcuts" aria-label="Быстрые разделы кошелька"><span class="wallet-shortcuts-label">Быстрый переход</span><a class="wallet-shortcut" href="#wallet-card">◈ Карта ZP</a><a class="wallet-shortcut" href="#wallet-collection-title">Кошельки и возможности</a><a class="wallet-shortcut" href="#history-title">История операций</a></nav>
       <div class="wallet-security-line"><span class="wallet-security-icon" aria-hidden="true">✓</span><span><strong>Безопасность — прежде всего.</strong> Реальный баланс и финансовые действия появятся только после внедрения авторизации, серверной проверки и журнала операций.</span></div>
+    </section>
+
+    <section class="wallet-v04" aria-labelledby="wallet-assets-title">
+      <div class="wallet-v04-head">
+        <div><h2 id="wallet-assets-title">Активы и цифровые баллы</h2><p>Раздельный учёт проектов · без смешения балансов и прав</p></div>
+        <span class="wallet-v04-tag">Обзор V04 · концепция</span>
+      </div>
+      <div class="wallet-v04-grid">
+        <article class="wallet-asset-card" aria-labelledby="wallet-zp-title">
+          <div class="wallet-asset-top"><div class="wallet-asset-name"><span class="wallet-asset-mark" aria-hidden="true">ZP</span><span id="wallet-zp-title">ZHAKIN POINTS</span></div><span class="wallet-asset-state">Не активирован</span></div>
+          <strong class="wallet-asset-value">— ZP</strong>
+          <p class="wallet-asset-note">Внутренние баллы платформы за подтверждённую активность. Личный счёт и начисления пока не подключены.</p>
+          <hr class="wallet-asset-divider">
+          <div class="wallet-asset-meta"><span>Личный баланс</span><strong>Недоступен</strong></div>
+        </article>
+        <article class="wallet-asset-card" aria-labelledby="wallet-bfu-title">
+          <div class="wallet-asset-top"><div class="wallet-asset-name"><span class="wallet-asset-mark" aria-hidden="true">BFU</span><span id="wallet-bfu-title">COIN УСЕРДИЕ</span></div><span class="wallet-asset-state">Отдельный проект</span></div>
+          <strong class="wallet-asset-value">— BFU</strong>
+          <p class="wallet-asset-note">Отдельный цифровой актив проекта фонда. Не является ZP; баланс, подключение сети и операции на этой странице не доступны.</p>
+          <hr class="wallet-asset-divider">
+          <div class="wallet-asset-meta"><span>Связь с ZP</span><strong>Отсутствует</strong></div>
+        </article>
+      </div>
+      <section class="wallet-chart-card" aria-labelledby="wallet-chart-title">
+        <div class="wallet-chart-head"><div><h3 id="wallet-chart-title">Визуализация активности</h3><p>Макет будущей аналитики кошелька</p></div><span class="wallet-chart-label">Схематично</span></div>
+        <svg class="wallet-chart" viewBox="0 0 720 168" role="img" aria-labelledby="wallet-chart-svg-title wallet-chart-svg-desc" preserveAspectRatio="none">
+          <title id="wallet-chart-svg-title">Схематичный график активности</title>
+          <desc id="wallet-chart-svg-desc">Декоративная линия без числовых значений и без привязки к реальным операциям или рыночной стоимости.</desc>
+          <defs><linearGradient id="wallet-chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8bd78" stop-opacity=".22"/><stop offset="1" stop-color="#d8bd78" stop-opacity="0"/></linearGradient></defs>
+          <g stroke="rgba(255,255,255,.10)" stroke-width="1"><path d="M0 28H720M0 78H720M0 128H720"/></g>
+          <path d="M0 125 C42 118 48 91 93 99 S153 112 190 82 S252 91 286 69 S346 87 382 62 S445 71 477 54 S539 70 574 39 S643 53 720 22 L720 150 L0 150Z" fill="url(#wallet-chart-fill)"/>
+          <path d="M0 125 C42 118 48 91 93 99 S153 112 190 82 S252 91 286 69 S346 87 382 62 S445 71 477 54 S539 70 574 39 S643 53 720 22" fill="none" stroke="#d8bd78" stroke-width="3" stroke-linecap="round"/>
+          <g fill="#f0dfae"><circle cx="190" cy="82" r="3.5"/><circle cx="382" cy="62" r="3.5"/><circle cx="574" cy="39" r="3.5"/><circle cx="720" cy="22" r="4"/></g>
+        </svg>
+        <p class="wallet-chart-caption">Иллюстрация интерфейса: линия не представляет историю начислений, доходность, цену токена или фактические данные пользователей. Реальный график появится только при подключении проверяемого источника данных.</p>
+      </section>
     </section>
     <div class="wallet-grid">
       <section id="wallet-card" class="wallet-card" aria-label="Карточка ZHAKIN Points">
