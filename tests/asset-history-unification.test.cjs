@@ -110,3 +110,55 @@ test('remove and clear operate on both stores, and the UI loads the same adapter
   assert.ok(valuation.indexOf('asset-history-unification.js') < valuation.indexOf('asset-valuation-registry.js'));
   assert.ok(dashboard.indexOf('asset-history-unification.js') < dashboard.indexOf('analytical-asset-dashboard.js'));
 });
+
+test('oversized legacy history is never truncated or rewritten during read', () => {
+  const registryRows = Array.from({ length: 125 }, (_, index) =>
+    registryRecord({ id: 'registry-' + index, createdAt: new Date(Date.UTC(2026, 0, 1, 0, index)).toISOString() }));
+  const dashboardRows = Array.from({ length: 125 }, (_, index) =>
+    dashboardRecord({ id: 'dashboard-' + index, createdAt: new Date(Date.UTC(2026, 1, 1, 0, index)).toISOString() }));
+  const registryRaw = JSON.stringify({ schemaVersion: 1, records: registryRows });
+  const dashboardRaw = JSON.stringify(dashboardRows);
+  const storage = storageMock([
+    [history.REGISTRY_KEY, registryRaw],
+    [history.DASHBOARD_KEY, dashboardRaw]
+  ]);
+  const rows = history.read(storage);
+  assert.equal(rows.length, 250);
+  assert.equal(storage.getItem(history.REGISTRY_KEY), registryRaw);
+  assert.equal(storage.getItem(history.DASHBOARD_KEY), dashboardRaw);
+});
+
+test('adding to an oversized legacy history fails safely without changing either store', () => {
+  const registryRows = Array.from({ length: 125 }, (_, index) =>
+    registryRecord({ id: 'registry-' + index, createdAt: new Date(Date.UTC(2026, 0, 1, 0, index)).toISOString() }));
+  const dashboardRows = Array.from({ length: 125 }, (_, index) =>
+    dashboardRecord({ id: 'dashboard-' + index, createdAt: new Date(Date.UTC(2026, 1, 1, 0, index)).toISOString() }));
+  const storage = storageMock([
+    [history.REGISTRY_KEY, JSON.stringify({ schemaVersion: 1, records: registryRows })],
+    [history.DASHBOARD_KEY, JSON.stringify(dashboardRows)]
+  ]);
+  const before = storage.snapshot();
+  assert.throws(() => history.save(storage, registryRecord({ id: 'new-record' })), /более 200 оценок/);
+  assert.deepEqual(storage.snapshot(), before);
+});
+
+
+test('deleting from an oversized legacy history preserves every remaining record in both stores', () => {
+  const registryRows = Array.from({ length: 125 }, (_, index) =>
+    registryRecord({ id: 'registry-' + index, createdAt: new Date(Date.UTC(2026, 0, 1, 0, index)).toISOString() }));
+  const dashboardRows = Array.from({ length: 125 }, (_, index) =>
+    dashboardRecord({ id: 'dashboard-' + index, createdAt: new Date(Date.UTC(2026, 1, 1, 0, index)).toISOString() }));
+  const storage = storageMock([
+    [history.REGISTRY_KEY, JSON.stringify({ schemaVersion: 1, records: registryRows })],
+    [history.DASHBOARD_KEY, JSON.stringify(dashboardRows)]
+  ]);
+
+  const remaining = history.remove(storage, 'registry-0');
+  assert.equal(remaining.length, 249);
+  assert.equal(history.read(storage).length, 249);
+  assert.equal(JSON.parse(storage.getItem(history.REGISTRY_KEY)).records.length, 249);
+  assert.equal(JSON.parse(storage.getItem(history.DASHBOARD_KEY)).length, 249);
+  assert.equal(history.read(storage).some(row => row.id === 'registry-0'), false);
+  assert.equal(history.read(storage).some(row => row.id === 'registry-1'), true);
+  assert.equal(history.read(storage).some(row => row.id === 'dashboard-124'), true);
+});
