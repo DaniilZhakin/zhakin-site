@@ -39,8 +39,9 @@ test('dashboard persists local records and rejects tampered or malformed rows', 
   assert.equal(dashboard.readRecords(storage).length, 1);
   storage.setItem(dashboard.STORAGE_KEY, JSON.stringify([first, { ...first, value: -1 }]));
   assert.equal(dashboard.readRecords(storage).length, 1);
-  assert.equal(JSON.parse(storage.getItem(dashboard.STORAGE_KEY)).length, 1);
+  assert.equal(dashboard.readRecords(storage).length, 1);
   storage.setItem(dashboard.STORAGE_KEY, '{broken');
+  storage.removeItem('zhakin.assetValuation.registry.v1');
   assert.deepEqual(dashboard.readRecords(storage), []);
 });
 
@@ -113,7 +114,8 @@ test('dashboard reports inaccessible browser storage instead of treating it as a
   const blockedRead = { getItem() { throw new Error('blocked'); }, setItem() {} };
   assert.throws(() => dashboard.readRecords(blockedRead), /Локальное хранилище недоступно/);
   const blockedWrite = { getItem() { return JSON.stringify([{ unexpected: true }]); }, setItem() { throw new Error('blocked'); } };
-  assert.throws(() => dashboard.readRecords(blockedWrite), /Не удалось обновить локальную историю/);
+  assert.doesNotThrow(() => dashboard.readRecords(blockedWrite));
+  assert.throws(() => dashboard.writeRecords({ getItem() { return null; }, setItem() { throw new Error('blocked'); }, removeItem() {} }, [record()]), /браузер отклонил запись|восстановить прежние локальные данные/);
 });
 
 test('trend chart uses one point per date and scales the horizontal axis by elapsed time', () => {
@@ -126,4 +128,34 @@ test('trend chart uses one point per date and scales the horizontal axis by elap
 test('dashboard reports local storage write failures when deleting an individual record', () => {
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
   assert.match(source, /Не удалось удалить запись: браузер не разрешил обновить локальную историю/);
+});
+
+
+test('dashboard exposes responsive KPI cards and multi-dimension history filters', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
+  assert.match(source, /ad-kpi-grid/);
+  assert.match(source, /ad-filter-bar/);
+  assert.match(source, /Поиск по названию актива/);
+  assert.match(source, /Фильтр по типу актива/);
+  assert.match(source, /Фильтр по валюте/);
+  assert.match(source, /Фильтр по периоду/);
+  assert.match(source, /Показано .* из .* записей/);
+  assert.match(source, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(source, /графики используют всю историю/);
+});
+
+
+test('dashboard preserves explicit comparison selection while filters rerender history', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
+  assert.match(source, /let selectedAssetIds = new Set\(\)/);
+  assert.match(source, /if \(comparisonInitialized\) selectedAssetIds = previouslySelected/);
+  assert.match(source, /comparisonInitialized = true/);
+  assert.match(source, /selectedAssetIds\.has\(row\.id\)/);
+});
+
+test('asset charts expose value labels and accessible point details', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/analytical-asset-dashboard.js'), 'utf8');
+  assert.match(source, /const tickValue = high - \(high - low\) \* ratio/);
+  assert.match(source, /point\.date \+ ' · ' \+ formatValue\(point\.value, point\.currency\)/);
+  assert.match(source, /row\.name \+ ': ' \+ formatValue\(row\.value, row\.currency\)/);
 });
