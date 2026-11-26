@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "catalog_name": "ZHAKIN TEAM Analytical Monitoring History",
   "status": "history_accumulating",
-  "generated_at": "2026-11-25T18:38:59.332Z",
+  "generated_at": "2026-11-26T18:25:55.527Z",
   "observations": [
     {
       "indicator_id": "tech.rd_gdp",
@@ -1614,6 +1614,57 @@
       },
       "source_release_date": "2026-11-26",
       "retrieved_at": "2026-11-25T18:38:59.332Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/CNY",
+      "value": 12.3184,
+      "unit": "RUB_per_1_CNY",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-27",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-27",
+      "retrieved_at": "2026-11-26T18:25:55.527Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/EUR",
+      "value": 89.8053,
+      "unit": "RUB_per_1_EUR",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-27",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-27",
+      "retrieved_at": "2026-11-26T18:25:55.527Z",
+      "revision_status": "source_published",
+      "validation_status": "validated"
+    },
+    {
+      "indicator_id": "macro.fx_official",
+      "series_key": "RUB/USD",
+      "value": 82.1265,
+      "unit": "RUB_per_1_USD",
+      "geography": "currency_pair",
+      "reference_period": "2026-11-27",
+      "source": {
+        "name": "Bank of Russia",
+        "dataset": "Daily official exchange rates",
+        "url": "https://www.cbr.ru/scripts/XML_daily.asp"
+      },
+      "source_release_date": "2026-11-27",
+      "retrieved_at": "2026-11-26T18:25:55.527Z",
       "revision_status": "source_published",
       "validation_status": "validated"
     }
