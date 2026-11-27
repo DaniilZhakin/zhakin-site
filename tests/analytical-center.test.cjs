@@ -159,6 +159,8 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
   assert.match(monitoring, /82,1265/);
   assert.match(monitoring, /89,8053/);
   assert.match(monitoring, /12,3184/);
+  assert.match(monitoring, /Банк России на дату действия 27\\.11\\.2026/);
+  assert.match(monitoring, /Снимок данных сформирован 26\\.11\\.2026, 18:25 UTC/);
   assert.match(monitoring, /3,44716%/);
   assert.match(monitoring, /26\.11\.2026/);
 });
