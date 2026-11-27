@@ -255,3 +255,17 @@ test('Coverage dashboard reports counts from the published snapshot without inve
   assert.ok(sources.has('Bank of Russia'));
   assert.match(fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8'), /Пропущенные годы не интерполируются/);
 });
+
+
+test('FX history chart exposes period movement, latest value and accessible point-level details', () => {
+  const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
+  assert.match(chartScript, /accessibleDescription\(/);
+  assert.match(chartScript, /aria-label/);
+  assert.match(chartScript, /node\('title'/);
+  assert.match(chartScript, /node\('desc'/);
+  assert.match(chartScript, /Последнее значение:/);
+  assert.match(chartScript, /изменение за период/);
+  assert.match(chartScript, /chart-point-latest/);
+  assert.match(chartScript, /point\.retrieved_at/);
+  assert.match(chartScript, /validation_status === 'validated'/);
+});
