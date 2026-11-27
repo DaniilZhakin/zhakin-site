@@ -80,8 +80,7 @@
       const marker = node('circle', {
         cx: x(i), cy: y(value), r: i === points.length - 1 ? 6.5 : 4.5,
         class: i === points.length - 1 ? 'chart-point chart-point-latest' : 'chart-point',
-        tabindex: 0,
-        'aria-label': point.reference_period + ': ' + formatRate(value)
+        'aria-hidden': 'true'
       });
       marker.append(node('title', {}, point.reference_period + ' · ' + formatRate(value) +
         ' · получено ' + String(point.retrieved_at || 'дата не указана')));
