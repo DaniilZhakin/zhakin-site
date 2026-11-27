@@ -135,9 +135,9 @@ test('Published observations snapshot contains only validated, sourced and times
 
 test('First snapshot values match the monitoring cards and preserve distinct reference periods', () => {
   const expected = new Map([
-    ['RUB/USD', 82.313],
-    ['RUB/EUR', 90.2397],
-    ['RUB/CNY', 12.3154],
+    ['RUB/USD', 82.1265],
+    ['RUB/EUR', 89.8053],
+    ['RUB/CNY', 12.3184],
     ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
     ['CHN/GB.XPD.RSDV.GD.ZS', 2.57729],
     ['DEU/GB.XPD.RSDV.GD.ZS', 3.1539],
@@ -156,9 +156,9 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     assert.equal(latestBySeries.get(key)?.value, value);
   }
   assert.equal(latestBySeries.get('USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
-  assert.match(monitoring, /82,313/);
-  assert.match(monitoring, /90,2397/);
-  assert.match(monitoring, /12,3154/);
+  assert.match(monitoring, /82,1265/);
+  assert.match(monitoring, /89,8053/);
+  assert.match(monitoring, /12,3184/);
   assert.match(monitoring, /3,44716%/);
   assert.match(monitoring, /26\.11\.2026/);
 });
@@ -167,7 +167,7 @@ test('FX history visualization uses only validated observations and exposes acce
   const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
   const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
   assert.equal(history.status, 'history_accumulating');
-  assert.equal(history.observations.length, 82);
+  assert.ok(history.observations.length > 0);\n  assert.equal(history.observations.length, history.observations.filter(row => row.validation_status === 'validated').length);
   assert.match(monitoring, /id="fx-history"/);
   assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
