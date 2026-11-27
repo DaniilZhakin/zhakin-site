@@ -135,9 +135,9 @@ test('Published observations snapshot contains only validated, sourced and times
 
 test('First snapshot values match the monitoring cards and preserve distinct reference periods', () => {
   const expected = new Map([
-    ['RUB/USD', 82.1265],
-    ['RUB/EUR', 89.8053],
-    ['RUB/CNY', 12.3184],
+    ['RUB/USD', 82.2732],
+    ['RUB/EUR', 90.2948],
+    ['RUB/CNY', 12.327],
     ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
     ['CHN/GB.XPD.RSDV.GD.ZS', 2.57729],
     ['DEU/GB.XPD.RSDV.GD.ZS', 3.1539],
@@ -156,11 +156,11 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     assert.equal(latestBySeries.get(key)?.value, value);
   }
   assert.equal(latestBySeries.get('USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
-  assert.match(monitoring, /82,1265/);
-  assert.match(monitoring, /89,8053/);
-  assert.match(monitoring, /12,3184/);
-  assert.match(monitoring, /Банк России на дату действия 27\.11\.2026/);
-  assert.match(monitoring, /Снимок данных сформирован 26\.11\.2026, 18:25 UTC/);
+  assert.match(monitoring, /82,2732/);
+  assert.match(monitoring, /90,2948/);
+  assert.match(monitoring, /12,327/);
+  assert.match(monitoring, /Банк России на дату действия 28\.11\.2026/);
+  assert.match(monitoring, /Снимок данных сформирован 27\.11\.2026, 18:11 UTC/);
   assert.match(monitoring, /3,44716%/);
   assert.match(monitoring, /26\.11\.2026/);
 });
