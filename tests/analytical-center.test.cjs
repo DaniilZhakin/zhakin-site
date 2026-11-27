@@ -162,7 +162,7 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
   assert.match(monitoring, /Банка России на дату действия 28\.11\.2026/);
   assert.match(monitoring, /Снимок данных сформирован 27\.11\.2026, 18:11 UTC/);
   assert.match(monitoring, /3,44716%/);
-  assert.match(monitoring, /26\.11\.2026/);
+  assert.match(monitoring, /АКТУАЛЬНЫЙ СНИМОК · 28\.11\.2026/);
 });
 
 test('FX history visualization uses only validated observations and exposes accessible series controls', () => {
