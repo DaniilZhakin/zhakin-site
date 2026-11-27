@@ -167,7 +167,8 @@ test('FX history visualization uses only validated observations and exposes acce
   const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
   const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
   assert.equal(history.status, 'history_accumulating');
-  assert.ok(history.observations.length > 0);\n  assert.equal(history.observations.length, history.observations.filter(row => row.validation_status === 'validated').length);
+  assert.ok(history.observations.length > 0);
+  assert.equal(history.observations.length, history.observations.filter(row => row.validation_status === 'validated').length);
   assert.match(monitoring, /id="fx-history"/);
   assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
