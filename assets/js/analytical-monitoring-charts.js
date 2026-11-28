@@ -16,8 +16,16 @@
     if (text !== undefined) el.textContent = text;
     return el;
   }
+  function accessibleDescription(heading, description) {
+    chart.setAttribute('role', 'img');
+    chart.setAttribute('aria-label', heading + '. ' + description);
+    chart.append(node('title', { id: 'fx-chart-svg-title' }, heading));
+    chart.append(node('desc', { id: 'fx-chart-svg-description' }, description));
+  }
   function message(text) {
-    chart.replaceChildren(node('text', { x: 360, y: 125, 'text-anchor': 'middle' }, text));
+    chart.replaceChildren();
+    accessibleDescription('История курса ' + labels[active], text);
+    chart.append(node('text', { x: 360, y: 125, 'text-anchor': 'middle' }, text));
   }
   function render() {
     const grouped = new Map();
@@ -35,6 +43,12 @@
       return;
     }
     const values = points.map(row => Number(row.value));
+    const firstValue = values[0];
+    const lastValue = values[values.length - 1];
+    const change = lastValue - firstValue;
+    const changePct = firstValue ? change / Math.abs(firstValue) * 100 : 0;
+    const sign = change > 0 ? '+' : '';
+    const formatRate = value => new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(value);
     const min = Math.min(...values), max = Math.max(...values);
     const spread = max - min || Math.max(Math.abs(max) * 0.02, 0.01);
     const low = min - spread * 0.16, high = max + spread * 0.16;
@@ -42,20 +56,45 @@
     const x = index => x0 + (x1 - x0) * index / (points.length - 1);
     const y = value => y1 - (value - low) / (high - low) * (y1 - y0);
     chart.replaceChildren();
+    accessibleDescription(
+      'История курса ' + labels[active],
+      points.length + ' подтверждённых дат. С ' + points[0].reference_period + ' по ' +
+      points[points.length - 1].reference_period + ' значение изменилось на ' +
+      sign + formatRate(change) + ' (' + sign + changePct.toFixed(2) + '%). Последнее значение: ' +
+      formatRate(lastValue) + '. Все точки взяты из проверенных наблюдений.'
+    );
+    chart.append(node('text', {
+      x: x1, y: 14, 'text-anchor': 'end', class: 'chart-value'
+    }, 'Последнее: ' + formatRate(lastValue)));
     for (let i = 0; i < 4; i++) {
       const yy = y0 + (y1 - y0) * i / 3;
       chart.append(node('line', { x1: x0, y1: yy, x2: x1, y2: yy, class: 'chart-grid' }));
       chart.append(node('text', { x: 8, y: yy + 4 }, (high - (high - low) * i / 3).toFixed(2)));
     }
-    chart.append(node('polyline', { points: points.map((p, i) => x(i) + ',' + y(Number(p.value))).join(' '), class: 'chart-line' }));
+    chart.append(node('polyline', {
+      points: points.map((point, i) => x(i) + ',' + y(Number(point.value))).join(' '),
+      class: 'chart-line'
+    }));
     points.forEach((point, i) => {
-      chart.append(node('circle', { cx: x(i), cy: y(Number(point.value)), r: 5, class: 'chart-point' }));
+      const value = Number(point.value);
+      const marker = node('circle', {
+        cx: x(i), cy: y(value), r: i === points.length - 1 ? 6.5 : 4.5,
+        class: i === points.length - 1 ? 'chart-point chart-point-latest' : 'chart-point',
+        'aria-hidden': 'true'
+      });
+      marker.append(node('title', {}, point.reference_period + ' · ' + formatRate(value) +
+        ' · получено ' + String(point.retrieved_at || 'дата не указана')));
+      chart.append(marker);
       if (i === 0 || i === points.length - 1 || points.length <= 6) {
-        chart.append(node('text', { x: x(i), y: 232, 'text-anchor': i === 0 ? 'start' : (i === points.length - 1 ? 'end' : 'middle') }, point.reference_period));
+        chart.append(node('text', {
+          x: x(i), y: 232, 'text-anchor': i === 0 ? 'start' : (i === points.length - 1 ? 'end' : 'middle')
+        }, point.reference_period));
       }
     });
-    status.textContent = points.length + ' подтверждённых дат · официальные значения';
-    range.textContent = points[0].reference_period + ' — ' + points[points.length - 1].reference_period;
+    status.textContent = points.length + ' подтверждённых дат · изменение за период ' +
+      sign + formatRate(change) + ' (' + sign + changePct.toFixed(2) + '%)';
+    range.textContent = points[0].reference_period + ' — ' + points[points.length - 1].reference_period +
+      ' · последнее значение ' + formatRate(lastValue);
   }
   document.querySelectorAll('[data-series]').forEach(button => {
     button.addEventListener('click', () => {
