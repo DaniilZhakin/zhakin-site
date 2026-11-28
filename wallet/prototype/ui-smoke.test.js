@@ -117,3 +117,10 @@ test("wallet visual polish preserves responsive accessible controls", async () =
   assert.ok(page.includes("@media(max-width:600px)"));
   assert.ok(page.includes("prefers-reduced-motion:reduce"));
 });
+
+test("wallet info dialog stays within the mobile viewport and can scroll", async () => {
+  const page = await readFile(walletUrl, "utf8");
+  assert.match(page, /\.wallet-dialog\{[^}]*width:min\(440px,calc\(100% - 32px\)\)[^}]*max-height:calc\(100vh - 32px\)[^}]*overflow-y:auto/);
+  assert.match(page, /@media\(max-width:600px\)\{\.wallet-dialog\{[^}]*max-height:calc\(100dvh - 28px\)/);
+  assert.match(page, /\.wallet-dialog-actions \.wallet-demo-button\{[^}]*min-height:48px/);
+});
