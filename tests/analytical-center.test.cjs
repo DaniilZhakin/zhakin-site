@@ -135,9 +135,9 @@ test('Published observations snapshot contains only validated, sourced and times
 
 test('First snapshot values match the monitoring cards and preserve distinct reference periods', () => {
   const expected = new Map([
-    ['RUB/USD', 82.313],
-    ['RUB/EUR', 90.2397],
-    ['RUB/CNY', 12.3154],
+    ['RUB/USD', 82.2732],
+    ['RUB/EUR', 90.2948],
+    ['RUB/CNY', 12.327],
     ['USA/GB.XPD.RSDV.GD.ZS', 3.44716],
     ['CHN/GB.XPD.RSDV.GD.ZS', 2.57729],
     ['DEU/GB.XPD.RSDV.GD.ZS', 3.1539],
@@ -156,18 +156,21 @@ test('First snapshot values match the monitoring cards and preserve distinct ref
     assert.equal(latestBySeries.get(key)?.value, value);
   }
   assert.equal(latestBySeries.get('USA/GB.XPD.RSDV.GD.ZS').reference_period, '2023');
-  assert.match(monitoring, /82,313/);
-  assert.match(monitoring, /90,2397/);
-  assert.match(monitoring, /12,3154/);
+  assert.match(monitoring, /82,2732/);
+  assert.match(monitoring, /90,2948/);
+  assert.match(monitoring, /12,327/);
+  assert.match(monitoring, /Банка России на дату действия 28\.11\.2026/);
+  assert.match(monitoring, /Снимок данных сформирован 27\.11\.2026, 18:11 UTC/);
   assert.match(monitoring, /3,44716%/);
-  assert.match(monitoring, /26\.11\.2026/);
+  assert.match(monitoring, /АКТУАЛЬНЫЙ СНИМОК · 28\.11\.2026/);
 });
 
 test('FX history visualization uses only validated observations and exposes accessible series controls', () => {
   const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
   const history = JSON.parse(fs.readFileSync(path.join(root, 'data/analytical-monitoring/history.json'), 'utf8'));
   assert.equal(history.status, 'history_accumulating');
-  assert.equal(history.observations.length, 82);
+  assert.ok(history.observations.length > 0);
+  assert.equal(history.observations.length, history.observations.filter(row => row.validation_status === 'validated').length);
   assert.match(monitoring, /id="fx-history"/);
   assert.match(monitoring, /data-series="RUB\/USD"/);
   assert.match(monitoring, /aria-pressed="true"/);
@@ -254,4 +257,18 @@ test('Coverage dashboard reports counts from the published snapshot without inve
   assert.ok(sources.has('World Bank'));
   assert.ok(sources.has('Bank of Russia'));
   assert.match(fs.readFileSync(path.join(root, 'centers/analytical/monitoring.html'), 'utf8'), /Пропущенные годы не интерполируются/);
+});
+
+
+test('FX history chart exposes period movement, latest value and accessible point-level details', () => {
+  const chartScript = fs.readFileSync(path.join(root, 'assets/js/analytical-monitoring-charts.js'), 'utf8');
+  assert.match(chartScript, /accessibleDescription\(/);
+  assert.match(chartScript, /aria-label/);
+  assert.match(chartScript, /node\('title'/);
+  assert.match(chartScript, /node\('desc'/);
+  assert.match(chartScript, /Последнее значение:/);
+  assert.match(chartScript, /изменение за период/);
+  assert.match(chartScript, /chart-point-latest/);
+  assert.match(chartScript, /point\.retrieved_at/);
+  assert.match(chartScript, /validation_status === 'validated'/);
 });
